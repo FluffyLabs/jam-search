@@ -1,75 +1,80 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchAzureSearchResults } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
+import { fetchAzureSearchResults, SearchResult } from "@/lib/api";
 
 interface UseSearchOptions {
-  enabled?: boolean;
   initialQuery?: string;
   pageSize?: number;
   useAzureSearch?: boolean;
 }
 
 export function useSearch({
-  enabled = false,
   initialQuery = "",
   pageSize = 10,
   useAzureSearch = true,
 }: UseSearchOptions = {}) {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [currentPage, setCurrentPage] = useState(0);
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [totalResults, setTotalResults] = useState(0);
 
-  const queryResult = useQuery({
-    queryKey: ["azureSearch", searchQuery, currentPage, pageSize],
-    queryFn: () =>
+  const mutation = useMutation({
+    mutationFn: () =>
       fetchAzureSearchResults(searchQuery, {
         top: pageSize,
         skip: currentPage * pageSize,
         orderBy: "timestamp desc",
       }),
-    enabled: enabled && !!searchQuery.trim() && useAzureSearch,
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    onSuccess: (data) => {
+      setResults(data.results);
+      setTotalResults(data.total);
+    },
+    onError: (error) => {
+      console.error("Error fetching search results", error);
+    },
   });
-
-  const { data, isLoading, isError, error, refetch } = queryResult;
 
   const search = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(0); // Reset to first page on new search
-    if (query.trim()) {
-      refetch();
+    if (query.trim() && useAzureSearch) {
+      mutation.mutate();
     }
   };
 
   const nextPage = () => {
-    if (data && data.results.length === pageSize) {
+    if (results.length === pageSize) {
       setCurrentPage((prev) => prev + 1);
+      mutation.mutate();
     }
   };
 
   const previousPage = () => {
     setCurrentPage((prev) => Math.max(0, prev - 1));
+    mutation.mutate();
   };
 
   const goToPage = (page: number) => {
     setCurrentPage(Math.max(0, page));
+    mutation.mutate();
   };
 
   return {
     search,
     searchQuery,
-    results: data?.results || [],
-    totalResults: data?.total || 0,
-    isLoading,
-    isError,
-    error,
-    refetch,
+    results,
+    totalResults,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    error: mutation.error,
+    refetch: mutation.mutate,
     pagination: {
       currentPage,
       pageSize,
       nextPage,
       previousPage,
       goToPage,
-      hasNextPage: data ? data.results.length === pageSize : false,
+      hasNextPage: results.length === pageSize,
       hasPreviousPage: currentPage > 0,
     },
   };
