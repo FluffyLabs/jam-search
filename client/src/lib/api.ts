@@ -18,6 +18,8 @@ export interface SearchResult {
   content: string;
   source: string;
   score: number;
+  link?: string;
+  timestamp?: string;
 }
 
 export interface SearchResponse {
@@ -137,8 +139,10 @@ export function mapAzureResultsToStandard(
       id: item.messageId,
       title: item.sender,
       content: item.content,
-      source: item.link,
+      source: "matrix",
       score: item["@search.score"],
+      link: item.link,
+      timestamp: item.timestamp,
     })),
     total: azureResponse["@odata.count"] || azureResponse.value.length,
   };
