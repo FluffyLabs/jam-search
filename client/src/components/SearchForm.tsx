@@ -3,15 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/hooks/useSearch";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const SearchForm = () => {
   const { search } = useSearch();
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       search(searchQuery);
+      navigate(`/results?q=${encodeURIComponent(searchQuery)}`);
     }
   };
 

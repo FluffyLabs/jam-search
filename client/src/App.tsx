@@ -3,6 +3,7 @@ import "./App.css";
 import { AppsSidebar } from "./packages/ui-kit/AppsSidebar";
 import { Header } from "./components/Header";
 import { IndexPage } from "./pages";
+import SearchResults from "./pages/results";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -27,6 +28,7 @@ function App() {
           <div className="w-full bg-background p-4 ">
             <Routes>
               <Route index element={<IndexPage />} />
+              <Route path="/results" element={<SearchResults />} />
             </Routes>
           </div>
         </div>
