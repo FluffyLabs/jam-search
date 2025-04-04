@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { fetchAzureSearchResults, SearchResult } from "@/lib/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchAzureSearchResults, SearchResponse } from "@/lib/api";
+import { getSearchResultsKey, getSearchParamsKey } from "@/lib/queryKeys";
 
 interface UseSearchOptions {
   initialQuery?: string;
@@ -8,17 +8,42 @@ interface UseSearchOptions {
   useAzureSearch?: boolean;
 }
 
+interface SearchParams {
+  query: string;
+  currentPage: number;
+  pageSize: number;
+}
+
 export function useSearch({
   initialQuery = "",
   pageSize = 10,
   useAzureSearch = true,
 }: UseSearchOptions = {}) {
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [totalResults, setTotalResults] = useState(0);
+  // Get query client instance
+  const queryClient = useQueryClient();
 
-  const mutation = useMutation({
+  // Get search params from global state or use defaults
+  const searchParamsKey = getSearchParamsKey();
+  const defaultParams: SearchParams = {
+    query: initialQuery,
+    currentPage: 0,
+    pageSize,
+  };
+
+  const searchParams =
+    queryClient.getQueryData<SearchParams>(searchParamsKey) || defaultParams;
+
+  const { query: searchQuery, currentPage } = searchParams;
+
+  // Use React Query to store and access the global search state
+  const searchResultsKey = getSearchResultsKey(
+    searchQuery,
+    currentPage,
+    pageSize
+  );
+
+  // Mutation for fetching search results
+  const searchMutation = useMutation({
     mutationFn: () =>
       fetchAzureSearchResults(searchQuery, {
         top: pageSize,
@@ -26,37 +51,66 @@ export function useSearch({
         orderBy: "timestamp desc",
       }),
     onSuccess: (data) => {
-      setResults(data.results);
-      setTotalResults(data.total);
+      // Store results in global cache
+      queryClient.setQueryData(searchResultsKey, data);
     },
     onError: (error) => {
       console.error("Error fetching search results", error);
     },
   });
 
+  // Get data from cache or return empty defaults
+  const cachedData = queryClient.getQueryData<SearchResponse>(searchResultsKey);
+  const results = cachedData?.results || [];
+  const totalResults = cachedData?.total || 0;
+
   const search = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(0); // Reset to first page on new search
+    // Update search params in global state
+    queryClient.setQueryData<SearchParams>(searchParamsKey, {
+      ...searchParams,
+      query,
+      currentPage: 0,
+    });
+
     if (query.trim() && useAzureSearch) {
-      mutation.mutate();
+      searchMutation.mutate();
     }
   };
 
   const nextPage = () => {
     if (results.length === pageSize) {
-      setCurrentPage((prev) => prev + 1);
-      mutation.mutate();
+      // Update page in global state
+      queryClient.setQueryData<SearchParams>(searchParamsKey, {
+        ...searchParams,
+        currentPage: currentPage + 1,
+      });
+
+      searchMutation.mutate();
     }
   };
 
   const previousPage = () => {
-    setCurrentPage((prev) => Math.max(0, prev - 1));
-    mutation.mutate();
+    if (currentPage > 0) {
+      // Update page in global state
+      queryClient.setQueryData<SearchParams>(searchParamsKey, {
+        ...searchParams,
+        currentPage: currentPage - 1,
+      });
+
+      searchMutation.mutate();
+    }
   };
 
   const goToPage = (page: number) => {
-    setCurrentPage(Math.max(0, page));
-    mutation.mutate();
+    const newPage = Math.max(0, page);
+
+    // Update page in global state
+    queryClient.setQueryData<SearchParams>(searchParamsKey, {
+      ...searchParams,
+      currentPage: newPage,
+    });
+
+    searchMutation.mutate();
   };
 
   return {
@@ -64,10 +118,10 @@ export function useSearch({
     searchQuery,
     results,
     totalResults,
-    isLoading: mutation.isPending,
-    isError: mutation.isError,
-    error: mutation.error,
-    refetch: mutation.mutate,
+    isLoading: searchMutation.isPending,
+    isError: searchMutation.isError,
+    error: searchMutation.error,
+    refetch: () => searchMutation.mutate(),
     pagination: {
       currentPage,
       pageSize,
