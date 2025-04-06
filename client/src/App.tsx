@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router";
 import "./App.css";
-import { AppsSidebar } from "./packages/ui-kit/AppsSidebar";
+import { AppsSidebar } from "@krystian5011/shared-ui";
 import { Header } from "./components/Header";
 import { IndexPage } from "./pages";
 import SearchResults from "./pages/results";
@@ -23,7 +23,7 @@ function App() {
       <div className="flex flex-col min-h-screen">
         <Header />
         <div className="flex h-full grow">
-          <AppsSidebar />
+          <AppsSidebar activeLink="website" />
 
           <div className="w-full bg-background p-4 ">
             <Routes>
