@@ -25,6 +25,7 @@ async function main() {
   const logger = new MessagesLogger(roomIds);
   await listenToMessages(homeserverUrl, accessToken, userId, logger);
 }
+console.log("Starting...");
 
 main().catch((err) => {
   console.error("Error:", err);

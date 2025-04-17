@@ -4,7 +4,7 @@
   "description": "Application for retrieving news from Matrix and indexing in Azure Cognitive Search",
   "main": "dist/index.js",
   "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
   "scripts": {
     "build": "tsc",
@@ -18,14 +18,14 @@
     "dotenv": "^16.0.3",
     "matrix-js-sdk": "^37.3.0",
     "pg": "^8.14.1",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.5",
+    "tsx": "^4.19.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@tsconfig/node20": "^20.1.5",
     "@types/node": "^16.11.17",
     "@types/pg": "^8.11.13",
-    "tsx": "^4.19.3",
     "typescript": "^5.3.3"
   }
 }
