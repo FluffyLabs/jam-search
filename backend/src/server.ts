@@ -1,31 +1,46 @@
-import { MatrixClient, AutojoinRoomsMixin, SimpleFsStorageProvider } from "matrix-bot-sdk";
-import { MessagesLogger } from "./logger";
+import type { MessagesLogger } from "./logger";
 
 export async function listenToMessages(
   homeserverUrl: string,
   accessToken: string,
   userId: string,
-  roomId: string,
   msgLog: MessagesLogger
 ) {
-  const storage = new SimpleFsStorageProvider("bot-storage.json");
-  const client = new MatrixClient(homeserverUrl, accessToken, storage);
+  const { ClientEvent, RoomEvent, createClient } = await import(
+    "matrix-js-sdk"
+  );
 
-  AutojoinRoomsMixin.setupOnClient(client);
+  const client = createClient({
+    baseUrl: homeserverUrl,
+    accessToken: accessToken,
+    userId,
+  });
 
-  client.on("room.message", (incomingRoomId, event) => {
-    if (incomingRoomId !== msgLog.getRoomId() || !event["content"]) return;
+  // Start the client
+  client.startClient();
 
-    const sender = event["sender"];
-    const messageContent = event["content"]["body"];
-    const eventId = event["event_id"];
-    const timestamp = new Date(event["origin_server_ts"]);
-
-    if (typeof messageContent === "string") {
-      msgLog.onMessage(messageContent, sender, eventId, timestamp);
+  // Wait for the client to be ready
+  client.once(ClientEvent.Sync, (state: string) => {
+    if (state === "PREPARED") {
+      console.log("Client is ready and synced!");
     }
   });
 
-  await client.start();
-  console.log("Backend job start");
+  client.on(RoomEvent.Timeline, (event, room) => {
+    const roomId = room?.roomId;
+    const messageContent = event.getContent().body;
+
+    if (!roomId || !msgLog.getRoomIds().includes(roomId) || !messageContent)
+      return;
+
+    const sender = event.getSender();
+    const eventId = event.getId();
+    const timestamp = event.getDate();
+
+    if (typeof messageContent === "string") {
+      msgLog.onMessage(roomId, messageContent, sender, eventId, timestamp);
+    }
+  });
+
+  return client;
 }

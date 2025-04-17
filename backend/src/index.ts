@@ -8,26 +8,22 @@ dotenv.config();
 const homeserverUrl = process.env.HOMESERVER_URL || "";
 const accessToken = process.env.ACCESS_TOKEN || "";
 const userId = process.env.USER_ID || "";
-const roomId = process.env.ROOM_ID || "";
-const searchEndpoint = process.env.SEARCH_ENDPOINT || "";
-const indexName = process.env.INDEX_NAME || "";
-const apiKey = process.env.API_KEY || "";
+const roomIds = process.env.ROOM_IDS?.split(";") || [];
+const postgresUrl = process.env.POSTGRES_URL || "";
 
 if (
   !homeserverUrl ||
   !accessToken ||
   !userId ||
-  !roomId ||
-  !searchEndpoint ||
-  !indexName ||
-  !apiKey
+  !roomIds.length ||
+  !postgresUrl
 ) {
   throw new Error("No .env");
 }
 
 async function main() {
-  const logger = new MessagesLogger(roomId, searchEndpoint, indexName, apiKey);
-  await listenToMessages(homeserverUrl, accessToken, userId, roomId, logger);
+  const logger = new MessagesLogger(roomIds);
+  await listenToMessages(homeserverUrl, accessToken, userId, logger);
 }
 
 main().catch((err) => {

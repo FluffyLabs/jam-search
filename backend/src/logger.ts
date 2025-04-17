@@ -1,5 +1,15 @@
 // src/logger.ts
-import { SearchClient, AzureKeyCredential } from "@azure/search-documents";
+import { Pool } from "pg";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 export interface Message {
   messageId: string;
@@ -11,27 +21,22 @@ export interface Message {
 }
 
 export class MessagesLogger {
-  private searchClient: SearchClient<Message>;
-  private roomId: string;
+  private roomIds: string[];
 
-  constructor(roomId: string, searchEndpoint: string, indexName: string, apiKey: string) {
-    this.roomId = roomId;
-    this.searchClient = new SearchClient<Message>(
-      searchEndpoint,
-      indexName,
-      new AzureKeyCredential(apiKey)
-    );
+  constructor(roomIds: string[]) {
+    this.roomIds = roomIds;
   }
 
-  public getRoomId(): string {
-    return this.roomId;
+  public getRoomIds(): string[] {
+    return this.roomIds;
   }
 
-  private generatePermalink(eventId: string): string {
-    return `https://matrix.to/#/${this.roomId}/${eventId}`;
+  private generatePermalink(eventId: string, roomId: string): string {
+    return `https://matrix.to/#/${roomId}/${eventId}`;
   }
 
   async onMessage(
+    roomId: string,
     msg: string,
     sender: string | undefined,
     eventId: string | undefined,
@@ -40,11 +45,11 @@ export class MessagesLogger {
     if (!eventId || !date) {
       return;
     }
-    const encodedMessageId = Buffer.from(eventId).toString('base64url');
-    const link = this.generatePermalink(eventId);
+    const encodedMessageId = Buffer.from(eventId).toString("base64url");
+    const link = this.generatePermalink(eventId, roomId);
     const newMessage: Message = {
       messageId: encodedMessageId,
-      roomId: this.roomId,
+      roomId: roomId,
       sender: sender || "unknown",
       link: link,
       content: msg,
@@ -52,14 +57,26 @@ export class MessagesLogger {
     };
 
     try {
-        const result = await this.searchClient.uploadDocuments([newMessage]);
-        if (result.results.length > 0) {
-          console.log(`Indexed message: ${result.results[0].key}`);
-        } else {
-          console.log('No indexed message.');
-        }
-      } catch (error) {
-        console.error("error indexing message", error);
-      }
+      const query = `
+        INSERT INTO public.messages (messageid, roomid, sender, link, content, "timestamp", searchable)
+        VALUES ($1, $2, $3, $4, $5, $6::timestamp, to_tsvector($7))
+      `;
+      const values = [
+        newMessage.messageId,
+        newMessage.roomId,
+        newMessage.sender,
+        newMessage.link,
+        newMessage.content,
+        newMessage.timestamp.toISOString(),
+        `${newMessage.sender} ${newMessage.content}`,
+      ];
+      await pool.query(query, values);
+    } catch (error) {
+      console.error(
+        "error indexing message",
+        `${newMessage.timestamp.toISOString()}`,
+        error
+      );
+    }
   }
 }
