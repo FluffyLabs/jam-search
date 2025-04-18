@@ -21,7 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-backend-packages
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: backend
       - run: npm run lint
       - name: Check if any files changed with git
         run: git diff --name-only --exit-code
@@ -31,7 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-backend-packages
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: backend
       - run: npm run format
       - name: Check if any files changed with git
         run: git diff --name-only --exit-code
@@ -41,7 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-backend-packages
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: backend
       - run: npm run test
 
   typecheck:
@@ -49,5 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-backend-packages
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: backend
       - run: npm run typecheck
