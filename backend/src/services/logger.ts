@@ -71,4 +71,45 @@ export class MessagesLogger {
       );
     }
   }
+
+  async onMessages(
+    events: {
+      roomId: string;
+      msg: string;
+      sender: string | undefined;
+      eventId: string | undefined;
+      date: Date | null;
+    }[]
+  ) {
+    if (events.length === 0) {
+      return;
+    }
+
+    try {
+      const messages: Message[] = events
+        .filter(
+          (
+            event
+          ): event is {
+            roomId: string;
+            msg: string;
+            sender: string | undefined;
+            eventId: string;
+            date: Date;
+          } => Boolean(event.eventId && event.date)
+        )
+        .map((event) => ({
+          messageId: Buffer.from(event.eventId).toString("base64url"),
+          roomId: event.roomId,
+          sender: event.sender || "unknown",
+          link: this.generatePermalink(event.eventId, event.roomId),
+          content: event.msg,
+          timestamp: event.date,
+        }));
+
+      await this.db.insert(messagesTable).values(messages);
+    } catch (error) {
+      console.error("error indexing multiple messages", error);
+    }
+  }
 }

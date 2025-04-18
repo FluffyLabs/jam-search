@@ -19,7 +19,8 @@
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "fill-historical-messages": "tsx ./src/utils/fill-historical-messages.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
