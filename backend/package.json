@@ -12,20 +12,30 @@
     "lint": "biome lint --write; biome check --write",
     "qa": "biome ci",
     "qa-fix": "npm run format; npm run lint",
-    "start": "tsx ./src/index.ts"
+    "start": "tsx ./src/index.ts",
+    "dev": "tsx watch ./src/index.ts",
+    "db:push": "drizzle-kit push --verbose --strict",
+    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
-    "dotenv": "^16.0.3",
+    "@hono/node-server": "^1.14.1",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.42.0",
+    "hono": "^4.7.7",
     "matrix-js-sdk": "^37.3.0",
-    "pg": "^8.14.1",
     "postgres": "^3.4.5",
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.3",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@tsconfig/node20": "^20.1.5",
-    "@types/node": "^16.11.17",
-    "@types/pg": "^8.11.13",
-    "typescript": "^5.3.3"
-  }
+    "@types/node": "^22.14.1",
+    "drizzle-kit": "^0.31.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  },
+  "type": "module"
 }
