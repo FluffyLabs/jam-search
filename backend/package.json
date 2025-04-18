@@ -12,7 +12,8 @@
     "lint": "biome lint --write; biome check --write",
     "qa": "biome ci",
     "qa-fix": "npm run format; npm run lint",
-    "start": "tsx ./src/index.ts"
+    "start": "tsx ./src/index.ts",
+    "historical-messages": "tsx ./src/historical-messages.ts"
   },
   "dependencies": {
     "dotenv": "^16.0.3",

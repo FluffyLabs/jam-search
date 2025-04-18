@@ -60,6 +60,7 @@ export class MessagesLogger {
       const query = `
         INSERT INTO public.messages (messageid, roomid, sender, link, content, "timestamp", searchable)
         VALUES ($1, $2, $3, $4, $5, $6::timestamp, to_tsvector($7))
+        ON CONFLICT DO NOTHING
       `;
       const values = [
         newMessage.messageId,
@@ -70,6 +71,7 @@ export class MessagesLogger {
         newMessage.timestamp.toISOString(),
         `${newMessage.sender} ${newMessage.content}`,
       ];
+      console.log("query", query);
       await pool.query(query, values);
     } catch (error) {
       console.error(
@@ -77,6 +79,48 @@ export class MessagesLogger {
         `${newMessage.timestamp.toISOString()}`,
         error
       );
+    }
+  }
+
+  async onMessages(messages: Message[]) {
+    if (messages.length === 0) {
+      return;
+    }
+
+    try {
+      // Create a parameterized query for multiple inserts
+      const placeholders = messages
+        .map((_, index) => {
+          const baseIndex = index * 7;
+          return `($${baseIndex + 1}, $${baseIndex + 2}, $${baseIndex + 3}, $${
+            baseIndex + 4
+          }, $${baseIndex + 5}, $${baseIndex + 6}::timestamp, to_tsvector($${
+            baseIndex + 7
+          }))`;
+        })
+        .join(", ");
+
+      const query = `
+        INSERT INTO public.messages (messageid, roomid, sender, link, content, "timestamp", searchable)
+        VALUES ${placeholders}
+        ON CONFLICT DO NOTHING
+      `;
+
+      // Flatten the values array
+      const values = messages.flatMap((message) => [
+        message.messageId,
+        message.roomId,
+        message.sender,
+        message.link,
+        message.content,
+        message.timestamp.toISOString(),
+        `${message.sender} ${message.content}`,
+      ]);
+
+      console.log("query", query);
+      await pool.query(query, values);
+    } catch (error) {
+      console.error("error indexing multiple messages", error);
     }
   }
 }

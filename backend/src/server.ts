@@ -20,10 +20,13 @@ export async function listenToMessages(
   client.startClient();
 
   // Wait for the client to be ready
-  client.once(ClientEvent.Sync, (state: string) => {
-    if (state === "PREPARED") {
-      console.log("Client is ready and synced!");
-    }
+  await new Promise<void>((resolve) => {
+    client.once(ClientEvent.Sync, (state: string) => {
+      if (state === "PREPARED") {
+        console.log("Client is ready and synced!");
+        resolve();
+      }
+    });
   });
 
   client.on(RoomEvent.Timeline, (event, room) => {
