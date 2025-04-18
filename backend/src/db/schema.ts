@@ -1,18 +1,4 @@
-import {
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  customType,
-} from "drizzle-orm/pg-core";
-
-export const tsvector = customType<{
-  data: string;
-}>({
-  dataType() {
-    return `tsvector`;
-  },
-});
+import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const messagesTable = pgTable("messages", {
   id: serial("id").primaryKey(),
@@ -22,5 +8,4 @@ export const messagesTable = pgTable("messages", {
   link: text("link"),
   content: text("content"),
   timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
-  searchable: tsvector("searchable"),
 });
