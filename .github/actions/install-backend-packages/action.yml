@@ -1,4 +1,4 @@
-name: Install packages
+name: Install BE packages
 description: Setup node
 
 runs:
@@ -7,7 +7,7 @@ runs:
     - name: Setup Node.js with cache
       uses: actions/setup-node@v4
       with:
-        node-version-file: ".nvmrc"
+        node-version-file: "backend/.nvmrc"
         cache: "npm"
 
     - name: Install dependencies
