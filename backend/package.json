@@ -8,10 +8,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "format": "biome format --write",
-    "lint": "biome lint --write; biome check --write",
-    "qa": "biome ci",
-    "qa-fix": "npm run format; npm run lint",
+    "lint": "biome check --write",
+    "lint:ci": "biome ci",
     "start": "tsx ./src/index.ts",
     "dev": "tsx watch ./src/index.ts",
     "db:push": "drizzle-kit push --verbose --strict",
@@ -19,7 +17,8 @@
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "fill-historical-messages": "tsx ./src/utils/fill-historical-messages.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
@@ -38,6 +37,5 @@
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
-  "type": "module",
-  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+  "type": "module"
 }

@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { DbClient } from "../db/db.js";
+import type { DbClient } from "../db/db.js";
 import { messagesTable } from "../db/schema.js";
 
 export interface Message {
@@ -14,6 +14,17 @@ export interface Message {
 type Dependencies = {
   db: DbClient;
   roomIds: string[];
+};
+
+const toDbMessage = (newMessage: Message) => {
+  return {
+    messageid: newMessage.messageId,
+    roomid: newMessage.roomId,
+    sender: newMessage.sender,
+    link: newMessage.link,
+    content: newMessage.content,
+    timestamp: newMessage.timestamp,
+  };
 };
 
 export class MessagesLogger {
@@ -55,20 +66,59 @@ export class MessagesLogger {
     };
 
     try {
-      await this.db.insert(messagesTable).values({
-        messageid: newMessage.messageId,
-        roomid: newMessage.roomId,
-        sender: newMessage.sender,
-        link: newMessage.link,
-        content: newMessage.content,
-        timestamp: newMessage.timestamp,
-      });
+      await this.db.insert(messagesTable).values(toDbMessage(newMessage));
     } catch (error) {
       console.error(
         "error indexing message",
         `${newMessage.timestamp.toISOString()}`,
         error
       );
+    }
+  }
+
+  async onMessages(
+    events: {
+      roomId: string;
+      msg: string;
+      sender: string | undefined;
+      eventId: string | undefined;
+      date: Date | null;
+    }[]
+  ) {
+    if (events.length === 0) {
+      return;
+    }
+
+    try {
+      const messages: Message[] = events
+        .filter(
+          (
+            event
+          ): event is {
+            roomId: string;
+            msg: string;
+            sender: string | undefined;
+            eventId: string;
+            date: Date;
+          } => Boolean(event.eventId && event.date)
+        )
+        .map((event) => ({
+          messageId: Buffer.from(event.eventId).toString("base64url"),
+          roomId: event.roomId,
+          sender: event.sender || "unknown",
+          link: this.generatePermalink(event.eventId, event.roomId),
+          content: event.msg,
+          timestamp: event.date,
+        }));
+
+      console.log(
+        "Inserting messages",
+        messages.length,
+        JSON.stringify(messages, null, 2)
+      );
+      await this.db.insert(messagesTable).values(messages.map(toDbMessage));
+    } catch (error) {
+      console.error("error indexing multiple messages", error);
     }
   }
 }

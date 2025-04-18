@@ -1,0 +1,47 @@
+name: BE Checks
+
+on:
+  pull_request:
+    paths:
+      - backend/**
+      - .github/actions/**
+      - .github/workflows/checks-backend.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: backend
+      - run: npm run lint:ci
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: backend
+      - run: npm run test
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: backend
+      - run: npm run typecheck
