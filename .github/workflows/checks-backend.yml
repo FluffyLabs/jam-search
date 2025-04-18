@@ -1,0 +1,53 @@
+name: BE Checks
+
+on:
+  pull_request:
+    paths:
+      - backend/**
+      - .github/actions/**
+      - .github/workflows/checks-backend.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+      - run: npm run lint
+      - name: Check if any files changed with git
+        run: git diff --name-only --exit-code
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+      - run: npm run format
+      - name: Check if any files changed with git
+        run: git diff --name-only --exit-code
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+      - run: npm run test
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+      - run: npm run typecheck
