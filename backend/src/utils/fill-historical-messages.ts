@@ -25,24 +25,24 @@ export async function fetchAndInsertHistoricalMessages(
     userId: userId,
   });
 
-  // Start the client
-  await client.startClient({ initialSyncLimit: 100 });
-
-  // Wait for the client to be ready
-  await new Promise<void>((resolve) => {
-    client.once(ClientEvent.Sync, (state: string) => {
-      if (state === "PREPARED") {
-        console.log("Client is ready and synced!");
-        resolve();
-      }
-    });
-  });
-
   const logger = new MessagesLogger({ roomIds, db });
   const daysAgo = new Date();
   daysAgo.setDate(daysAgo.getDate() - daysBack);
 
   for (const roomId of roomIds) {
+    // Start the client
+    await client.startClient({ initialSyncLimit: 1000 });
+
+    // Wait for the client to be ready
+    await new Promise<void>((resolve) => {
+      client.once(ClientEvent.Sync, (state: string) => {
+        if (state === "PREPARED") {
+          console.log("Client is ready and synced!");
+          resolve();
+        }
+      });
+    });
+
     try {
       console.log(`Fetching messages for room ${roomId}`);
 
@@ -83,16 +83,18 @@ export async function fetchAndInsertHistoricalMessages(
           }
         }
       }
-
+      console.log("Adding messages", roomId, messages.length);
       await logger.onMessages(messages);
     } catch (error) {
       console.error(`Error processing room ${roomId}:`, error);
     }
-  }
 
-  // Stop the client
-  client.stopClient();
+    // Stop the client
+    client.stopClient();
+  }
 }
 
 // Example usage:
-fetchAndInsertHistoricalMessages(roomIds, 100);
+fetchAndInsertHistoricalMessages(roomIds, 200).finally(() => {
+  process.exit(0);
+});

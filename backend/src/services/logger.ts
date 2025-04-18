@@ -16,6 +16,17 @@ type Dependencies = {
   roomIds: string[];
 };
 
+const toDbMessage = (newMessage: Message) => {
+  return {
+    messageid: newMessage.messageId,
+    roomid: newMessage.roomId,
+    sender: newMessage.sender,
+    link: newMessage.link,
+    content: newMessage.content,
+    timestamp: newMessage.timestamp,
+  };
+};
+
 export class MessagesLogger {
   private roomIds: string[];
   private db: DbClient;
@@ -55,14 +66,7 @@ export class MessagesLogger {
     };
 
     try {
-      await this.db.insert(messagesTable).values({
-        messageid: newMessage.messageId,
-        roomid: newMessage.roomId,
-        sender: newMessage.sender,
-        link: newMessage.link,
-        content: newMessage.content,
-        timestamp: newMessage.timestamp,
-      });
+      await this.db.insert(messagesTable).values(toDbMessage(newMessage));
     } catch (error) {
       console.error(
         "error indexing message",
@@ -107,7 +111,12 @@ export class MessagesLogger {
           timestamp: event.date,
         }));
 
-      await this.db.insert(messagesTable).values(messages);
+      console.log(
+        "Inserting messages",
+        messages.length,
+        JSON.stringify(messages, null, 2)
+      );
+      await this.db.insert(messagesTable).values(messages.map(toDbMessage));
     } catch (error) {
       console.error("error indexing multiple messages", error);
     }
