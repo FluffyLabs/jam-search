@@ -4,7 +4,7 @@ import { MessagesLogger } from "../services/logger.js";
 
 export async function fetchAndInsertHistoricalMessages(
   roomIds: string[],
-  daysBack = 30,
+  daysBack = 30
 ) {
   const { ClientEvent, createClient } = await import("matrix-js-sdk");
 

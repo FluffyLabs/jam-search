@@ -8,10 +8,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "format": "biome format --write",
-    "lint": "biome lint --write; biome check --write",
-    "qa": "biome ci",
-    "qa-fix": "npm run format; npm run lint",
+    "lint": "biome check --write",
+    "lint:ci": "biome ci",
     "start": "tsx ./src/index.ts",
     "dev": "tsx watch ./src/index.ts",
     "db:push": "drizzle-kit push --verbose --strict",
