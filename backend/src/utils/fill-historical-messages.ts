@@ -1,10 +1,10 @@
-import { MessagesLogger } from "../services/logger.js";
 import { db } from "../db/db.js";
 import { env } from "../env.js";
+import { MessagesLogger } from "../services/logger.js";
 
 export async function fetchAndInsertHistoricalMessages(
   roomIds: string[],
-  daysBack: number = 30
+  daysBack = 30,
 ) {
   const { ClientEvent, createClient } = await import("matrix-js-sdk");
 

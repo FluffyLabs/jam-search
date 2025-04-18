@@ -1,9 +1,9 @@
 import { serve } from "@hono/node-server";
-import { env } from "./env.js";
 import { createApp } from "./api.js";
-import { MatrixService } from "./services/matrix.js";
-import { MessagesLogger } from "./services/logger.js";
 import { db } from "./db/db.js";
+import { env } from "./env.js";
+import { MessagesLogger } from "./services/logger.js";
+import { MatrixService } from "./services/matrix.js";
 
 async function main() {
   const msgLog = new MessagesLogger({ roomIds: env.ROOM_IDS, db: db });
@@ -11,7 +11,7 @@ async function main() {
     env.HOMESERVER_URL,
     env.ACCESS_TOKEN,
     env.USER_ID,
-    msgLog
+    msgLog,
   );
 
   const app = createApp();

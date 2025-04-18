@@ -1,10 +1,10 @@
 import {
   ClientEvent,
-  MatrixClient,
+  type MatrixClient,
   RoomEvent,
   createClient,
 } from "matrix-js-sdk";
-import { MessagesLogger } from "./logger.js";
+import type { MessagesLogger } from "./logger.js";
 
 export class MatrixService {
   private client: MatrixClient;
@@ -13,7 +13,7 @@ export class MatrixService {
     private homeserverUrl: string,
     private accessToken: string,
     private userId: string,
-    private msgLog: MessagesLogger
+    private msgLog: MessagesLogger,
   ) {
     this.client = createClient({
       baseUrl: this.homeserverUrl,
@@ -56,7 +56,7 @@ export class MatrixService {
           messageContent,
           sender,
           eventId,
-          timestamp
+          timestamp,
         );
       }
     });

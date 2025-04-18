@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { DbClient } from "../db/db.js";
+import type { DbClient } from "../db/db.js";
 import { messagesTable } from "../db/schema.js";
 
 export interface Message {
@@ -49,7 +49,7 @@ export class MessagesLogger {
     msg: string,
     sender: string | undefined,
     eventId: string | undefined,
-    date: Date | null
+    date: Date | null,
   ) {
     if (!eventId || !date) {
       return;
@@ -71,7 +71,7 @@ export class MessagesLogger {
       console.error(
         "error indexing message",
         `${newMessage.timestamp.toISOString()}`,
-        error
+        error,
       );
     }
   }
@@ -83,7 +83,7 @@ export class MessagesLogger {
       sender: string | undefined;
       eventId: string | undefined;
       date: Date | null;
-    }[]
+    }[],
   ) {
     if (events.length === 0) {
       return;
@@ -93,14 +93,14 @@ export class MessagesLogger {
       const messages: Message[] = events
         .filter(
           (
-            event
+            event,
           ): event is {
             roomId: string;
             msg: string;
             sender: string | undefined;
             eventId: string;
             date: Date;
-          } => Boolean(event.eventId && event.date)
+          } => Boolean(event.eventId && event.date),
         )
         .map((event) => ({
           messageId: Buffer.from(event.eventId).toString("base64url"),
@@ -114,7 +114,7 @@ export class MessagesLogger {
       console.log(
         "Inserting messages",
         messages.length,
-        JSON.stringify(messages, null, 2)
+        JSON.stringify(messages, null, 2),
       );
       await this.db.insert(messagesTable).values(messages.map(toDbMessage));
     } catch (error) {
