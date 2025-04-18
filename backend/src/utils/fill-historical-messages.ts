@@ -1,13 +1,6 @@
-import dotenv from "dotenv";
 import { MessagesLogger } from "../services/logger.js";
 import { db } from "../db/db.js";
-
-dotenv.config();
-
-const homeserverUrl = process.env.HOMESERVER_URL || "";
-const accessToken = process.env.ACCESS_TOKEN || "";
-const userId = process.env.USER_ID || "";
-const roomIds = process.env.ROOM_IDS?.split(";") || [];
+import { env } from "../env.js";
 
 export async function fetchAndInsertHistoricalMessages(
   roomIds: string[],
@@ -15,14 +8,10 @@ export async function fetchAndInsertHistoricalMessages(
 ) {
   const { ClientEvent, createClient } = await import("matrix-js-sdk");
 
-  if (!homeserverUrl || !accessToken || !userId) {
-    throw new Error("Missing required environment variables");
-  }
-
   const client = createClient({
-    baseUrl: homeserverUrl,
-    accessToken: accessToken,
-    userId: userId,
+    baseUrl: env.HOMESERVER_URL,
+    accessToken: env.ACCESS_TOKEN,
+    userId: env.USER_ID,
   });
 
   const logger = new MessagesLogger({ roomIds, db });
@@ -95,6 +84,6 @@ export async function fetchAndInsertHistoricalMessages(
 }
 
 // Example usage:
-fetchAndInsertHistoricalMessages(roomIds, 200).finally(() => {
+fetchAndInsertHistoricalMessages(env.ROOM_IDS, 200).finally(() => {
   process.exit(0);
 });
