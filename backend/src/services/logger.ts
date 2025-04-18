@@ -1,15 +1,6 @@
-// src/logger.ts
-import { Pool } from "pg";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+import "dotenv/config";
+import { DbClient } from "../db/db.js";
+import { messagesTable } from "../db/schema.js";
 
 export interface Message {
   messageId: string;
@@ -20,11 +11,18 @@ export interface Message {
   timestamp: Date;
 }
 
+type Dependencies = {
+  db: DbClient;
+  roomIds: string[];
+};
+
 export class MessagesLogger {
   private roomIds: string[];
+  private db: DbClient;
 
-  constructor(roomIds: string[]) {
+  constructor({ roomIds, db }: Dependencies) {
     this.roomIds = roomIds;
+    this.db = db;
   }
 
   public getRoomIds(): string[] {
@@ -57,20 +55,14 @@ export class MessagesLogger {
     };
 
     try {
-      const query = `
-        INSERT INTO public.messages (messageid, roomid, sender, link, content, "timestamp", searchable)
-        VALUES ($1, $2, $3, $4, $5, $6::timestamp, to_tsvector($7))
-      `;
-      const values = [
-        newMessage.messageId,
-        newMessage.roomId,
-        newMessage.sender,
-        newMessage.link,
-        newMessage.content,
-        newMessage.timestamp.toISOString(),
-        `${newMessage.sender} ${newMessage.content}`,
-      ];
-      await pool.query(query, values);
+      await this.db.insert(messagesTable).values({
+        messageid: newMessage.messageId,
+        roomid: newMessage.roomId,
+        sender: newMessage.sender,
+        link: newMessage.link,
+        content: newMessage.content,
+        timestamp: newMessage.timestamp,
+      });
     } catch (error) {
       console.error(
         "error indexing message",

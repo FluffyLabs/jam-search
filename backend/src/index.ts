@@ -1,32 +1,45 @@
-// src/index.ts
-import dotenv from "dotenv";
-import { MessagesLogger } from "./logger";
-import { listenToMessages } from "./server";
-
-dotenv.config();
-
-const homeserverUrl = process.env.HOMESERVER_URL || "";
-const accessToken = process.env.ACCESS_TOKEN || "";
-const userId = process.env.USER_ID || "";
-const roomIds = process.env.ROOM_IDS?.split(";") || [];
-const postgresUrl = process.env.POSTGRES_URL || "";
-
-if (
-  !homeserverUrl ||
-  !accessToken ||
-  !userId ||
-  !roomIds.length ||
-  !postgresUrl
-) {
-  throw new Error("No .env");
-}
+import { serve } from "@hono/node-server";
+import { env } from "./env.js";
+import { createApp } from "./api.js";
+import { MatrixService } from "./services/matrix.js";
+import { MessagesLogger } from "./services/logger.js";
+import { db } from "./db/db.js";
 
 async function main() {
-  const logger = new MessagesLogger(roomIds);
-  await listenToMessages(homeserverUrl, accessToken, userId, logger);
+  const msgLog = new MessagesLogger({ roomIds: env.ROOM_IDS, db: db });
+  const matrixService = new MatrixService(
+    env.HOMESERVER_URL,
+    env.ACCESS_TOKEN,
+    env.USER_ID,
+    msgLog
+  );
+
+  const app = createApp();
+
+  // Start Matrix client
+  await matrixService.start();
+
+  // Start HTTP server
+  const server = serve({
+    fetch: app.fetch,
+    port: env.PORT,
+  });
+
+  console.log(`🚀 Server running on http://localhost:${env.PORT}`);
+
+  // Handle graceful shutdown
+  const shutdown = async () => {
+    console.log("🛑 Shutting down...");
+    await matrixService.stop();
+    server.close();
+    process.exit(0);
+  };
+
+  process.on("SIGTERM", shutdown);
+  process.on("SIGINT", shutdown);
 }
-console.log("Starting...");
 
 main().catch((err) => {
-  console.error("Error:", err);
+  console.error("❌ Error:", err);
+  process.exit(1);
 });
