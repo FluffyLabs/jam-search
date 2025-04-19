@@ -17,7 +17,7 @@ async function main() {
   const app = createApp();
 
   // Start Matrix client
-  // await matrixService.start();
+  await matrixService.start();
 
   // Start HTTP server
   const server = serve({

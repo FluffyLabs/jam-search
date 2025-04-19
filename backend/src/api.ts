@@ -6,7 +6,7 @@ import { z } from "zod";
 import { db } from "./db/db.js";
 import { messagesTable } from "./db/schema.js";
 
-const isDevelopment = process.env.NODE_ENV === "development";
+// const isDevelopment = process.env.NODE_ENV === "development";
 
 export function createApp() {
   const app = new Hono();
@@ -14,13 +14,11 @@ export function createApp() {
   // Middleware
   app.use(logger());
 
-  if (!isDevelopment) {
-    app.use(
-      cors({
-        origin: "*",
-      })
-    );
-  }
+  app.use(
+    cors({
+      origin: "*",
+    })
+  );
 
   // Health check endpoint
   app.get("/health", (c) => {
