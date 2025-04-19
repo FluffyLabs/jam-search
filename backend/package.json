@@ -28,6 +28,7 @@
     "hono": "^4.7.7",
     "matrix-js-sdk": "^37.3.0",
     "node-schedule": "^2.1.1",
+    "pdfjs-dist": "^5.1.91",
     "postgres": "^3.4.5",
     "tsx": "^4.19.3",
     "zod": "^3.24.3"
