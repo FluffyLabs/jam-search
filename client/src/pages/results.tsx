@@ -88,14 +88,13 @@ const SearchResults = () => {
       <ResultHeader totalResults={totalResults} />
 
       <div className="w-full max-w-4xl">
+        <SearchForm />
+
         <h2 className="text-2xl font-bold text-foreground mb-6">
           {searchQuery}
         </h2>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">
-            More Findings
-          </h3>
           <ResultList results={results} />
         </div>
 
@@ -109,7 +108,7 @@ const SearchResults = () => {
               Previous
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {pagination.currentPage + 1}
+              Page {pagination.currentPage}
             </span>
             <Button
               onClick={pagination.nextPage}
@@ -120,7 +119,6 @@ const SearchResults = () => {
             </Button>
           </div>
         )}
-        <SearchForm />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { SearchResult } from "@/lib/api";
+import { formatDate, formatJamChatName } from "@/lib/utils";
 
 interface ResultListProps {
   results: SearchResult[];
@@ -21,8 +22,12 @@ export const ResultList = ({ results }: ResultListProps) => {
         <div key={index} className="border-b border-border pb-6">
           <div className="mb-2">
             <div className="flex items-center mb-1">
-              <span className="font-medium text-foreground">
-                Matrix Chat: {result.title}
+              <span className="font-medium  text-foreground">
+                Jam Chat: @{result.sender}{" "}
+                <span className="text-muted-foreground">
+                  {formatDate(result.timestamp)}, #
+                  {formatJamChatName(result.roomid)},{" "}
+                </span>
               </span>
               {result.timestamp && (
                 <span className="text-xs text-muted-foreground ml-2">

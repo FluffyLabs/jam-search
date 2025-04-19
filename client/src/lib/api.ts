@@ -9,13 +9,13 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
  * Type definitions for API responses
  */
 export interface SearchResult {
-  id: string;
-  title: string;
-  content: string;
-  source: string;
-  score: number;
-  link?: string;
-  timestamp?: string;
+  id: number;
+  messageid: string | null;
+  roomid: string | null;
+  sender: string | null;
+  link: string | null;
+  content: string | null;
+  timestamp: string;
 }
 
 export interface SearchResponse {
@@ -52,7 +52,11 @@ export async function fetchApi<T>(
 
 // Fetch search results
 export async function fetchSearchResults(
-  query: string
+  query: string,
+  options: { page?: number; pageSize?: number } = {}
 ): Promise<SearchResponse> {
-  return fetchApi<SearchResponse>(`/search?q=${encodeURIComponent(query)}`);
+  const { page = 1, pageSize = 10 } = options;
+  return fetchApi<SearchResponse>(
+    `/search?q=${encodeURIComponent(query)}&page=${page}&pageSize=${pageSize}`
+  );
 }

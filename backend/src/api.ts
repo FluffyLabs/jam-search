@@ -41,7 +41,7 @@ export function createApp() {
     }
     const data = result.data;
 
-    const messages = await db
+    const results = await db
       .select()
       .from(messagesTable)
       .where(
@@ -53,7 +53,7 @@ export function createApp() {
       .orderBy(sql`paradedb.score(id) DESC`)
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
-    return c.json({ messages });
+    return c.json({ results, test: null });
   });
 
   return app;

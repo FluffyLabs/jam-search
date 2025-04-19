@@ -24,7 +24,7 @@ export function useSearch({
   const searchParamsKey = getSearchParamsKey();
   const defaultParams: SearchParams = {
     query: initialQuery,
-    currentPage: 0,
+    currentPage: 1,
     pageSize,
   };
 
@@ -42,7 +42,11 @@ export function useSearch({
 
   // Mutation for fetching search results
   const searchMutation = useMutation({
-    mutationFn: () => fetchSearchResults(searchQuery),
+    mutationFn: () =>
+      fetchSearchResults(searchQuery, {
+        page: currentPage,
+        pageSize,
+      }),
     onSuccess: (data) => {
       // Store results in global cache
       queryClient.setQueryData(searchResultsKey, data);
@@ -55,14 +59,14 @@ export function useSearch({
   // Get data from cache or return empty defaults
   const cachedData = queryClient.getQueryData<SearchResponse>(searchResultsKey);
   const results = cachedData?.results || [];
-  const totalResults = cachedData?.total || 0;
+  const totalResults = cachedData?.results.length || 0;
 
   const search = (query: string) => {
     // Update search params in global state
     queryClient.setQueryData<SearchParams>(searchParamsKey, {
       ...searchParams,
       query,
-      currentPage: 0,
+      currentPage: 1,
     });
 
     if (query.trim()) {
@@ -83,7 +87,7 @@ export function useSearch({
   };
 
   const previousPage = () => {
-    if (currentPage > 0) {
+    if (currentPage > 1) {
       // Update page in global state
       queryClient.setQueryData<SearchParams>(searchParamsKey, {
         ...searchParams,
@@ -95,7 +99,7 @@ export function useSearch({
   };
 
   const goToPage = (page: number) => {
-    const newPage = Math.max(0, page);
+    const newPage = Math.max(1, page);
 
     // Update page in global state
     queryClient.setQueryData<SearchParams>(searchParamsKey, {
@@ -122,7 +126,7 @@ export function useSearch({
       previousPage,
       goToPage,
       hasNextPage: results.length === pageSize,
-      hasPreviousPage: currentPage > 0,
+      hasPreviousPage: currentPage > 1,
     },
   };
 }
