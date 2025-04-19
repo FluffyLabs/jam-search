@@ -2,13 +2,22 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSearch } from "@/hooks/useSearch";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
-export const SearchForm = () => {
+interface SearchFormProps {
+  initialQuery?: string;
+}
+
+export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
   const { search } = useSearch();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const navigate = useNavigate();
+
+  // Update the search input when initialQuery changes
+  useEffect(() => {
+    setSearchQuery(initialQuery);
+  }, [initialQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

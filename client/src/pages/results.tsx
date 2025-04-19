@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SearchForm } from "@/components/SearchForm";
 import { useSearch } from "@/hooks/useSearch";
 import { useLocation } from "react-router";
@@ -11,6 +11,14 @@ interface ResultHeaderProps {
 }
 
 const ResultHeader = ({ totalResults, sourceCount = 1 }: ResultHeaderProps) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-2">
       <div className="flex items-center justify-between py-3 px-2">
@@ -31,6 +39,7 @@ const ResultHeader = ({ totalResults, sourceCount = 1 }: ResultHeaderProps) => {
           variant="outline"
           size="sm"
           className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+          onClick={handleCopyLink}
         >
           <svg
             className="w-4 h-4 mr-1.5 opacity-70"
@@ -44,7 +53,7 @@ const ResultHeader = ({ totalResults, sourceCount = 1 }: ResultHeaderProps) => {
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
-          copy link
+          {copied ? "copied!" : "copy link"}
         </Button>
       </div>
     </div>
@@ -88,7 +97,7 @@ const SearchResults = () => {
       <ResultHeader totalResults={totalResults} />
 
       <div className="w-full max-w-4xl">
-        <SearchForm />
+        <SearchForm initialQuery={query} />
 
         <h2 className="text-2xl font-bold text-foreground mb-6">
           {searchQuery}
