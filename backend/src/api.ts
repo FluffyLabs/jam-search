@@ -1,15 +1,26 @@
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { logger } from "hono/logger";
+import { cors } from "hono/cors";
 import { z } from "zod";
 import { db } from "./db/db.js";
 import { messagesTable } from "./db/schema.js";
+
+const isDevelopment = process.env.NODE_ENV === "development";
 
 export function createApp() {
   const app = new Hono();
 
   // Middleware
   app.use(logger());
+
+  if (!isDevelopment) {
+    app.use(
+      cors({
+        origin: "*",
+      })
+    );
+  }
 
   // Health check endpoint
   app.get("/health", (c) => {

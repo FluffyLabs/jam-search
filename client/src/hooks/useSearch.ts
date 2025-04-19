@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchAzureSearchResults, SearchResponse } from "@/lib/api";
+import { fetchSearchResults, SearchResponse } from "@/lib/api";
 import { getSearchResultsKey, getSearchParamsKey } from "@/lib/queryKeys";
 
 interface UseSearchOptions {
   initialQuery?: string;
   pageSize?: number;
-  useAzureSearch?: boolean;
 }
 
 interface SearchParams {
@@ -17,7 +16,6 @@ interface SearchParams {
 export function useSearch({
   initialQuery = "",
   pageSize = 10,
-  useAzureSearch = true,
 }: UseSearchOptions = {}) {
   // Get query client instance
   const queryClient = useQueryClient();
@@ -44,12 +42,7 @@ export function useSearch({
 
   // Mutation for fetching search results
   const searchMutation = useMutation({
-    mutationFn: () =>
-      fetchAzureSearchResults(searchQuery, {
-        top: pageSize,
-        skip: currentPage * pageSize,
-        orderBy: "timestamp desc",
-      }),
+    mutationFn: () => fetchSearchResults(searchQuery),
     onSuccess: (data) => {
       // Store results in global cache
       queryClient.setQueryData(searchResultsKey, data);
@@ -72,7 +65,7 @@ export function useSearch({
       currentPage: 0,
     });
 
-    if (query.trim() && useAzureSearch) {
+    if (query.trim()) {
       searchMutation.mutate();
     }
   };
