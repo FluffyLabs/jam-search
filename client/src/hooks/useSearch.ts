@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchAzureSearchResults, SearchResponse } from "@/lib/api";
+import { fetchSearchResults, SearchResponse } from "@/lib/api";
 import { getSearchResultsKey, getSearchParamsKey } from "@/lib/queryKeys";
 
 interface UseSearchOptions {
   initialQuery?: string;
   pageSize?: number;
-  useAzureSearch?: boolean;
 }
 
 interface SearchParams {
@@ -17,7 +16,6 @@ interface SearchParams {
 export function useSearch({
   initialQuery = "",
   pageSize = 10,
-  useAzureSearch = true,
 }: UseSearchOptions = {}) {
   // Get query client instance
   const queryClient = useQueryClient();
@@ -26,7 +24,7 @@ export function useSearch({
   const searchParamsKey = getSearchParamsKey();
   const defaultParams: SearchParams = {
     query: initialQuery,
-    currentPage: 0,
+    currentPage: 1,
     pageSize,
   };
 
@@ -45,10 +43,9 @@ export function useSearch({
   // Mutation for fetching search results
   const searchMutation = useMutation({
     mutationFn: () =>
-      fetchAzureSearchResults(searchQuery, {
-        top: pageSize,
-        skip: currentPage * pageSize,
-        orderBy: "timestamp desc",
+      fetchSearchResults(searchQuery, {
+        page: currentPage,
+        pageSize,
       }),
     onSuccess: (data) => {
       // Store results in global cache
@@ -62,17 +59,17 @@ export function useSearch({
   // Get data from cache or return empty defaults
   const cachedData = queryClient.getQueryData<SearchResponse>(searchResultsKey);
   const results = cachedData?.results || [];
-  const totalResults = cachedData?.total || 0;
+  const totalResults = cachedData?.results.length || 0;
 
   const search = (query: string) => {
     // Update search params in global state
     queryClient.setQueryData<SearchParams>(searchParamsKey, {
       ...searchParams,
       query,
-      currentPage: 0,
+      currentPage: 1,
     });
 
-    if (query.trim() && useAzureSearch) {
+    if (query.trim()) {
       searchMutation.mutate();
     }
   };
@@ -90,7 +87,7 @@ export function useSearch({
   };
 
   const previousPage = () => {
-    if (currentPage > 0) {
+    if (currentPage > 1) {
       // Update page in global state
       queryClient.setQueryData<SearchParams>(searchParamsKey, {
         ...searchParams,
@@ -102,7 +99,7 @@ export function useSearch({
   };
 
   const goToPage = (page: number) => {
-    const newPage = Math.max(0, page);
+    const newPage = Math.max(1, page);
 
     // Update page in global state
     queryClient.setQueryData<SearchParams>(searchParamsKey, {
@@ -129,7 +126,7 @@ export function useSearch({
       previousPage,
       goToPage,
       hasNextPage: results.length === pageSize,
-      hasPreviousPage: currentPage > 0,
+      hasPreviousPage: currentPage > 1,
     },
   };
 }

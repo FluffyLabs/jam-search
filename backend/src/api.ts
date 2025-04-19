@@ -1,15 +1,26 @@
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { z } from "zod";
 import { db } from "./db/db.js";
 import { messagesTable } from "./db/schema.js";
+
+const isDevelopment = process.env.NODE_ENV === "development";
 
 export function createApp() {
   const app = new Hono();
 
   // Middleware
   app.use(logger());
+
+  if (!isDevelopment) {
+    app.use(
+      cors({
+        origin: "*",
+      })
+    );
+  }
 
   // Health check endpoint
   app.get("/health", (c) => {
@@ -30,7 +41,7 @@ export function createApp() {
     }
     const data = result.data;
 
-    const messages = await db
+    const results = await db
       .select()
       .from(messagesTable)
       .where(
@@ -42,7 +53,7 @@ export function createApp() {
       .orderBy(sql`paradedb.score(id) DESC`)
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
-    return c.json({ messages });
+    return c.json({ results, test: null });
   });
 
   return app;

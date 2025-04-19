@@ -1,7 +1,7 @@
 {
-  "name": "matrix-azure-search",
+  "name": "jam-search-api",
   "version": "1.0.0",
-  "description": "Application for retrieving news from Matrix and indexing in Azure Cognitive Search",
+  "description": "API for JAM Search",
   "main": "dist/index.js",
   "engines": {
     "node": "22.x"
