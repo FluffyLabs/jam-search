@@ -20,12 +20,12 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col h-screen">
         <Header />
         <div className="flex h-full grow">
           <AppsSidebar activeLink="website" />
 
-          <div className="w-full bg-background p-4 ">
+          <div className="w-full bg-background p-4 h-[calc(100vh-82px)] overflow-hidden">
             <Routes>
               <Route index element={<IndexPage />} />
               <Route path="/results" element={<SearchResults />} />

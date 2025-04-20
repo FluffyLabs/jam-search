@@ -4,14 +4,24 @@ import { useSearch } from "@/hooks/useSearch";
 import { useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
 import { ResultList } from "@/components/ResultList";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 interface ResultHeaderProps {
   totalResults: number;
-  sourceCount?: number;
+  onSourceChange?: (sources: string[]) => void;
 }
 
-const ResultHeader = ({ totalResults, sourceCount = 1 }: ResultHeaderProps) => {
+const SOURCE_OPTIONS = [
+  { label: "Element channels", value: "element" },
+  { label: "Graypaper.pdf", value: "graypaper" },
+  { label: "JamCha.in/docs", value: "jamchain" },
+  { label: "Web3 Foundation", value: "w3f" },
+  { label: "GitHub Source Code", value: "github" },
+];
+
+const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
   const [copied, setCopied] = useState(false);
+  const [selectedSources, setSelectedSources] = useState<string[]>(["element"]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -19,17 +29,26 @@ const ResultHeader = ({ totalResults, sourceCount = 1 }: ResultHeaderProps) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleSourceChange = (sources: string[]) => {
+    setSelectedSources(sources);
+    onSourceChange?.(sources);
+  };
+
   return (
     <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-2">
       <div className="flex items-center justify-between py-3 px-2">
         <div className="flex items-center space-x-3">
           <div className="flex items-center bg-card/80 border border-border px-2 py-1 rounded-md">
-            <span className="text-muted-foreground text-sm font-medium mr-1.5">
-              Source
-            </span>
-            <span className="bg-muted rounded-full px-2 py-0.5 text-xs text-muted-foreground">
-              {sourceCount}
-            </span>
+            <MultiSelect
+              options={SOURCE_OPTIONS}
+              selectedValues={selectedSources}
+              onValueChange={handleSourceChange}
+              placeholder="Select sources"
+              className="min-w-[140px]"
+              showSearch
+              maxCount={0}
+              required
+            />
           </div>
           <span className="text-muted-foreground text-sm">
             {totalResults.toLocaleString()} results
@@ -63,6 +82,7 @@ const ResultHeader = ({ totalResults, sourceCount = 1 }: ResultHeaderProps) => {
 const SearchResults = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q") || "";
+  const [, setSelectedSources] = useState<string[]>([]);
 
   const {
     search,
@@ -80,6 +100,11 @@ const SearchResults = () => {
     }
   }, [query]);
 
+  const handleSourceChange = (sources: string[]) => {
+    setSelectedSources(sources);
+    // TODO: Implement source filtering logic here
+  };
+
   if (isLoading) {
     return <div className="text-center p-8">Loading results...</div>;
   }
@@ -94,7 +119,10 @@ const SearchResults = () => {
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
-      <ResultHeader totalResults={totalResults} />
+      <ResultHeader
+        totalResults={totalResults}
+        onSourceChange={handleSourceChange}
+      />
 
       <div className="w-full max-w-4xl">
         <SearchForm initialQuery={query} />
