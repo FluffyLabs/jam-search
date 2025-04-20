@@ -23,7 +23,7 @@ export const ResultList = ({ results }: ResultListProps) => {
           <div className="mb-2">
             <div className="flex items-center mb-1">
               <span className="font-medium  text-foreground">
-                Jam Chat: @{result.sender}{" "}
+                Jam Chat: {result.sender}{" "}
                 <span className="text-muted-foreground">
                   {formatDate(result.timestamp)}, #
                   {formatJamChatName(result.roomid)},{" "}

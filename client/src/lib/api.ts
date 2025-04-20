@@ -56,6 +56,7 @@ export async function fetchSearchResults(
   options: { page?: number; pageSize?: number } = {}
 ): Promise<SearchResponse> {
   const { page = 1, pageSize = 10 } = options;
+  console.log(page);
   return fetchApi<SearchResponse>(
     `/search?q=${encodeURIComponent(query)}&page=${page}&pageSize=${pageSize}`
   );

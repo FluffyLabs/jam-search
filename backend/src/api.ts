@@ -16,7 +16,7 @@ export function createApp() {
 
   app.use(
     cors({
-      origin: "*",
+      origin: ["http://localhost:5173", "*"],
     })
   );
 
@@ -39,19 +39,34 @@ export function createApp() {
     }
     const data = result.data;
 
+    const searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+      paradedb.match('content', ${data.q}, distance => 1),
+      paradedb.match('sender', ${data.q}, distance => 1)
+    ])`;
+
+    // Get total count of matching rows
+    const countResult = await db
+      .select({ count: sql`count(*)` })
+      .from(messagesTable)
+      .where(searchCondition);
+
+    const total = Number(countResult[0].count);
+
+    // Get paginated results
     const results = await db
       .select()
       .from(messagesTable)
-      .where(
-        sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('content', ${data.q}, distance => 1),
-          paradedb.match('sender', ${data.q}, distance => 1)
-        ])`
-      )
+      .where(searchCondition)
       .orderBy(sql`paradedb.score(id) DESC`)
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
-    return c.json({ results, test: null });
+
+    return c.json({
+      results,
+      total,
+      page: data.page,
+      pageSize: data.pageSize,
+    });
   });
 
   return app;

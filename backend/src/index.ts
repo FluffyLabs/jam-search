@@ -5,19 +5,24 @@ import { env } from "./env.js";
 import { MessagesLogger } from "./services/logger.js";
 import { MatrixService } from "./services/matrix.js";
 
+const isDev = process.env.NODE_ENV === "development";
 async function main() {
   const msgLog = new MessagesLogger({ roomIds: env.ROOM_IDS, db: db });
-  const matrixService = new MatrixService(
-    env.HOMESERVER_URL,
-    env.ACCESS_TOKEN,
-    env.USER_ID,
-    msgLog
-  );
+  const matrixService = isDev
+    ? null
+    : new MatrixService(
+        env.HOMESERVER_URL,
+        env.ACCESS_TOKEN,
+        env.USER_ID,
+        msgLog
+      );
 
   const app = createApp();
 
-  // Start Matrix client
-  await matrixService.start();
+  if (!isDev) {
+    // Start Matrix client
+    await matrixService?.start();
+  }
 
   // Start HTTP server
   const server = serve({
@@ -30,7 +35,7 @@ async function main() {
   // Handle graceful shutdown
   const shutdown = async () => {
     console.log("🛑 Shutting down...");
-    await matrixService.stop();
+    await matrixService?.stop();
     server.close();
     process.exit(0);
   };
