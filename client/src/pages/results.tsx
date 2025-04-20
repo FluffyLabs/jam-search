@@ -38,7 +38,7 @@ const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
     <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-2">
       <div className="flex items-center justify-between py-3 px-2">
         <div className="flex items-center space-x-3">
-          <div className="flex items-center bg-card/80 border border-border px-2 py-1 rounded-md">
+          <div className="flex items-center bg-card/80 border border-border rounded-md">
             <MultiSelect
               options={SOURCE_OPTIONS}
               selectedValues={selectedSources}
@@ -124,7 +124,7 @@ const SearchResults = () => {
         onSourceChange={handleSourceChange}
       />
 
-      <div className="w-full max-w-4xl">
+      <div className="w-full max-w-4xl px-7">
         <SearchForm initialQuery={query} />
 
         <h2 className="text-2xl font-bold text-foreground mb-6">

@@ -25,7 +25,7 @@ function App() {
         <div className="flex h-full grow">
           <AppsSidebar activeLink="website" />
 
-          <div className="w-full bg-background p-4 h-[calc(100vh-82px)] overflow-hidden">
+          <div className="w-full bg-background p-4 h-[calc(100vh-82px)] overflow-y-auto">
             <Routes>
               <Route index element={<IndexPage />} />
               <Route path="/results" element={<SearchResults />} />

@@ -4,7 +4,7 @@ import { SearchForm } from "@/components/SearchForm";
 const Header = () => {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-2 flex items-center">
+      <h1 className="text-4xl font-bold mb-2 flex items-center flex-col sm:flex-row">
         Search in{" "}
         <span className="bg-gradient-to-r from-[#0d7277] to-[#032c2f] px-3 py-1 ml-2 rounded">
           JAM knowledge base

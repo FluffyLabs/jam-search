@@ -59,7 +59,7 @@ export function useSearch({
   // Get data from cache or return empty defaults
   const cachedData = queryClient.getQueryData<SearchResponse>(searchResultsKey);
   const results = cachedData?.results || [];
-  const totalResults = cachedData?.results.length || 0;
+  const totalResults = cachedData?.total || 0;
 
   const search = (query: string) => {
     // Update search params in global state
