@@ -105,10 +105,6 @@ const SearchResults = () => {
     // TODO: Implement source filtering logic here
   };
 
-  if (isLoading) {
-    return <div className="text-center p-8">Loading results...</div>;
-  }
-
   if (isError) {
     return (
       <div className="text-center p-8 text-destructive">
@@ -132,7 +128,11 @@ const SearchResults = () => {
         </h2>
 
         <div className="mb-8">
-          <ResultList results={results} />
+          {isLoading && !results.length ? (
+            <div className="text-center p-8">Loading results...</div>
+          ) : (
+            <ResultList results={results} />
+          )}
         </div>
 
         {results.length > 0 && (

@@ -42,10 +42,10 @@ export function useSearch({
 
   // Mutation for fetching search results
   const searchMutation = useMutation({
-    mutationFn: () =>
-      fetchSearchResults(searchQuery, {
-        page: currentPage,
-        pageSize,
+    mutationFn: (params: SearchParams) =>
+      fetchSearchResults(params.query, {
+        page: params.currentPage,
+        pageSize: params.pageSize,
       }),
     onSuccess: (data) => {
       // Store results in global cache
@@ -62,52 +62,60 @@ export function useSearch({
   const totalResults = cachedData?.total || 0;
 
   const search = (query: string) => {
-    // Update search params in global state
-    queryClient.setQueryData<SearchParams>(searchParamsKey, {
+    const newParams = {
       ...searchParams,
       query,
       currentPage: 1,
-    });
+    };
+
+    // Update search params in global state
+    queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
 
     if (query.trim()) {
-      searchMutation.mutate();
+      searchMutation.mutate(newParams);
     }
   };
 
   const nextPage = () => {
     if (results.length === pageSize) {
-      // Update page in global state
-      queryClient.setQueryData<SearchParams>(searchParamsKey, {
+      const newParams = {
         ...searchParams,
         currentPage: currentPage + 1,
-      });
+      };
 
-      searchMutation.mutate();
+      // Update page in global state
+      queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
+
+      searchMutation.mutate(newParams);
     }
   };
 
   const previousPage = () => {
     if (currentPage > 1) {
-      // Update page in global state
-      queryClient.setQueryData<SearchParams>(searchParamsKey, {
+      const newParams = {
         ...searchParams,
         currentPage: currentPage - 1,
-      });
+      };
 
-      searchMutation.mutate();
+      // Update page in global state
+      queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
+
+      searchMutation.mutate(newParams);
     }
   };
 
   const goToPage = (page: number) => {
     const newPage = Math.max(1, page);
 
-    // Update page in global state
-    queryClient.setQueryData<SearchParams>(searchParamsKey, {
+    const newParams = {
       ...searchParams,
       currentPage: newPage,
-    });
+    };
 
-    searchMutation.mutate();
+    // Update page in global state
+    queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
+
+    searchMutation.mutate(newParams);
   };
 
   return {
@@ -118,7 +126,7 @@ export function useSearch({
     isLoading: searchMutation.isPending,
     isError: searchMutation.isError,
     error: searchMutation.error,
-    refetch: () => searchMutation.mutate(),
+    refetch: () => searchMutation.mutate(searchParams),
     pagination: {
       currentPage,
       pageSize,
