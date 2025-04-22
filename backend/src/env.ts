@@ -4,8 +4,10 @@ import { z } from "zod";
 
 export const envSchema = z.object({
   HOMESERVER_URL: z.string().url(),
-  ACCESS_TOKEN: z.string().min(1),
+  ACCESS_TOKEN: z.string().min(1).optional(),
   USER_ID: z.string().min(1),
+  MATRIX_USERNAME: z.string().min(1),
+  MATRIX_PASSWORD: z.string().min(1),
   ROOM_IDS: z
     .string()
     .min(1)
