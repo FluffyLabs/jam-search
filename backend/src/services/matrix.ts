@@ -6,19 +6,10 @@ import {
   MatrixError,
 } from "matrix-js-sdk";
 import type { MessagesLogger } from "./logger.js";
-
-interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  userId: string;
-  expiresInMs?: number;
-}
+import { ISyncStateData, SyncState } from "matrix-js-sdk/lib/sync.js";
 
 export class MatrixService {
   private client?: MatrixClient;
-  private isRefreshing = false;
-  private refreshToken?: string;
-  private tokenExpiryTime?: number;
 
   constructor(
     private homeserverUrl: string,
@@ -29,7 +20,24 @@ export class MatrixService {
     private password: string
   ) {}
 
-  private async authenticate(): Promise<AuthTokens> {
+  /**
+   * Creates a Matrix client. If accessToken is provided, uses it.
+   * Otherwise, performs a login with username/password and creates a client
+   * with all necessary tokens, letting Matrix handle refreshes
+   */
+  async createMatrixClient(): Promise<MatrixClient> {
+    // If we have an access token, try using it first
+    // This way we can avoid the login process for short leaving tasks - like filling DB
+    if (this.accessToken) {
+      console.log("🔑 Using provided access token");
+      return createClient({
+        baseUrl: this.homeserverUrl,
+        accessToken: this.accessToken,
+        userId: this.userId,
+      });
+    }
+
+    // No access token available - need to authenticate
     if (!this.username || !this.password) {
       throw new Error("Matrix username or password not set");
     }
@@ -41,172 +49,75 @@ export class MatrixService {
       baseUrl: this.homeserverUrl,
     });
 
-    try {
-      // Perform login to get a fresh token
-      const response = await tempClient.loginRequest({
-        type: "m.login.password",
-        user: this.username,
-        password: this.password,
-        refresh_token: true,
-      });
+    // Perform login to get a fresh token
+    const response = await tempClient.loginRequest({
+      type: "m.login.password",
+      user: this.username,
+      password: this.password,
+      refresh_token: true, // Request a refresh token
+    });
 
-      console.log("✅ Successfully authenticated with Matrix");
+    console.log("✅ Successfully authenticated with Matrix");
 
-      // Check if expires_in_ms is available in the response
-      if (response.expires_in_ms) {
-        console.log(
-          `✓ Token will expire in ${Math.round(
-            response.expires_in_ms / (1000 * 60 * 60)
-          )} hours`
-        );
-      }
-
-      return {
-        accessToken: response.access_token,
-        refreshToken: response.refresh_token || "",
-        userId: response.user_id || this.userId,
-        expiresInMs: response.expires_in_ms,
-      };
-    } catch (error) {
-      console.error("❌ Matrix authentication failed:", error);
-      throw error;
-    }
-  }
-
-  private async refreshAccessToken(): Promise<AuthTokens> {
-    if (!this.refreshToken) {
-      // If no refresh token, fall back to password authentication
-      return this.authenticate();
-    }
-
-    try {
-      console.log("🔄 Refreshing Matrix access token using refresh token...");
-
-      // Create temporary client for token refresh
-      const tempClient = createClient({
-        baseUrl: this.homeserverUrl,
-      });
-
-      // The refreshToken method in matrix-js-sdk
-      const response = await tempClient.refreshToken(this.refreshToken);
-
-      console.log("✅ Successfully refreshed Matrix access token");
-
-      // Check if expires_in_ms is available in the response
-      if (response.expires_in_ms) {
-        console.log(
-          `✓ Refreshed token will expire in ${Math.round(
-            response.expires_in_ms / (1000 * 60 * 60)
-          )} hours`
-        );
-      }
-
-      return {
-        accessToken: response.access_token,
-        refreshToken: response.refresh_token || this.refreshToken,
-        userId: this.userId,
-        expiresInMs: response.expires_in_ms,
-      };
-    } catch (error) {
-      console.error(
-        "❌ Failed to refresh token, falling back to password auth:",
-        error
-      );
-      // If refresh token is invalid or expired, fall back to password authentication
-      return this.authenticate();
-    }
-  }
-
-  async createMatrixClient(): Promise<MatrixClient> {
-    if (this.isRefreshing) {
-      throw new Error("Already refreshing client");
-    }
-
-    this.isRefreshing = true;
-
-    try {
-      let tokens: AuthTokens;
-
-      // Use existing token if valid, otherwise authenticate
-      if (this.accessToken && !this.tokenExpired()) {
-        tokens = {
-          accessToken: this.accessToken,
-          refreshToken: this.refreshToken || "",
-          userId: this.userId,
-        };
-      } else if (this.refreshToken) {
-        // Try to refresh using refresh token
-        tokens = await this.refreshAccessToken();
-      } else {
-        // First time or fallback: authenticate with username/password
-        tokens = await this.authenticate();
-      }
-
-      // Update internal state with new tokens
-      this.accessToken = tokens.accessToken;
-      this.refreshToken = tokens.refreshToken;
-      this.userId = tokens.userId;
-
-      // Calculate token expiry time based on expires_in_ms from the response
-      // If expires_in_ms is not available, use a reasonable default of 12 hours
-      // Add a 5-minute buffer to refresh slightly before actual expiration
-      const buffer = 5 * 60 * 1000; // 5 minutes in milliseconds
-      const defaultExpiry = 12 * 60 * 60 * 1000; // 12 hours in milliseconds
-
-      this.tokenExpiryTime =
-        Date.now() +
-        (tokens.expiresInMs ? tokens.expiresInMs - buffer : defaultExpiry);
-
+    // Check if expires_in_ms is available in the response
+    if (response.expires_in_ms) {
       console.log(
-        `⏰ Token expiry set to ${new Date(this.tokenExpiryTime).toISOString()}`
+        `✓ Token will expire in ${Math.round(
+          response.expires_in_ms / (1000 * 60 * 60)
+        )} hours`
       );
-
-      // Create client with the new tokens
-      return createClient({
-        baseUrl: this.homeserverUrl,
-        accessToken: this.accessToken,
-        userId: this.userId,
-      });
-    } finally {
-      this.isRefreshing = false;
     }
+
+    // Create a client with accessToken and refreshToken
+    // The matrix-js-sdk will handle token refresh automatically
+    return createClient({
+      baseUrl: this.homeserverUrl,
+      accessToken: response.access_token,
+      refreshToken: response.refresh_token,
+      userId: response.user_id || this.userId,
+    });
   }
 
-  private tokenExpired(): boolean {
-    return (
-      !this.accessToken ||
-      (this.tokenExpiryTime !== undefined && Date.now() >= this.tokenExpiryTime)
-    );
-  }
-
-  async start() {
+  async start(): Promise<MatrixClient> {
     try {
       this.client = await this.createMatrixClient();
 
       // Start the client
       this.client.startClient();
 
-      await new Promise<void>((resolve) => {
-        this.client!.once(ClientEvent.Sync, (state: string) => {
-          if (state === "PREPARED") {
-            console.log("✅ Matrix client is ready and synced!");
-            resolve();
+      await new Promise<void>((resolve, reject) => {
+        this.client!.once(
+          ClientEvent.Sync,
+          (
+            state: SyncState,
+            prevState: SyncState | null,
+            data?: ISyncStateData
+          ) => {
+            console.log("state", state, prevState, data?.error?.name);
+            if (state === "ERROR" && data?.error?.name === "M_UNKNOWN_TOKEN") {
+              console.log("🚨 Matrix client is in error state");
+              reject("Matrix token expired - incorrect initial credentials");
+            } else if (state === "PREPARED") {
+              console.log("✅ Matrix client is ready and synced!");
+              resolve();
+            }
           }
-        });
+        );
       });
 
       // Set up error handler for token issues
-      this.client.on("sync.error" as any, async (error: Error) => {
-        if (error instanceof MatrixError) {
-          if (
-            error.errcode === "M_UNKNOWN_TOKEN" ||
-            error.message.includes("Token is not active") ||
-            error.data?.error?.includes("Token is not active")
-          ) {
-            console.warn("🚨 Matrix token expired, attempting to refresh...");
-            await this.stop();
-            await this.handleTokenRefresh();
-          }
+      this.client.on(ClientEvent.SyncUnexpectedError, async (error: Error) => {
+        console.log(
+          "🚨 Matrix token expired, attempting to re-authenticate..."
+        );
+        if (error instanceof MatrixError && error.name === "M_UNKNOWN_TOKEN") {
+          console.warn(
+            "🚨 Matrix token expired, attempting to re-authenticate..."
+          );
+          await this.stop();
+
+          this.client = await this.createMatrixClient();
+          this.client.startClient();
         }
       });
 
@@ -239,30 +150,17 @@ export class MatrixService {
 
       return this.client;
     } catch (error) {
+      console.warn("🚨 Matrix token expired, attempting to re-authenticate...");
       console.error("❌ Error starting Matrix client:", error);
-      if (
-        error instanceof MatrixError &&
-        (error.errcode === "M_UNKNOWN_TOKEN" ||
-          error.message.includes("Token is not active") ||
-          error.data?.error?.includes("Token is not active"))
-      ) {
-        await this.handleTokenRefresh();
+      if (error instanceof MatrixError && error.name === "M_UNKNOWN_TOKEN") {
+        this.client = await this.createMatrixClient();
+        return this.start();
       }
       throw error;
     }
   }
 
-  private async handleTokenRefresh() {
-    try {
-      this.client = await this.createMatrixClient();
-      await this.start();
-    } catch (error) {
-      console.error("❌ Failed to refresh client after token expiry:", error);
-      throw error;
-    }
-  }
-
-  async stop() {
+  async stop(): Promise<void> {
     if (this.client) {
       await this.client.stopClient();
       this.client = undefined;
