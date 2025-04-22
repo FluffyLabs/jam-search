@@ -90,10 +90,9 @@ export class MatrixService {
           ClientEvent.Sync,
           (
             state: SyncState,
-            prevState: SyncState | null,
+            _prevState: SyncState | null,
             data?: ISyncStateData
           ) => {
-            console.log("state", state, prevState, data?.error?.name);
             if (state === "ERROR" && data?.error?.name === "M_UNKNOWN_TOKEN") {
               console.log("🚨 Matrix client is in error state");
               reject("Matrix token expired - incorrect initial credentials");
