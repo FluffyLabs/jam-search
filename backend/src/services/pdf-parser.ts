@@ -2,13 +2,17 @@ import type {
   PDFDocumentProxy,
   PDFPageProxy,
 } from "pdfjs-dist/legacy/build/pdf.mjs";
+import type { TextItem } from "pdfjs-dist/types/src/display/api.js";
 
 export interface PDFSection {
-  title: string;
+  title: string | null;
   text: string;
+  subsections: PDFSection[];
 }
 
-export type PDFParseResult = PDFSection[];
+export type PDFParseResult = {
+  sections: PDFSection[];
+};
 
 export class PDFParserService {
   private static instance: PDFParserService;
@@ -25,86 +29,10 @@ export class PDFParserService {
   private async getPageText(page: PDFPageProxy): Promise<string> {
     const textContent = await page.getTextContent();
     return textContent.items
-      .map((item: any) => item.str)
+      .map((item) => (item as TextItem).str)
       .join(" ")
       .replace(/\s+/g, " ")
       .trim();
-  }
-
-  private async processOutlineItem(
-    item: {
-      title: string;
-      bold: boolean;
-      italic: boolean;
-      /**
-       * - The color in RGB format to use for
-       * display purposes.
-       */
-      color: Uint8ClampedArray;
-      dest: string | Array<any> | null;
-      url: string | null;
-      unsafeUrl: string | undefined;
-      newWindow: boolean | undefined;
-      count: number | undefined;
-      items: Array</*elided*/ any>;
-    },
-    doc: PDFDocumentProxy
-  ): Promise<PDFSection[]> {
-    let sections: PDFSection[] = [];
-    let text = "";
-
-    if (item.dest) {
-      let pageNumber: number;
-
-      if (Array.isArray(item.dest)) {
-        // Handle array destination format
-        if (typeof item.dest[0] === "object" && item.dest[0] !== null) {
-          // If first element is a page reference object
-          pageNumber = await doc.getPageIndex(item.dest[0]);
-        } else if (typeof item.dest[0] === "number") {
-          // If first element is a direct page number
-          pageNumber = item.dest[0];
-        } else {
-          // If it's a named destination
-          const namedDest = await doc.getDestination(item.dest[0]);
-          if (namedDest) {
-            pageNumber = await doc.getPageIndex(namedDest[0]);
-          } else {
-            throw new Error(`Could not resolve destination: ${item.dest[0]}`);
-          }
-        }
-      } else if (typeof item.dest === "string") {
-        // Handle string destination format
-        const namedDest = await doc.getDestination(item.dest);
-        if (namedDest) {
-          pageNumber = await doc.getPageIndex(namedDest[0]);
-        } else {
-          throw new Error(`Could not resolve destination: ${item.dest}`);
-        }
-      } else {
-        throw new Error("Invalid destination format");
-      }
-
-      // PDF.js uses 0-based page numbers internally, but getPage expects 1-based
-      const page = await doc.getPage(pageNumber + 1);
-      text = await this.getPageText(page);
-    }
-
-    // Add the current section to the flat list
-    sections.push({
-      title: item.title,
-      text: text,
-    });
-
-    // Process all children recursively and add them to the flat list
-    if (item.items && item.items.length > 0) {
-      const childSections = await Promise.all(
-        item.items.map((child) => this.processOutlineItem(child, doc))
-      );
-      sections = sections.concat(...childSections);
-    }
-
-    return sections;
   }
 
   public async parsePDF(source: string): Promise<PDFParseResult> {
@@ -121,12 +49,143 @@ export class PDFParserService {
       throw new Error("No outline found in the PDF");
     }
 
-    // Process each outline item recursively and flatten the structure
-    const sectionsArrays = await Promise.all(
-      outline.map((item) => this.processOutlineItem(item, doc))
+    // Get all text from the PDF
+    const pageTexts: string[] = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      pageTexts.push(await this.getPageText(page));
+    }
+    const allText = pageTexts
+      .join(" ")
+      .replace(/(?<=[a-zA-Z0-9])- /gu, "")
+      .replace(/ -(?=[a-zA-Z0-9])/gu, "-")
+      .replace(/ \. /gu, ". ")
+      .replace(/ , /gu, ", ")
+      .replace(/ \)/gu, ")")
+      .replace(/\( /gu, "(")
+      .replace(/(?<= )Snark s(?=[ ,\.])/gu, "Snarks")
+      .replace(/(?<= )snark s(?=[ ,\.])/gu, "snarks")
+      .replace(/(?<= )Zk-snark s(?=[ ,\.])/gu, "Zk-snarks")
+      .replace(/snark - based/gu, "snarkbased")
+      .replace(/(?<= )Polka vm(?=[ ,\.])/gu, "Polkavm")
+      .replace(/(?<= )J am(?=[ ,\.])/gu, "Jam");
+
+    // Helper: flatten outline to get all titles in order (for splitting)
+    function flattenOutline(
+      outlineItems: Array<{ title: string; items?: unknown[] }>
+    ): string[] {
+      const titles: string[] = [];
+      for (const item of outlineItems) {
+        if (item.title) titles.push(item.title.trim());
+        if (item.items && item.items.length > 0) {
+          titles.push(
+            ...flattenOutline(
+              item.items as Array<{ title: string; items?: unknown[] }>
+            )
+          );
+        }
+      }
+      return titles;
+    }
+    const allTitles = flattenOutline(outline);
+
+    // Helper: find all indices of titles in the text
+    function findTitleIndices(
+      text: string,
+      titles: string[]
+    ): { title: string; index: number }[] {
+      const indices: { title: string; index: number }[] = [];
+      for (const title of titles) {
+        const idx = text.indexOf(title);
+        if (idx === -1) {
+          throw new Error(`Title not found: ${title}`);
+        }
+        indices.push({ title, index: idx });
+      }
+      // Sort by index in text
+      indices.sort((a, b) => a.index - b.index);
+      return indices;
+    }
+    const titleIndices = findTitleIndices(allText, allTitles);
+
+    // Helper: recursively build PDFSection tree from outline
+    function buildSections(
+      outlineItems: Array<{ title: string; items?: unknown[] }>,
+      text: string,
+      indices: Array<{ title: string; index: number }>,
+      startIdx: number,
+      endIdx: number | undefined
+    ): PDFSection[] {
+      const sections: PDFSection[] = [];
+      for (let i = 0; i < outlineItems.length; i++) {
+        const item = outlineItems[i];
+        const title = item.title ? item.title.trim() : null;
+        // Find this section's start and end in the text
+        const thisIdxObj = indices.find((t) => t.title === title);
+        const thisIdx = thisIdxObj ? thisIdxObj.index : startIdx;
+        let nextIdx = endIdx;
+        // If there is a next outline item at this level, use its index as end
+        if (i + 1 < outlineItems.length) {
+          const nextTitle = outlineItems[i + 1].title.trim();
+          const nextObj = indices.find((t) => t.title === nextTitle);
+          if (nextObj) nextIdx = nextObj.index;
+        }
+        // If this item has children, recursively build subsections
+        let subsections: PDFSection[] = [];
+        if (item.items && item.items.length > 0) {
+          subsections = buildSections(
+            item.items as Array<{ title: string; items?: unknown[] }>,
+            text,
+            indices,
+            thisIdxObj
+              ? thisIdxObj.index + (title ? title.length : 0)
+              : thisIdx,
+            nextIdx
+          );
+        }
+        // Extract text for this section (between thisIdx+title.length and nextIdx)
+        let sectionText = "";
+        if (thisIdxObj) {
+          const firstSubsectionIndex =
+            subsections.length > 0
+              ? indices.find((t) => t.title === subsections[0].title)?.index
+              : undefined;
+          const from = thisIdxObj.index + (title ? title.length : 0);
+          const to =
+            firstSubsectionIndex !== undefined
+              ? firstSubsectionIndex
+              : nextIdx !== undefined
+              ? nextIdx
+              : text.length;
+          sectionText = text.slice(from, to).replace(/^\./, "").trim();
+        }
+        sections.push({
+          title,
+          text: sectionText,
+          subsections,
+        });
+      }
+      return sections;
+    }
+
+    // Special case: the very first section (before any outline title)
+    let sections: PDFSection[] = [];
+    if (titleIndices.length > 0 && titleIndices[0].index > 0) {
+      // There is a preamble before the first outline title
+      const preambleText = allText.slice(0, titleIndices[0].index).trim();
+      sections.push({
+        title: null,
+        text: preambleText,
+        subsections: [],
+      });
+    }
+    // Now build the rest of the sections from the outline
+    sections = sections.concat(
+      buildSections(outline, allText, titleIndices, 0, undefined)
     );
 
-    // Flatten the array of arrays into a single array
-    return sectionsArrays.flat();
+    return {
+      sections,
+    };
   }
 }

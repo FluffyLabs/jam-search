@@ -7,7 +7,6 @@ import { db } from "./db/db.js";
 import { graypapersTable, messagesTable } from "./db/schema.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
-import { PDFParserService } from "./services/pdf-parser.js";
 
 export function createApp() {
   const app = new Hono();
@@ -134,13 +133,6 @@ export function createApp() {
       page: data.page,
       pageSize: data.pageSize,
     });
-  });
-
-  app.get("/parse-pdf", async (c) => {
-    const result = await PDFParserService.getInstance().parsePDF(
-      "https://graypaper.com/graypaper.pdf"
-    );
-    return c.json({ result });
   });
 
   return app;
