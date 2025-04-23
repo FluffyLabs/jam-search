@@ -4,9 +4,19 @@ import { MessagesLogger } from "../services/logger.js";
 import { MatrixService } from "../services/matrix.js";
 import { Direction } from "matrix-js-sdk";
 
+// Define message type to avoid implicit any[]
+interface Message {
+  roomId: string;
+  msg: string;
+  sender: string;
+  eventId: string;
+  date: Date;
+}
+
 export async function fetchAndInsertHistoricalMessages(
   roomIds: string[],
-  daysBack = 30
+  daysBack = 30,
+  maxMessagesPerRoom = 3000 // Set maximum number of messages to fetch per room
 ) {
   const logger = new MessagesLogger({ roomIds, db });
   const daysAgo = new Date();
@@ -34,57 +44,109 @@ export async function fetchAndInsertHistoricalMessages(
           continue;
         }
 
-        // Get messages directly from the Matrix API
-        const messagesLimit = 1000; // Increase this number to fetch more messages
-        const messagesResponse = await client.createMessagesRequest(
-          roomId,
-          "", // from token (empty to start from latest)
-          messagesLimit,
-          Direction.Backward // backwards direction to get historical messages
-        );
+        // Implement pagination to fetch more than 1000 messages
+        const batchSize = 1000; // Maximum per API request
+        let fromToken = ""; // Start with empty token (latest messages)
+        let totalFetched = 0;
+        let allMessages: Message[] = [];
+        let shouldContinue = true;
 
-        if (!messagesResponse || !messagesResponse.chunk) {
-          console.log(`No messages found for room ${roomId}`);
-          continue;
-        }
+        // Fetch messages in batches using pagination
+        while (shouldContinue && totalFetched < maxMessagesPerRoom) {
+          console.log(
+            `Fetching batch from token: ${
+              fromToken || "latest"
+            }, total so far: ${totalFetched}`
+          );
 
-        const events = messagesResponse.chunk;
-        console.log("EVENTS", events.length);
+          const messagesResponse = await client.createMessagesRequest(
+            roomId,
+            fromToken,
+            batchSize,
+            Direction.Backward
+          );
 
-        const messages = [];
-        for (const event of events) {
-          if (event.type === "m.room.message") {
-            const content = event.content;
-            const messageContent = content.body;
+          if (
+            !messagesResponse ||
+            !messagesResponse.chunk ||
+            messagesResponse.chunk.length === 0
+          ) {
+            console.log(`No more messages found for room ${roomId}`);
+            break;
+          }
 
-            if (typeof messageContent === "string") {
-              const sender = event.sender;
-              const eventId = event.event_id;
-              const timestamp = new Date(event.origin_server_ts);
+          const events = messagesResponse.chunk;
+          console.log(`Received ${events.length} events in this batch`);
 
-              if (eventId && timestamp && timestamp >= daysAgo) {
-                try {
-                  messages.push({
-                    roomId,
-                    msg: messageContent,
-                    sender,
-                    eventId,
-                    date: timestamp,
-                  });
-                } catch (error) {
-                  console.error(`Error processing message ${eventId}:`, error);
+          // Process messages from this batch
+          const batchMessages: Message[] = [];
+          for (const event of events) {
+            if (event.type === "m.room.message") {
+              const content = event.content;
+              const messageContent = content.body;
+
+              if (typeof messageContent === "string") {
+                const sender = event.sender;
+                const eventId = event.event_id;
+                const timestamp = new Date(event.origin_server_ts);
+
+                if (eventId && timestamp && timestamp >= daysAgo) {
+                  try {
+                    batchMessages.push({
+                      roomId,
+                      msg: messageContent,
+                      sender,
+                      eventId,
+                      date: timestamp,
+                    });
+                  } catch (error) {
+                    console.error(
+                      `Error processing message ${eventId}:`,
+                      error
+                    );
+                  }
+                } else if (timestamp < daysAgo) {
+                  // We've reached messages older than our cutoff date
+                  shouldContinue = false;
                 }
               }
             }
           }
+
+          // Add this batch to our collection
+          allMessages = [...allMessages, ...batchMessages];
+          totalFetched += events.length;
+
+          // Check if we have an end token for the next batch
+          if (messagesResponse.end) {
+            fromToken = messagesResponse.end;
+          } else {
+            console.log("No pagination token returned, reached end of history");
+            break;
+          }
+
+          // If we got fewer messages than requested, we've reached the end
+          if (events.length < batchSize) {
+            console.log(
+              "Received fewer messages than requested, reached end of history"
+            );
+            break;
+          }
         }
 
-        console.log("Adding messages", roomId, messages.length);
         console.log(
-          JSON.stringify(messages[0], null, 2),
-          JSON.stringify(messages[messages.length - 1], null, 2)
+          `Total messages collected: ${allMessages.length} from ${totalFetched} events`
         );
-        // await logger.onMessages(messages);
+
+        if (allMessages.length > 0) {
+          console.log(
+            JSON.stringify(allMessages[0], null, 2),
+            JSON.stringify(allMessages[allMessages.length - 1], null, 2)
+          );
+          // await logger.onMessages(allMessages);
+        } else {
+          console.log("No matching messages found");
+        }
       } catch (error) {
         console.error(`Error processing room ${roomId}:`, error);
       }
@@ -96,6 +158,6 @@ export async function fetchAndInsertHistoricalMessages(
 }
 
 // Example usage:
-fetchAndInsertHistoricalMessages(env.ROOM_IDS, 200).finally(() => {
+fetchAndInsertHistoricalMessages(env.ROOM_IDS, 200, 10000).finally(() => {
   process.exit(0);
 });
