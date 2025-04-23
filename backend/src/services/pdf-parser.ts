@@ -155,8 +155,8 @@ export class PDFParserService {
             firstSubsectionIndex !== undefined
               ? firstSubsectionIndex
               : nextIdx !== undefined
-              ? nextIdx
-              : text.length;
+                ? nextIdx
+                : text.length;
           sectionText = text.slice(from, to).replace(/^\./, "").trim();
         }
         sections.push({
