@@ -1,12 +1,12 @@
 import {
   ClientEvent,
   type MatrixClient,
+  MatrixError,
   RoomEvent,
   createClient,
-  MatrixError,
 } from "matrix-js-sdk";
+import type { ISyncStateData, SyncState } from "matrix-js-sdk/lib/sync.js";
 import type { MessagesLogger } from "./logger.js";
-import { ISyncStateData, SyncState } from "matrix-js-sdk/lib/sync.js";
 
 export class MatrixService {
   private client?: MatrixClient;
@@ -86,14 +86,18 @@ export class MatrixService {
       this.client.startClient();
 
       await new Promise<void>((resolve, reject) => {
-        this.client!.once(
+        this.client?.once(
           ClientEvent.Sync,
           (
             state: SyncState,
             _prevState: SyncState | null,
             data?: ISyncStateData
           ) => {
-            if (state === "ERROR" && data?.error?.name === "M_UNKNOWN_TOKEN") {
+            if (
+              state === "ERROR" &&
+              data?.error instanceof MatrixError &&
+              data.error.errcode === "M_UNKNOWN_TOKEN"
+            ) {
               console.log("🚨 Matrix client is in error state");
               reject("Matrix token expired - incorrect initial credentials");
             } else if (state === "PREPARED") {
@@ -109,7 +113,10 @@ export class MatrixService {
         console.log(
           "🚨 Matrix token expired, attempting to re-authenticate..."
         );
-        if (error instanceof MatrixError && error.name === "M_UNKNOWN_TOKEN") {
+        if (
+          error instanceof MatrixError &&
+          error.errcode === "M_UNKNOWN_TOKEN"
+        ) {
           console.warn(
             "🚨 Matrix token expired, attempting to re-authenticate..."
           );
@@ -151,7 +158,7 @@ export class MatrixService {
     } catch (error) {
       console.warn("🚨 Matrix token expired, attempting to re-authenticate...");
       console.error("❌ Error starting Matrix client:", error);
-      if (error instanceof MatrixError && error.name === "M_UNKNOWN_TOKEN") {
+      if (error instanceof MatrixError && error.errcode === "M_UNKNOWN_TOKEN") {
         this.client = await this.createMatrixClient();
         return this.start();
       }
