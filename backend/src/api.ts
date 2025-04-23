@@ -16,7 +16,7 @@ export function createApp() {
 
   app.use(
     cors({
-      origin: isDevelopment ? ["http://localhost:5173"] : ["*"],
+      origin: isDevelopment ? ["http://localhost:5173"] : "*",
     })
   );
 
