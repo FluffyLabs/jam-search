@@ -6,7 +6,7 @@ import { z } from "zod";
 import { db } from "./db/db.js";
 import { messagesTable } from "./db/schema.js";
 
-// const isDevelopment = process.env.NODE_ENV === "development";
+const isDevelopment = process.env.NODE_ENV === "development";
 
 export function createApp() {
   const app = new Hono();
@@ -16,7 +16,7 @@ export function createApp() {
 
   app.use(
     cors({
-      origin: ["http://localhost:5173", "*"],
+      origin: isDevelopment ? ["http://localhost:5173"] : ["*"],
     })
   );
 
