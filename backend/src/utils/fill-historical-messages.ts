@@ -143,7 +143,7 @@ export async function fetchAndInsertHistoricalMessages(
             JSON.stringify(allMessages[0], null, 2),
             JSON.stringify(allMessages[allMessages.length - 1], null, 2)
           );
-          // await logger.onMessages(allMessages);
+          await logger.onMessages(allMessages);
         } else {
           console.log("No matching messages found");
         }
@@ -158,6 +158,6 @@ export async function fetchAndInsertHistoricalMessages(
 }
 
 // Example usage:
-fetchAndInsertHistoricalMessages(env.ROOM_IDS, 200, 10000).finally(() => {
+fetchAndInsertHistoricalMessages(env.ROOM_IDS, 113, 10000).finally(() => {
   process.exit(0);
 });
