@@ -1,8 +1,8 @@
+import { Direction } from "matrix-js-sdk";
 import { db } from "../db/db.js";
 import { env } from "../env.js";
 import { MessagesLogger } from "../services/logger.js";
 import { MatrixService } from "../services/matrix.js";
-import { Direction } from "matrix-js-sdk";
 
 // Define message type to avoid implicit any[]
 interface Message {
