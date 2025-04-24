@@ -14,7 +14,9 @@ async function main() {
         env.HOMESERVER_URL,
         env.ACCESS_TOKEN,
         env.USER_ID,
-        msgLog
+        msgLog,
+        env.MATRIX_USERNAME,
+        env.MATRIX_PASSWORD
       );
 
   const app = createApp();
