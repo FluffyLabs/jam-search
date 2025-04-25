@@ -44,7 +44,7 @@ const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
               selectedValues={selectedSources}
               onValueChange={handleSourceChange}
               placeholder="Select sources"
-              className="min-w-[140px]"
+              className="min-w-[90px] sm:min-w-[140px]"
               showSearch
               maxCount={0}
               required
