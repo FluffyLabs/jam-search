@@ -56,7 +56,7 @@ const Features = () => {
 
 export const IndexPage = () => {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl w-full h-full bg-card text-foreground dark:text-white p-4 relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center rounded-xl w-full bg-card text-foreground dark:text-white p-4 relative overflow-hidden min-h-full">
       <div className="max-w-3xl w-full flex flex-col items-center mt-16 relative z-10">
         <Header />
 
