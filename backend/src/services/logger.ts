@@ -116,7 +116,10 @@ export class MessagesLogger {
         messages.length,
         JSON.stringify(messages, null, 2)
       );
-      await this.db.insert(messagesTable).values(messages.map(toDbMessage));
+      await this.db
+        .insert(messagesTable)
+        .values(messages.map(toDbMessage))
+        .onConflictDoNothing();
     } catch (error) {
       console.error("error indexing multiple messages", error);
     }
