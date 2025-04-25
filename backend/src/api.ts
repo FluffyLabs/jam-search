@@ -41,7 +41,7 @@ export function createApp() {
 
     const searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
       paradedb.match('content', ${data.q}, distance => 1),
-      paradedb.match('sender', ${data.q}, distance => 1)
+      paradedb.match('sender', ${data.q}, distance => 1, prefix => true)
     ])`;
 
     // Get total count of matching rows
