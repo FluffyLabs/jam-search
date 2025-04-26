@@ -159,9 +159,24 @@ const SearchResults = () => {
       <div className="w-full max-w-4xl px-7">
         <SearchForm initialQuery={query} />
 
-        <h2 className="text-2xl font-bold text-foreground mb-6">
-          {searchQuery}
-        </h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground">{searchQuery}</h2>
+
+          {/* Display active filters as tags */}
+          {query && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {parseSearchQuery(query).filters.map((filter, index) => (
+                <div
+                  key={index}
+                  className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+                >
+                  <span className="font-semibold mr-1">{filter.key}:</span>
+                  <span>{filter.value}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="mb-8">
           {isLoading && !results.length ? (
