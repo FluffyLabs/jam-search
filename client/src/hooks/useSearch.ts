@@ -7,10 +7,16 @@ interface UseSearchOptions {
   pageSize?: number;
 }
 
+interface SearchFilter {
+  key: string;
+  value: string;
+}
+
 interface SearchParams {
   query: string;
   currentPage: number;
   pageSize: number;
+  filters?: SearchFilter[];
 }
 
 export function useSearch({
@@ -26,6 +32,7 @@ export function useSearch({
     query: initialQuery,
     currentPage: 1,
     pageSize,
+    filters: [],
   };
 
   const searchParams =
@@ -46,6 +53,7 @@ export function useSearch({
       fetchSearchResults(params.query, {
         page: params.currentPage,
         pageSize: params.pageSize,
+        filters: params.filters,
       }),
     onSuccess: (data) => {
       // Store results in global cache
@@ -61,11 +69,12 @@ export function useSearch({
   const results = cachedData?.results || [];
   const totalResults = cachedData?.total || 0;
 
-  const search = (query: string) => {
+  const search = (query: string, options?: { filters?: SearchFilter[] }) => {
     const newParams = {
       ...searchParams,
       query,
       currentPage: 1,
+      filters: options?.filters || [],
     };
 
     // Update search params in global state
