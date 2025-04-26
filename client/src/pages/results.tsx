@@ -11,6 +11,38 @@ interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
 }
 
+// Define SearchFilter type
+interface SearchFilter {
+  key: string;
+  value: string;
+}
+
+// Helper function to parse search query
+const parseSearchQuery = (
+  query: string
+): { rawQuery: string; filters: SearchFilter[] } => {
+  const filters: SearchFilter[] = [];
+  const filterOptions = ["from", "gp_ver", "before", "after"];
+  const regex = new RegExp(`(${filterOptions.join("|")}):([^\\s]+)`, "g");
+  let match;
+  let rawQuery = query;
+
+  while ((match = regex.exec(query)) !== null) {
+    filters.push({ key: match[1], value: match[2] });
+  }
+
+  // Filter out the filter patterns from the raw query
+  filterOptions.forEach((option) => {
+    const filterPattern = new RegExp(`${option}:[^\\s]+`, "g");
+    rawQuery = rawQuery.replace(filterPattern, "");
+  });
+
+  // Clean up extra spaces
+  rawQuery = rawQuery.replace(/\s+/g, " ").trim();
+
+  return { rawQuery, filters };
+};
+
 const SOURCE_OPTIONS = [
   { label: "Element channels", value: "element" },
   { label: "Graypaper.pdf", value: "graypaper" },
@@ -96,9 +128,13 @@ const SearchResults = () => {
 
   useEffect(() => {
     if (query) {
-      search(query);
+      // Parse the query to extract filters
+      const { rawQuery, filters } = parseSearchQuery(query);
+
+      // Pass the raw query and filters separately
+      search(rawQuery, { filters });
     }
-  }, [query]);
+  }, [query]); // Remove search from dependency array to prevent infinite loop
 
   const handleSourceChange = (sources: string[]) => {
     setSelectedSources(sources);
