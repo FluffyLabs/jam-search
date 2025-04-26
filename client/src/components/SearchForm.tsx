@@ -26,7 +26,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
   const searchOptions = [
     { label: "from", description: "Messages from a specific user" },
     {
-      label: "gp_ver",
+      label: "since_gp",
       description: "Find messages from a specific graypaper version",
     },
     { label: "before", description: "Find messages before a specific date" },
@@ -85,7 +85,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
     query: string
   ): { rawQuery: string; filters: SearchFilter[] } => {
     const filters: SearchFilter[] = [];
-    const regex = /(from|gp_ver|before|after):([^\s]+)/g;
+    const regex = /(from|since_gp|before|after):([^\s]+)/g;
     let match;
     let rawQuery = query;
 

@@ -22,7 +22,7 @@ const parseSearchQuery = (
   query: string
 ): { rawQuery: string; filters: SearchFilter[] } => {
   const filters: SearchFilter[] = [];
-  const filterOptions = ["from", "gp_ver", "before", "after"];
+  const filterOptions = ["from", "since_gp", "before", "after"];
   const regex = new RegExp(`(${filterOptions.join("|")}):([^\\s]+)`, "g");
   let match;
   let rawQuery = query;
