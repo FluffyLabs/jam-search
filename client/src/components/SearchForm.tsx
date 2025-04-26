@@ -24,9 +24,11 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
   const searchOptions = [
     { label: "from", description: "Messages from a specific user" },
     {
-      label: "graypaper",
+      label: "gp_ver",
       description: "Find messages from a specific graypaper version",
     },
+    { label: "before", description: "Find messages before a specific date" },
+    { label: "after", description: "Find messages after a specific date" },
   ];
 
   // Update the search input when initialQuery changes
@@ -55,7 +57,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
     query: string
   ): { rawQuery: string; filters: SearchFilter[] } => {
     const filters: SearchFilter[] = [];
-    const regex = /(from|graypaper):([^\s]+)/g;
+    const regex = /(from|gp_ver|before|after):([^\s]+)/g;
     let match;
     let rawQuery = query;
 
@@ -113,8 +115,8 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
         </Button>
       </form>
 
-      {isFocused && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-zinc-900 border border-zinc-700 rounded-md shadow-lg z-10">
+      {isFocused && searchQuery.trim() === "" && (
+        <div className="absolute top-full left-0 right-0 mt-2 border border-input bg-card rounded-md shadow-lg z-10">
           <div className="p-4 border-b border-zinc-700">
             <h3 className="text-lg font-semibold text-zinc-200">
               Search Options
