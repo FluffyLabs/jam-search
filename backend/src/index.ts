@@ -4,6 +4,8 @@ import { db } from "./db/db.js";
 import { env } from "./env.js";
 import { MessagesLogger } from "./services/logger.js";
 import { MatrixService } from "./services/matrix.js";
+import { Job, scheduleJob } from "node-schedule";
+import { updateGraypapers } from "./scripts/updateGraypapers.js";
 
 const isDev = process.env.NODE_ENV === "development";
 async function main() {
@@ -17,11 +19,25 @@ async function main() {
         msgLog
       );
 
+  let job: Job | null = null;
   const app = createApp();
 
   if (!isDev) {
     // Start Matrix client
     await matrixService?.start();
+
+    job = scheduleJob("0 0 * * *", async () => {
+      console.log(
+        "Running scheduled graypaper update job at",
+        new Date().toISOString()
+      );
+      try {
+        await updateGraypapers();
+        console.log("Graypaper update job completed successfully");
+      } catch (error) {
+        console.error("Error in graypaper update job:", error);
+      }
+    });
   }
 
   // Start HTTP server
@@ -37,6 +53,7 @@ async function main() {
     console.log("🛑 Shutting down...");
     await matrixService?.stop();
     server.close();
+    job?.cancel();
     process.exit(0);
   };
 
