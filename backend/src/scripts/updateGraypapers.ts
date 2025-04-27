@@ -16,7 +16,10 @@ async function fetchLatestReleases(): Promise<GitHubRelease[]> {
       throw new Error(`GitHub API responded with status: ${response.status}`);
     }
 
-    return await response.json();
+    return (await response.json()).map((release: GitHubRelease) => ({
+      tag_name: release.tag_name.replace("v", ""),
+      published_at: release.published_at,
+    }));
   } catch (error) {
     console.error("Error fetching releases:", error);
     return [];
