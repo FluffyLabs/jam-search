@@ -167,12 +167,11 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
-            placeholder='Example: "JAM consensus" from: user before: 2023-10'
           />
 
           {/* Visible styled display with highlighted filters */}
           <div
-            className="pr-12 h-[58px] px-2 py-2 flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
+            className="pr-12 h-[58px] px-3 py-2 flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
             aria-hidden="true"
           >
             {displayedValue ? (
