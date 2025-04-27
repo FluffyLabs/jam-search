@@ -1,10 +1,10 @@
-import { desc, eq, like, sql, gte, lt, gt } from "drizzle-orm";
+import { desc, eq, gt, gte, like, lt, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { z } from "zod";
 import { db } from "./db/db.js";
-import { messagesTable, graypapersTable } from "./db/schema.js";
+import { graypapersTable, messagesTable } from "./db/schema.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -50,7 +50,7 @@ export function createApp() {
     ])`;
 
     // Initialize additional filter conditions
-    let filterConditions = [];
+    const filterConditions = [];
 
     // Add filter conditions based on parameters
     if (data.filter_from) {
@@ -60,7 +60,7 @@ export function createApp() {
         senderName = `@${senderName}`;
       }
       // Use LIKE for prefix matching on sender names
-      filterConditions.push(sql`sender LIKE ${senderName + "%"}`);
+      filterConditions.push(sql`sender LIKE ${senderName}%`);
     }
 
     // Lookup timestamp for graypaper version if filter_since_gp is provided
@@ -105,9 +105,9 @@ export function createApp() {
     // Combine search condition with filter conditions
     let whereCondition = searchCondition;
     if (filterConditions.length > 0) {
-      filterConditions.forEach((condition) => {
+      for (const condition of filterConditions) {
         whereCondition = sql`${whereCondition} AND ${condition}`;
-      });
+      }
     }
 
     // Get total count of matching rows

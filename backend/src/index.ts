@@ -1,11 +1,11 @@
 import { serve } from "@hono/node-server";
+import { type Job, scheduleJob } from "node-schedule";
 import { createApp } from "./api.js";
 import { db } from "./db/db.js";
 import { env } from "./env.js";
+import { updateGraypapers } from "./scripts/updateGraypapers.js";
 import { MessagesLogger } from "./services/logger.js";
 import { MatrixService } from "./services/matrix.js";
-import { Job, scheduleJob } from "node-schedule";
-import { updateGraypapers } from "./scripts/updateGraypapers.js";
 
 const isDev = process.env.NODE_ENV === "development";
 async function main() {
