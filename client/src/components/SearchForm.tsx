@@ -27,7 +27,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
     { label: "from", description: "Messages from a specific user" },
     {
       label: "since_gp",
-      description: "Find messages from a specific graypaper version",
+      description: "Find messages since a specific graypaper version",
     },
     { label: "before", description: "Find messages before a specific date" },
     { label: "after", description: "Find messages after a specific date" },
@@ -172,7 +172,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
 
           {/* Visible styled display with highlighted filters */}
           <div
-            className="pr-12 h-[58px] px-3 py-2 flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
+            className="pr-12 h-[58px] px-2 py-2 flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
             aria-hidden="true"
           >
             {displayedValue ? (
