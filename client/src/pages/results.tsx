@@ -126,6 +126,9 @@ const SearchResults = () => {
     pagination,
   } = useSearch({ initialQuery: query });
 
+  // Calculate total pages
+  const totalPages = Math.ceil(totalResults / pagination.pageSize);
+
   useEffect(() => {
     if (query) {
       // Parse the query to extract filters
@@ -196,7 +199,7 @@ const SearchResults = () => {
               Previous
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {pagination.currentPage}
+              Page {pagination.currentPage} of {totalPages}
             </span>
             <Button
               onClick={pagination.nextPage}
