@@ -72,5 +72,33 @@ export async function fetchSearchResults(
     queryParams.append(`filter_${filter.key}`, filter.value);
   });
 
-  return fetchApi<SearchResponse>(`/search?${queryParams.toString()}`);
+  return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
+}
+
+export interface GraypaperSearchResult {
+  id: number;
+  title: string;
+  text: string;
+}
+
+export interface GraypaperSearchResponse {
+  results: GraypaperSearchResult[];
+  total: number;
+}
+
+export async function searchGraypaper(
+  query: string,
+  options: {
+    page?: number;
+    pageSize?: number;
+  } = {}
+): Promise<GraypaperSearchResponse> {
+  const { page = 1, pageSize = 10 } = options;
+
+  const queryParams = new URLSearchParams();
+  queryParams.append("q", query);
+  queryParams.append("page", page.toString());
+  queryParams.append("pageSize", pageSize.toString());
+
+  return fetchApi(`/search/graypaper?${queryParams.toString()}`);
 }

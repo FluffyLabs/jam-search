@@ -4,7 +4,11 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { z } from "zod";
 import { db } from "./db/db.js";
-import { graypapersTable, messagesTable } from "./db/schema.js";
+import {
+  graypaperSectionsTable,
+  graypapersTable,
+  messagesTable,
+} from "./db/schema.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -25,7 +29,7 @@ export function createApp() {
     return c.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
-  const searchRequestSchema = z.object({
+  const searchMessagesRequestSchema = z.object({
     q: z.string(),
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().lte(100).default(10),
@@ -36,8 +40,8 @@ export function createApp() {
   });
 
   // Search endpoint
-  app.get("/search", async (c) => {
-    const result = searchRequestSchema.safeParse(c.req.query());
+  app.get("/search/messages", async (c) => {
+    const result = searchMessagesRequestSchema.safeParse(c.req.query());
     if (!result.success) {
       return c.json({ error: "Invalid query parameters" }, 400);
     }
@@ -123,7 +127,51 @@ export function createApp() {
       .select()
       .from(messagesTable)
       .where(whereCondition)
-      .orderBy(sql`paradedb.score(id) DESC`)
+      .orderBy(sql`paradedb.score(id) DESC, id`)
+      .offset((data.page - 1) * data.pageSize)
+      .limit(data.pageSize);
+
+    return c.json({
+      results,
+      total,
+      page: data.page,
+      pageSize: data.pageSize,
+    });
+  });
+
+  const searchGraypaperRequestSchema = z.object({
+    q: z.string(),
+    page: z.coerce.number().int().positive().default(1),
+    pageSize: z.coerce.number().int().positive().lte(100).default(10),
+  });
+
+  app.get("/search/graypaper", async (c) => {
+    const result = searchGraypaperRequestSchema.safeParse(c.req.query());
+    if (!result.success) {
+      return c.json({ error: "Invalid query parameters" }, 400);
+    }
+    const data = result.data;
+
+    // Base search condition
+    const searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+      paradedb.match('title', ${data.q}, distance => 1),
+      paradedb.match('text', ${data.q}, distance => 1)
+    ])`;
+
+    // Get total count of matching rows
+    const countResult = await db
+      .select({ count: sql`count(*)` })
+      .from(graypaperSectionsTable)
+      .where(searchCondition);
+
+    const total = Number(countResult[0].count);
+
+    // Get paginated results
+    const results = await db
+      .select()
+      .from(graypaperSectionsTable)
+      .where(searchCondition)
+      .orderBy(sql`paradedb.score(id) DESC, id`)
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
 

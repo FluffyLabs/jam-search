@@ -5,6 +5,7 @@ import { useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
 import { ResultList } from "@/components/ResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
+import { GraypaperResults } from "@/components/GraypaperResults";
 
 interface ResultHeaderProps {
   totalResults: number;
@@ -51,9 +52,12 @@ const SOURCE_OPTIONS = [
   { label: "GitHub Source Code", value: "github" },
 ];
 
+const initialSources = ["element", "graypaper"];
+
 const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
   const [copied, setCopied] = useState(false);
-  const [selectedSources, setSelectedSources] = useState<string[]>(["element"]);
+  const [selectedSources, setSelectedSources] =
+    useState<string[]>(initialSources);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -114,7 +118,8 @@ const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
 const SearchResults = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q") || "";
-  const [, setSelectedSources] = useState<string[]>([]);
+  const [selectedSources, setSelectedSources] =
+    useState<string[]>(initialSources);
 
   const {
     search,
@@ -182,6 +187,9 @@ const SearchResults = () => {
         </div>
 
         <div className="mb-8">
+          {selectedSources.includes("graypaper") && (
+            <GraypaperResults query={query} />
+          )}
           {isLoading && !results.length ? (
             <div className="text-center p-8">Loading results...</div>
           ) : (
