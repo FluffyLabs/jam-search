@@ -5,13 +5,15 @@ import type {
 import type { TextItem } from "pdfjs-dist/types/src/display/api.js";
 
 export interface PDFSection {
-  title: string | null;
+  title: string;
   text: string;
   subsections: PDFSection[];
 }
 
 export type PDFParseResult = {
   sections: PDFSection[];
+  filename: string;
+  version: string;
 };
 
 export class PDFParserService {
@@ -119,7 +121,7 @@ export class PDFParserService {
       const sections: PDFSection[] = [];
       for (let i = 0; i < outlineItems.length; i++) {
         const item = outlineItems[i];
-        const title = item.title ? item.title.trim() : null;
+        const title = item.title.trim();
         // Find this section's start and end in the text
         const thisIdxObj = indices.find((t) => t.title === title);
         const thisIdx = thisIdxObj ? thisIdxObj.index : startIdx;
@@ -155,8 +157,8 @@ export class PDFParserService {
             firstSubsectionIndex !== undefined
               ? firstSubsectionIndex
               : nextIdx !== undefined
-                ? nextIdx
-                : text.length;
+              ? nextIdx
+              : text.length;
           sectionText = text.slice(from, to).replace(/^\./, "").trim();
         }
         sections.push({
@@ -174,7 +176,7 @@ export class PDFParserService {
       // There is a preamble before the first outline title
       const preambleText = allText.slice(0, titleIndices[0].index).trim();
       sections.push({
-        title: null,
+        title: "Abstract",
         text: preambleText,
         subsections: [],
       });
@@ -184,8 +186,13 @@ export class PDFParserService {
       buildSections(outline, allText, titleIndices, 0, undefined)
     );
 
+    const filename = (doc._transport?._fullReader?._filename ?? "") as string;
+    const version = filename.split("-").pop()?.split(".pdf")[0] ?? "";
+
     return {
       sections,
+      filename,
+      version,
     };
   }
 }

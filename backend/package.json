@@ -11,7 +11,6 @@
     "lint": "biome check --write",
     "lint:ci": "biome ci",
     "start": "tsx ./src/index.ts",
-    "parse:graypaper": "tsx ./src/cli/parse-graypaper.ts",
     "dev": "NODE_ENV=development tsx watch ./src/index.ts",
     "db:push": "drizzle-kit push --verbose --strict",
     "db:migrate": "drizzle-kit migrate",
@@ -19,7 +18,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "fill-historical-messages": "tsx ./src/utils/fill-historical-messages.ts",
+    "fill-historical-messages": "tsx ./src/utils/fillHistoricalMessages.ts",
+    "graypaper:index-search": "tsx ./src/scripts/updateGraypaperData.ts",
     "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts"
   },
   "dependencies": {
@@ -42,6 +42,5 @@
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
-  "type": "module",
-  "packageManager": "npm@11.3.0"
+  "type": "module"
 }

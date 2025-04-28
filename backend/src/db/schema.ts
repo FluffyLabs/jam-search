@@ -14,3 +14,9 @@ export const graypapersTable = pgTable("graypapers", {
   version: text("version").primaryKey(),
   timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
 });
+
+export const graypaperSectionsTable = pgTable("graypaper_sections", {
+  id: serial("id").primaryKey(),
+  title: text("title"),
+  text: text("text").notNull(),
+});

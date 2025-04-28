@@ -46,7 +46,7 @@ export function createApp() {
     // Base search condition
     const searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
       paradedb.match('content', ${data.q}, distance => 1),
-      paradedb.match('sender', ${data.q}, distance => 1, prefix => true)
+      paradedb.match('sender', ${data.q}, prefix => true)
     ])`;
 
     // Initialize additional filter conditions
