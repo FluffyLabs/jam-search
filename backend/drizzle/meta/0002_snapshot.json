@@ -108,9 +108,7 @@
         "messages_messageid_unique": {
           "name": "messages_messageid_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "messageid"
-          ]
+          "columns": ["messageid"]
         }
       },
       "policies": {},

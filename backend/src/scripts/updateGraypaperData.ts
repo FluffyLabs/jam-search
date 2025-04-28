@@ -1,8 +1,8 @@
 import { PDFParserService } from "../services/pdf-parser.js";
 
+import { sql } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { graypaperSectionsTable } from "../db/schema.js";
-import { sql } from "drizzle-orm";
 
 // Get the PDF path from command line argument
 const pdfPath = "https://graypaper.com/graypaper.pdf";
