@@ -212,8 +212,6 @@ const highlightText = (text: string, words: string[]) => {
   let match = regex.exec(text);
   let lastIndex = 0;
 
-  console.log(words);
-
   while (match) {
     const before = text.slice(lastIndex, match.index);
     result.push(before);
