@@ -60,7 +60,7 @@ export function createApp() {
         senderName = `@${senderName}`;
       }
       // Use LIKE for prefix matching on sender names
-      filterConditions.push(sql`sender LIKE ${senderName}%`);
+      filterConditions.push(like(messagesTable.sender, `${senderName}%`));
     }
 
     // Lookup timestamp for graypaper version if filter_since_gp is provided

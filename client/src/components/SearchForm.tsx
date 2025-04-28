@@ -74,7 +74,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
     highlightedQuery = highlightedQuery.replace(
       filterRegex,
       (_match, filterName, filterValue) => {
-        return `<span class="text-primary font-medium">${filterName}</span>:${filterValue}`;
+        return `<span class="text-primary">${filterName}</span>:${filterValue}`;
       }
     );
 
