@@ -11,6 +11,38 @@ interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
 }
 
+// Define SearchFilter type
+interface SearchFilter {
+  key: string;
+  value: string;
+}
+
+// Helper function to parse search query
+const parseSearchQuery = (
+  query: string
+): { rawQuery: string; filters: SearchFilter[] } => {
+  const filters: SearchFilter[] = [];
+  const filterOptions = ["from", "since_gp", "before", "after"];
+  const regex = new RegExp(`(${filterOptions.join("|")}):([^\\s]+)`, "g");
+  let match;
+  let rawQuery = query;
+
+  while ((match = regex.exec(query)) !== null) {
+    filters.push({ key: match[1], value: match[2] });
+  }
+
+  // Filter out the filter patterns from the raw query
+  filterOptions.forEach((option) => {
+    const filterPattern = new RegExp(`${option}:[^\\s]+`, "g");
+    rawQuery = rawQuery.replace(filterPattern, "");
+  });
+
+  // Clean up extra spaces
+  rawQuery = rawQuery.replace(/\s+/g, " ").trim();
+
+  return { rawQuery, filters };
+};
+
 const SOURCE_OPTIONS = [
   { label: "Element channels", value: "element" },
   { label: "Graypaper.pdf", value: "graypaper" },
@@ -94,11 +126,18 @@ const SearchResults = () => {
     pagination,
   } = useSearch({ initialQuery: query });
 
+  // Calculate total pages
+  const totalPages = Math.ceil(totalResults / pagination.pageSize);
+
   useEffect(() => {
     if (query) {
-      search(query);
+      // Parse the query to extract filters
+      const { rawQuery, filters } = parseSearchQuery(query);
+
+      // Pass the raw query and filters separately
+      search(rawQuery, { filters });
     }
-  }, [query]);
+  }, [query]); // Remove search from dependency array to prevent infinite loop
 
   const handleSourceChange = (sources: string[]) => {
     setSelectedSources(sources);
@@ -123,9 +162,24 @@ const SearchResults = () => {
       <div className="w-full max-w-4xl px-7">
         <SearchForm initialQuery={query} />
 
-        <h2 className="text-2xl font-bold text-foreground mb-6">
-          {searchQuery}
-        </h2>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-foreground">{searchQuery}</h2>
+
+          {/* Display active filters as tags */}
+          {query && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {parseSearchQuery(query).filters.map((filter, index) => (
+                <div
+                  key={index}
+                  className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
+                >
+                  <span className="font-semibold mr-1">{filter.key}:</span>
+                  <span>{filter.value}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="mb-8">
           {isLoading && !results.length ? (
@@ -145,7 +199,7 @@ const SearchResults = () => {
               Previous
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {pagination.currentPage}
+              Page {pagination.currentPage} of {totalPages}
             </span>
             <Button
               onClick={pagination.nextPage}

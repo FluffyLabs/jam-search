@@ -9,3 +9,8 @@ export const messagesTable = pgTable("messages", {
   content: text("content"),
   timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
 });
+
+export const graypapersTable = pgTable("graypapers", {
+  version: text("version").primaryKey(),
+  timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
+});

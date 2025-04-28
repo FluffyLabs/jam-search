@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "fill-historical-messages": "tsx ./src/utils/fill-historical-messages.ts"
+    "fill-historical-messages": "tsx ./src/utils/fill-historical-messages.ts",
+    "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
@@ -26,6 +27,7 @@
     "drizzle-orm": "^0.42.0",
     "hono": "^4.7.7",
     "matrix-js-sdk": "^37.3.0",
+    "node-schedule": "^2.1.1",
     "postgres": "^3.4.5",
     "tsx": "^4.19.3",
     "zod": "^3.24.3"
@@ -33,6 +35,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.14.1",
+    "@types/node-schedule": "^2.1.0",
     "drizzle-kit": "^0.31.0",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"

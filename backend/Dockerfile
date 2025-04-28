@@ -1,17 +1,16 @@
-# Use the official Node.js image from Docker Hub
 FROM node:22-slim
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package.json package-lock.json ./
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install
 
-# Install dependencies using npm ci (ensures a clean and repeatable build)
-RUN npm ci --only=production
-
-# Copy the rest of the application code to the working directory
+# Copy source files
 COPY . .
 
-# Start the application using npm start
+# Build TypeScript
+RUN npm run build
+
+# Use npm start for Heroku compatibility
 CMD ["npm", "start"]

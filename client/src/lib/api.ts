@@ -53,11 +53,24 @@ export async function fetchApi<T>(
 // Fetch search results
 export async function fetchSearchResults(
   query: string,
-  options: { page?: number; pageSize?: number } = {}
+  options: {
+    page?: number;
+    pageSize?: number;
+    filters?: Array<{ key: string; value: string }>;
+  } = {}
 ): Promise<SearchResponse> {
-  const { page = 1, pageSize = 10 } = options;
-  console.log(page);
-  return fetchApi<SearchResponse>(
-    `/search?q=${encodeURIComponent(query)}&page=${page}&pageSize=${pageSize}`
-  );
+  const { page = 1, pageSize = 10, filters = [] } = options;
+
+  // Build the query parameters
+  const queryParams = new URLSearchParams();
+  queryParams.append("q", query);
+  queryParams.append("page", page.toString());
+  queryParams.append("pageSize", pageSize.toString());
+
+  // Add filter parameters if provided
+  filters.forEach((filter) => {
+    queryParams.append(`filter_${filter.key}`, filter.value);
+  });
+
+  return fetchApi<SearchResponse>(`/search?${queryParams.toString()}`);
 }
