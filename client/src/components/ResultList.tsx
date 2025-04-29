@@ -40,7 +40,7 @@ export const ResultList = ({ results }: ResultListProps) => {
               )}
             </div>
             <p className="text-muted-foreground text-sm mb-2">
-              "{result.content}"
+              {result.content}
             </p>
             {result.link && (
               <a
