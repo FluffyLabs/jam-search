@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
+    "cheerio": "^1.0.0-rc.12",
+    "date-fns": "^3.4.0",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.42.0",
     "hono": "^4.7.7",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@types/cheerio": "^0.22.35",
     "@types/node": "^22.14.1",
     "@types/node-schedule": "^2.1.0",
     "drizzle-kit": "^0.31.0",

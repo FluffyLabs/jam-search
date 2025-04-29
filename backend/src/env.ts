@@ -3,9 +3,6 @@ import "dotenv/config";
 import { z } from "zod";
 
 export const envSchema = z.object({
-  HOMESERVER_URL: z.string().url(),
-  ACCESS_TOKEN: z.string().min(1),
-  USER_ID: z.string().min(1),
   ROOM_IDS: z
     .string()
     .min(1)
