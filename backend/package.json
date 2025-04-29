@@ -11,14 +11,15 @@
     "lint": "biome check --write",
     "lint:ci": "biome ci",
     "start": "tsx ./src/index.ts",
-    "dev": "tsx watch ./src/index.ts",
+    "dev": "NODE_ENV=development tsx watch ./src/index.ts",
     "db:push": "drizzle-kit push --verbose --strict",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "fill-historical-messages": "tsx ./src/utils/fill-historical-messages.ts",
+    "fill-historical-messages": "tsx ./src/utils/fillHistoricalMessages.ts",
+    "graypaper:index-search": "tsx ./src/scripts/updateGraypaperData.ts",
     "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "hono": "^4.7.7",
     "matrix-js-sdk": "^37.3.0",
     "node-schedule": "^2.1.1",
+    "pdfjs-dist": "^5.1.91",
     "postgres": "^3.4.5",
     "tsx": "^4.19.3",
     "zod": "^3.24.3"

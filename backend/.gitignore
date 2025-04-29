@@ -54,3 +54,6 @@ coverage/
 *.bak
 *.tmp
 *.lock
+
+# Temporary files
+tmp
