@@ -204,7 +204,7 @@ const getTextToDisplay = (text: string, query: string) => {
   return result;
 };
 
-const highlightText = (text: string, words: string[]) => {
+export const highlightText = (text: string, words: string[]) => {
   // TODO: this is not secure solution as words comes from user input
   const regex = new RegExp(`(${words.join("|")})`, "gi");
   const result = [];
