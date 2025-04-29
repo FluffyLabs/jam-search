@@ -193,7 +193,7 @@ const SearchResults = () => {
           {isLoading && !results.length ? (
             <div className="text-center p-8">Loading results...</div>
           ) : (
-            <ResultList results={results} />
+            <ResultList results={results} searchQuery={searchQuery} />
           )}
         </div>
 

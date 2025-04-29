@@ -1,11 +1,13 @@
 import { SearchResult } from "@/lib/api";
 import { formatDate, formatJamChatName } from "@/lib/utils";
+import { highlightText } from "./GraypaperResults";
 
 interface ResultListProps {
   results: SearchResult[];
+  searchQuery: string;
 }
 
-export const ResultList = ({ results }: ResultListProps) => {
+export const ResultList = ({ results, searchQuery }: ResultListProps) => {
   if (results.length === 0) {
     return (
       <div className="text-center p-8">
@@ -40,7 +42,7 @@ export const ResultList = ({ results }: ResultListProps) => {
               )}
             </div>
             <p className="text-muted-foreground text-sm mb-2">
-              {result.content}
+              {highlightText(result.content || "", searchQuery.split(/\s+/))}
             </p>
             {result.link && (
               <a
