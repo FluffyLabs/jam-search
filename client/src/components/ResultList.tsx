@@ -7,6 +7,13 @@ interface ResultListProps {
   searchQuery: string;
 }
 
+const ARCHIVE = {
+  "!ddsEwXlCWnreEGuqXZ:polkadot.io":
+    "https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html",
+  "!wBOJlzaOULZOALhaRh:polkadot.io":
+    "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
+};
+
 export const ResultList = ({ results, searchQuery }: ResultListProps) => {
   if (results.length === 0) {
     return (
@@ -46,7 +53,9 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
             </p>
             {result.messageid && (
               <a
-                href={`https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html#${result.messageid}`}
+                href={`${ARCHIVE[result.roomid as keyof typeof ARCHIVE]}#${
+                  result.messageid
+                }`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-brand flex items-center w-fit hover:text-brand-dark"
