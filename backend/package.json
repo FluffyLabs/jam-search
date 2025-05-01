@@ -11,7 +11,7 @@
     "lint": "biome check --write",
     "lint:ci": "biome ci",
     "start": "tsx ./src/index.ts",
-    "dev": "NODE_ENV=development tsx watch ./src/index.ts",
+    "dev": "tsx watch ./src/index.ts",
     "db:push": "drizzle-kit push --verbose --strict",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",

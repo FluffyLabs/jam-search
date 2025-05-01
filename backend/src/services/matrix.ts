@@ -49,15 +49,36 @@ export class MatrixService {
       const sender = event.getSender();
       const eventId = event.getId();
       const timestamp = event.getDate();
+      const relatesTo = event.getContent()["m.relates_to"];
+      const isEdit = relatesTo && relatesTo.rel_type === "m.replace";
+      const isThread = relatesTo && relatesTo.rel_type === "m.thread";
 
-      if (typeof messageContent === "string") {
-        this.msgLog.onMessage(
-          roomId,
-          messageContent,
-          sender,
-          eventId,
-          timestamp
-        );
+      // We ignore threads for now
+      if (typeof messageContent === "string" && !isThread) {
+        if (isEdit) {
+          const originalEventId = relatesTo.event_id;
+          if (originalEventId) {
+            // Update the existing message in the database
+            this.msgLog.updateMessage(
+              roomId,
+              originalEventId,
+              messageContent,
+              sender,
+              eventId,
+              timestamp
+            );
+          } else {
+            console.error("No original event ID found for edit event");
+          }
+        } else {
+          this.msgLog.onMessage(
+            roomId,
+            messageContent,
+            sender,
+            eventId,
+            timestamp
+          );
+        }
       }
     });
 

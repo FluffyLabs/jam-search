@@ -1,6 +1,7 @@
 import "dotenv/config";
 import type { DbClient } from "../db/db.js";
 import { messagesTable } from "../db/schema.js";
+import { eq } from "drizzle-orm";
 
 export interface Message {
   messageId: string;
@@ -73,6 +74,37 @@ export class MessagesLogger {
         `${newMessage.timestamp.toISOString()}`,
         error
       );
+    }
+  }
+
+  async updateMessage(
+    roomId: string,
+    originalEventId: string,
+    newContent: string,
+    sender: string | undefined,
+    editEventId: string | undefined,
+    date: Date | null
+  ) {
+    if (!originalEventId || !date) {
+      return;
+    }
+
+    const encodedOriginalId =
+      Buffer.from(originalEventId).toString("base64url");
+
+    try {
+      // Update the message content in the database
+      await this.db
+        .update(messagesTable)
+        .set({
+          content: newContent,
+          // Optionally track edit timestamp, but keeping original message ID
+        })
+        .where(eq(messagesTable.messageid, encodedOriginalId));
+
+      console.log(`Updated message ${encodedOriginalId} with new content`);
+    } catch (error) {
+      console.error("Error updating edited message", originalEventId, error);
     }
   }
 
