@@ -49,16 +49,15 @@ export class MessagesLogger {
     roomId: string,
     msg: string,
     sender: string | undefined,
-    eventId: string | undefined,
+    messageId: string | undefined,
     date: Date | null
   ) {
-    if (!eventId || !date) {
+    if (!messageId || !date) {
       return;
     }
-    const encodedMessageId = Buffer.from(eventId).toString("base64url");
-    const link = this.generatePermalink(eventId, roomId);
+    const link = this.generatePermalink(messageId, roomId);
     const newMessage: Message = {
-      messageId: encodedMessageId,
+      messageId,
       roomId: roomId,
       sender: sender || "unknown",
       link: link,
@@ -79,18 +78,15 @@ export class MessagesLogger {
 
   async updateMessage(
     roomId: string,
-    originalEventId: string,
+    originalMessageId: string,
     newContent: string,
     sender: string | undefined,
-    editEventId: string | undefined,
+    editMessageId: string | undefined,
     date: Date | null
   ) {
-    if (!originalEventId || !date) {
+    if (!originalMessageId || !date || !editMessageId) {
       return;
     }
-
-    const encodedOriginalId =
-      Buffer.from(originalEventId).toString("base64url");
 
     try {
       // Update the message content in the database
@@ -98,13 +94,14 @@ export class MessagesLogger {
         .update(messagesTable)
         .set({
           content: newContent,
+          messageid: editMessageId,
           // Optionally track edit timestamp, but keeping original message ID
         })
-        .where(eq(messagesTable.messageid, encodedOriginalId));
+        .where(eq(messagesTable.messageid, originalMessageId));
 
-      console.log(`Updated message ${encodedOriginalId} with new content`);
+      console.log(`Updated message ${originalMessageId} with new content`);
     } catch (error) {
-      console.error("Error updating edited message", originalEventId, error);
+      console.error("Error updating edited message", originalMessageId, error);
     }
   }
 
@@ -113,7 +110,7 @@ export class MessagesLogger {
       roomId: string;
       msg: string;
       sender: string | undefined;
-      eventId: string | undefined;
+      messageId: string | undefined;
       date: Date | null;
     }[]
   ) {
@@ -130,15 +127,15 @@ export class MessagesLogger {
             roomId: string;
             msg: string;
             sender: string | undefined;
-            eventId: string;
+            messageId: string;
             date: Date;
-          } => Boolean(event.eventId && event.date)
+          } => Boolean(event.messageId && event.date)
         )
         .map((event) => ({
-          messageId: Buffer.from(event.eventId).toString("base64url"),
+          messageId: event.messageId,
           roomId: event.roomId,
           sender: event.sender || "unknown",
-          link: this.generatePermalink(event.eventId, event.roomId),
+          link: this.generatePermalink(event.messageId, event.roomId),
           content: event.msg,
           timestamp: event.date,
         }));
