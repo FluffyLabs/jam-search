@@ -266,7 +266,7 @@ export const MultiSelect = React.forwardRef<
                       })}
                     {!showOptionsAsTags && selectedValues.length > maxCount && (
                       <span className="text-[#858585] px-2">
-                        <span className="hidden sm:inline">Source</span>{" "}
+                        <span className="hidden sm:inline">Sources</span>{" "}
                         <span className="bg-secondary ml-2 p-2 rounded-xl w-[15px] h-[15px]">
                           {selectedValues.length}
                         </span>
