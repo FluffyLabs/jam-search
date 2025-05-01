@@ -59,7 +59,7 @@ export async function fetchArchivedMessages(
         const sender = $(element).find("span.u").text().trim();
 
         // Extract message content - it's the text content after the sender part
-        let elementText = $(element).text().trim();
+        const elementText = $(element).text().trim();
         let msgStartIndex = elementText.indexOf(sender) + sender.length;
         // Skip the colon and space after the username
         if (elementText.substring(msgStartIndex, msgStartIndex + 2) === ": ") {

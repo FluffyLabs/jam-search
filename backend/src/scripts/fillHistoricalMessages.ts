@@ -1,7 +1,7 @@
-import { db } from "../db/db.js";
-import { MessagesLogger } from "../services/logger.js";
-import { fetchArchivedMessages } from "../services/archive.js";
 import { format, subDays } from "date-fns";
+import { db } from "../db/db.js";
+import { fetchArchivedMessages } from "../services/archive.js";
+import { MessagesLogger } from "../services/logger.js";
 
 const ROOMS = [
   {
@@ -70,7 +70,7 @@ export async function fetchAndInsertHistoricalMessages(daysBack = 1000) {
 // });
 
 // For running directly:
-const daysBack = process.argv[2] ? parseInt(process.argv[2], 10) : 1000;
+const daysBack = process.argv[2] ? Number.parseInt(process.argv[2], 10) : 1000;
 fetchAndInsertHistoricalMessages(daysBack).finally(() => {
   process.exit(0);
 });

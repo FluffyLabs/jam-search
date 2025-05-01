@@ -1,7 +1,7 @@
 import "dotenv/config";
+import { eq } from "drizzle-orm";
 import type { DbClient } from "../db/db.js";
 import { messagesTable } from "../db/schema.js";
-import { eq } from "drizzle-orm";
 
 export interface Message {
   messageId: string;
