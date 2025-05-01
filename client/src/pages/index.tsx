@@ -12,7 +12,7 @@ const Header = () => {
       </h1>
 
       <p className="text-center text-muted-foreground mb-8">
-        Connecting you to the right answers from GrayPaper, JAM Chat, JAM0 and
+        Connecting you to the right answers from Gray Paper, JAM Chat, JAM0 and
         others sources
       </p>
     </>

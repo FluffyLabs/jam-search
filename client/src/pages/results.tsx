@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ResultList } from "@/components/ResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
+import { Check, Share } from "lucide-react";
 
 interface ResultHeaderProps {
   totalResults: number;
@@ -47,9 +48,9 @@ const parseSearchQuery = (
 const SOURCE_OPTIONS = [
   { label: "Element channels", value: "element" },
   { label: "Graypaper.pdf", value: "graypaper" },
-  { label: "JamCha.in/docs", value: "jamchain" },
-  { label: "Web3 Foundation", value: "w3f" },
-  { label: "GitHub Source Code", value: "github" },
+  { label: "JamCha.in/docs", value: "jamchain", disabled: true },
+  { label: "Web3 Foundation", value: "w3f", disabled: true },
+  { label: "GitHub Source Code", value: "github", disabled: true },
 ];
 
 const initialSources = ["element", "graypaper"];
@@ -81,7 +82,6 @@ const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
               onValueChange={handleSourceChange}
               placeholder="Select sources"
               className="min-w-[90px] sm:min-w-[140px]"
-              showSearch
               maxCount={0}
               required
             />
@@ -96,19 +96,17 @@ const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
           className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
           onClick={handleCopyLink}
         >
-          <svg
-            className="w-4 h-4 mr-1.5 opacity-70"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          {copied ? "copied!" : "copy link"}
+          {copied ? (
+            <div className="flex items-center">
+              <Check className="w-4 h-4 mr-1.5" />
+              copied!
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <Share className="w-4 h-4 mr-1.5" />
+              share results
+            </div>
+          )}
         </Button>
       </div>
     </div>
@@ -167,11 +165,9 @@ const SearchResults = () => {
       <div className="w-full max-w-4xl px-7">
         <SearchForm initialQuery={query} />
 
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground">{searchQuery}</h2>
-
-          {/* Display active filters as tags */}
-          {query && (
+        {/* Display active filters as tags */}
+        {query && parseSearchQuery(query).filters.length > 0 && (
+          <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
               {parseSearchQuery(query).filters.map((filter, index) => (
                 <div
@@ -183,8 +179,8 @@ const SearchResults = () => {
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="mb-8">
           {selectedSources.includes("graypaper") && (
