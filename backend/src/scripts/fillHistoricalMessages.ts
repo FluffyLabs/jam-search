@@ -1,163 +1,76 @@
-import { Direction } from "matrix-js-sdk";
+import { format, subDays } from "date-fns";
 import { db } from "../db/db.js";
-import { env } from "../env.js";
+import { fetchArchivedMessages } from "../services/archive.js";
 import { MessagesLogger } from "../services/logger.js";
-import { MatrixService } from "../services/matrix.js";
 
-// Define message type to avoid implicit any[]
-interface Message {
-  roomId: string;
-  msg: string;
-  sender: string;
-  eventId: string;
-  date: Date;
-}
+const ROOMS = [
+  {
+    id: "!ddsEwXlCWnreEGuqXZ:polkadot.io",
+    archiveUrl:
+      "https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html",
+  },
+  {
+    id: "!wBOJlzaOULZOALhaRh:polkadot.io",
+    archiveUrl:
+      "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
+  },
+];
 
-export async function fetchAndInsertHistoricalMessages(
-  roomIds: string[],
-  daysBack = 30,
-  maxMessagesPerRoom = 3000 // Set maximum number of messages to fetch per room
-) {
-  const logger = new MessagesLogger({ roomIds, db });
-  const daysAgo = new Date();
-  daysAgo.setDate(daysAgo.getDate() - daysBack);
+export async function fetchAndInsertHistoricalMessages(daysBack = 1000) {
+  // Extract just the room IDs for the MessagesLogger
+  const logger = new MessagesLogger({
+    roomIds: ROOMS.map((room) => room.id),
+    db,
+  });
 
-  // Create Matrix service with automatic token refresh
-  const matrixService = new MatrixService(
-    env.HOMESERVER_URL,
-    env.ACCESS_TOKEN,
-    env.USER_ID,
-    logger
-  );
+  // Calculate from and to dates based on days back and format as strings
+  const today = new Date();
+  const pastDate = subDays(today, daysBack);
 
-  // Start client with token refresh capability
-  const client = await matrixService.start();
+  const toDateString = format(today, "yyyy-MM-dd");
+  const fromDateString = format(pastDate, "yyyy-MM-dd");
+
+  console.log(`Fetching messages from ${fromDateString} to ${toDateString}`);
 
   try {
-    for (const roomId of roomIds) {
-      try {
-        console.log(`Fetching messages for room ${roomId}`);
+    for (const room of ROOMS) {
+      console.log(`Fetching archived messages for room ${room.id}`);
+      console.log(`Using archive URL: ${room.archiveUrl}`);
 
-        const room = client.getRoom(roomId);
-        if (!room) {
-          console.error(`Room ${roomId} not found`);
-          continue;
-        }
+      // Fetch messages for the date range using string dates
+      const messages = await fetchArchivedMessages(
+        room.archiveUrl,
+        room.id,
+        fromDateString,
+        toDateString
+      );
 
-        // Implement pagination to fetch more than 1000 messages
-        const batchSize = 1000; // Maximum per API request
-        let fromToken = ""; // Start with empty token (latest messages)
-        let totalFetched = 0;
-        let allMessages: Message[] = [];
-        let shouldContinue = true;
-
-        // Fetch messages in batches using pagination
-        while (shouldContinue && totalFetched < maxMessagesPerRoom) {
-          console.log(
-            `Fetching batch from token: ${
-              fromToken || "latest"
-            }, total so far: ${totalFetched}`
-          );
-
-          const messagesResponse = await client.createMessagesRequest(
-            roomId,
-            fromToken,
-            batchSize,
-            Direction.Backward
-          );
-
-          if (
-            !messagesResponse ||
-            !messagesResponse.chunk ||
-            messagesResponse.chunk.length === 0
-          ) {
-            console.log(`No more messages found for room ${roomId}`);
-            break;
-          }
-
-          const events = messagesResponse.chunk;
-          console.log(`Received ${events.length} events in this batch`);
-
-          // Process messages from this batch
-          const batchMessages: Message[] = [];
-          for (const event of events) {
-            if (event.type === "m.room.message") {
-              const content = event.content;
-              const messageContent = content.body;
-
-              if (typeof messageContent === "string") {
-                const sender = event.sender;
-                const eventId = event.event_id;
-                const timestamp = new Date(event.origin_server_ts);
-
-                if (eventId && timestamp && timestamp >= daysAgo) {
-                  try {
-                    batchMessages.push({
-                      roomId,
-                      msg: messageContent,
-                      sender,
-                      eventId,
-                      date: timestamp,
-                    });
-                  } catch (error) {
-                    console.error(
-                      `Error processing message ${eventId}:`,
-                      error
-                    );
-                  }
-                } else if (timestamp < daysAgo) {
-                  // We've reached messages older than our cutoff date
-                  shouldContinue = false;
-                }
-              }
-            }
-          }
-
-          // Add this batch to our collection
-          allMessages = [...allMessages, ...batchMessages];
-          totalFetched += events.length;
-
-          // Check if we have an end token for the next batch
-          if (messagesResponse.end) {
-            fromToken = messagesResponse.end;
-          } else {
-            console.log("No pagination token returned, reached end of history");
-            break;
-          }
-
-          // If we got fewer messages than requested, we've reached the end
-          if (events.length < batchSize) {
-            console.log(
-              "Received fewer messages than requested, reached end of history"
-            );
-            break;
-          }
-        }
-
+      if (messages.length > 0) {
+        console.log(`Found ${messages.length} messages for room ${room.id}`);
+        await logger.onMessages(messages);
         console.log(
-          `Total messages collected: ${allMessages.length} from ${totalFetched} events`
+          `Successfully inserted ${messages.length} messages for room ${room.id}`
         );
-
-        if (allMessages.length > 0) {
-          console.log(
-            JSON.stringify(allMessages[0], null, 2),
-            JSON.stringify(allMessages[allMessages.length - 1], null, 2)
-          );
-          await logger.onMessages(allMessages);
-        } else {
-          console.log("No matching messages found");
-        }
-      } catch (error) {
-        console.error(`Error processing room ${roomId}:`, error);
+        console.log("First message:", messages[0]);
+        console.log("Last message:", messages[messages.length - 1]);
+      } else {
+        console.log(
+          `No messages found for room ${room.id} in the specified date range`
+        );
       }
     }
-  } finally {
-    // Stop the client
-    await matrixService.stop();
+  } catch (error) {
+    console.error("Error fetching and inserting historical messages:", error);
   }
 }
 
 // Example usage:
-fetchAndInsertHistoricalMessages(env.ROOM_IDS, 113, 10000).finally(() => {
+// fetchAndInsertHistoricalMessages(30).finally(() => {
+//   process.exit(0);
+// });
+
+// For running directly:
+const daysBack = process.argv[2] ? Number.parseInt(process.argv[2], 10) : 1000;
+fetchAndInsertHistoricalMessages(daysBack).finally(() => {
   process.exit(0);
 });

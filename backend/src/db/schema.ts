@@ -5,7 +5,6 @@ export const messagesTable = pgTable("messages", {
   messageid: text("messageid").unique(),
   roomid: text("roomid"),
   sender: text("sender"),
-  link: text("link"),
   content: text("content"),
   timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
 });
