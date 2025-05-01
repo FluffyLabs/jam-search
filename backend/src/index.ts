@@ -6,10 +6,13 @@ import { env } from "./env.js";
 import { updateGraypapers } from "./scripts/updateGraypapers.js";
 import { MessagesLogger } from "./services/logger.js";
 import { fetchArchivedMessages } from "./services/archiveService.js";
+import { format } from "date-fns";
 
 const isDev = process.env.NODE_ENV === "development";
 async function main() {
-  const msgLog = new MessagesLogger({ roomIds: env.ROOM_IDS, db: db });
+  // Extract just the room IDs for the MessagesLogger
+  const roomIds = env.ROOM_IDS.map((room) => room.id);
+  const msgLog = new MessagesLogger({ roomIds, db: db });
   let job: Job | null = null;
   const app = createApp();
 
@@ -21,37 +24,33 @@ async function main() {
         new Date().toISOString()
       );
       try {
-        // Get yesterday's date (messages from previous day)
+        // Get yesterday's date as string
+        const today = new Date();
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
 
-        // Define archive URLs for the rooms
-        // First entry is graypaper room, second is JAM room
-        const archiveUrls = [
-          "https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html",
-          "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
-        ];
-
-        // Make sure we don't try to fetch more rooms than we have archive URLs for
-        const roomCount = Math.min(env.ROOM_IDS.length, archiveUrls.length);
+        const yesterdayString = format(yesterday, "yyyy-MM-dd");
 
         // Fetch messages from archives and store them
-        for (let i = 0; i < roomCount; i++) {
-          const roomId = env.ROOM_IDS[i];
-          const archiveUrl = archiveUrls[i];
+        for (const room of env.ROOM_IDS) {
+          console.log(
+            `Processing room ${room.id} with archive URL ${room.archiveUrl}`
+          );
 
           const messages = await fetchArchivedMessages(
-            archiveUrl,
-            roomId,
-            yesterday
+            room.archiveUrl,
+            room.id,
+            yesterdayString,
+            yesterdayString // Use same date for both from and to to get just yesterday's messages
           );
+
           if (messages.length > 0) {
             await msgLog.onMessages(messages);
             console.log(
-              `Added ${messages.length} messages from room ${roomId}`
+              `Added ${messages.length} messages from room ${room.id}`
             );
           } else {
-            console.log(`No new messages found for room ${roomId}`);
+            console.log(`No new messages found for room ${room.id}`);
           }
         }
 

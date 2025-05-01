@@ -1,5 +1,5 @@
 import { load } from "cheerio";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 // Define message interface to match what MessagesLogger expects
 interface MessageEvent {
@@ -11,16 +11,20 @@ interface MessageEvent {
 }
 
 /**
- * Fetches and parses messages from the Matrix HTML archive
+ * Fetches and parses messages from the Matrix HTML archive within a date range
+ * @param archiveUrl URL of the Matrix HTML archive
+ * @param roomId Matrix room ID
+ * @param fromDateString Start date in "yyyy-MM-dd" format
+ * @param toDateString End date in "yyyy-MM-dd" format
  */
 export async function fetchArchivedMessages(
   archiveUrl: string,
   roomId: string,
-  targetDate: Date
+  fromDateString: string,
+  toDateString: string
 ): Promise<MessageEvent[]> {
   try {
-    // Format the date to compare
-    const targetDateString = format(targetDate, "yyyy-MM-dd");
+    console.log(`Fetching messages from ${fromDateString} to ${toDateString}`);
 
     // Fetch the HTML content from the archive
     const response = await fetch(archiveUrl);
@@ -47,8 +51,11 @@ export async function fetchArchivedMessages(
       const date = new Date(dateStr);
       const messageDateString = format(date, "yyyy-MM-dd");
 
-      // Only include messages from the target date
-      if (messageDateString === targetDateString) {
+      // Check if the message date is within our target range
+      if (
+        messageDateString >= fromDateString &&
+        messageDateString <= toDateString
+      ) {
         const sender = $(element).find("span.u").text().trim();
 
         // Extract message content - it's the text content after the sender part
@@ -83,7 +90,7 @@ export async function fetchArchivedMessages(
     });
 
     console.log(
-      `Found ${messages.length} messages from ${targetDateString} in room ${roomId}`
+      `Found ${messages.length} messages between ${fromDateString} and ${toDateString} in room ${roomId}`
     );
     return messages;
   } catch (error) {

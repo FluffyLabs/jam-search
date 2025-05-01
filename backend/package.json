@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "fill-historical-messages": "tsx ./src/utils/fill-historical-messages.ts",
+    "fetch-archived-messages": "tsx ./src/utils/fill-historical-messages.ts",
     "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts"
   },
   "dependencies": {
