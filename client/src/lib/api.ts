@@ -13,7 +13,6 @@ export interface SearchResult {
   messageid: string | null;
   roomid: string | null;
   sender: string | null;
-  link: string | null;
   content: string | null;
   timestamp: string;
 }

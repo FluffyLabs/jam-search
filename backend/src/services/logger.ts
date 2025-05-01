@@ -7,7 +7,6 @@ export interface Message {
   messageId: string;
   roomId: string;
   sender: string;
-  link: string;
   content: string;
   timestamp: Date;
 }
@@ -22,7 +21,6 @@ const toDbMessage = (newMessage: Message) => {
     messageid: newMessage.messageId,
     roomid: newMessage.roomId,
     sender: newMessage.sender,
-    link: newMessage.link,
     content: newMessage.content,
     timestamp: newMessage.timestamp,
   };
@@ -55,12 +53,10 @@ export class MessagesLogger {
     if (!messageId || !date) {
       return;
     }
-    const link = this.generatePermalink(messageId, roomId);
     const newMessage: Message = {
       messageId,
       roomId: roomId,
       sender: sender || "unknown",
-      link: link,
       content: msg,
       timestamp: date,
     };
@@ -135,7 +131,6 @@ export class MessagesLogger {
           messageId: event.messageId,
           roomId: event.roomId,
           sender: event.sender || "unknown",
-          link: this.generatePermalink(event.messageId, event.roomId),
           content: event.msg,
           timestamp: event.date,
         }));

@@ -44,9 +44,9 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
             <p className="text-muted-foreground text-sm mb-2">
               {highlightText(result.content || "", searchQuery.split(/\s+/))}
             </p>
-            {result.link && (
+            {result.messageid && (
               <a
-                href={result.link}
+                href={`https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html#${result.messageid}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-brand flex items-center w-fit hover:text-brand-dark"
