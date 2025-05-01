@@ -38,8 +38,8 @@ export async function fetchArchivedMessages(
     // Parse message elements
     const messages: MessageEvent[] = [];
 
-    // Each message entry in the archive has the class "msg"
-    $("div.msg").each((_index: number, element) => {
+    // Select only messages with class "msg" but not those with class "msg reply"
+    $("div.msg:not(.reply)").each((_index: number, element) => {
       const timestampElement = $(element).find("a.ts");
       const dateStr = timestampElement.text().trim();
 
