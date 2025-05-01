@@ -11,11 +11,14 @@ export const QUERY_KEYS = {
 export function getSearchResultsKey(
   query: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  channelId?: string
 ) {
-  return [QUERY_KEYS.SEARCH_RESULTS, query, page, pageSize];
+  return [QUERY_KEYS.SEARCH_RESULTS, query, page, pageSize, channelId].filter(
+    Boolean
+  );
 }
 
-export function getSearchParamsKey() {
-  return [QUERY_KEYS.SEARCH_PARAMS];
+export function getSearchParamsKey(channelId?: string) {
+  return [QUERY_KEYS.SEARCH_PARAMS, channelId].filter(Boolean);
 }

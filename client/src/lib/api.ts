@@ -56,9 +56,10 @@ export async function fetchSearchResults(
     page?: number;
     pageSize?: number;
     filters?: Array<{ key: string; value: string }>;
+    channelId?: string;
   } = {}
 ): Promise<SearchResponse> {
-  const { page = 1, pageSize = 10, filters = [] } = options;
+  const { page = 1, pageSize = 10, filters = [], channelId } = options;
 
   // Build the query parameters
   const queryParams = new URLSearchParams();
@@ -70,6 +71,11 @@ export async function fetchSearchResults(
   filters.forEach((filter) => {
     queryParams.append(`filter_${filter.key}`, filter.value);
   });
+
+  // Add channelId parameter if provided
+  if (channelId) {
+    queryParams.append("channelId", channelId);
+  }
 
   return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
 }

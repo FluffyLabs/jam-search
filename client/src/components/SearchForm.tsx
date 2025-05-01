@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useSearch } from "@/hooks/useSearch";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-
+import { MATRIX_CHANNELS } from "@/consts";
 interface SearchFormProps {
   initialQuery?: string;
 }
@@ -15,7 +15,7 @@ type SearchFilter = {
 };
 
 export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
-  const { search } = useSearch();
+  const { search } = useSearch({ channelId: MATRIX_CHANNELS[0].id });
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [isFocused, setIsFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -111,7 +111,6 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
     if (searchQuery.trim()) {
       // Parse the query to extract filters AND the raw query (without filters)
       const { rawQuery, filters } = parseSearchQuery(searchQuery);
-
       // Pass the raw query (without filters) and the parsed filters separately
       search(rawQuery, { filters });
 

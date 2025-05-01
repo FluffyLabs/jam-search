@@ -7,6 +7,7 @@ import { ResultList } from "@/components/ResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
 import { Check, Share } from "lucide-react";
+import { MATRIX_CHANNELS } from "@/consts";
 
 interface ResultHeaderProps {
   totalResults: number;
@@ -127,7 +128,7 @@ const SearchResults = () => {
     isLoading,
     isError,
     pagination,
-  } = useSearch({ initialQuery: query });
+  } = useSearch({ initialQuery: query, channelId: MATRIX_CHANNELS[0].id });
 
   // Calculate total pages
   const totalPages = Math.ceil(totalResults / pagination.pageSize);

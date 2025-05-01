@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchSearchResults, SearchResponse } from "@/lib/api";
 import { getSearchResultsKey, getSearchParamsKey } from "@/lib/queryKeys";
-
+import { MATRIX_CHANNELS } from "@/consts";
 interface UseSearchOptions {
   initialQuery?: string;
   pageSize?: number;
+  channelId?: (typeof MATRIX_CHANNELS)[number]["id"];
 }
 
 interface SearchFilter {
@@ -17,22 +18,24 @@ interface SearchParams {
   currentPage: number;
   pageSize: number;
   filters?: SearchFilter[];
+  channelId?: string;
 }
 
 export function useSearch({
   initialQuery = "",
+  channelId,
   pageSize = 10,
 }: UseSearchOptions = {}) {
   // Get query client instance
   const queryClient = useQueryClient();
-
   // Get search params from global state or use defaults
-  const searchParamsKey = getSearchParamsKey();
+  const searchParamsKey = getSearchParamsKey(channelId);
   const defaultParams: SearchParams = {
     query: initialQuery,
     currentPage: 1,
     pageSize,
     filters: [],
+    channelId,
   };
 
   const searchParams =
@@ -44,7 +47,8 @@ export function useSearch({
   const searchResultsKey = getSearchResultsKey(
     searchQuery,
     currentPage,
-    pageSize
+    pageSize,
+    channelId
   );
 
   // Mutation for fetching search results
@@ -54,6 +58,7 @@ export function useSearch({
         page: params.currentPage,
         pageSize: params.pageSize,
         filters: params.filters,
+        channelId,
       }),
     onSuccess: (data) => {
       // Store results in global cache
@@ -75,6 +80,7 @@ export function useSearch({
       query,
       currentPage: 1,
       filters: options?.filters || [],
+      channelId,
     };
 
     // Update search params in global state
