@@ -156,7 +156,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
   };
 
   return (
-    <div ref={searchRef} className="relative w-full mb-12 mt-4">
+    <div ref={searchRef} className="relative w-full mb-7 mt-4">
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative">
           {/* Hidden actual input field for form handling */}
@@ -178,7 +178,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
               <div dangerouslySetInnerHTML={{ __html: displayedValue }} />
             ) : (
               <span className="text-muted-foreground">
-                Example: "JAM consensus" from: user before: 2023-10
+                Examples: grandpa, contest, pvm
               </span>
             )}
           </div>

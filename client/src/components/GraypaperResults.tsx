@@ -35,7 +35,7 @@ export const GraypaperResults = ({ query }: { query: string }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 mb-4">
+    <div className="flex flex-col gap-4 mb-7">
       <h2 className="text-sm">Top Graypaper Results</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {data.results.map((section) => (

@@ -71,6 +71,8 @@ interface MultiSelectProps
     icon?: React.ComponentType<{ className?: string }>;
     /** Optional removable flag. */
     removable?: boolean;
+    /** If true, the option will be disabled and cannot be selected. */
+    disabled?: boolean;
   }[];
 
   /**
@@ -199,6 +201,10 @@ export const MultiSelect = React.forwardRef<
     };
 
     const toggleOption = (option: string) => {
+      // Check if the option is disabled before toggling
+      const optionObj = options.find((o) => o.value === option);
+      if (optionObj?.disabled) return;
+
       const newSelectedValues = selectedValues.includes(option)
         ? selectedValues.filter((value) => value !== option)
         : [...selectedValues, option];
@@ -382,7 +388,9 @@ export const MultiSelect = React.forwardRef<
                       onSelect={() => toggleOption(option.value)}
                       className={cn(
                         "cursor-pointer",
-                        isSelected ? "text-white" : "text-[#848484]"
+                        isSelected ? "text-white" : "text-[rgb(204,204,204)]",
+                        option.disabled &&
+                          "opacity-50 cursor-not-allowed pointer-events-none"
                       )}
                     >
                       <div
@@ -399,7 +407,7 @@ export const MultiSelect = React.forwardRef<
                         <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                       )}
                       <span className="flex-1 text-[11px]">{option.label}</span>
-                      {option.removable && (
+                      {option.removable && !option.disabled && (
                         <XCircle
                           className="ml-2 h-4 w-4 cursor-pointer"
                           onClick={(event) => {
