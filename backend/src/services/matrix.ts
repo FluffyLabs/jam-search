@@ -59,25 +59,33 @@ export class MatrixService {
           const originalEventId = relatesTo.event_id;
           if (originalEventId) {
             // Update the existing message in the database
-            this.msgLog.updateMessage(
-              roomId,
-              originalEventId,
-              messageContent,
-              sender,
-              eventId,
-              timestamp
-            );
+            // this.msgLog.updateMessage(
+            //   roomId,
+            //   originalEventId,
+            //   messageContent,
+            //   sender,
+            //   eventId,
+            //   timestamp
+            // );
           } else {
             console.error("No original event ID found for edit event");
           }
         } else {
-          this.msgLog.onMessage(
+          console.log(
+            "onMessage",
             roomId,
             messageContent,
             sender,
             eventId,
             timestamp
           );
+          // this.msgLog.onMessage(
+          //   roomId,
+          //   messageContent,
+          //   sender,
+          //   eventId,
+          //   timestamp
+          // );
         }
       }
     });

@@ -11,6 +11,32 @@ interface MessageEvent {
 }
 
 /**
+ * Removes quoted content from a message
+ * Quoted content appears as lines starting with ">"
+ */
+function removeQuotedContent(content: string): string {
+  // Split the message into lines
+  const lines = content.split("\n");
+
+  // Find the first line that doesn't start with ">"
+  let firstNonQuoteLine = 0;
+  while (
+    firstNonQuoteLine < lines.length &&
+    lines[firstNonQuoteLine].trim().startsWith(">")
+  ) {
+    firstNonQuoteLine++;
+  }
+
+  // If everything was a quote or empty, return empty string
+  if (firstNonQuoteLine >= lines.length) {
+    return "";
+  }
+
+  // Return only the non-quoted content
+  return lines.slice(firstNonQuoteLine).join("\n").trim();
+}
+
+/**
  * Fetches and parses messages from the Matrix HTML archive within a date range
  * @param archiveUrl URL of the Matrix HTML archive
  * @param roomId Matrix room ID
@@ -67,6 +93,11 @@ export async function fetchArchivedMessages(
         }
         let msg = elementText.substring(msgStartIndex).trim();
 
+        // Remove quoted content if present (lines starting with ">")
+        if (msg.trim().startsWith(">")) {
+          msg = removeQuotedContent(msg);
+        }
+
         // Remove "(edited)" from the end of messages if present
         msg = msg.replace(/\s*\(edited\)\s*$/, "");
 
@@ -82,13 +113,16 @@ export async function fetchArchivedMessages(
                 .toString(36)
                 .substring(2, 10)}`;
 
-        messages.push({
-          roomId,
-          msg,
-          sender,
-          messageId: eventId,
-          date,
-        });
+        // Skip messages that become empty after removing quotes
+        if (msg.trim()) {
+          messages.push({
+            roomId,
+            msg,
+            sender,
+            messageId: eventId,
+            date,
+          });
+        }
       }
     });
 
