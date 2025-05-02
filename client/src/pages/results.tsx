@@ -16,14 +16,14 @@ interface ResultHeaderProps {
 }
 
 const SOURCE_OPTIONS = [
-  { label: "Matrix channels", value: "element" },
+  { label: "Matrix channels", value: "matrix" },
   { label: "Graypaper.pdf", value: "graypaper" },
   { label: "JamCha.in/docs", value: "jamchain", disabled: true },
   { label: "Web3 Foundation", value: "w3f", disabled: true },
   { label: "GitHub Source Code", value: "github", disabled: true },
 ];
 
-const initialSources = ["element", "graypaper"];
+const initialSources = ["matrix", "graypaper"];
 
 const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
   const [copied, setCopied] = useState(false);
@@ -140,10 +140,10 @@ const SearchResults = () => {
             <GraypaperResults query={query} />
           )}
 
-          {selectedSources.includes("element") && (
+          {selectedSources.includes("matrix") && (
             <div className="mt-6">
               <div className="flex justify-between items-center mb-3">
-                <h2 className="text-sm">Top Element Chat Results</h2>
+                <h2 className="text-sm">Top matrix Chat Results</h2>
                 {totalResults > 2 && (
                   <Link to={`/results/matrix?q=${encodeURIComponent(query)}`}>
                     <Button
