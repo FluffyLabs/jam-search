@@ -37,6 +37,7 @@ export function createApp() {
     filter_since_gp: z.string().optional(),
     filter_before: z.string().optional(),
     filter_after: z.string().optional(),
+    channelId: z.string().optional(),
   });
 
   // Search endpoint
@@ -65,6 +66,11 @@ export function createApp() {
       }
       // Use LIKE for prefix matching on sender names
       filterConditions.push(like(messagesTable.sender, `${senderName}%`));
+    }
+
+    // Add filter condition for channelId
+    if (data.channelId) {
+      filterConditions.push(eq(messagesTable.roomid, data.channelId));
     }
 
     // Lookup timestamp for graypaper version if filter_since_gp is provided
