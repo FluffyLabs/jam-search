@@ -13,18 +13,6 @@ export function formatDate(date: string) {
   });
 }
 
-export function formatJamChatName(roomId: string | null) {
-  if (!roomId) return null;
-
-  const rooms = {
-    "!ddsEwXlCWnreEGuqXZ:polkadot.io": "Gray Paper",
-    "!wBOJlzaOULZOALhaRh:polkadot.io": "Let's JAM",
-    "!KKOmuUpvYKPcniwOzw:matrix.org": "JAM Implementers Room",
-  };
-
-  return rooms[roomId as keyof typeof rooms] || roomId;
-}
-
 // Define SearchFilter type
 export interface SearchFilter {
   key: string;

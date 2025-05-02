@@ -1,7 +1,7 @@
 import { SearchResult } from "@/lib/api";
-import { formatDate, formatJamChatName } from "@/lib/utils";
 import { highlightText } from "./GraypaperResults";
 import { MATRIX_CHANNELS } from "@/consts";
+import { formatDate } from "@/lib/utils";
 
 interface ResultListProps {
   results: SearchResult[];
@@ -30,11 +30,7 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
               </span>
               {result.timestamp && (
                 <span className="text-xs text-muted-foreground ml-2">
-                  {new Date(result.timestamp).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {formatDate(result.timestamp)}
                 </span>
               )}
             </div>
