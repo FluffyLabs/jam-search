@@ -34,8 +34,6 @@ export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
       display: "graypaper.fluffylabs.dev",
       href: "https://graypaper.fluffylabs.dev",
     },
-    description:
-      "We build fluffy blockchain stuff. Talk is cheap, so see our GitHub for the code. Projects no fluff - we build...",
   };
 
   return (
@@ -62,7 +60,6 @@ export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
       <CommercialBanner
         title={graypaperReader.title}
         url={graypaperReader.url}
-        description={graypaperReader.description}
       />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {results.map((section) => (

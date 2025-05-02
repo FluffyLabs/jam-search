@@ -54,9 +54,9 @@ const MatrixResults = () => {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <h1 className="text-lg font-medium">{channel.name} Results</h1>
+            <h1 className="text-lg font-medium">{channel.name} @ Matrix</h1>
             <span className="text-muted-foreground text-sm">
-              {totalResults.toLocaleString()} results
+              ({totalResults.toLocaleString()} results)
             </span>
           </div>
         </div>

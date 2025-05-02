@@ -6,7 +6,6 @@ import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { parseSearchQuery } from "@/lib/utils";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { highlightText } from "@/components/GraypaperResults";
-import Logo from "@/assets/logo.svg";
 
 const GraypaperResults = () => {
   const location = useLocation();
@@ -25,17 +24,6 @@ const GraypaperResults = () => {
     query,
     pageSize: 10,
   });
-
-  // Banner data
-  const graypaperReader = {
-    title: "Fluffy Labs - Gray Paper Reader",
-    url: {
-      display: "graypaper.fluffylabs.dev",
-      href: "https://graypaper.fluffylabs.dev",
-    },
-    description:
-      "We build fluffy blockchain stuff. Talk is cheap, so see our GitHub for the code. Projects no fluff - we build...",
-  };
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
@@ -56,7 +44,7 @@ const GraypaperResults = () => {
       </div>
 
       <div className="w-full max-w-4xl px-7">
-        <SearchForm initialQuery={query} />
+        <SearchForm />
 
         {/* Display active filters as tags */}
         {query && parseSearchQuery(query).filters.length > 0 && (
@@ -78,12 +66,6 @@ const GraypaperResults = () => {
         <h2 className="text-lg font-medium mb-4">
           Graypaper Reader (0.6.5) ({totalResults} results)
         </h2>
-
-        <GraypaperReaderBanner
-          title={graypaperReader.title}
-          url={graypaperReader.url}
-          description={graypaperReader.description}
-        />
 
         <div className="mt-8">
           {isLoading ? (
@@ -136,44 +118,6 @@ const GraypaperResults = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-// Helper components
-const GraypaperReaderBanner = ({
-  title,
-  url,
-  description,
-}: {
-  title: string;
-  url: {
-    display: string;
-    href: string;
-  };
-  description: string;
-}) => {
-  return (
-    <Card className="relative bg-secondary border-border">
-      <CardContent className="p-1.5 flex gap-2 shrink-0 items-center">
-        <div className="bg-muted p-2 rounded-full border-border border">
-          <img src={Logo} className="size-6" alt="Fluffy Labs Logo" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <CardTitle className="text-sm text-primary">{title}</CardTitle>
-            <a
-              href={url.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground after:absolute after:inset-0"
-            >
-              {url.display}
-            </a>
-          </div>
-          <p className="text-xs text-foreground">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 
