@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SearchForm } from "@/components/SearchForm";
 import { useSearch } from "@/hooks/useSearch";
 import { useLocation, Link } from "react-router";
@@ -80,26 +80,20 @@ const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
 
 const SearchResults = () => {
   const location = useLocation();
-  const query = new URLSearchParams(location.search).get("q") || "";
+  const richQuery = new URLSearchParams(location.search).get("q") || "";
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
 
-  const { search, searchQuery, results, totalResults, isLoading, isError } =
-    useSearch({
-      initialQuery: query,
-      channelId: MATRIX_CHANNELS[0].id,
-      pageSize: 2, // Limit to 2 items
-    });
+  // Parse the query to extract filters
+  const { query, filters } = parseSearchQuery(richQuery);
 
-  useEffect(() => {
-    if (query) {
-      // Parse the query to extract filters
-      const { rawQuery, filters } = parseSearchQuery(query);
-
-      // Pass the raw query and filters separately
-      search(rawQuery, { filters });
-    }
-  }, [query]); // Remove search from dependency array to prevent infinite loop
+  // Use our search hook with the extracted query and filters
+  const { results, totalResults, isLoading, isError } = useSearch({
+    query,
+    channelId: MATRIX_CHANNELS[0].id,
+    pageSize: 2, // Limit to 2 items
+    filters,
+  });
 
   const handleSourceChange = (sources: string[]) => {
     setSelectedSources(sources);
@@ -122,13 +116,13 @@ const SearchResults = () => {
       />
 
       <div className="w-full max-w-4xl px-7">
-        <SearchForm initialQuery={query} />
+        <SearchForm />
 
         {/* Display active filters as tags */}
-        {query && parseSearchQuery(query).filters.length > 0 && (
+        {query && filters.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
-              {parseSearchQuery(query).filters.map((filter, index) => (
+              {filters.map((filter, index) => (
                 <div
                   key={index}
                   className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
@@ -166,7 +160,7 @@ const SearchResults = () => {
               {isLoading && !results.length ? (
                 <div className="text-center p-8">Loading results...</div>
               ) : (
-                <ResultList results={results} searchQuery={searchQuery} />
+                <ResultList results={results} searchQuery={query} />
               )}
             </div>
           )}

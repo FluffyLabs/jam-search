@@ -33,26 +33,26 @@ export interface SearchFilter {
 
 // Helper function to parse search query
 export const parseSearchQuery = (
-  query: string
-): { rawQuery: string; filters: SearchFilter[] } => {
+  richQuery: string
+): { query: string; filters: SearchFilter[] } => {
   const filters: SearchFilter[] = [];
   const filterOptions = ["from", "since_gp", "before", "after"];
   const regex = new RegExp(`(${filterOptions.join("|")}):([^\\s]+)`, "g");
   let match;
-  let rawQuery = query;
+  let query = richQuery;
 
-  while ((match = regex.exec(query)) !== null) {
+  while ((match = regex.exec(richQuery)) !== null) {
     filters.push({ key: match[1], value: match[2] });
   }
 
   // Filter out the filter patterns from the raw query
   filterOptions.forEach((option) => {
     const filterPattern = new RegExp(`${option}:[^\\s]+`, "g");
-    rawQuery = rawQuery.replace(filterPattern, "");
+    query = query.replace(filterPattern, "");
   });
 
   // Clean up extra spaces
-  rawQuery = rawQuery.replace(/\s+/g, " ").trim();
+  query = query.replace(/\s+/g, " ").trim();
 
-  return { rawQuery, filters };
+  return { query, filters };
 };

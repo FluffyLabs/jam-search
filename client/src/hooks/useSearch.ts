@@ -4,9 +4,11 @@ import { MATRIX_CHANNELS } from "@/consts";
 import { useState } from "react";
 
 interface UseSearchOptions {
-  initialQuery?: string;
+  query: string;
+  initialPage?: number;
   pageSize?: number;
   channelId?: (typeof MATRIX_CHANNELS)[number]["id"];
+  filters?: SearchFilter[];
 }
 
 interface SearchFilter {
@@ -14,109 +16,69 @@ interface SearchFilter {
   value: string;
 }
 
-interface SearchParams {
-  query: string;
-  currentPage: number;
-  pageSize: number;
-  filters?: SearchFilter[];
-  channelId?: string;
-}
-
 export function useSearch({
-  initialQuery = "",
-  channelId,
+  query,
+  initialPage = 1,
   pageSize = 10,
-}: UseSearchOptions = {}) {
-  // State for search parameters
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    query: initialQuery,
-    currentPage: 1,
-    pageSize,
-    filters: [],
-    channelId,
-  });
-
-  // Destructure for convenience
-  const { query: searchQuery, currentPage, filters } = searchParams;
+  channelId,
+  filters = [],
+}: UseSearchOptions) {
+  // Only manage pagination state
+  const [page, setPage] = useState(initialPage);
 
   // Use React Query to fetch search results
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: [
-      "search",
-      searchQuery,
-      currentPage,
-      pageSize,
-      channelId,
-      filters,
-    ],
+    queryKey: ["search", query, page, pageSize, channelId, filters],
     queryFn: () =>
-      fetchSearchResults(searchQuery, {
-        page: currentPage,
+      fetchSearchResults(query, {
+        page,
         pageSize,
         filters,
         channelId,
       }),
-    enabled: !!searchQuery.trim(), // Only fetch if we have a non-empty query
+    enabled: !!query.trim(), // Only fetch if we have a non-empty query
   });
 
   // Extract results
   const results = data?.results || [];
   const totalResults = data?.total || 0;
 
-  // Function to set a new search query
-  const search = (query: string, options?: { filters?: SearchFilter[] }) => {
-    setSearchParams({
-      ...searchParams,
-      query,
-      currentPage: 1, // Reset to first page on new search
-      filters: options?.filters || [],
-    });
-  };
+  // Calculate total pages
+  const totalPages = data ? Math.ceil(totalResults / pageSize) : 0;
 
   // Pagination functions
   const nextPage = () => {
-    if (results.length === pageSize) {
-      setSearchParams({
-        ...searchParams,
-        currentPage: currentPage + 1,
-      });
+    if (page < totalPages) {
+      setPage(page + 1);
     }
   };
 
   const previousPage = () => {
-    if (currentPage > 1) {
-      setSearchParams({
-        ...searchParams,
-        currentPage: currentPage - 1,
-      });
+    if (page > 1) {
+      setPage(page - 1);
     }
   };
 
-  const goToPage = (page: number) => {
-    const newPage = Math.max(1, page);
-    setSearchParams({
-      ...searchParams,
-      currentPage: newPage,
-    });
+  const goToPage = (newPage: number) => {
+    setPage(Math.max(1, Math.min(newPage, totalPages || 1)));
   };
 
   return {
-    search,
-    searchQuery,
     results,
     totalResults,
+    currentPage: page,
+    totalPages,
+    pageSize,
     isLoading,
     isError,
     error,
     refetch,
     pagination: {
-      currentPage,
-      pageSize,
       nextPage,
       previousPage,
       goToPage,
-      hasNextPage: results.length === pageSize,
-      hasPreviousPage: currentPage > 1,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
     },
     channelId,
   };

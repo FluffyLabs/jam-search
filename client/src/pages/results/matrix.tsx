@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useLocation, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/SearchForm";
@@ -10,34 +9,26 @@ import { ArrowLeft } from "lucide-react";
 
 const MatrixResults = () => {
   const location = useLocation();
-  const query = new URLSearchParams(location.search).get("q") || "";
+  const richQuery = new URLSearchParams(location.search).get("q") || "";
 
+  // Parse the query to extract filters
+  const { query, filters } = parseSearchQuery(richQuery);
+
+  // Use our search hook with the extracted query and filters
   const {
-    search,
-    searchQuery,
     results,
     totalResults,
+    currentPage,
+    totalPages,
     isLoading,
     isError,
     pagination,
   } = useSearch({
-    initialQuery: query,
+    query,
     channelId: MATRIX_CHANNELS[0].id,
     pageSize: 10,
+    filters,
   });
-
-  // Calculate total pages
-  const totalPages = Math.ceil(totalResults / pagination.pageSize);
-
-  useEffect(() => {
-    if (query) {
-      // Parse the query to extract filters
-      const { rawQuery, filters } = parseSearchQuery(query);
-
-      // Pass the raw query and filters separately
-      search(rawQuery, { filters });
-    }
-  }, [query]);
 
   if (isError) {
     return (
@@ -66,13 +57,13 @@ const MatrixResults = () => {
       </div>
 
       <div className="w-full max-w-4xl px-7">
-        <SearchForm initialQuery={query} />
+        <SearchForm />
 
         {/* Display active filters as tags */}
-        {query && parseSearchQuery(query).filters.length > 0 && (
+        {query && filters.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
-              {parseSearchQuery(query).filters.map((filter, index) => (
+              {filters.map((filter, index) => (
                 <div
                   key={index}
                   className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
@@ -89,7 +80,7 @@ const MatrixResults = () => {
           {isLoading && !results.length ? (
             <div className="text-center p-8">Loading results...</div>
           ) : (
-            <ResultList results={results} searchQuery={searchQuery} />
+            <ResultList results={results} searchQuery={query} />
           )}
         </div>
 
@@ -103,7 +94,7 @@ const MatrixResults = () => {
               Previous
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {pagination.currentPage} of {totalPages || 1}
+              Page {currentPage} of {totalPages || 1}
             </span>
             <Button
               onClick={pagination.nextPage}
