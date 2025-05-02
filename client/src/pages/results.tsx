@@ -9,9 +9,9 @@ import { GraypaperResults } from "@/components/GraypaperResults";
 import { Check, Share, ArrowRight } from "lucide-react";
 import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery } from "@/lib/utils";
+import { CommercialBanner } from "@/components/CommercialBanner";
 
 interface ResultHeaderProps {
-  totalResults: number;
   onSourceChange?: (sources: string[]) => void;
 }
 
@@ -87,10 +87,28 @@ const SearchResults = () => {
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
 
-  // Use our search hook with the extracted query and filters
-  const { results, totalResults, isLoading, isError } = useSearch({
+  // Search for graypaper channel
+  const {
+    results: graypaperResults,
+    totalResults: graypaperTotalResults,
+    isLoading: isGraypaperLoading,
+    isError: isGraypaperError,
+  } = useSearch({
     query,
     channelId: MATRIX_CHANNELS[0].id,
+    pageSize: 2, // Limit to 2 items
+    filters,
+  });
+
+  // Search for jam channel
+  const {
+    results: jamResults,
+    totalResults: jamTotalResults,
+    isLoading: isJamLoading,
+    isError: isJamError,
+  } = useSearch({
+    query,
+    channelId: MATRIX_CHANNELS[1].id,
     pageSize: 2, // Limit to 2 items
     filters,
   });
@@ -100,6 +118,7 @@ const SearchResults = () => {
     // TODO: Implement source filtering logic here
   };
 
+  const isError = isGraypaperError || isJamError;
   if (isError) {
     return (
       <div className="text-center p-8 text-destructive">
@@ -110,10 +129,7 @@ const SearchResults = () => {
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
-      <ResultHeader
-        totalResults={totalResults}
-        onSourceChange={handleSourceChange}
-      />
+      <ResultHeader onSourceChange={handleSourceChange} />
 
       <div className="w-full max-w-4xl px-7">
         <SearchForm />
@@ -141,28 +157,94 @@ const SearchResults = () => {
           )}
 
           {selectedSources.includes("matrix") && (
-            <div className="mt-6">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-sm">Top matrix Chat Results</h2>
-                {totalResults > 2 && (
-                  <Link to={`/results/matrix?q=${encodeURIComponent(query)}`}>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary flex items-center text-xs"
+            <>
+              {/* Graypaper channel results */}
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-sm">
+                    {MATRIX_CHANNELS[0].name} @ Matrix ({graypaperTotalResults}{" "}
+                    results)
+                  </h2>
+
+                  {graypaperTotalResults > 2 && (
+                    <Link
+                      to={`/results/matrix?q=${encodeURIComponent(
+                        query
+                      )}&channelId=${encodeURIComponent(
+                        MATRIX_CHANNELS[0].id
+                      )}`}
                     >
-                      View all {totalResults} results
-                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                    </Button>
-                  </Link>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-primary flex items-center text-xs"
+                      >
+                        View all {graypaperTotalResults} results
+                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <CommercialBanner
+                    title="Matrix archiver"
+                    url={{
+                      display: "paritytech.github.io/matrix-archiver",
+                      href: "https://paritytech.github.io/matrix-archiver",
+                    }}
+                  />
+                </div>
+                {isGraypaperLoading && !graypaperResults.length ? (
+                  <div className="text-center p-8">Loading results...</div>
+                ) : (
+                  <ResultList results={graypaperResults} searchQuery={query} />
                 )}
               </div>
-              {isLoading && !results.length ? (
-                <div className="text-center p-8">Loading results...</div>
-              ) : (
-                <ResultList results={results} searchQuery={query} />
-              )}
-            </div>
+
+              {/* Jam channel results */}
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-3">
+                  <h2 className="text-sm">
+                    {MATRIX_CHANNELS[1].name} @ Matrix ({jamTotalResults}{" "}
+                    results)
+                  </h2>
+                  {jamTotalResults > 2 && (
+                    <Link
+                      to={`/results/matrix?q=${encodeURIComponent(
+                        query
+                      )}&channelId=${encodeURIComponent(
+                        MATRIX_CHANNELS[1].id
+                      )}`}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-primary flex items-center text-xs"
+                      >
+                        View all {jamTotalResults} results
+                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <CommercialBanner
+                    title="Matrix archiver"
+                    url={{
+                      display: "paritytech.github.io/matrix-archiver",
+                      href: "https://paritytech.github.io/matrix-archiver",
+                    }}
+                  />
+                </div>
+                {isJamLoading && !jamResults.length ? (
+                  <div className="text-center p-8">Loading results...</div>
+                ) : (
+                  <ResultList results={jamResults} searchQuery={query} />
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

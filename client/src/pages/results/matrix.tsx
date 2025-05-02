@@ -9,7 +9,13 @@ import { ArrowLeft } from "lucide-react";
 
 const MatrixResults = () => {
   const location = useLocation();
-  const richQuery = new URLSearchParams(location.search).get("q") || "";
+  const searchParams = new URLSearchParams(location.search);
+  const richQuery = searchParams.get("q") || "";
+  const channelId = searchParams.get("channelId") || MATRIX_CHANNELS[0].id;
+
+  // Find the channel name based on the channelId
+  const channel =
+    MATRIX_CHANNELS.find((ch) => ch.id === channelId) || MATRIX_CHANNELS[0];
 
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
@@ -25,7 +31,7 @@ const MatrixResults = () => {
     pagination,
   } = useSearch({
     query,
-    channelId: MATRIX_CHANNELS[0].id,
+    channelId,
     pageSize: 10,
     filters,
   });
@@ -48,7 +54,7 @@ const MatrixResults = () => {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <h1 className="text-lg font-medium">Matrix Chat Results</h1>
+            <h1 className="text-lg font-medium">{channel.name} Results</h1>
             <span className="text-muted-foreground text-sm">
               {totalResults.toLocaleString()} results
             </span>

@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, ArrowRight } from "lucide-react";
-import Logo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
 import { Link as RouterLink } from "react-router";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
+import { CommercialBanner } from "./CommercialBanner";
 
 interface GraypaperResultsProps {
   query: string;
@@ -41,7 +41,10 @@ export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
   return (
     <div className="flex flex-col gap-4 mb-7">
       <div className="flex justify-between items-center">
-        <h2 className="text-sm">Top Graypaper Results</h2>
+        <h2 className="text-sm">
+          Graypaper Results v0.6.5 ({totalResults} results)
+        </h2>
+
         {totalResults > 6 && (
           <RouterLink to={`/results/graypaper?q=${encodeURIComponent(query)}`}>
             <Button
@@ -55,6 +58,12 @@ export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
           </RouterLink>
         )}
       </div>
+
+      <CommercialBanner
+        title={graypaperReader.title}
+        url={graypaperReader.url}
+        description={graypaperReader.description}
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {results.map((section) => (
           <SectionResult
@@ -66,49 +75,7 @@ export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
           />
         ))}
       </div>
-      <GraypaperReaderBanner
-        title={graypaperReader.title}
-        url={graypaperReader.url}
-        description={graypaperReader.description}
-      />
     </div>
-  );
-};
-
-const GraypaperReaderBanner = ({
-  title,
-  url,
-  description,
-}: {
-  title: string;
-  url: {
-    display: string;
-    href: string;
-  };
-  description: string;
-}) => {
-  return (
-    <Card className="relative bg-secondary border-border">
-      <CardContent className="p-1.5 flex gap-2 shrink-0 items-center">
-        <div className="bg-muted p-2 rounded-full border-border border">
-          <img src={Logo} className="size-6" alt="Fluffy Labs Logo" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <CardTitle className="text-sm text-primary">{title}</CardTitle>
-            <a
-              href={url.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground after:absolute after:inset-0"
-            >
-              {url.display}
-            </a>
-          </div>
-          <p className="text-xs text-foreground">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 
