@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchSearchResults, SearchResponse } from "@/lib/api";
-import { getSearchResultsKey, getSearchParamsKey } from "@/lib/queryKeys";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSearchResults } from "@/lib/api";
 import { MATRIX_CHANNELS } from "@/consts";
+import { useState } from "react";
+
 interface UseSearchOptions {
   initialQuery?: string;
   pageSize?: number;
@@ -26,111 +27,77 @@ export function useSearch({
   channelId,
   pageSize = 10,
 }: UseSearchOptions = {}) {
-  // Get query client instance
-  const queryClient = useQueryClient();
-  // Get search params from global state or use defaults
-  const searchParamsKey = getSearchParamsKey(channelId);
-  const defaultParams: SearchParams = {
+  // State for search parameters
+  const [searchParams, setSearchParams] = useState<SearchParams>({
     query: initialQuery,
     currentPage: 1,
     pageSize,
     filters: [],
     channelId,
-  };
-
-  const searchParams =
-    queryClient.getQueryData<SearchParams>(searchParamsKey) || defaultParams;
-
-  const { query: searchQuery, currentPage } = searchParams;
-
-  // Use React Query to store and access the global search state
-  const searchResultsKey = getSearchResultsKey(
-    searchQuery,
-    currentPage,
-    pageSize,
-    channelId
-  );
-
-  // Mutation for fetching search results
-  const searchMutation = useMutation({
-    mutationFn: (params: SearchParams) =>
-      fetchSearchResults(params.query, {
-        page: params.currentPage,
-        pageSize: params.pageSize,
-        filters: params.filters,
-        channelId,
-      }),
-    onSuccess: (data) => {
-      // Store results in global cache
-      queryClient.setQueryData(searchResultsKey, data);
-    },
-    onError: (error) => {
-      console.error("Error fetching search results", error);
-    },
   });
 
-  // Get data from cache or return empty defaults
-  const cachedData = queryClient.getQueryData<SearchResponse>(searchResultsKey);
-  const results = cachedData?.results || [];
-  const totalResults = cachedData?.total || 0;
+  // Destructure for convenience
+  const { query: searchQuery, currentPage, filters } = searchParams;
 
+  // Use React Query to fetch search results
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: [
+      "search",
+      searchQuery,
+      currentPage,
+      pageSize,
+      channelId,
+      filters,
+    ],
+    queryFn: () =>
+      fetchSearchResults(searchQuery, {
+        page: currentPage,
+        pageSize,
+        filters,
+        channelId,
+      }),
+    enabled: !!searchQuery.trim(), // Only fetch if we have a non-empty query
+  });
+
+  // Extract results
+  const results = data?.results || [];
+  const totalResults = data?.total || 0;
+
+  // Function to set a new search query
   const search = (query: string, options?: { filters?: SearchFilter[] }) => {
-    const newParams = {
+    setSearchParams({
       ...searchParams,
       query,
-      currentPage: 1,
+      currentPage: 1, // Reset to first page on new search
       filters: options?.filters || [],
-      channelId,
-    };
-
-    // Update search params in global state
-    queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-    if (query.trim()) {
-      searchMutation.mutate(newParams);
-    }
+    });
   };
 
+  // Pagination functions
   const nextPage = () => {
     if (results.length === pageSize) {
-      const newParams = {
+      setSearchParams({
         ...searchParams,
         currentPage: currentPage + 1,
-      };
-
-      // Update page in global state
-      queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-      searchMutation.mutate(newParams);
+      });
     }
   };
 
   const previousPage = () => {
     if (currentPage > 1) {
-      const newParams = {
+      setSearchParams({
         ...searchParams,
         currentPage: currentPage - 1,
-      };
-
-      // Update page in global state
-      queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-      searchMutation.mutate(newParams);
+      });
     }
   };
 
   const goToPage = (page: number) => {
     const newPage = Math.max(1, page);
-
-    const newParams = {
+    setSearchParams({
       ...searchParams,
       currentPage: newPage,
-    };
-
-    // Update page in global state
-    queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-    searchMutation.mutate(newParams);
+    });
   };
 
   return {
@@ -138,10 +105,10 @@ export function useSearch({
     searchQuery,
     results,
     totalResults,
-    isLoading: searchMutation.isPending,
-    isError: searchMutation.isError,
-    error: searchMutation.error,
-    refetch: () => searchMutation.mutate(searchParams),
+    isLoading,
+    isError,
+    error,
+    refetch,
     pagination: {
       currentPage,
       pageSize,
@@ -151,5 +118,6 @@ export function useSearch({
       hasNextPage: results.length === pageSize,
       hasPreviousPage: currentPage > 1,
     },
+    channelId,
   };
 }

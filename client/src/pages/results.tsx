@@ -1,53 +1,22 @@
 import { useEffect, useState } from "react";
 import { SearchForm } from "@/components/SearchForm";
 import { useSearch } from "@/hooks/useSearch";
-import { useLocation } from "react-router";
+import { useLocation, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { ResultList } from "@/components/ResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
-import { Check, Share } from "lucide-react";
+import { Check, Share, ArrowRight } from "lucide-react";
 import { MATRIX_CHANNELS } from "@/consts";
+import { parseSearchQuery } from "@/lib/utils";
 
 interface ResultHeaderProps {
   totalResults: number;
   onSourceChange?: (sources: string[]) => void;
 }
 
-// Define SearchFilter type
-interface SearchFilter {
-  key: string;
-  value: string;
-}
-
-// Helper function to parse search query
-const parseSearchQuery = (
-  query: string
-): { rawQuery: string; filters: SearchFilter[] } => {
-  const filters: SearchFilter[] = [];
-  const filterOptions = ["from", "since_gp", "before", "after"];
-  const regex = new RegExp(`(${filterOptions.join("|")}):([^\\s]+)`, "g");
-  let match;
-  let rawQuery = query;
-
-  while ((match = regex.exec(query)) !== null) {
-    filters.push({ key: match[1], value: match[2] });
-  }
-
-  // Filter out the filter patterns from the raw query
-  filterOptions.forEach((option) => {
-    const filterPattern = new RegExp(`${option}:[^\\s]+`, "g");
-    rawQuery = rawQuery.replace(filterPattern, "");
-  });
-
-  // Clean up extra spaces
-  rawQuery = rawQuery.replace(/\s+/g, " ").trim();
-
-  return { rawQuery, filters };
-};
-
 const SOURCE_OPTIONS = [
-  { label: "Element channels", value: "element" },
+  { label: "Matrix channels", value: "element" },
   { label: "Graypaper.pdf", value: "graypaper" },
   { label: "JamCha.in/docs", value: "jamchain", disabled: true },
   { label: "Web3 Foundation", value: "w3f", disabled: true },
@@ -56,7 +25,7 @@ const SOURCE_OPTIONS = [
 
 const initialSources = ["element", "graypaper"];
 
-const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
+const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
   const [copied, setCopied] = useState(false);
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
@@ -75,21 +44,16 @@ const ResultHeader = ({ totalResults, onSourceChange }: ResultHeaderProps) => {
   return (
     <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-2">
       <div className="flex items-center justify-between py-3 px-2">
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center bg-card/80 border border-border rounded-md">
-            <MultiSelect
-              options={SOURCE_OPTIONS}
-              selectedValues={selectedSources}
-              onValueChange={handleSourceChange}
-              placeholder="Select sources"
-              className="min-w-[90px] sm:min-w-[140px]"
-              maxCount={0}
-              required
-            />
-          </div>
-          <span className="text-muted-foreground text-sm">
-            {totalResults.toLocaleString()} results
-          </span>
+        <div className="flex items-center bg-card/80 border border-border rounded-md">
+          <MultiSelect
+            options={SOURCE_OPTIONS}
+            selectedValues={selectedSources}
+            onValueChange={handleSourceChange}
+            placeholder="Select sources"
+            className="min-w-[90px] sm:min-w-[155px]"
+            maxCount={0}
+            required
+          />
         </div>
         <Button
           variant="outline"
@@ -120,18 +84,12 @@ const SearchResults = () => {
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
 
-  const {
-    search,
-    searchQuery,
-    results,
-    totalResults,
-    isLoading,
-    isError,
-    pagination,
-  } = useSearch({ initialQuery: query, channelId: MATRIX_CHANNELS[0].id });
-
-  // Calculate total pages
-  const totalPages = Math.ceil(totalResults / pagination.pageSize);
+  const { search, searchQuery, results, totalResults, isLoading, isError } =
+    useSearch({
+      initialQuery: query,
+      channelId: MATRIX_CHANNELS[0].id,
+      pageSize: 2, // Limit to 2 items
+    });
 
   useEffect(() => {
     if (query) {
@@ -187,34 +145,32 @@ const SearchResults = () => {
           {selectedSources.includes("graypaper") && (
             <GraypaperResults query={query} />
           )}
-          {isLoading && !results.length ? (
-            <div className="text-center p-8">Loading results...</div>
-          ) : (
-            <ResultList results={results} searchQuery={searchQuery} />
+
+          {selectedSources.includes("element") && (
+            <div className="mt-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-sm">Top Element Chat Results</h2>
+                {totalResults > 2 && (
+                  <Link to={`/results/matrix?q=${encodeURIComponent(query)}`}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-primary flex items-center text-xs"
+                    >
+                      View all {totalResults} results
+                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                    </Button>
+                  </Link>
+                )}
+              </div>
+              {isLoading && !results.length ? (
+                <div className="text-center p-8">Loading results...</div>
+              ) : (
+                <ResultList results={results} searchQuery={searchQuery} />
+              )}
+            </div>
           )}
         </div>
-
-        {results.length > 0 && (
-          <div className="flex justify-center items-center mt-6 mb-8 space-x-2">
-            <Button
-              onClick={pagination.previousPage}
-              disabled={!pagination.hasPreviousPage}
-              className="px-3 py-1 bg-muted rounded disabled:opacity-50 text-muted-foreground"
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {pagination.currentPage} of {totalPages}
-            </span>
-            <Button
-              onClick={pagination.nextPage}
-              disabled={!pagination.hasNextPage}
-              className="px-3 py-1 bg-muted rounded disabled:opacity-50 text-muted-foreground"
-            >
-              Next
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

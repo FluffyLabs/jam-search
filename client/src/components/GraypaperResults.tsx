@@ -1,27 +1,31 @@
-import { searchGraypaper } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "lucide-react";
+import { Link, ArrowRight } from "lucide-react";
 import Logo from "@/assets/logo.svg";
+import { Button } from "@/components/ui/button";
+import { Link as RouterLink } from "react-router";
+import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 
-const useGraypaperSearch = (query: string) => {
-  return useQuery({
-    queryKey: ["graypaper-search", query],
-    queryFn: () =>
-      searchGraypaper(query, {
-        page: 1,
-        pageSize: 6,
-      }),
-    enabled: !!query,
-    staleTime: 0,
+interface GraypaperResultsProps {
+  query: string;
+}
+
+export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
+  // Use our graypaper search hook with 6 results per page (for compact view)
+  const { results, totalResults, isLoading, isError } = useSearchGraypaper({
+    query,
+    pageSize: 6,
   });
-};
 
-export const GraypaperResults = ({ query }: { query: string }) => {
-  const { data } = useGraypaperSearch(query);
+  if (isLoading) {
+    return <div className="text-center p-4">Loading graypaper results...</div>;
+  }
 
-  if (!data || data.results.length === 0) {
-    return null;
+  if (isError) {
+    return null; // No error message in compact view
+  }
+
+  if (!results || results.length === 0) {
+    return null; // No empty state in compact view
   }
 
   const graypaperReader = {
@@ -36,9 +40,23 @@ export const GraypaperResults = ({ query }: { query: string }) => {
 
   return (
     <div className="flex flex-col gap-4 mb-7">
-      <h2 className="text-sm">Top Graypaper Results</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-sm">Top Graypaper Results</h2>
+        {totalResults > 6 && (
+          <RouterLink to={`/results/graypaper?q=${encodeURIComponent(query)}`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary flex items-center text-xs"
+            >
+              View all {totalResults} results
+              <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </Button>
+          </RouterLink>
+        )}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {data.results.map((section) => (
+        {results.map((section) => (
           <SectionResult
             key={section.id}
             title={section.title}
