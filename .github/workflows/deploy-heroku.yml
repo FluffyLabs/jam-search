@@ -9,6 +9,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,10 +39,18 @@ jobs:
       - name: Add Heroku remote
         run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
 
-      # Get current branch name and push to Heroku
+      # Initialize git in backend directory if needed
+      - name: Init git if needed
+        run: |
+          if [ ! -d .git ]; then
+            git init
+            git config --global user.email "github-actions@github.com"
+            git config --global user.name "GitHub Actions"
+            git add .
+            git commit -m "Initial backend commit for Heroku deployment"
+          fi
+
+      # Push to Heroku
       - name: Push to Heroku
         run: |
-          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
-          CURRENT_BRANCH=$(git symbolic-ref --short HEAD || echo "HEAD")
-          echo "Current branch is $CURRENT_BRANCH"
-          git push heroku $CURRENT_BRANCH:main --force
+          git push https://git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git HEAD:main --force
