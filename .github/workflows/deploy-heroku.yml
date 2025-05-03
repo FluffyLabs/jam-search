@@ -1,4 +1,4 @@
-name: Deploy to Heroku
+name: Deploy to Heroku via Git
 
 on:
   push:
@@ -12,26 +12,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Heroku CLI
-        uses: akhileshns/heroku-deploy@v3.12.14
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          fetch-depth: 0
 
-      # If you need to deploy a specific directory instead of the entire repo
-      # - name: Deploy Backend
-      #   uses: akhileshns/heroku-deploy@v3.12.14
-      #   with:
-      #     heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-      #     heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}-backend
-      #     heroku_email: ${{ secrets.HEROKU_EMAIL }}
-      #     appdir: "backend"
+      # Install Heroku CLI
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Add additional steps if you need to build your app before deploying
-      # For example:
-      # - name: Install dependencies
-      #   run: npm ci
-      # - name: Build
-      #   run: npm run build
+      # Login to Heroku
+      - name: Login to Heroku
+        run: |
+          cat > ~/.netrc <<EOF
+          machine api.heroku.com
+            login ${{ secrets.HEROKU_EMAIL }}
+            password ${{ secrets.HEROKU_API_KEY }}
+          machine git.heroku.com
+            login ${{ secrets.HEROKU_EMAIL }}
+            password ${{ secrets.HEROKU_API_KEY }}
+          EOF
+
+      # Add Heroku remote
+      - name: Add Heroku remote
+        run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+
+      # Push to Heroku
+      - name: Push to Heroku
+        run: git push heroku main
