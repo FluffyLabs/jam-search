@@ -52,7 +52,11 @@ const highlightFilters = (query: string) => {
  * to filter the search results.
  * It sets the search query in the URL when the form is submitted. For now this is the only global state we have.
  */
-export const SearchForm = () => {
+export const SearchForm = ({
+  redirectToResults = false,
+}: {
+  redirectToResults?: boolean;
+}) => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
   const [searchQuery, setSearchQuery] = useState(richQuery);
@@ -99,7 +103,11 @@ export const SearchForm = () => {
       }
 
       // Navigate to current path with updated query params
-      navigate(`${location.pathname}?${queryParams.toString()}`);
+      navigate(
+        `${
+          redirectToResults ? "/results" : location.pathname
+        }?${queryParams.toString()}`
+      );
     }
   };
 

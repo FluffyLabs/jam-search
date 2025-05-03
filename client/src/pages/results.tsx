@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SearchForm } from "@/components/SearchForm";
 import { useSearch } from "@/hooks/useSearch";
-import { useLocation, Link } from "react-router";
+import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResultList } from "@/components/ResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
@@ -172,11 +172,11 @@ const SearchResults = () => {
 
                   {graypaperTotalResults > 2 && (
                     <Link
-                      to={`/results/matrix?q=${encodeURIComponent(
-                        query
-                      )}&channelId=${encodeURIComponent(
-                        MATRIX_CHANNELS[0].id
-                      )}`}
+                      to={(() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set("channelId", MATRIX_CHANNELS[0].id);
+                        return `/results/matrix?${params.toString()}`;
+                      })()}
                     >
                       <Button
                         variant="ghost"
@@ -215,11 +215,11 @@ const SearchResults = () => {
                   </h2>
                   {jamTotalResults > 2 && (
                     <Link
-                      to={`/results/matrix?q=${encodeURIComponent(
-                        query
-                      )}&channelId=${encodeURIComponent(
-                        MATRIX_CHANNELS[1].id
-                      )}`}
+                      to={(() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set("channelId", MATRIX_CHANNELS[1].id);
+                        return `/results/matrix?${params.toString()}`;
+                      })()}
                     >
                       <Button
                         variant="ghost"
