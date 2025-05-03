@@ -69,12 +69,14 @@ export function createApp() {
         ])`;
         break;
       case "strict":
-      default:
         // Strict/exact matching without distance parameter
         searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
           paradedb.match('content', ${data.q}),
           paradedb.match('sender', ${data.q}, prefix => true)
         ])`;
+        break;
+      default:
+        throw new Error(`Unhandled search mode: ${data.searchMode}`);
     }
 
     // Initialize additional filter conditions
@@ -202,12 +204,14 @@ export function createApp() {
         ])`;
         break;
       case "strict":
-      default:
         // Strict/exact matching without distance parameter
         searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
           paradedb.match('title', ${data.q}),
           paradedb.match('text', ${data.q})
         ])`;
+        break;
+      default:
+        throw new Error(`Unhandled search mode: ${data.searchMode}`);
     }
 
     // Get total count of matching rows
