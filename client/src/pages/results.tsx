@@ -134,7 +134,7 @@ const SearchResults = () => {
 
         <div className="mb-8">
           {selectedSources.includes("graypaper") && (
-            <GraypaperResults query={query} />
+            <GraypaperResults query={query} fuzzySearch={fuzzySearchParam} />
           )}
 
           {selectedSources.includes("matrix") && (

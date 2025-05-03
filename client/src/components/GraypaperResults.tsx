@@ -7,13 +7,18 @@ import { CommercialBanner } from "./CommercialBanner";
 
 interface GraypaperResultsProps {
   query: string;
+  fuzzySearch?: boolean;
 }
 
-export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
+export const GraypaperResults = ({
+  query,
+  fuzzySearch,
+}: GraypaperResultsProps) => {
   // Use our graypaper search hook with 6 results per page (for compact view)
   const { results, totalResults, isLoading, isError } = useSearchGraypaper({
     query,
     pageSize: 6,
+    fuzzySearch,
   });
 
   if (isLoading) {

@@ -118,6 +118,7 @@ export async function searchGraypaper(
   queryParams.append("page", page.toString());
   queryParams.append("pageSize", pageSize.toString());
 
+  console.log("fuzzySearch", fuzzySearch);
   // Add fuzzySearch parameter if provided
   if (fuzzySearch) {
     queryParams.append("fuzzySearch", "true");
