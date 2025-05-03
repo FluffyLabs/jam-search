@@ -6,6 +6,7 @@ import { useSearch } from "@/hooks/useSearch";
 import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
+import { ShareUrl } from "@/components/ShareUrl";
 
 const MatrixResults = () => {
   const location = useLocation();
@@ -60,6 +61,7 @@ const MatrixResults = () => {
               ({totalResults.toLocaleString()} results)
             </span>
           </div>
+          <ShareUrl />
         </div>
       </div>
 

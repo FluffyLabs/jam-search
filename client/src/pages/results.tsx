@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { ResultList } from "@/components/ResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
-import { Check, Share, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery } from "@/lib/utils";
 import { CommercialBanner } from "@/components/CommercialBanner";
+import { ShareUrl } from "@/components/ShareUrl";
 
 interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
@@ -26,15 +27,8 @@ const SOURCE_OPTIONS = [
 const initialSources = ["matrix", "graypaper"];
 
 const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
-  const [copied, setCopied] = useState(false);
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const handleSourceChange = (sources: string[]) => {
     setSelectedSources(sources);
@@ -55,24 +49,7 @@ const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
             required
           />
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
-          onClick={handleCopyLink}
-        >
-          {copied ? (
-            <div className="flex items-center">
-              <Check className="w-4 h-4 mr-1.5" />
-              copied!
-            </div>
-          ) : (
-            <div className="flex items-center">
-              <Share className="w-4 h-4 mr-1.5" />
-              share results
-            </div>
-          )}
-        </Button>
+        <ShareUrl />
       </div>
     </div>
   );

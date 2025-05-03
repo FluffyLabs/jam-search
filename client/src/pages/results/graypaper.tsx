@@ -6,6 +6,7 @@ import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { parseSearchQuery } from "@/lib/utils";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { highlightText } from "@/components/GraypaperResults";
+import { ShareUrl } from "@/components/ShareUrl";
 
 const GraypaperResults = () => {
   const location = useLocation();
@@ -43,6 +44,7 @@ const GraypaperResults = () => {
               {totalResults.toLocaleString()} results
             </span>
           </div>
+          <ShareUrl />
         </div>
       </div>
 
