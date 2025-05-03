@@ -1,4 +1,4 @@
-import { desc, eq, gt, gte, like, lt, sql } from "drizzle-orm";
+import { type SQL, desc, eq, gt, gte, like, lt, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -50,7 +50,7 @@ export function createApp() {
     const data = result.data;
 
     // Base search condition
-    let searchCondition;
+    let searchCondition: SQL;
 
     if (data.fuzzySearch === "true") {
       // Use a more flexible/fuzzy search with higher distance
@@ -172,7 +172,7 @@ export function createApp() {
     const data = result.data;
 
     // Base search condition
-    let searchCondition;
+    let searchCondition: SQL;
 
     if (data.fuzzySearch === "true") {
       // Use a more flexible/fuzzy search with higher distance
