@@ -1,4 +1,4 @@
-import { subDays, format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { fillArchivedMessages } from "./fillArchivedMessages.js";
 
 const N_DAYS = 1000;
