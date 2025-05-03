@@ -1,18 +1,12 @@
 import { SearchResult } from "@/lib/api";
-import { formatDate, formatJamChatName } from "@/lib/utils";
 import { highlightText } from "./GraypaperResults";
+import { MATRIX_CHANNELS } from "@/consts";
+import { formatDate } from "@/lib/utils";
 
 interface ResultListProps {
   results: SearchResult[];
   searchQuery: string;
 }
-
-const ARCHIVE = {
-  "!ddsEwXlCWnreEGuqXZ:polkadot.io":
-    "https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html",
-  "!wBOJlzaOULZOALhaRh:polkadot.io":
-    "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
-};
 
 export const ResultList = ({ results, searchQuery }: ResultListProps) => {
   if (results.length === 0) {
@@ -32,19 +26,11 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
           <div className="mb-2">
             <div className="flex items-center mb-1">
               <span className="font-medium  text-foreground">
-                Jam Chat: {result.sender}{" "}
-                <span className="text-muted-foreground">
-                  {formatDate(result.timestamp)}, #
-                  {formatJamChatName(result.roomid)},{" "}
-                </span>
+                {result.sender}{" "}
               </span>
               {result.timestamp && (
                 <span className="text-xs text-muted-foreground ml-2">
-                  {new Date(result.timestamp).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {formatDate(result.timestamp)}
                 </span>
               )}
             </div>
@@ -53,9 +39,11 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
             </p>
             {result.messageid && (
               <a
-                href={`${ARCHIVE[result.roomid as keyof typeof ARCHIVE]}#${
-                  result.messageid
-                }`}
+                href={`${
+                  MATRIX_CHANNELS.find(
+                    (channel) => channel.id === result.roomid
+                  )?.archiveUrl
+                }#${result.messageid}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs text-brand flex items-center w-fit hover:text-brand-dark"

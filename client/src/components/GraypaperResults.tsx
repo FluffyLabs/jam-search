@@ -1,27 +1,31 @@
-import { searchGraypaper } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "lucide-react";
-import Logo from "@/assets/logo.svg";
+import { Link, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link as RouterLink } from "react-router";
+import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
+import { CommercialBanner } from "./CommercialBanner";
 
-const useGraypaperSearch = (query: string) => {
-  return useQuery({
-    queryKey: ["graypaper-search", query],
-    queryFn: () =>
-      searchGraypaper(query, {
-        page: 1,
-        pageSize: 6,
-      }),
-    enabled: !!query,
-    staleTime: 0,
+interface GraypaperResultsProps {
+  query: string;
+}
+
+export const GraypaperResults = ({ query }: GraypaperResultsProps) => {
+  // Use our graypaper search hook with 6 results per page (for compact view)
+  const { results, totalResults, isLoading, isError } = useSearchGraypaper({
+    query,
+    pageSize: 6,
   });
-};
 
-export const GraypaperResults = ({ query }: { query: string }) => {
-  const { data } = useGraypaperSearch(query);
+  if (isLoading) {
+    return <div className="text-center p-4">Loading graypaper results...</div>;
+  }
 
-  if (!data || data.results.length === 0) {
-    return null;
+  if (isError) {
+    return null; // No error message in compact view
+  }
+
+  if (!results || results.length === 0) {
+    return null; // No empty state in compact view
   }
 
   const graypaperReader = {
@@ -30,15 +34,35 @@ export const GraypaperResults = ({ query }: { query: string }) => {
       display: "graypaper.fluffylabs.dev",
       href: "https://graypaper.fluffylabs.dev",
     },
-    description:
-      "We build fluffy blockchain stuff. Talk is cheap, so see our GitHub for the code. Projects no fluff - we build...",
   };
 
   return (
     <div className="flex flex-col gap-4 mb-7">
-      <h2 className="text-sm">Top Graypaper Results</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-sm">
+          Graypaper Results v0.6.5 ({totalResults} results)
+        </h2>
+
+        {totalResults > 6 && (
+          <RouterLink to={`/results/graypaper?q=${encodeURIComponent(query)}`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary flex items-center text-xs"
+            >
+              View all {totalResults} results
+              <ArrowRight className="h-3.5 w-3.5 ml-1" />
+            </Button>
+          </RouterLink>
+        )}
+      </div>
+
+      <CommercialBanner
+        title={graypaperReader.title}
+        url={graypaperReader.url}
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {data.results.map((section) => (
+        {results.map((section) => (
           <SectionResult
             key={section.id}
             title={section.title}
@@ -48,49 +72,7 @@ export const GraypaperResults = ({ query }: { query: string }) => {
           />
         ))}
       </div>
-      <GraypaperReaderBanner
-        title={graypaperReader.title}
-        url={graypaperReader.url}
-        description={graypaperReader.description}
-      />
     </div>
-  );
-};
-
-const GraypaperReaderBanner = ({
-  title,
-  url,
-  description,
-}: {
-  title: string;
-  url: {
-    display: string;
-    href: string;
-  };
-  description: string;
-}) => {
-  return (
-    <Card className="relative bg-secondary border-border">
-      <CardContent className="p-1.5 flex gap-2 shrink-0 items-center">
-        <div className="bg-muted p-2 rounded-full border-border border">
-          <img src={Logo} className="size-6" alt="Fluffy Labs Logo" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <CardTitle className="text-sm text-primary">{title}</CardTitle>
-            <a
-              href={url.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-muted-foreground after:absolute after:inset-0"
-            >
-              {url.display}
-            </a>
-          </div>
-          <p className="text-xs text-foreground">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 

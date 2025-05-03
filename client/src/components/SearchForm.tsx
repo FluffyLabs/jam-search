@@ -1,43 +1,63 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useSearch } from "@/hooks/useSearch";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
-interface SearchFormProps {
-  initialQuery?: string;
-}
+const searchOptions = [
+  { label: "from", description: "Messages from a specific user" },
+  {
+    label: "since_gp",
+    description: "Find messages since a specific graypaper version",
+  },
+  { label: "before", description: "Find messages before a specific date" },
+  { label: "after", description: "Find messages after a specific date" },
+];
 
-type SearchFilter = {
-  key: string;
-  value: string;
+// Function to highlight filter names in the input
+const highlightFilters = (query: string) => {
+  if (!query) {
+    return "";
+  }
+
+  // Create a highlighted version of the query with filter keys wrapped in spans
+  let highlightedQuery = query;
+  const filterKeys = searchOptions.map((option) => option.label);
+
+  // Regex to find filter patterns (filter_name: value)
+  const filterRegex = new RegExp(`(${filterKeys.join("|")}):([^\\s]+)`, "g");
+
+  // Replace filter patterns with highlighted versions
+  highlightedQuery = highlightedQuery.replace(
+    filterRegex,
+    (_match, filterName, filterValue) => {
+      return `<span class="text-primary">${filterName}</span>:${filterValue}`;
+    }
+  );
+
+  return highlightedQuery;
 };
 
-export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
-  const { search } = useSearch();
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
+/**
+ * SearchForm component
+ *
+ * This component provides a search form with a dropdown of search options.
+ * It allows users to input a search query and select from a list of options
+ * to filter the search results.
+ * It sets the search query in the URL when the form is submitted. For now this is the only global state we have.
+ */
+export const SearchForm = () => {
+  const location = useLocation();
+  const richQuery = new URLSearchParams(location.search).get("q") || "";
+
+  const [searchQuery, setSearchQuery] = useState(richQuery);
   const [isFocused, setIsFocused] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [displayedValue, setDisplayedValue] = useState("");
+  const [displayedValue, setDisplayedValue] = useState(
+    highlightFilters(richQuery)
+  );
   const navigate = useNavigate();
-
-  const searchOptions = [
-    { label: "from", description: "Messages from a specific user" },
-    {
-      label: "since_gp",
-      description: "Find messages since a specific graypaper version",
-    },
-    { label: "before", description: "Find messages before a specific date" },
-    { label: "after", description: "Find messages after a specific date" },
-  ];
-
-  // Update the search input when initialQuery changes
-  useEffect(() => {
-    setSearchQuery(initialQuery);
-    highlightFilters(initialQuery);
-  }, [initialQuery]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -56,66 +76,11 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
     };
   }, []);
 
-  // Function to highlight filter names in the input
-  const highlightFilters = (query: string) => {
-    if (!query) {
-      setDisplayedValue("");
-      return;
-    }
-
-    // Create a highlighted version of the query with filter keys wrapped in spans
-    let highlightedQuery = query;
-    const filterKeys = searchOptions.map((option) => option.label);
-
-    // Regex to find filter patterns (filter_name: value)
-    const filterRegex = new RegExp(`(${filterKeys.join("|")}):([^\\s]+)`, "g");
-
-    // Replace filter patterns with highlighted versions
-    highlightedQuery = highlightedQuery.replace(
-      filterRegex,
-      (_match, filterName, filterValue) => {
-        return `<span class="text-primary">${filterName}</span>:${filterValue}`;
-      }
-    );
-
-    setDisplayedValue(highlightedQuery);
-  };
-
-  const parseSearchQuery = (
-    query: string
-  ): { rawQuery: string; filters: SearchFilter[] } => {
-    const filters: SearchFilter[] = [];
-    const regex = /(from|since_gp|before|after):([^\s]+)/g;
-    let match;
-    let rawQuery = query;
-
-    while ((match = regex.exec(query)) !== null) {
-      filters.push({ key: match[1], value: match[2] });
-      // We don't remove the filters from rawQuery anymore
-    }
-
-    // Filter out the filter patterns from the raw query
-    searchOptions.forEach((option) => {
-      const filterPattern = new RegExp(`${option.label}:[^\\s]+`, "g");
-      rawQuery = rawQuery.replace(filterPattern, "");
-    });
-
-    // Clean up extra spaces
-    rawQuery = rawQuery.replace(/\s+/g, " ").trim();
-
-    return { rawQuery, filters };
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Parse the query to extract filters AND the raw query (without filters)
-      const { rawQuery, filters } = parseSearchQuery(searchQuery);
-
-      // Pass the raw query (without filters) and the parsed filters separately
-      search(rawQuery, { filters });
-
-      // Still navigate with the full query for display purposes
+      // Navigate to the results page with the full query
+      // The results page will handle parsing the query
       navigate(`/results?q=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -137,7 +102,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
     // Insert the filter at the cursor position
     const newQuery = `${textBefore}${space}${option}: ${textAfter}`;
     setSearchQuery(newQuery);
-    highlightFilters(newQuery);
+    setDisplayedValue(highlightFilters(newQuery));
 
     // Focus the input and set cursor after the inserted filter
     setTimeout(() => {
@@ -152,7 +117,7 @@ export const SearchForm = ({ initialQuery = "" }: SearchFormProps) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
-    highlightFilters(value);
+    setDisplayedValue(highlightFilters(value));
   };
 
   return (

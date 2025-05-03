@@ -1,10 +1,14 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchSearchResults, SearchResponse } from "@/lib/api";
-import { getSearchResultsKey, getSearchParamsKey } from "@/lib/queryKeys";
+import { useQuery } from "@tanstack/react-query";
+import { fetchSearchResults } from "@/lib/api";
+import { MATRIX_CHANNELS } from "@/consts";
+import { useState } from "react";
 
 interface UseSearchOptions {
-  initialQuery?: string;
+  query: string;
+  initialPage?: number;
   pageSize?: number;
+  channelId?: (typeof MATRIX_CHANNELS)[number]["id"];
+  filters?: SearchFilter[];
 }
 
 interface SearchFilter {
@@ -12,138 +16,70 @@ interface SearchFilter {
   value: string;
 }
 
-interface SearchParams {
-  query: string;
-  currentPage: number;
-  pageSize: number;
-  filters?: SearchFilter[];
-}
-
 export function useSearch({
-  initialQuery = "",
+  query,
+  initialPage = 1,
   pageSize = 10,
-}: UseSearchOptions = {}) {
-  // Get query client instance
-  const queryClient = useQueryClient();
+  channelId,
+  filters = [],
+}: UseSearchOptions) {
+  // Only manage pagination state
+  const [page, setPage] = useState(initialPage);
 
-  // Get search params from global state or use defaults
-  const searchParamsKey = getSearchParamsKey();
-  const defaultParams: SearchParams = {
-    query: initialQuery,
-    currentPage: 1,
-    pageSize,
-    filters: [],
-  };
-
-  const searchParams =
-    queryClient.getQueryData<SearchParams>(searchParamsKey) || defaultParams;
-
-  const { query: searchQuery, currentPage } = searchParams;
-
-  // Use React Query to store and access the global search state
-  const searchResultsKey = getSearchResultsKey(
-    searchQuery,
-    currentPage,
-    pageSize
-  );
-
-  // Mutation for fetching search results
-  const searchMutation = useMutation({
-    mutationFn: (params: SearchParams) =>
-      fetchSearchResults(params.query, {
-        page: params.currentPage,
-        pageSize: params.pageSize,
-        filters: params.filters,
+  // Use React Query to fetch search results
+  const { data, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ["search", query, page, pageSize, channelId, filters],
+    queryFn: () =>
+      fetchSearchResults(query, {
+        page,
+        pageSize,
+        filters,
+        channelId,
       }),
-    onSuccess: (data) => {
-      // Store results in global cache
-      queryClient.setQueryData(searchResultsKey, data);
-    },
-    onError: (error) => {
-      console.error("Error fetching search results", error);
-    },
+    enabled: !!query.trim(), // Only fetch if we have a non-empty query
   });
 
-  // Get data from cache or return empty defaults
-  const cachedData = queryClient.getQueryData<SearchResponse>(searchResultsKey);
-  const results = cachedData?.results || [];
-  const totalResults = cachedData?.total || 0;
+  // Extract results
+  const results = data?.results || [];
+  const totalResults = data?.total || 0;
 
-  const search = (query: string, options?: { filters?: SearchFilter[] }) => {
-    const newParams = {
-      ...searchParams,
-      query,
-      currentPage: 1,
-      filters: options?.filters || [],
-    };
+  // Calculate total pages
+  const totalPages = data ? Math.ceil(totalResults / pageSize) : 0;
 
-    // Update search params in global state
-    queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-    if (query.trim()) {
-      searchMutation.mutate(newParams);
-    }
-  };
-
+  // Pagination functions
   const nextPage = () => {
-    if (results.length === pageSize) {
-      const newParams = {
-        ...searchParams,
-        currentPage: currentPage + 1,
-      };
-
-      // Update page in global state
-      queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-      searchMutation.mutate(newParams);
+    if (page < totalPages) {
+      setPage(page + 1);
     }
   };
 
   const previousPage = () => {
-    if (currentPage > 1) {
-      const newParams = {
-        ...searchParams,
-        currentPage: currentPage - 1,
-      };
-
-      // Update page in global state
-      queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-      searchMutation.mutate(newParams);
+    if (page > 1) {
+      setPage(page - 1);
     }
   };
 
-  const goToPage = (page: number) => {
-    const newPage = Math.max(1, page);
-
-    const newParams = {
-      ...searchParams,
-      currentPage: newPage,
-    };
-
-    // Update page in global state
-    queryClient.setQueryData<SearchParams>(searchParamsKey, newParams);
-
-    searchMutation.mutate(newParams);
+  const goToPage = (newPage: number) => {
+    setPage(Math.max(1, Math.min(newPage, totalPages || 1)));
   };
 
   return {
-    search,
-    searchQuery,
     results,
     totalResults,
-    isLoading: searchMutation.isPending,
-    isError: searchMutation.isError,
-    error: searchMutation.error,
-    refetch: () => searchMutation.mutate(searchParams),
+    currentPage: page,
+    totalPages,
+    pageSize,
+    isLoading,
+    isError,
+    error,
+    refetch,
     pagination: {
-      currentPage,
-      pageSize,
       nextPage,
       previousPage,
       goToPage,
-      hasNextPage: results.length === pageSize,
-      hasPreviousPage: currentPage > 1,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
     },
+    channelId,
   };
 }
