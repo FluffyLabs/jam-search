@@ -14,7 +14,7 @@ async function main() {
 
   if (!isDev) {
     // Schedule daily job to fetch messages from yesterday at 5:00 UTC
-    matrixJob = scheduleJob("0 5 * * *", async () => {
+    matrixJob = scheduleJob("0 4 * * *", async () => {
       console.log(
         "Running scheduled message fetch job at",
         new Date().toISOString()
