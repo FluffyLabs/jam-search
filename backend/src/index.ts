@@ -13,7 +13,7 @@ async function main() {
   const app = createApp();
 
   if (!isDev) {
-    // Schedule daily job to fetch messages from yesterday at 5:00 UTC
+    // Schedule daily job to fetch messages from yesterday at 3:20 UTC
     // Immediately after https://github.com/paritytech/matrix-archiver/blob/master/.github/workflows/archive.yml#L10
     matrixJob = scheduleJob("20 3 * * *", async () => {
       console.log(
