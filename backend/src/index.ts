@@ -14,7 +14,8 @@ async function main() {
 
   if (!isDev) {
     // Schedule daily job to fetch messages from yesterday at 5:00 UTC
-    matrixJob = scheduleJob("0 4 * * *", async () => {
+    // Immediately after https://github.com/paritytech/matrix-archiver/blob/master/.github/workflows/archive.yml#L10
+    matrixJob = scheduleJob("20 3 * * *", async () => {
       console.log(
         "Running scheduled message fetch job at",
         new Date().toISOString()
