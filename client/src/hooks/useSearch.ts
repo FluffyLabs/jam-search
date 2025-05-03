@@ -9,7 +9,7 @@ interface UseSearchOptions {
   pageSize?: number;
   channelId?: (typeof MATRIX_CHANNELS)[number]["id"];
   filters?: SearchFilter[];
-  fuzzySearch?: boolean;
+  searchMode?: string;
 }
 
 interface SearchFilter {
@@ -23,29 +23,21 @@ export function useSearch({
   pageSize = 10,
   channelId,
   filters = [],
-  fuzzySearch,
+  searchMode = "strict",
 }: UseSearchOptions) {
   // Only manage pagination state
   const [page, setPage] = useState(initialPage);
 
   // Use React Query to fetch search results
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: [
-      "search",
-      query,
-      page,
-      pageSize,
-      channelId,
-      filters,
-      fuzzySearch,
-    ],
+    queryKey: ["search", query, page, pageSize, channelId, filters, searchMode],
     queryFn: () =>
       fetchSearchResults(query, {
         page,
         pageSize,
         filters,
         channelId,
-        fuzzySearch,
+        searchMode,
       }),
     enabled: !!query.trim(), // Only fetch if we have a non-empty query
   });

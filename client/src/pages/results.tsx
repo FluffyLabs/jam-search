@@ -58,8 +58,8 @@ const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
 const SearchResults = () => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
-  const fuzzySearchParam =
-    new URLSearchParams(location.search).get("fuzzySearch") === "true";
+  const searchModeParam =
+    new URLSearchParams(location.search).get("searchMode") || "strict";
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
 
@@ -77,7 +77,7 @@ const SearchResults = () => {
     channelId: MATRIX_CHANNELS[0].id,
     pageSize: 2, // Limit to 2 items
     filters,
-    fuzzySearch: fuzzySearchParam,
+    searchMode: searchModeParam,
   });
 
   // Search for jam channel
@@ -91,7 +91,7 @@ const SearchResults = () => {
     channelId: MATRIX_CHANNELS[1].id,
     pageSize: 2, // Limit to 2 items
     filters,
-    fuzzySearch: fuzzySearchParam,
+    searchMode: searchModeParam,
   });
 
   const handleSourceChange = (sources: string[]) => {
@@ -134,7 +134,7 @@ const SearchResults = () => {
 
         <div className="mb-8">
           {selectedSources.includes("graypaper") && (
-            <GraypaperResults query={query} fuzzySearch={fuzzySearchParam} />
+            <GraypaperResults query={query} searchMode={searchModeParam} />
           )}
 
           {selectedSources.includes("matrix") && (
