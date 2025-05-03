@@ -36,6 +36,10 @@ jobs:
       - name: Add Heroku remote
         run: heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
 
-      # Push to Heroku
+      # Get current branch name and push to Heroku
       - name: Push to Heroku
-        run: git push heroku main
+        run: |
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          CURRENT_BRANCH=$(git symbolic-ref --short HEAD || echo "HEAD")
+          echo "Current branch is $CURRENT_BRANCH"
+          git push heroku $CURRENT_BRANCH:main
