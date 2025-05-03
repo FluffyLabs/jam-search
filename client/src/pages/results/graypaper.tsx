@@ -10,6 +10,8 @@ import { highlightText } from "@/components/GraypaperResults";
 const GraypaperResults = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q") || "";
+  const fuzzySearchParam =
+    new URLSearchParams(location.search).get("fuzzySearch") === "true";
 
   // Use our graypaper search hook with 10 results per page
   const {
@@ -23,6 +25,7 @@ const GraypaperResults = () => {
   } = useSearchGraypaper({
     query,
     pageSize: 10,
+    fuzzySearch: fuzzySearchParam,
   });
 
   return (

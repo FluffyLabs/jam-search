@@ -12,7 +12,7 @@ const MatrixResults = () => {
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
   const channelId = searchParams.get("channelId") || MATRIX_CHANNELS[0].id;
-
+  const fuzzySearch = searchParams.get("fuzzySearch") === "true";
   // Find the channel name based on the channelId
   const channel =
     MATRIX_CHANNELS.find((ch) => ch.id === channelId) || MATRIX_CHANNELS[0];
@@ -34,6 +34,7 @@ const MatrixResults = () => {
     channelId,
     pageSize: 10,
     filters,
+    fuzzySearch,
   });
 
   if (isError) {

@@ -38,6 +38,7 @@ export function createApp() {
     filter_before: z.string().optional(),
     filter_after: z.string().optional(),
     channelId: z.string().optional(),
+    fuzzySearch: z.string().optional(),
   });
 
   // Search endpoint
@@ -49,10 +50,21 @@ export function createApp() {
     const data = result.data;
 
     // Base search condition
-    const searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-      paradedb.match('content', ${data.q}, distance => 1),
-      paradedb.match('sender', ${data.q}, prefix => true)
-    ])`;
+    let searchCondition;
+
+    if (data.fuzzySearch === "true") {
+      // Use a more flexible/fuzzy search with higher distance
+      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+        paradedb.match('content', ${data.q}, distance => 1),
+        paradedb.match('sender', ${data.q}, prefix => true)
+      ])`;
+    } else {
+      // Exact matching without distance parameter
+      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+        paradedb.match('content', ${data.q}),
+        paradedb.match('sender', ${data.q}, prefix => true)
+      ])`;
+    }
 
     // Initialize additional filter conditions
     const filterConditions = [];
@@ -149,6 +161,7 @@ export function createApp() {
     q: z.string(),
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().lte(100).default(10),
+    fuzzySearch: z.string().optional(),
   });
 
   app.get("/search/graypaper", async (c) => {
@@ -159,10 +172,21 @@ export function createApp() {
     const data = result.data;
 
     // Base search condition
-    const searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-      paradedb.match('title', ${data.q}, distance => 1),
-      paradedb.match('text', ${data.q}, distance => 1)
-    ])`;
+    let searchCondition;
+
+    if (data.fuzzySearch === "true") {
+      // Use a more flexible/fuzzy search with higher distance
+      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+        paradedb.match('title', ${data.q}, distance => 1),
+        paradedb.match('text', ${data.q}, distance => 1)
+      ])`;
+    } else {
+      // Exact matching without distance parameter
+      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+        paradedb.match('title', ${data.q}),
+        paradedb.match('text', ${data.q})
+      ])`;
+    }
 
     // Get total count of matching rows
     const countResult = await db

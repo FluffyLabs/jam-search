@@ -81,6 +81,8 @@ const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
 const SearchResults = () => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
+  const fuzzySearchParam =
+    new URLSearchParams(location.search).get("fuzzySearch") === "true";
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
 
@@ -98,6 +100,7 @@ const SearchResults = () => {
     channelId: MATRIX_CHANNELS[0].id,
     pageSize: 2, // Limit to 2 items
     filters,
+    fuzzySearch: fuzzySearchParam,
   });
 
   // Search for jam channel
@@ -111,6 +114,7 @@ const SearchResults = () => {
     channelId: MATRIX_CHANNELS[1].id,
     pageSize: 2, // Limit to 2 items
     filters,
+    fuzzySearch: fuzzySearchParam,
   });
 
   const handleSourceChange = (sources: string[]) => {

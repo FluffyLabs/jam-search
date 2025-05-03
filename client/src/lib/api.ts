@@ -57,9 +57,16 @@ export async function fetchSearchResults(
     pageSize?: number;
     filters?: Array<{ key: string; value: string }>;
     channelId?: string;
+    fuzzySearch?: boolean;
   } = {}
 ): Promise<SearchResponse> {
-  const { page = 1, pageSize = 10, filters = [], channelId } = options;
+  const {
+    page = 1,
+    pageSize = 10,
+    filters = [],
+    channelId,
+    fuzzySearch,
+  } = options;
 
   // Build the query parameters
   const queryParams = new URLSearchParams();
@@ -75,6 +82,11 @@ export async function fetchSearchResults(
   // Add channelId parameter if provided
   if (channelId) {
     queryParams.append("channelId", channelId);
+  }
+
+  // Add fuzzySearch parameter if provided
+  if (fuzzySearch) {
+    queryParams.append("fuzzySearch", "true");
   }
 
   return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
@@ -96,14 +108,20 @@ export async function searchGraypaper(
   options: {
     page?: number;
     pageSize?: number;
+    fuzzySearch?: boolean;
   } = {}
 ): Promise<GraypaperSearchResponse> {
-  const { page = 1, pageSize = 10 } = options;
+  const { page = 1, pageSize = 10, fuzzySearch } = options;
 
   const queryParams = new URLSearchParams();
   queryParams.append("q", query);
   queryParams.append("page", page.toString());
   queryParams.append("pageSize", pageSize.toString());
+
+  // Add fuzzySearch parameter if provided
+  if (fuzzySearch) {
+    queryParams.append("fuzzySearch", "true");
+  }
 
   return fetchApi(`/search/graypaper?${queryParams.toString()}`);
 }
