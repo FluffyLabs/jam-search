@@ -38,7 +38,7 @@ export function createApp() {
     filter_before: z.string().optional(),
     filter_after: z.string().optional(),
     channelId: z.string().optional(),
-    searchMode: z.enum(["fuzzy", "semantic", "strict"]).optional(),
+    searchMode: z.enum(["fuzzy", "semantic", "strict"]).default("strict"),
   });
 
   // Search endpoint
