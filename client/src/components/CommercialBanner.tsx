@@ -19,8 +19,8 @@ export const CommercialBanner = ({
         <div className="bg-muted p-2 rounded-full border-border border">
           <img src={Logo} className="size-6" alt="Fluffy Labs Logo" />
         </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
+        <div className="flex gap-1">
+          <div className="flex flex-col items-start sm:items-center sm:flex-row sm:gap-3">
             <CardTitle className="text-sm text-primary">{title}</CardTitle>
             <a
               href={url.href}
