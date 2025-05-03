@@ -9,6 +9,7 @@ import {
   graypapersTable,
   messagesTable,
 } from "./db/schema.js";
+import OpenAI from "openai";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -180,6 +181,37 @@ export function createApp() {
       total,
       page: data.page,
       pageSize: data.pageSize,
+    });
+  });
+
+  app.post("/chat", async (c) => {
+    const client = new OpenAI();
+
+    const { message } = await c.req.json();
+
+    const result = await client.responses.create({
+      model: "gpt-4.1-nano",
+      input: [
+        {
+          role: "system",
+          content:
+            "You are a helpful assistant. You should answer the questions from the user regarding the file. Make it rather short.",
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      tools: [
+        {
+          type: "file_search",
+          vector_store_ids: ["vs_681092b149408191a081b889bb7cb04a"],
+        },
+      ],
+    });
+
+    return c.json({
+      result,
     });
   });
 

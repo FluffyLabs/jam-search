@@ -20,7 +20,8 @@
     "test:watch": "vitest",
     "fill-historical-messages": "tsx ./src/utils/fillHistoricalMessages.ts",
     "graypaper:index-search": "tsx ./src/scripts/updateGraypaperData.ts",
-    "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts"
+    "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts",
+    "create-context": "tsx ./src/scripts/createContext.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
@@ -29,6 +30,7 @@
     "hono": "^4.7.7",
     "matrix-js-sdk": "^37.3.0",
     "node-schedule": "^2.1.1",
+    "openai": "^4.96.0",
     "pdfjs-dist": "^5.1.91",
     "postgres": "^3.4.5",
     "tsx": "^4.19.3",
