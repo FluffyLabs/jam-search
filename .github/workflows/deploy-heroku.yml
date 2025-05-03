@@ -42,4 +42,4 @@ jobs:
           git config --global --add safe.directory "${GITHUB_WORKSPACE}"
           CURRENT_BRANCH=$(git symbolic-ref --short HEAD || echo "HEAD")
           echo "Current branch is $CURRENT_BRANCH"
-          git push heroku $CURRENT_BRANCH:main
+          git push heroku $CURRENT_BRANCH:main --force
