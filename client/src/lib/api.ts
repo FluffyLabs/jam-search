@@ -57,7 +57,7 @@ export async function fetchSearchResults(
     pageSize?: number;
     filters?: Array<{ key: string; value: string }>;
     channelId?: string;
-    fuzzySearch?: boolean;
+    searchMode?: string;
   } = {}
 ): Promise<SearchResponse> {
   const {
@@ -65,7 +65,7 @@ export async function fetchSearchResults(
     pageSize = 10,
     filters = [],
     channelId,
-    fuzzySearch,
+    searchMode = "strict",
   } = options;
 
   // Build the query parameters
@@ -84,9 +84,9 @@ export async function fetchSearchResults(
     queryParams.append("channelId", channelId);
   }
 
-  // Add fuzzySearch parameter if provided
-  if (fuzzySearch) {
-    queryParams.append("fuzzySearch", "true");
+  // Add searchMode parameter if not strict (default)
+  if (searchMode !== "strict") {
+    queryParams.append("searchMode", searchMode);
   }
 
   return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
@@ -108,20 +108,19 @@ export async function searchGraypaper(
   options: {
     page?: number;
     pageSize?: number;
-    fuzzySearch?: boolean;
+    searchMode?: string;
   } = {}
 ): Promise<GraypaperSearchResponse> {
-  const { page = 1, pageSize = 10, fuzzySearch } = options;
+  const { page = 1, pageSize = 10, searchMode = "strict" } = options;
 
   const queryParams = new URLSearchParams();
   queryParams.append("q", query);
   queryParams.append("page", page.toString());
   queryParams.append("pageSize", pageSize.toString());
 
-  console.log("fuzzySearch", fuzzySearch);
-  // Add fuzzySearch parameter if provided
-  if (fuzzySearch) {
-    queryParams.append("fuzzySearch", "true");
+  // Add searchMode parameter if not strict (default)
+  if (searchMode !== "strict") {
+    queryParams.append("searchMode", searchMode);
   }
 
   return fetchApi(`/search/graypaper?${queryParams.toString()}`);

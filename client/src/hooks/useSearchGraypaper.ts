@@ -6,22 +6,22 @@ interface UseSearchGraypaperOptions {
   query: string;
   initialPage?: number;
   pageSize?: number;
-  fuzzySearch?: boolean;
+  searchMode?: string;
 }
 
 export function useSearchGraypaper({
   query,
   initialPage = 1,
   pageSize = 10,
-  fuzzySearch,
+  searchMode = "strict",
 }: UseSearchGraypaperOptions) {
   const [page, setPage] = useState(initialPage);
   const currentPageSize = pageSize;
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["graypaper-search", query, page, currentPageSize, fuzzySearch],
+    queryKey: ["graypaper-search", query, page, currentPageSize, searchMode],
     queryFn: () =>
-      searchGraypaper(query, { page, pageSize: currentPageSize, fuzzySearch }),
+      searchGraypaper(query, { page, pageSize: currentPageSize, searchMode }),
     enabled: !!query.trim(),
     staleTime: 0,
   });

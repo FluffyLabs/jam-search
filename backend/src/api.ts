@@ -38,7 +38,7 @@ export function createApp() {
     filter_before: z.string().optional(),
     filter_after: z.string().optional(),
     channelId: z.string().optional(),
-    fuzzySearch: z.string().optional(),
+    searchMode: z.enum(["fuzzy", "semantic", "strict"]).optional(),
   });
 
   // Search endpoint
@@ -52,18 +52,29 @@ export function createApp() {
     // Base search condition
     let searchCondition: SQL;
 
-    if (data.fuzzySearch === "true") {
-      // Use a more flexible/fuzzy search with higher distance
-      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-        paradedb.match('content', ${data.q}, distance => 1),
-        paradedb.match('sender', ${data.q}, prefix => true)
-      ])`;
-    } else {
-      // Exact matching without distance parameter
-      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-        paradedb.match('content', ${data.q}),
-        paradedb.match('sender', ${data.q}, prefix => true)
-      ])`;
+    switch (data.searchMode) {
+      case "fuzzy":
+        // Fuzzy search with distance parameter for approximate matching
+        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.match('content', ${data.q}, distance => 1),
+          paradedb.match('sender', ${data.q}, prefix => true)
+        ])`;
+        break;
+      case "semantic":
+        // Future semantic search implementation
+        // For now, fallback to basic search with a note that it's not implemented
+        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.match('content', ${data.q}),
+          paradedb.match('sender', ${data.q}, prefix => true)
+        ])`;
+        break;
+      case "strict":
+      default:
+        // Strict/exact matching without distance parameter
+        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.match('content', ${data.q}),
+          paradedb.match('sender', ${data.q}, prefix => true)
+        ])`;
     }
 
     // Initialize additional filter conditions
@@ -161,7 +172,7 @@ export function createApp() {
     q: z.string(),
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().lte(100).default(10),
-    fuzzySearch: z.string().optional(),
+    searchMode: z.enum(["fuzzy", "semantic", "strict"]).optional(),
   });
 
   app.get("/search/graypaper", async (c) => {
@@ -174,18 +185,29 @@ export function createApp() {
     // Base search condition
     let searchCondition: SQL;
 
-    if (data.fuzzySearch === "true") {
-      // Use a more flexible/fuzzy search with higher distance
-      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-        paradedb.match('title', ${data.q}, distance => 1),
-        paradedb.match('text', ${data.q}, distance => 1)
-      ])`;
-    } else {
-      // Exact matching without distance parameter
-      searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-        paradedb.match('title', ${data.q}),
-        paradedb.match('text', ${data.q})
-      ])`;
+    switch (data.searchMode) {
+      case "fuzzy":
+        // Fuzzy search with distance parameter for approximate matching
+        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.match('title', ${data.q}, distance => 1),
+          paradedb.match('text', ${data.q}, distance => 1)
+        ])`;
+        break;
+      case "semantic":
+        // Future semantic search implementation
+        // For now, fallback to basic search with a note that it's not implemented
+        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.match('title', ${data.q}),
+          paradedb.match('text', ${data.q})
+        ])`;
+        break;
+      case "strict":
+      default:
+        // Strict/exact matching without distance parameter
+        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.match('title', ${data.q}),
+          paradedb.match('text', ${data.q})
+        ])`;
     }
 
     // Get total count of matching rows

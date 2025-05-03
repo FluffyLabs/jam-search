@@ -11,8 +11,8 @@ import { ShareUrl } from "@/components/ShareUrl";
 const GraypaperResults = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q") || "";
-  const fuzzySearchParam =
-    new URLSearchParams(location.search).get("fuzzySearch") === "true";
+  const searchModeParam =
+    new URLSearchParams(location.search).get("searchMode") || "strict";
 
   // Use our graypaper search hook with 10 results per page
   const {
@@ -26,7 +26,7 @@ const GraypaperResults = () => {
   } = useSearchGraypaper({
     query,
     pageSize: 10,
-    fuzzySearch: fuzzySearchParam,
+    searchMode: searchModeParam,
   });
 
   return (
