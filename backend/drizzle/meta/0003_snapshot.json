@@ -1,6 +1,6 @@
 {
-  "id": "a0297ec2-c452-4377-b332-3cfb663b8889",
-  "prevId": "04f58f61-5d74-40a5-b91d-43f6b40d9532",
+  "id": "b68e7503-eac6-4e86-abfd-2df4f847cbbb",
+  "prevId": "a0297ec2-c452-4377-b332-3cfb663b8889",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -25,9 +25,32 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "embedding": {
+          "name": "embedding",
+          "type": "vector(1536)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "graypaper_embedding_index": {
+          "name": "graypaper_embedding_index",
+          "columns": [
+            {
+              "expression": "embedding",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "vector_cosine_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "hnsw",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -88,7 +111,6 @@
           "primaryKey": false,
           "notNull": false
         },
-
         "content": {
           "name": "content",
           "type": "text",
@@ -100,16 +122,41 @@
           "type": "timestamp (3)",
           "primaryKey": false,
           "notNull": true
+        },
+        "embedding": {
+          "name": "embedding",
+          "type": "vector(1536)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "messages_embedding_index": {
+          "name": "messages_embedding_index",
+          "columns": [
+            {
+              "expression": "embedding",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "vector_cosine_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "hnsw",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "messages_messageid_unique": {
           "name": "messages_messageid_unique",
           "nullsNotDistinct": false,
-          "columns": ["messageid"]
+          "columns": [
+            "messageid"
+          ]
         }
       },
       "policies": {},

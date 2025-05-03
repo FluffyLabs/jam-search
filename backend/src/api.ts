@@ -9,6 +9,7 @@ import {
   graypapersTable,
   messagesTable,
 } from "./db/schema.js";
+import { OpenAI } from "openai";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -50,7 +51,9 @@ export function createApp() {
     const data = result.data;
 
     // Base search condition
-    let searchCondition: SQL;
+    let searchCondition: SQL | null = null;
+    // TODO: Make this better - it should update select & order by in the semantic search
+    let orderBy: SQL = sql`paradedb.score(id) DESC, id`;
 
     switch (data.searchMode) {
       case "fuzzy":
@@ -61,12 +64,28 @@ export function createApp() {
         ])`;
         break;
       case "semantic":
-        // Future semantic search implementation
-        // For now, fallback to basic search with a note that it's not implemented
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('content', ${data.q}),
-          paradedb.match('sender', ${data.q}, prefix => true)
-        ])`;
+        // Get embeddings for the query
+        try {
+          const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+          });
+
+          const response = await openai.embeddings.create({
+            model: "text-embedding-3-small",
+            input: data.q,
+            dimensions: 1536,
+          });
+
+          const queryEmbedding = response.data[0].embedding;
+          orderBy = sql`1 - ${messagesTable.embedding} <=> ${queryEmbedding}`;
+        } catch (error) {
+          console.error("Error generating embedding for search query:", error);
+          // Fallback to standard search if embedding fails
+          searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+            paradedb.match('content', ${data.q}),
+            paradedb.match('sender', ${data.q}, prefix => true)
+          ])`;
+        }
         break;
       case "strict":
         // Strict/exact matching without distance parameter
@@ -158,7 +177,11 @@ export function createApp() {
       .select()
       .from(messagesTable)
       .where(whereCondition)
-      .orderBy(sql`paradedb.score(id) DESC, id`)
+      .orderBy(
+        data.searchMode === "semantic"
+          ? searchCondition
+          : sql`paradedb.score(id) DESC, id`
+      )
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
 
@@ -196,12 +219,30 @@ export function createApp() {
         ])`;
         break;
       case "semantic":
-        // Future semantic search implementation
-        // For now, fallback to basic search with a note that it's not implemented
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('title', ${data.q}),
-          paradedb.match('text', ${data.q})
-        ])`;
+        // Get embeddings for the query
+        try {
+          const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+          });
+
+          const response = await openai.embeddings.create({
+            model: "text-embedding-3-small",
+            input: data.q,
+            dimensions: 1536,
+          });
+
+          const queryEmbedding = response.data[0].embedding;
+
+          // Use vector similarity search with PostgreSQL pgvector
+          searchCondition = sql`${graypaperSectionsTable.embedding} <=> ${queryEmbedding}`;
+        } catch (error) {
+          console.error("Error generating embedding for search query:", error);
+          // Fallback to standard search if embedding fails
+          searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+            paradedb.match('title', ${data.q}),
+            paradedb.match('text', ${data.q})
+          ])`;
+        }
         break;
       case "strict":
         // Strict/exact matching without distance parameter
@@ -227,7 +268,11 @@ export function createApp() {
       .select()
       .from(graypaperSectionsTable)
       .where(searchCondition)
-      .orderBy(sql`paradedb.score(id) DESC, id`)
+      .orderBy(
+        data.searchMode === "semantic"
+          ? searchCondition
+          : sql`paradedb.score(id) DESC, id`
+      )
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
 
