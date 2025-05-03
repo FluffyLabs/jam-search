@@ -38,7 +38,7 @@ const MatrixResults = () => {
 
   if (isError) {
     return (
-      <div className="text-center p-8 text-destructive">
+      <div className="text-center text-2xl p-8 text-destructive-foreground">
         Error loading search results
       </div>
     );

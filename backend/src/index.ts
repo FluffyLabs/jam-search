@@ -1,32 +1,39 @@
 import { serve } from "@hono/node-server";
 import { type Job, scheduleJob } from "node-schedule";
 import { createApp } from "./api.js";
-import { db } from "./db/db.js";
 import { env } from "./env.js";
 import { updateGraypapers } from "./scripts/updateGraypapers.js";
-import { MessagesLogger } from "./services/logger.js";
-import { MatrixService } from "./services/matrix.js";
+import { fillArchivedMessages } from "./scripts/fillArchivedMessages.js";
+import { format, subDays } from "date-fns";
 
 const isDev = process.env.NODE_ENV === "development";
 async function main() {
-  const msgLog = new MessagesLogger({ roomIds: env.ROOM_IDS, db: db });
-  const matrixService = isDev
-    ? null
-    : new MatrixService(
-        env.HOMESERVER_URL,
-        env.ACCESS_TOKEN,
-        env.USER_ID,
-        msgLog
-      );
-
-  let job: Job | null = null;
+  let matrixJob: Job | null = null;
+  let graypaperJob: Job | null = null;
   const app = createApp();
 
   if (!isDev) {
-    // Start Matrix client
-    await matrixService?.start();
+    // Schedule daily job to fetch messages from yesterday at 5:00 UTC
+    matrixJob = scheduleJob("0 5 * * *", async () => {
+      console.log(
+        "Running scheduled message fetch job at",
+        new Date().toISOString()
+      );
+      try {
+        // Calculate yesterday and today dates
+        const today = new Date();
+        const yesterday = subDays(today, 1);
+        const yesterdayStr = format(yesterday, "yyyy-MM-dd");
 
-    job = scheduleJob("0 0 * * *", async () => {
+        // Fetch messages from yesterday to today
+        await fillArchivedMessages(yesterdayStr, yesterdayStr);
+        console.log("Message fetch job completed successfully");
+      } catch (error) {
+        console.error("Error in message fetch job:", error);
+      }
+    });
+
+    graypaperJob = scheduleJob("0 0 * * *", async () => {
       console.log(
         "Running scheduled graypaper update job at",
         new Date().toISOString()
@@ -51,9 +58,9 @@ async function main() {
   // Handle graceful shutdown
   const shutdown = async () => {
     console.log("🛑 Shutting down...");
-    await matrixService?.stop();
     server.close();
-    job?.cancel();
+    matrixJob?.cancel();
+    graypaperJob?.cancel();
     process.exit(0);
   };
 

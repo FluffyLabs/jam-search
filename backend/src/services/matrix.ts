@@ -1,3 +1,5 @@
+//  This is not used anymore, we use the archive instead
+// We keep it here for the future usage
 import {
   ClientEvent,
   type MatrixClient,

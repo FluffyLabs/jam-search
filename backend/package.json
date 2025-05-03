@@ -20,7 +20,7 @@
     "test:watch": "vitest",
     "graypaper:index-search": "tsx ./src/scripts/updateGraypaperData.ts",
     "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts",
-    "fill-historical-messages": "tsx ./src/scripts/fillHistoricalMessages.ts"
+    "fill-archived-messages": "tsx ./src/scripts/fillArchivedMessages.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
