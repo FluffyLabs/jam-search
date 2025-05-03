@@ -6,10 +6,13 @@ import { ArrowLeft, Link as LinkIcon } from "lucide-react";
 import { parseSearchQuery } from "@/lib/utils";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { highlightText } from "@/components/GraypaperResults";
+import { ShareUrl } from "@/components/ShareUrl";
 
 const GraypaperResults = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q") || "";
+  const fuzzySearchParam =
+    new URLSearchParams(location.search).get("fuzzySearch") === "true";
 
   // Use our graypaper search hook with 10 results per page
   const {
@@ -23,6 +26,7 @@ const GraypaperResults = () => {
   } = useSearchGraypaper({
     query,
     pageSize: 10,
+    fuzzySearch: fuzzySearchParam,
   });
 
   return (
@@ -40,6 +44,7 @@ const GraypaperResults = () => {
               {totalResults.toLocaleString()} results
             </span>
           </div>
+          <ShareUrl />
         </div>
       </div>
 

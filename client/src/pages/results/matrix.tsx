@@ -6,13 +6,14 @@ import { useSearch } from "@/hooks/useSearch";
 import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
+import { ShareUrl } from "@/components/ShareUrl";
 
 const MatrixResults = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
   const channelId = searchParams.get("channelId") || MATRIX_CHANNELS[0].id;
-
+  const fuzzySearch = searchParams.get("fuzzySearch") === "true";
   // Find the channel name based on the channelId
   const channel =
     MATRIX_CHANNELS.find((ch) => ch.id === channelId) || MATRIX_CHANNELS[0];
@@ -34,6 +35,7 @@ const MatrixResults = () => {
     channelId,
     pageSize: 10,
     filters,
+    fuzzySearch,
   });
 
   if (isError) {
@@ -59,6 +61,7 @@ const MatrixResults = () => {
               ({totalResults.toLocaleString()} results)
             </span>
           </div>
+          <ShareUrl />
         </div>
       </div>
 

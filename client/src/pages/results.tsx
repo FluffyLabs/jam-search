@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { SearchForm } from "@/components/SearchForm";
 import { useSearch } from "@/hooks/useSearch";
-import { useLocation, Link } from "react-router";
+import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ResultList } from "@/components/ResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
-import { Check, Share, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery } from "@/lib/utils";
 import { CommercialBanner } from "@/components/CommercialBanner";
+import { ShareUrl } from "@/components/ShareUrl";
 
 interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
@@ -26,15 +27,8 @@ const SOURCE_OPTIONS = [
 const initialSources = ["matrix", "graypaper"];
 
 const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
-  const [copied, setCopied] = useState(false);
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const handleSourceChange = (sources: string[]) => {
     setSelectedSources(sources);
@@ -55,24 +49,7 @@ const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
             required
           />
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
-          onClick={handleCopyLink}
-        >
-          {copied ? (
-            <div className="flex items-center">
-              <Check className="w-4 h-4 mr-1.5" />
-              copied!
-            </div>
-          ) : (
-            <div className="flex items-center">
-              <Share className="w-4 h-4 mr-1.5" />
-              share results
-            </div>
-          )}
-        </Button>
+        <ShareUrl />
       </div>
     </div>
   );
@@ -81,6 +58,8 @@ const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
 const SearchResults = () => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
+  const fuzzySearchParam =
+    new URLSearchParams(location.search).get("fuzzySearch") === "true";
   const [selectedSources, setSelectedSources] =
     useState<string[]>(initialSources);
 
@@ -98,6 +77,7 @@ const SearchResults = () => {
     channelId: MATRIX_CHANNELS[0].id,
     pageSize: 2, // Limit to 2 items
     filters,
+    fuzzySearch: fuzzySearchParam,
   });
 
   // Search for jam channel
@@ -111,6 +91,7 @@ const SearchResults = () => {
     channelId: MATRIX_CHANNELS[1].id,
     pageSize: 2, // Limit to 2 items
     filters,
+    fuzzySearch: fuzzySearchParam,
   });
 
   const handleSourceChange = (sources: string[]) => {
@@ -153,7 +134,7 @@ const SearchResults = () => {
 
         <div className="mb-8">
           {selectedSources.includes("graypaper") && (
-            <GraypaperResults query={query} />
+            <GraypaperResults query={query} fuzzySearch={fuzzySearchParam} />
           )}
 
           {selectedSources.includes("matrix") && (
@@ -168,11 +149,11 @@ const SearchResults = () => {
 
                   {graypaperTotalResults > 2 && (
                     <Link
-                      to={`/results/matrix?q=${encodeURIComponent(
-                        query
-                      )}&channelId=${encodeURIComponent(
-                        MATRIX_CHANNELS[0].id
-                      )}`}
+                      to={(() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set("channelId", MATRIX_CHANNELS[0].id);
+                        return `/results/matrix?${params.toString()}`;
+                      })()}
                     >
                       <Button
                         variant="ghost"
@@ -211,11 +192,11 @@ const SearchResults = () => {
                   </h2>
                   {jamTotalResults > 2 && (
                     <Link
-                      to={`/results/matrix?q=${encodeURIComponent(
-                        query
-                      )}&channelId=${encodeURIComponent(
-                        MATRIX_CHANNELS[1].id
-                      )}`}
+                      to={(() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set("channelId", MATRIX_CHANNELS[1].id);
+                        return `/results/matrix?${params.toString()}`;
+                      })()}
                     >
                       <Button
                         variant="ghost"

@@ -1,8 +1,14 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -46,12 +52,18 @@ const highlightFilters = (query: string) => {
  * to filter the search results.
  * It sets the search query in the URL when the form is submitted. For now this is the only global state we have.
  */
-export const SearchForm = () => {
+export const SearchForm = ({
+  redirectToResults = false,
+}: {
+  redirectToResults?: boolean;
+}) => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
-
   const [searchQuery, setSearchQuery] = useState(richQuery);
   const [isFocused, setIsFocused] = useState(false);
+  const [fuzzySearch, setFuzzySearch] = useState(
+    new URLSearchParams(location.search).get("fuzzySearch") === "true"
+  );
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [displayedValue, setDisplayedValue] = useState(
@@ -79,9 +91,23 @@ export const SearchForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to the results page with the full query
-      // The results page will handle parsing the query
-      navigate(`/results?q=${encodeURIComponent(searchQuery)}`);
+      // Get current URL parameters and update only the search-related ones
+      const queryParams = new URLSearchParams(location.search);
+      queryParams.set("q", searchQuery);
+
+      // Only include fuzzySearch when enabled
+      if (fuzzySearch) {
+        queryParams.set("fuzzySearch", "true");
+      } else {
+        queryParams.delete("fuzzySearch");
+      }
+
+      // Navigate to current path with updated query params
+      navigate(
+        `${
+          redirectToResults ? "/results" : location.pathname
+        }?${queryParams.toString()}`
+      );
     }
   };
 
@@ -120,15 +146,64 @@ export const SearchForm = () => {
     setDisplayedValue(highlightFilters(value));
   };
 
+  const toggleFuzzySearch = () => {
+    setFuzzySearch(!fuzzySearch);
+  };
+
   return (
     <div ref={searchRef} className="relative w-full mb-7 mt-4">
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative">
+          {/* Fuzzy search icon on the left */}
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center gap-2 justify-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="icon"
+                    type="button"
+                    className={`h-9 w-9 my-auto border border-border`}
+                    disabled
+                  >
+                    <div>
+                      <Sparkles className="h-4 w-4" />
+                    </div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-card text-foreground border border-border">
+                  <p>Enable semantic search (coming soon)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={fuzzySearch ? "default" : "ghost"}
+                    size="icon"
+                    type="button"
+                    onClick={toggleFuzzySearch}
+                    className={`h-9 w-9 my-auto ${
+                      fuzzySearch ? "bg-brand" : "border border-border"
+                    }`}
+                  >
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-card text-foreground border border-border">
+                  <p>Enable fuzzy search</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
           {/* Hidden actual input field for form handling */}
           <Input
             ref={inputRef}
             type="text"
-            className="pr-12 h-[58px] absolute inset-0 z-10 bg-transparent text-transparent caret-foreground"
+            className="pr-12 pl-26 py-0 h-[58px] absolute inset-0 z-10 bg-transparent text-transparent caret-foreground"
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
@@ -136,7 +211,7 @@ export const SearchForm = () => {
 
           {/* Visible styled display with highlighted filters */}
           <div
-            className="pr-12 h-[58px] px-3 py-2 flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
+            className="pr-12 pl-26 h-[58px] flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
             aria-hidden="true"
           >
             {displayedValue ? (
@@ -149,14 +224,16 @@ export const SearchForm = () => {
           </div>
         </div>
 
-        <Button
-          variant="default"
-          size="icon"
-          type="submit"
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 mt-0 bg-brand h-10 w-10 z-20"
-        >
-          <ArrowRight className="h-4 w-4" />
-        </Button>
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center justify-center">
+          <Button
+            variant="default"
+            size="icon"
+            type="submit"
+            className="bg-brand h-9 w-9 my-auto"
+          >
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </div>
       </form>
 
       {isFocused && searchQuery.trim() === "" && (
