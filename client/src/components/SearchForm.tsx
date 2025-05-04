@@ -193,8 +193,19 @@ export const SearchForm = ({
   };
 
   // Sync scroll on key events (arrow keys, etc)
-  const handleKeyDown = () => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Sync scrolling
     setTimeout(handleInputScroll, 0);
+
+    // Prevent new lines when pressing Enter
+    if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+
+      // Submit form on Enter if not in instant search mode
+      if (!isInstantSearch(searchMode)) {
+        handleSubmit(e);
+      }
+    }
   };
 
   // Get the current search mode configuration
@@ -246,14 +257,16 @@ export const SearchForm = ({
           </div>
 
           {/* Hidden actual textarea field for form handling */}
+          {/* padding top is 16px to align with the visible display - this is a hack to make the textarea look centered */}
           <Textarea
             ref={inputRef}
-            className="pr-12 pl-14 pt-2 pb-2 min-h-[58px] h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal"
+            className="pr-12 pl-14 pt-4 pb-2 min-h-[58px] h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal"
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
             onScroll={handleInputScroll}
             onKeyDown={handleKeyDown}
+            maxLength={170}
           />
 
           {/* Visible styled display with highlighted filters */}
