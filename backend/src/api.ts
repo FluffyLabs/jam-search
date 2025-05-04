@@ -175,8 +175,7 @@ export function createApp() {
     }
 
     const countResult = await db
-      // TODO: Similarity filter
-      .select({ count: sql`count(id)` })
+      .select({ count: sql`count(*)` })
       .from(messagesTable)
       .where(and(...whereConditions));
     const query = db
