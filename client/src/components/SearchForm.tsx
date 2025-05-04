@@ -185,18 +185,8 @@ export const SearchForm = ({
   // Add a ref for the displayed value div
   const displayedValueRef = useRef<HTMLDivElement>(null);
 
-  // Sync scroll position when cursor moves
-  const handleInputScroll = () => {
-    if (inputRef.current && displayedValueRef.current) {
-      displayedValueRef.current.scrollLeft = inputRef.current.scrollLeft;
-    }
-  };
-
   // Sync scroll on key events (arrow keys, etc)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Sync scrolling
-    setTimeout(handleInputScroll, 0);
-
     // Prevent new lines when pressing Enter
     if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
@@ -264,7 +254,6 @@ export const SearchForm = ({
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
-            onScroll={handleInputScroll}
             onKeyDown={handleKeyDown}
             maxLength={170}
           />
