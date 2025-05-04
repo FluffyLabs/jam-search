@@ -26,7 +26,11 @@ function App() {
         <Header />
         <div className="flex h-full">
           <div className="max-sm:hidden">
-            <AppsSidebar activeLink="website" className="h-full" />
+            <AppsSidebar
+              activeLink="website"
+              className="h-full"
+              enableDarkModeToggle={false}
+            />
           </div>
 
           <div className="w-full bg-background p-4 h-[calc(100dvh-77px)] sm:h-[calc(100dvh-87px)] overflow-y-auto">
