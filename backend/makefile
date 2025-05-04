@@ -23,4 +23,6 @@ lint:
 migrate:
 	@npm run db:migrate
 
-
+.PHONY: embeddings
+embeddings:
+	@npm run generate-embeddings

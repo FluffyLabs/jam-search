@@ -91,6 +91,7 @@ async function fetchItemsWithoutEmbeddings(): Promise<{
     .where(
       and(isNull(messagesTable.embedding), isNotNull(messagesTable.content))
     )
+    .limit(10)
     .execute();
 
   console.log(`Found ${messages.length} messages without embeddings`);
@@ -105,6 +106,7 @@ async function fetchItemsWithoutEmbeddings(): Promise<{
     })
     .from(graypaperSectionsTable)
     .where(isNull(graypaperSectionsTable.embedding))
+    .limit(10)
     .execute();
 
   console.log(
@@ -218,7 +220,9 @@ async function processBatchEmbeddings() {
     const completedCount = status.request_counts?.completed ?? 0;
     const totalCount = status.request_counts?.total ?? 0;
     console.log(
-      `Status: ${status.status}, Completed: ${completedCount}/${totalCount}`
+      `[${new Date().toISOString().split(".")[0]}] Status: ${
+        status.status
+      }, Completed: ${completedCount}/${totalCount}`
     );
 
     if (status.status === "completed") {
