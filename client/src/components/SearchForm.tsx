@@ -1,6 +1,6 @@
 import { ArrowRight, Search, Sparkles, ScanSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import {
@@ -95,7 +95,7 @@ export const SearchForm = ({
   const [isFocused, setIsFocused] = useState(false);
   const [searchMode, setSearchMode] = useState(searchModeParam);
   const searchRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [displayedValue, setDisplayedValue] = useState(
     highlightFilters(richQuery)
   );
@@ -172,7 +172,7 @@ export const SearchForm = ({
     }, 0);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
     setDisplayedValue(highlightFilters(value));
@@ -180,6 +180,21 @@ export const SearchForm = ({
     if (isInstantSearch(searchMode)) {
       debouncedSubmit(e);
     }
+  };
+
+  // Add a ref for the displayed value div
+  const displayedValueRef = useRef<HTMLDivElement>(null);
+
+  // Sync scroll position when cursor moves
+  const handleInputScroll = () => {
+    if (inputRef.current && displayedValueRef.current) {
+      displayedValueRef.current.scrollLeft = inputRef.current.scrollLeft;
+    }
+  };
+
+  // Sync scroll on key events (arrow keys, etc)
+  const handleKeyDown = () => {
+    setTimeout(handleInputScroll, 0);
   };
 
   // Get the current search mode configuration
@@ -192,7 +207,7 @@ export const SearchForm = ({
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative">
           {/* Search mode dropdown on the left */}
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center justify-center">
+          <div className="absolute left-3 top-0 h-full z-20 flex items-center justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -230,25 +245,30 @@ export const SearchForm = ({
             </DropdownMenu>
           </div>
 
-          {/* Hidden actual input field for form handling */}
-          <Input
+          {/* Hidden actual textarea field for form handling */}
+          <Textarea
             ref={inputRef}
-            type="text"
-            className="pr-12 pl-14 py-0 h-[58px] absolute inset-0 z-10 bg-transparent text-transparent caret-foreground"
+            className="pr-12 pl-14 pt-2 pb-2 min-h-[58px] h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal"
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
+            onScroll={handleInputScroll}
+            onKeyDown={handleKeyDown}
           />
 
           {/* Visible styled display with highlighted filters */}
           <div
-            className="pr-12 pl-14 h-[58px] flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
+            className="pr-12 pl-14 pt-2 pb-2 min-h-[58px] h-auto flex pointer-events-none border border-input rounded-md bg-background text-foreground overflow-auto font-sans text-base leading-normal"
             aria-hidden="true"
+            ref={displayedValueRef}
           >
             {displayedValue ? (
-              <div dangerouslySetInnerHTML={{ __html: displayedValue }} />
+              <div
+                className="w-full whitespace-pre-wrap break-words py-2"
+                dangerouslySetInnerHTML={{ __html: displayedValue }}
+              />
             ) : (
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground py-2">
                 Examples: grandpa, contest, pvm
               </span>
             )}
@@ -257,7 +277,7 @@ export const SearchForm = ({
 
         {/* Only show submit button for non-strict search modes */}
         {!isInstantSearch(searchMode) && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center justify-center">
+          <div className="absolute right-3 top-0 z-20 h-full flex items-center justify-center">
             <Button
               variant="default"
               size="icon"
