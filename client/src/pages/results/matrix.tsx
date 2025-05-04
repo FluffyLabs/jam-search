@@ -46,12 +46,15 @@ const MatrixResults = () => {
     );
   }
 
+  const backParams = new URLSearchParams(location.search);
+  backParams.delete("channelId");
+
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
       <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Link to={`/results?q=${encodeURIComponent(query)}`}>
+            <Link to={`/results?${backParams.toString()}`}>
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
