@@ -67,11 +67,7 @@ export function createApp() {
 
     // Add filter conditions based on parameters
     if (data.filter_from) {
-      // Ensure username starts with @ and use prefix matching (LIKE)
       let senderName = data.filter_from;
-      if (!senderName.startsWith("@")) {
-        senderName = `@${senderName}`;
-      }
       // Use LIKE for prefix matching on sender names
       whereConditions.push(like(messagesTable.sender, `${senderName}%`));
     }
@@ -126,11 +122,19 @@ export function createApp() {
     switch (data.searchMode) {
       case "strict":
         whereConditions.push(
-          sql`id @@@ paradedb.match('content', ${data.q}, conjunction_mode => true)`
+          sql`id @@@ paradedb.boolean(should => ARRAY[
+            paradedb.match('content', ${data.q}, conjunction_mode => true),
+            paradedb.match('sender', ${data.q}, prefix => true)
+          ])`
         );
         break;
       case "fuzzy":
-        whereConditions.push(sql`id @@@ paradedb.match('content', ${data.q})`);
+        whereConditions.push(
+          sql`id @@@ paradedb.boolean(should => ARRAY[
+            paradedb.match('content', ${data.q}),
+            paradedb.match('sender', ${data.q}, prefix => true)
+          ])`
+        );
         break;
       case "semantic":
         // Get embeddings for the query
@@ -172,12 +176,15 @@ export function createApp() {
 
     const countResult = await db
       // TODO: Similarity filter
-      .select({ count: sql`count(*)` })
+      .select({ count: sql`count(id)` })
       .from(messagesTable)
       .where(and(...whereConditions));
     const query = db
       .select({
-        ...getTableColumns(messagesTable),
+        messageid: messagesTable.id,
+        sender: messagesTable.sender,
+        content: messagesTable.content,
+        timestamp: messagesTable.timestamp,
         similarity,
       })
       .from(messagesTable)
@@ -299,7 +306,9 @@ export function createApp() {
     // Get paginated results
     const results = await db
       .select({
-        ...getTableColumns(graypaperSectionsTable),
+        id: graypaperSectionsTable.id,
+        title: graypaperSectionsTable.title,
+        text: graypaperSectionsTable.text,
         similarity,
       })
       .from(graypaperSectionsTable)
