@@ -34,11 +34,11 @@ const GraypaperResults = () => {
       <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Link to={`/results${location.search}`}>
-              <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="mt-0" asChild>
+              <Link to={`/results${location.search}`}>
                 <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <h1 className="text-lg font-medium">Graypaper Results</h1>
             <span className="text-muted-foreground text-sm">
               {totalResults.toLocaleString()} results
@@ -69,7 +69,7 @@ const GraypaperResults = () => {
         )}
 
         <h2 className="text-lg font-medium mb-4">
-          Graypaper Reader (0.6.5) ({totalResults} results)
+          Graypaper Results ({totalResults} results)
         </h2>
 
         <div className="mt-8">

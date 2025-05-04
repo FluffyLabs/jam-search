@@ -24,7 +24,7 @@ export const GraypaperResults = ({
   });
 
   if (isLoading) {
-    return <div className="text-center p-4">Loading graypaper results...</div>;
+    return null;
   }
 
   if (isError) {
@@ -46,9 +46,7 @@ export const GraypaperResults = ({
   return (
     <div className="flex flex-col gap-4 mb-7">
       <div className="flex justify-between items-center">
-        <h2 className="text-sm">
-          Graypaper Results v0.6.5 ({totalResults} results)
-        </h2>
+        <h2 className="text-sm">Graypaper ({totalResults} results)</h2>
 
         {totalResults > 6 && (
           <RouterLink to={`/results/graypaper${location.search}`}>
