@@ -1,4 +1,4 @@
-import { ArrowRight, Search, Sparkles, ScanSearch } from "lucide-react";
+import { ArrowRight, Search, Sparkles, ScanSearch, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
@@ -203,6 +203,14 @@ export const SearchForm = ({
     searchModes.find((mode) => mode.id === searchMode) || searchModes[0];
   const ModeIcon = currentModeConfig.icon;
 
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setDisplayedValue("");
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <div ref={searchRef} className="relative w-full mb-7 mt-4">
       <form onSubmit={handleSubmit} className="relative w-full">
@@ -276,6 +284,25 @@ export const SearchForm = ({
             )}
           </div>
         </div>
+
+        {/* Clear button */}
+        {searchQuery.trim() !== "" && (
+          <div
+            className={`absolute ${
+              !isInstantSearch(searchMode) ? "right-14" : "right-3"
+            } top-0 z-20 h-full flex items-center justify-center`}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              onClick={handleClearSearch}
+              className="h-9 w-9 my-auto"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
 
         {/* Only show submit button for non-strict search modes */}
         {!isInstantSearch(searchMode) && (
