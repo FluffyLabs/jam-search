@@ -174,7 +174,7 @@ export function createApp() {
     q: z.string(),
     page: z.coerce.number().int().positive().default(1),
     pageSize: z.coerce.number().int().positive().lte(100).default(10),
-    searchMode: z.enum(["fuzzy", "semantic", "strict"]).optional(),
+    searchMode: z.enum(["fuzzy", "semantic", "strict"]).default("strict"),
   });
 
   app.get("/search/graypaper", async (c) => {
