@@ -11,6 +11,7 @@ import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery } from "@/lib/utils";
 import { CommercialBanner } from "@/components/CommercialBanner";
 import { ShareUrl } from "@/components/ShareUrl";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
@@ -177,7 +178,22 @@ const SearchResults = () => {
                   />
                 </div>
                 {isGraypaperLoading && !graypaperResults.length ? (
-                  <div className="text-center p-8">Loading results...</div>
+                  <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-2 border-b border-border pb-6">
+                      <Skeleton className="h-4 w-[160px] my-1" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-2 w-[80px] mt-1" />
+                    </div>
+                    <div className="flex flex-col gap-2 border-b border-border pb-6">
+                      <Skeleton className="h-4 w-[160px] my-1" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-2 w-[80px] mt-1" />
+                    </div>
+                  </div>
                 ) : (
                   <ResultList results={graypaperResults} searchQuery={query} />
                 )}
@@ -220,7 +236,22 @@ const SearchResults = () => {
                   />
                 </div>
                 {isJamLoading && !jamResults.length ? (
-                  <div className="text-center p-8">Loading results...</div>
+                  <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-2 border-b border-border pb-6">
+                      <Skeleton className="h-4 w-[160px] my-1" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-2 w-[80px] mt-1" />
+                    </div>
+                    <div className="flex flex-col gap-2 border-b border-border pb-6">
+                      <Skeleton className="h-4 w-[160px] my-1" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-2 w-[80px] mt-1" />
+                    </div>
+                  </div>
                 ) : (
                   <ResultList results={jamResults} searchQuery={query} />
                 )}
