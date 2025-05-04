@@ -1,21 +1,52 @@
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  index,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  vector,
+} from "drizzle-orm/pg-core";
 
-export const messagesTable = pgTable("messages", {
-  id: serial("id").primaryKey(),
-  messageid: text("messageid").unique(),
-  roomid: text("roomid"),
-  sender: text("sender"),
-  content: text("content"),
-  timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
-});
+export const messagesTable = pgTable(
+  "messages",
+  {
+    id: serial("id").primaryKey(),
+    messageid: text("messageid").unique(),
+    roomid: text("roomid"),
+    sender: text("sender"),
+    content: text("content"),
+    timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+  },
+  (table) => [
+    index("messages_embedding_index").using(
+      "hnsw",
+      table.embedding.op("vector_cosine_ops")
+    ),
+  ]
+);
+
+export type Message = typeof messagesTable.$inferSelect;
 
 export const graypapersTable = pgTable("graypapers", {
   version: text("version").primaryKey(),
   timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
 });
 
-export const graypaperSectionsTable = pgTable("graypaper_sections", {
-  id: serial("id").primaryKey(),
-  title: text("title"),
-  text: text("text").notNull(),
-});
+export const graypaperSectionsTable = pgTable(
+  "graypaper_sections",
+  {
+    id: serial("id").primaryKey(),
+    title: text("title").notNull(),
+    text: text("text").notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+  },
+  (table) => [
+    index("graypaper_embedding_index").using(
+      "hnsw",
+      table.embedding.op("vector_cosine_ops")
+    ),
+  ]
+);
+
+export type GraypaperSection = typeof graypaperSectionsTable.$inferSelect;

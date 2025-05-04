@@ -76,7 +76,7 @@
   --sidebar: hsl(0 0% 14%);
   --sidebar-foreground: hsl(0 0% 32%);
 }
- 
+
 @theme {
   --color-title-foreground: var(--title-foreground);
   --color-title: var(--title);
@@ -122,4 +122,9 @@ body {
     font-display: swap;
     src: url("/fonts/Oswald.woff2") format("woff2");
   }
+}
+
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
 }

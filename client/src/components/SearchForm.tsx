@@ -1,4 +1,4 @@
-import { ArrowRight, Search, Sparkles, BookText } from "lucide-react";
+import { ArrowRight, Search, Sparkles, ScanSearch } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect, useRef } from "react";
@@ -27,13 +27,13 @@ const searchModes = [
   {
     id: "strict",
     label: "Strict Search",
-    icon: BookText,
+    icon: Search,
     description: "Exact matching",
   },
   {
     id: "fuzzy",
     label: "Fuzzy Search",
-    icon: Search,
+    icon: ScanSearch,
     description: "Approximate matching with tolerance for typos",
   },
   {
