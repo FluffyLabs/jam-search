@@ -153,7 +153,10 @@ export function createApp() {
 
           orderBy = sql`similarity DESC, timestamp DESC, id`;
           whereConditions.push(
-            sql`${cosineDistance(messagesTable.embedding, embedding)} < 0.5`
+            sql`${messagesTable.embedding} IS NOT NULL AND ${cosineDistance(
+              messagesTable.embedding,
+              embedding
+            )} < 0.7`
           );
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
@@ -167,11 +170,11 @@ export function createApp() {
         throw new Error(`Unhandled search mode: ${data.searchMode}`);
     }
 
-    // const countResult = await db
-    //   // TODO: Similarity filter
-    //   .select({ count: sql`count(*)` })
-    //   .from(messagesTable)
-    //   .where(and(...whereConditions));
+    const countResult = await db
+      // TODO: Similarity filter
+      .select({ count: sql`count(*)` })
+      .from(messagesTable)
+      .where(and(...whereConditions));
     const query = db
       .select({
         ...getTableColumns(messagesTable),
@@ -182,11 +185,9 @@ export function createApp() {
       .orderBy(orderBy)
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
-    console.log(query.toSQL());
     const results = await query;
 
-    // const total = Number(countResult[0].count);
-    const total = 0;
+    const total = Number(countResult[0].count);
 
     return c.json({
       results,
@@ -244,10 +245,12 @@ export function createApp() {
 
           orderBy = sql`similarity DESC, id DESC`;
           whereConditions.push(
-            sql`${cosineDistance(
+            sql`${
+              graypaperSectionsTable.embedding
+            } IS NOT NULL AND ${cosineDistance(
               graypaperSectionsTable.embedding,
               embedding
-            )} < 0.5`
+            )} < 0.7`
           );
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
@@ -272,14 +275,26 @@ export function createApp() {
     }
 
     // Get total count of matching rows
-    // const countResult = await db
-    //   // TODO: Similarity filter
-    //   .select({ count: sql`count(*)` })
-    //   .from(graypaperSectionsTable)
-    //   .where(and(...whereConditions));
+    const countResult = await db
+      // TODO: Similarity filter
+      .select({ count: sql`count(*)` })
+      .from(graypaperSectionsTable)
+      .where(and(...whereConditions));
 
-    // const total = Number(countResult[0].count);
-    const total = 0;
+    const total = Number(countResult[0].count);
+    console.log(`Graypaper search query found ${total} results`);
+
+    // Let's check if we have any graypaper sections with embeddings
+    if (data.searchMode === "semantic") {
+      const embeddingCheckResult = await db
+        .select({ count: sql`count(*)` })
+        .from(graypaperSectionsTable)
+        .where(sql`embedding IS NOT NULL`);
+
+      console.log(
+        `Found ${embeddingCheckResult[0].count} graypaper sections with embeddings`
+      );
+    }
 
     // Get paginated results
     const results = await db
