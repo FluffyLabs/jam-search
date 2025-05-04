@@ -4,7 +4,6 @@ import {
   cosineDistance,
   desc,
   eq,
-  getTableColumns,
   gt,
   gte,
   like,
@@ -74,6 +73,7 @@ export function createApp() {
 
     // Add filter condition for channelId
     if (data.channelId) {
+      // TODO: Ranking is not working correctly when filtering like that. Let's use fast fields: https://docs.paradedb.com/documentation/full-text/filtering
       whereConditions.push(eq(messagesTable.roomid, data.channelId));
     }
 
@@ -120,22 +120,33 @@ export function createApp() {
     let similarity = sql<number>`1`;
 
     switch (data.searchMode) {
-      case "strict":
+      case "strict": {
+        const searchTerms = data.q.toLowerCase().split(/\s+/);
         whereConditions.push(
           sql`id @@@ paradedb.boolean(should => ARRAY[
-            paradedb.match('content', ${data.q}, conjunction_mode => true),
-            paradedb.match('sender', ${data.q}, prefix => true)
+            paradedb.phrase('content', ARRAY[${sql.join(
+              searchTerms.map((term) => sql`${term}`),
+              sql.raw(", ")
+            )}]),
+            paradedb.match('sender', ${data.q}, conjunction_mode => true)
           ])`
         );
         break;
-      case "fuzzy":
+      }
+      case "fuzzy": {
+        const searchTerms = data.q.toLowerCase().split(/\s+/);
         whereConditions.push(
           sql`id @@@ paradedb.boolean(should => ARRAY[
+            paradedb.boost(10, paradedb.phrase('content', ARRAY[${sql.join(
+              searchTerms.map((term) => sql`${term}`),
+              sql.raw(", ")
+            )}])),
             paradedb.match('content', ${data.q}),
-            paradedb.match('sender', ${data.q}, prefix => true)
+            paradedb.match('sender', ${data.q})
           ])`
         );
         break;
+      }
       case "semantic":
         // Get embeddings for the query
         try {
@@ -185,6 +196,7 @@ export function createApp() {
         content: messagesTable.content,
         timestamp: messagesTable.timestamp,
         similarity,
+        score: sql<number>`paradedb.score(id)`,
       })
       .from(messagesTable)
       .where(and(...whereConditions))
@@ -223,9 +235,33 @@ export function createApp() {
     let orderBy: SQL = sql`paradedb.score(id) DESC, id DESC`;
     let similarity = sql<number>`1`;
 
+    const searchTerms = data.q.toLowerCase().split(/\s+/);
     switch (data.searchMode) {
+      case "strict": {
+        whereConditions.push(
+          sql`id @@@ paradedb.boolean(must => ARRAY[
+            paradedb.phrase('title', ARRAY[${sql.join(
+              searchTerms.map((term) => sql`${term}`),
+              sql.raw(", ")
+            )}]),
+            paradedb.phrase('text', ARRAY[${sql.join(
+              searchTerms.map((term) => sql`${term}`),
+              sql.raw(", ")
+            )}]),
+          ])`
+        );
+        break;
+      }
       case "fuzzy":
         whereConditions.push(sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.boost(10, paradedb.phrase('title', ARRAY[${sql.join(
+            searchTerms.map((term) => sql`${term}`),
+            sql.raw(", ")
+          )}])),
+          paradedb.boost(10, paradedb.phrase('text', ARRAY[${sql.join(
+            searchTerms.map((term) => sql`${term}`),
+            sql.raw(", ")
+          )}])),
           paradedb.match('title', ${data.q}),
           paradedb.match('text', ${data.q})
         ])`);
@@ -269,13 +305,6 @@ export function createApp() {
           );
         }
         break;
-      case "strict":
-        // Strict/exact matching without distance parameter
-        whereConditions.push(sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('title', ${data.q}, conjunction_mode => true),
-          paradedb.match('text', ${data.q}, conjunction_mode => true)
-        ])`);
-        break;
       default:
         throw new Error(`Unhandled search mode: ${data.searchMode}`);
     }
@@ -309,6 +338,7 @@ export function createApp() {
         title: graypaperSectionsTable.title,
         text: graypaperSectionsTable.text,
         similarity,
+        score: sql<number>`paradedb.score(id)`,
       })
       .from(graypaperSectionsTable)
       .where(and(...whereConditions))
