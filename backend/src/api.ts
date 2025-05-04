@@ -1,5 +1,6 @@
 import {
   type SQL,
+  and,
   cosineDistance,
   desc,
   eq,
@@ -9,11 +10,11 @@ import {
   like,
   lt,
   sql,
-  and,
 } from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import OpenAI from "openai";
 import { z } from "zod";
 import { db } from "./db/db.js";
 import {
@@ -21,7 +22,6 @@ import {
   graypapersTable,
   messagesTable,
 } from "./db/schema.js";
-import OpenAI from "openai";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
