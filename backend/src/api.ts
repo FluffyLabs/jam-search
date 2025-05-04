@@ -149,9 +149,10 @@ export function createApp() {
           similarity = sql<number>`1 - (${cosineDistance(
             messagesTable.embedding,
             embedding
-          )})`;
+          )}) AS similarity`;
 
           orderBy = sql`similarity DESC, timestamp DESC, id`;
+          whereConditions.push(sql`similarity > 0.5`);
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
           // Fallback to standard search if embedding fails
@@ -164,10 +165,11 @@ export function createApp() {
         throw new Error(`Unhandled search mode: ${data.searchMode}`);
     }
 
-    const countResult = await db
-      .select({ count: sql`count(*)`, similarity })
-      .from(messagesTable)
-      .where(and(...whereConditions));
+    // const countResult = await db
+    //   // TODO: Similarity filter
+    //   .select({ count: sql`count(*)` })
+    //   .from(messagesTable)
+    //   .where(and(...whereConditions));
     const query = db
       .select({
         ...getTableColumns(messagesTable),
@@ -181,7 +183,8 @@ export function createApp() {
     console.log(query.toSQL());
     const results = await query;
 
-    const total = Number(countResult[0].count);
+    // const total = Number(countResult[0].count);
+    const total = 0;
 
     return c.json({
       results,
@@ -235,9 +238,10 @@ export function createApp() {
           similarity = sql<number>`1 - (${cosineDistance(
             graypaperSectionsTable.embedding,
             embedding
-          )})`;
+          )}) AS similarity`;
 
           orderBy = sql`similarity DESC, id DESC`;
+          whereConditions.push(sql`similarity > 0.5`);
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
           // Fallback to standard search if embedding fails
@@ -261,12 +265,14 @@ export function createApp() {
     }
 
     // Get total count of matching rows
-    const countResult = await db
-      .select({ count: sql`count(*)`, similarity })
-      .from(graypaperSectionsTable)
-      .where(and(...whereConditions));
+    // const countResult = await db
+    //   // TODO: Similarity filter
+    //   .select({ count: sql`count(*)` })
+    //   .from(graypaperSectionsTable)
+    //   .where(and(...whereConditions));
 
-    const total = Number(countResult[0].count);
+    // const total = Number(countResult[0].count);
+    const total = 0;
 
     // Get paginated results
     const results = await db
