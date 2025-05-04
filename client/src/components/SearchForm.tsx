@@ -202,7 +202,6 @@ export const SearchForm = ({
                   <DropdownMenuItem
                     key={mode.id}
                     onClick={() => setSearchMode(mode.id)}
-                    disabled={mode.disabled}
                     className={`flex items-center gap-2 ${
                       searchMode === mode.id ? "bg-primary/20" : ""
                     }`}
