@@ -1,4 +1,9 @@
-import { isNull, sql, and, isNotNull } from "drizzle-orm";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+import dotenv from "dotenv";
+import { and, isNotNull, isNull, sql } from "drizzle-orm";
+import OpenAI from "openai";
 import { db } from "../db/db.js";
 import {
   type GraypaperSection,
@@ -6,11 +11,6 @@ import {
   graypaperSectionsTable,
   messagesTable,
 } from "../db/schema.js";
-import OpenAI from "openai";
-import * as fs from "node:fs";
-import * as path from "node:path";
-import * as os from "node:os";
-import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
