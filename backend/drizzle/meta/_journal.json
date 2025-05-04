@@ -29,6 +29,13 @@
       "when": 1746307217218,
       "tag": "0003_semantic_search",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1746383254722,
+      "tag": "0004_silky_doomsday",
+      "breakpoints": true
     }
   ]
 }

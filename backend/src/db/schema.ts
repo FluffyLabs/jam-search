@@ -19,9 +19,19 @@ export const messagesTable = pgTable(
     embedding: vector("embedding", { dimensions: 1536 }),
   },
   (table) => [
+    index("messages_search_idx")
+      .using("bm25", table.id, table.sender, table.content)
+      .with({
+        key_field: "id",
+      }),
     index("messages_embedding_index").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
+    ),
+    index("messages_roomid_idx").on(table.roomid),
+    index("messages_roomid_timestamp_idx").on(
+      table.roomid,
+      table.timestamp.desc()
     ),
   ]
 );
@@ -42,6 +52,11 @@ export const graypaperSectionsTable = pgTable(
     embedding: vector("embedding", { dimensions: 1536 }),
   },
   (table) => [
+    index("graypaper_search_idx")
+      .using("bm25", table.id, table.title, table.text)
+      .with({
+        key_field: "id",
+      }),
     index("graypaper_embedding_index").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
