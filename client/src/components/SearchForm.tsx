@@ -41,7 +41,7 @@ const searchModes = [
     id: "semantic",
     label: "Semantic Search",
     icon: Sparkles,
-    description: "Find similar concepts (coming soon)",
+    description: "Find similar concepts using AI",
   },
 ];
 
