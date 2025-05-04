@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink, useLocation } from "react-router";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { CommercialBanner } from "./CommercialBanner";
 
@@ -14,6 +14,8 @@ export const GraypaperResults = ({
   query,
   searchMode = "strict",
 }: GraypaperResultsProps) => {
+  const location = useLocation();
+
   // Use our graypaper search hook with 6 results per page (for compact view)
   const { results, totalResults, isLoading, isError } = useSearchGraypaper({
     query,
@@ -49,7 +51,7 @@ export const GraypaperResults = ({
         </h2>
 
         {totalResults > 6 && (
-          <RouterLink to={`/results/graypaper?q=${encodeURIComponent(query)}`}>
+          <RouterLink to={`/results/graypaper${location.search}`}>
             <Button
               variant="ghost"
               size="sm"
