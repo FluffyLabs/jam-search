@@ -152,7 +152,9 @@ export function createApp() {
           )}) AS similarity`;
 
           orderBy = sql`similarity DESC, timestamp DESC, id`;
-          whereConditions.push(sql`similarity > 0.5`);
+          whereConditions.push(
+            sql`${cosineDistance(messagesTable.embedding, embedding)} < 0.5`
+          );
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
           // Fallback to standard search if embedding fails
@@ -241,7 +243,12 @@ export function createApp() {
           )}) AS similarity`;
 
           orderBy = sql`similarity DESC, id DESC`;
-          whereConditions.push(sql`similarity > 0.5`);
+          whereConditions.push(
+            sql`${cosineDistance(
+              graypaperSectionsTable.embedding,
+              embedding
+            )} < 0.5`
+          );
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
           // Fallback to standard search if embedding fails
