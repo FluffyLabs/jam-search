@@ -141,7 +141,7 @@ export const SearchForm = ({
     }
   };
 
-  const debouncedSubmit = useDebouncedCallback(handleSubmit, 500);
+  const debouncedSubmit = useDebouncedCallback(handleSubmit, 300);
 
   const addSearchOption = (option: string) => {
     if (!inputRef.current) return;
