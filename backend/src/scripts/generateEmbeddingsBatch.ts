@@ -91,7 +91,6 @@ async function fetchItemsWithoutEmbeddings(): Promise<{
     .where(
       and(isNull(messagesTable.embedding), isNotNull(messagesTable.content))
     )
-    .limit(10)
     .execute();
 
   console.log(`Found ${messages.length} messages without embeddings`);
@@ -106,7 +105,6 @@ async function fetchItemsWithoutEmbeddings(): Promise<{
     })
     .from(graypaperSectionsTable)
     .where(isNull(graypaperSectionsTable.embedding))
-    .limit(10)
     .execute();
 
   console.log(
