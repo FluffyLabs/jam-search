@@ -1,4 +1,16 @@
-import { type SQL, desc, eq, gt, gte, like, lt, sql } from "drizzle-orm";
+import {
+  type SQL,
+  cosineDistance,
+  desc,
+  eq,
+  getTableColumns,
+  gt,
+  gte,
+  like,
+  lt,
+  sql,
+  and,
+} from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -9,6 +21,7 @@ import {
   graypapersTable,
   messagesTable,
 } from "./db/schema.js";
+import OpenAI from "openai";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -49,38 +62,8 @@ export function createApp() {
     }
     const data = result.data;
 
-    // Base search condition
-    let searchCondition: SQL;
-
-    switch (data.searchMode) {
-      case "fuzzy":
-        // Fuzzy search with distance parameter for approximate matching
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('content', ${data.q}, distance => 1),
-          paradedb.match('sender', ${data.q}, prefix => true)
-        ])`;
-        break;
-      case "semantic":
-        // Future semantic search implementation
-        // For now, fallback to basic search with a note that it's not implemented
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('content', ${data.q}),
-          paradedb.match('sender', ${data.q}, prefix => true)
-        ])`;
-        break;
-      case "strict":
-        // Strict/exact matching without distance parameter
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('content', ${data.q}),
-          paradedb.match('sender', ${data.q}, prefix => true)
-        ])`;
-        break;
-      default:
-        throw new Error(`Unhandled search mode: ${data.searchMode}`);
-    }
-
     // Initialize additional filter conditions
-    const filterConditions = [];
+    const whereConditions = [];
 
     // Add filter conditions based on parameters
     if (data.filter_from) {
@@ -90,12 +73,12 @@ export function createApp() {
         senderName = `@${senderName}`;
       }
       // Use LIKE for prefix matching on sender names
-      filterConditions.push(like(messagesTable.sender, `${senderName}%`));
+      whereConditions.push(like(messagesTable.sender, `${senderName}%`));
     }
 
     // Add filter condition for channelId
     if (data.channelId) {
-      filterConditions.push(eq(messagesTable.roomid, data.channelId));
+      whereConditions.push(eq(messagesTable.roomid, data.channelId));
     }
 
     // Lookup timestamp for graypaper version if filter_since_gp is provided
@@ -112,7 +95,7 @@ export function createApp() {
         // Use the timestamp from graypaper to filter messages
         const gpTimestamp = gpVersionResult[0].timestamp;
         // Convert Date object to ISO string for SQL comparison
-        filterConditions.push(gte(messagesTable.timestamp, gpTimestamp));
+        whereConditions.push(gte(messagesTable.timestamp, gpTimestamp));
       } else {
         // If graypaper version not found, return empty results
         return c.json({
@@ -126,41 +109,79 @@ export function createApp() {
     }
 
     if (data.filter_before) {
-      filterConditions.push(
+      whereConditions.push(
         lt(messagesTable.timestamp, new Date(data.filter_before))
       );
     }
 
     if (data.filter_after) {
-      filterConditions.push(
+      whereConditions.push(
         gt(messagesTable.timestamp, new Date(data.filter_after))
       );
     }
 
-    // Combine search condition with filter conditions
-    let whereCondition = searchCondition;
-    if (filterConditions.length > 0) {
-      for (const condition of filterConditions) {
-        whereCondition = sql`${whereCondition} AND ${condition}`;
-      }
+    let orderBy: SQL = sql`paradedb.score(id) DESC, timestamp DESC, id`;
+    let similarity = sql<number>`1`;
+
+    switch (data.searchMode) {
+      case "strict":
+        whereConditions.push(
+          sql`id @@@ paradedb.match('content', ${data.q}, conjunction_mode => true)`
+        );
+        break;
+      case "fuzzy":
+        whereConditions.push(sql`id @@@ paradedb.match('content', ${data.q})`);
+        break;
+      case "semantic":
+        // Get embeddings for the query
+        try {
+          const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+          });
+
+          const response = await openai.embeddings.create({
+            model: "text-embedding-3-small",
+            input: data.q,
+            dimensions: 1536,
+          });
+
+          const embedding = response.data[0].embedding;
+          similarity = sql<number>`1 - (${cosineDistance(
+            messagesTable.embedding,
+            embedding
+          )})`;
+
+          orderBy = sql`similarity DESC, timestamp DESC, id`;
+        } catch (error) {
+          console.error("Error generating embedding for search query:", error);
+          // Fallback to standard search if embedding fails
+          whereConditions.push(
+            sql`id @@@ paradedb.match('content', ${data.q})`
+          );
+        }
+        break;
+      default:
+        throw new Error(`Unhandled search mode: ${data.searchMode}`);
     }
 
-    // Get total count of matching rows
     const countResult = await db
-      .select({ count: sql`count(*)` })
+      .select({ count: sql`count(*)`, similarity })
       .from(messagesTable)
-      .where(whereCondition);
-
-    const total = Number(countResult[0].count);
-
-    // Get paginated results
-    const results = await db
-      .select()
+      .where(and(...whereConditions));
+    const query = db
+      .select({
+        ...getTableColumns(messagesTable),
+        similarity,
+      })
       .from(messagesTable)
-      .where(whereCondition)
-      .orderBy(sql`paradedb.score(id) DESC, id`)
+      .where(and(...whereConditions))
+      .orderBy(orderBy)
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
+    console.log(query.toSQL());
+    const results = await query;
+
+    const total = Number(countResult[0].count);
 
     return c.json({
       results,
@@ -185,30 +206,55 @@ export function createApp() {
     const data = result.data;
 
     // Base search condition
-    let searchCondition: SQL;
+    const whereConditions = [];
+
+    let orderBy: SQL = sql`paradedb.score(id) DESC, id DESC`;
+    let similarity = sql<number>`1`;
 
     switch (data.searchMode) {
       case "fuzzy":
-        // Fuzzy search with distance parameter for approximate matching
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('title', ${data.q}, distance => 1),
-          paradedb.match('text', ${data.q}, distance => 1)
-        ])`;
-        break;
-      case "semantic":
-        // Future semantic search implementation
-        // For now, fallback to basic search with a note that it's not implemented
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
+        whereConditions.push(sql`id @@@ paradedb.boolean(should => ARRAY[
           paradedb.match('title', ${data.q}),
           paradedb.match('text', ${data.q})
-        ])`;
+        ])`);
+        break;
+      case "semantic":
+        // Get embeddings for the query
+        try {
+          const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+          });
+
+          const response = await openai.embeddings.create({
+            model: "text-embedding-3-small",
+            input: data.q,
+            dimensions: 1536,
+          });
+
+          const embedding = response.data[0].embedding;
+          similarity = sql<number>`1 - (${cosineDistance(
+            graypaperSectionsTable.embedding,
+            embedding
+          )})`;
+
+          orderBy = sql`similarity DESC, id DESC`;
+        } catch (error) {
+          console.error("Error generating embedding for search query:", error);
+          // Fallback to standard search if embedding fails
+          whereConditions.push(
+            sql`id @@@ paradedb.boolean(should => ARRAY[
+              paradedb.match('title', ${data.q}),
+              paradedb.match('text', ${data.q})
+            ])`
+          );
+        }
         break;
       case "strict":
         // Strict/exact matching without distance parameter
-        searchCondition = sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('title', ${data.q}),
-          paradedb.match('text', ${data.q})
-        ])`;
+        whereConditions.push(sql`id @@@ paradedb.boolean(should => ARRAY[
+          paradedb.match('title', ${data.q}, conjunction_mode => true),
+          paradedb.match('text', ${data.q}, conjunction_mode => true)
+        ])`);
         break;
       default:
         throw new Error(`Unhandled search mode: ${data.searchMode}`);
@@ -216,18 +262,21 @@ export function createApp() {
 
     // Get total count of matching rows
     const countResult = await db
-      .select({ count: sql`count(*)` })
+      .select({ count: sql`count(*)`, similarity })
       .from(graypaperSectionsTable)
-      .where(searchCondition);
+      .where(and(...whereConditions));
 
     const total = Number(countResult[0].count);
 
     // Get paginated results
     const results = await db
-      .select()
+      .select({
+        ...getTableColumns(graypaperSectionsTable),
+        similarity,
+      })
       .from(graypaperSectionsTable)
-      .where(searchCondition)
-      .orderBy(sql`paradedb.score(id) DESC, id`)
+      .where(and(...whereConditions))
+      .orderBy(orderBy)
       .offset((data.page - 1) * data.pageSize)
       .limit(data.pageSize);
 
