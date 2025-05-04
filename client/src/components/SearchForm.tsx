@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useDebouncedCallback } from "use-debounce";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -66,6 +67,10 @@ const highlightFilters = (query: string) => {
   );
 
   return highlightedQuery;
+};
+
+const isInstantSearch = (searchMode: string) => {
+  return searchMode === "strict" || searchMode === "fuzzy";
 };
 
 /**
@@ -136,6 +141,8 @@ export const SearchForm = ({
     }
   };
 
+  const debouncedSubmit = useDebouncedCallback(handleSubmit, 500);
+
   const addSearchOption = (option: string) => {
     if (!inputRef.current) return;
 
@@ -169,6 +176,10 @@ export const SearchForm = ({
     const value = e.target.value;
     setSearchQuery(value);
     setDisplayedValue(highlightFilters(value));
+
+    if (isInstantSearch(searchMode)) {
+      debouncedSubmit(e);
+    }
   };
 
   // Get the current search mode configuration
@@ -244,16 +255,19 @@ export const SearchForm = ({
           </div>
         </div>
 
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center justify-center">
-          <Button
-            variant="default"
-            size="icon"
-            type="submit"
-            className="bg-brand h-9 w-9 my-auto"
-          >
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
+        {/* Only show submit button for non-strict search modes */}
+        {!isInstantSearch(searchMode) && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center justify-center">
+            <Button
+              variant="default"
+              size="icon"
+              type="submit"
+              className="bg-brand h-9 w-9 my-auto"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </form>
 
       {isFocused && searchQuery.trim() === "" && (
