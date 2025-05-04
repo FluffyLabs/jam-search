@@ -67,7 +67,7 @@ export function createApp() {
 
     // Add filter conditions based on parameters
     if (data.filter_from) {
-      let senderName = data.filter_from;
+      const senderName = data.filter_from;
       // Use LIKE for prefix matching on sender names
       whereConditions.push(like(messagesTable.sender, `${senderName}%`));
     }
