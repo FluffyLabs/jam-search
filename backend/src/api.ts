@@ -128,7 +128,7 @@ export function createApp() {
                     searchTerms.map((term) => sql`${term}`),
                     sql.raw(", ")
                   )}])`
-                : sql`paradedb.match('content', ${data.q})`
+                : sql`paradedb.match('content', ${data.q}, conjunction_mode => true)`
             },
             paradedb.match('sender', ${data.q}, conjunction_mode => true)
           ])`
@@ -251,7 +251,7 @@ export function createApp() {
                     searchTerms.map((term) => sql`${term}`),
                     sql.raw(", ")
                   )}])`
-                : sql`paradedb.match('title', ${data.q})`
+                : sql`paradedb.match('title', ${data.q}, conjunction_mode => true)`
             },
             ${
               searchTerms.length > 1
@@ -259,7 +259,7 @@ export function createApp() {
                     searchTerms.map((term) => sql`${term}`),
                     sql.raw(", ")
                   )}])`
-                : sql`paradedb.match('text', ${data.q})`
+                : sql`paradedb.match('text', ${data.q}, conjunction_mode => true)`
             }
           ])`
         );
