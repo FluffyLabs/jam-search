@@ -12,6 +12,8 @@ import {
 } from "./db/schema.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+const escapeRegExp = (str: string) =>
+  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export function createApp() {
   const app = new Hono();
@@ -56,7 +58,9 @@ export function createApp() {
     // Add filter conditions based on parameters
     if (data.filter_from) {
       const senderName = data.filter_from;
-      whereConditions.push(sql`id @@@ paradedb.match('sender', ${senderName})`);
+      whereConditions.push(
+        sql`id @@@ paradedb.regex('sender', ${escapeRegExp(senderName) + ".*"})`
+      );
     }
 
     // Add filter condition for channelId
