@@ -1,0 +1,2 @@
+DROP INDEX "messages_search_idx";--> statement-breakpoint
+CREATE INDEX "messages_search_idx" ON "messages" USING bm25 ("id","sender","content","roomid","timestamp") WITH (key_field=id,text_fields='{ "roomid": { "fast": true } }');
