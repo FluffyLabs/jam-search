@@ -114,7 +114,11 @@ const SearchResults = () => {
       <ResultHeader onSourceChange={handleSourceChange} />
 
       <div className="w-full max-w-4xl px-7">
-        <SearchForm />
+        <SearchForm
+          showSearchOptions={
+            selectedSources.length === 1 && selectedSources[0] === "matrix"
+          }
+        />
 
         {/* Display active filters as tags */}
         {query && filters.length > 0 && (
