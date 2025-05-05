@@ -73,7 +73,7 @@ export const GraypaperResults = ({
             title={section.title}
             text={section.text}
             query={query}
-            url="https://graypaper.fluffylabs.dev"
+            url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
           />
         ))}
       </div>
