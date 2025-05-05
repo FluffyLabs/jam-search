@@ -240,6 +240,11 @@ export const SearchForm = ({
                     key={mode.id}
                     onClick={() => {
                       setSearchMode(mode.id);
+
+                      if (!instantSearch) {
+                        return;
+                      }
+
                       const searchMode = mode.id;
                       const queryParams = new URLSearchParams(location.search);
                       queryParams.set("q", searchQuery);
