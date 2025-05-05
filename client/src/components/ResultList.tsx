@@ -46,7 +46,7 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
                 }#${result.messageid}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-brand flex items-center w-fit hover:text-brand-dark"
+                className="text-xs text-brand flex items-center w-fit hover:opacity-60"
               >
                 <svg
                   className="w-3 h-3 mr-1"

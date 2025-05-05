@@ -1,6 +1,6 @@
-import { ArrowRight, Search, Sparkles, ScanSearch } from "lucide-react";
+import { ArrowRight, Search, Sparkles, ScanSearch, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import {
@@ -11,6 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useDebouncedCallback } from "use-debounce";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -40,7 +41,7 @@ const searchModes = [
     id: "semantic",
     label: "Semantic Search",
     icon: Sparkles,
-    description: "Find similar concepts",
+    description: "Find similar concepts using AI",
   },
 ];
 
@@ -68,6 +69,10 @@ const highlightFilters = (query: string) => {
   return highlightedQuery;
 };
 
+const isInstantSearch = (searchMode: string) => {
+  return searchMode === "strict" || searchMode === "fuzzy";
+};
+
 /**
  * SearchForm component
  *
@@ -90,7 +95,7 @@ export const SearchForm = ({
   const [isFocused, setIsFocused] = useState(false);
   const [searchMode, setSearchMode] = useState(searchModeParam);
   const searchRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const [displayedValue, setDisplayedValue] = useState(
     highlightFilters(richQuery)
   );
@@ -136,6 +141,8 @@ export const SearchForm = ({
     }
   };
 
+  const debouncedSubmit = useDebouncedCallback(handleSubmit, 300);
+
   const addSearchOption = (option: string) => {
     if (!inputRef.current) return;
 
@@ -165,10 +172,30 @@ export const SearchForm = ({
     }, 0);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
     setDisplayedValue(highlightFilters(value));
+
+    if (isInstantSearch(searchMode)) {
+      debouncedSubmit(e);
+    }
+  };
+
+  // Add a ref for the displayed value div
+  const displayedValueRef = useRef<HTMLDivElement>(null);
+
+  // Sync scroll on key events (arrow keys, etc)
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Prevent new lines when pressing Enter
+    if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+
+      // Submit form on Enter if not in instant search mode
+      if (!isInstantSearch(searchMode)) {
+        handleSubmit(e);
+      }
+    }
   };
 
   // Get the current search mode configuration
@@ -176,12 +203,20 @@ export const SearchForm = ({
     searchModes.find((mode) => mode.id === searchMode) || searchModes[0];
   const ModeIcon = currentModeConfig.icon;
 
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setDisplayedValue("");
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <div ref={searchRef} className="relative w-full mb-7 mt-4">
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative">
           {/* Search mode dropdown on the left */}
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center justify-center">
+          <div className="absolute left-3 top-0 h-full z-20 flex items-center justify-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -201,7 +236,26 @@ export const SearchForm = ({
                 {searchModes.map((mode) => (
                   <DropdownMenuItem
                     key={mode.id}
-                    onClick={() => setSearchMode(mode.id)}
+                    onClick={() => {
+                      setSearchMode(mode.id);
+                      const searchMode = mode.id;
+                      const queryParams = new URLSearchParams(location.search);
+                      queryParams.set("q", searchQuery);
+
+                      // Add search mode parameter (only if not strict, which is the default)
+                      if (searchMode !== "strict") {
+                        queryParams.set("searchMode", searchMode);
+                      } else {
+                        queryParams.delete("searchMode");
+                      }
+
+                      // Navigate to current path with updated query params
+                      navigate(
+                        `${
+                          redirectToResults ? "/results" : location.pathname
+                        }?${queryParams.toString()}`
+                      );
+                    }}
                     className={`flex items-center gap-2 ${
                       searchMode === mode.id ? "bg-primary/20" : ""
                     }`}
@@ -219,41 +273,69 @@ export const SearchForm = ({
             </DropdownMenu>
           </div>
 
-          {/* Hidden actual input field for form handling */}
-          <Input
+          {/* Hidden actual textarea field for form handling */}
+          {/* padding top is 16px to align with the visible display - this is a hack to make the textarea look centered */}
+          <Textarea
             ref={inputRef}
-            type="text"
-            className="pr-12 pl-14 py-0 h-[58px] absolute inset-0 z-10 bg-transparent text-transparent caret-foreground"
+            className="pr-12 pl-14 pt-4 pb-2 min-h-[58px] h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal"
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
+            onKeyDown={handleKeyDown}
+            maxLength={170}
           />
 
           {/* Visible styled display with highlighted filters */}
           <div
-            className="pr-12 pl-14 h-[58px] flex items-center pointer-events-none border border-input rounded-md bg-background text-foreground"
+            className="pr-12 pl-14 pt-2 pb-2 min-h-[58px] h-auto flex pointer-events-none border border-input rounded-md bg-background text-foreground overflow-auto font-sans text-base leading-normal"
             aria-hidden="true"
+            ref={displayedValueRef}
           >
             {displayedValue ? (
-              <div dangerouslySetInnerHTML={{ __html: displayedValue }} />
+              <div
+                className="w-full whitespace-pre-wrap break-words py-2"
+                dangerouslySetInnerHTML={{ __html: displayedValue }}
+              />
             ) : (
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground py-2">
                 Examples: grandpa, contest, pvm
               </span>
             )}
           </div>
         </div>
 
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 z-20 flex items-center justify-center">
-          <Button
-            variant="default"
-            size="icon"
-            type="submit"
-            className="bg-brand h-9 w-9 my-auto"
+        {/* Clear button */}
+        {searchQuery.trim() !== "" && (
+          <div
+            className={`absolute ${
+              !isInstantSearch(searchMode) ? "right-14" : "right-3"
+            } top-0 z-20 h-full flex items-center justify-center`}
           >
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              onClick={handleClearSearch}
+              className="h-9 w-9 my-auto"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+
+        {/* Only show submit button for non-strict search modes */}
+        {!isInstantSearch(searchMode) && (
+          <div className="absolute right-3 top-0 z-20 h-full flex items-center justify-center">
+            <Button
+              variant="default"
+              size="icon"
+              type="submit"
+              className="bg-brand h-9 w-9 my-auto"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </form>
 
       {isFocused && searchQuery.trim() === "" && (

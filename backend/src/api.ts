@@ -191,10 +191,11 @@ export function createApp() {
       .where(and(...whereConditions));
     const query = db
       .select({
-        messageid: messagesTable.id,
+        messageid: messagesTable.messageid,
         sender: messagesTable.sender,
         content: messagesTable.content,
         timestamp: messagesTable.timestamp,
+        roomid: messagesTable.roomid,
         similarity,
         score: sql<number>`paradedb.score(id)`,
       })
