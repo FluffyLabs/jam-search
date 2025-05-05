@@ -27,7 +27,7 @@ function App() {
         <div className="flex h-full">
           <div className="max-sm:hidden">
             <AppsSidebar
-              activeLink="website"
+              activeLink="search"
               className="h-full"
               enableDarkModeToggle={false}
             />
