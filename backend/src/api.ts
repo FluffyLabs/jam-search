@@ -168,10 +168,7 @@ export function createApp() {
 
           orderBy = sql`similarity DESC, timestamp DESC, id`;
           whereConditions.push(
-            sql`${messagesTable.embedding} IS NOT NULL AND ${cosineDistance(
-              messagesTable.embedding,
-              embedding
-            )} < 0.7`
+            sql`${cosineDistance(messagesTable.embedding, embedding)} < 0.8`
           );
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
@@ -207,6 +204,7 @@ export function createApp() {
     const results = await query;
 
     const total = Number(countResult[0].count);
+    console.log(`Message search query found ${total} results`);
 
     return c.json({
       results,
@@ -288,12 +286,10 @@ export function createApp() {
 
           orderBy = sql`similarity DESC, id DESC`;
           whereConditions.push(
-            sql`${
-              graypaperSectionsTable.embedding
-            } IS NOT NULL AND ${cosineDistance(
+            sql`${cosineDistance(
               graypaperSectionsTable.embedding,
               embedding
-            )} < 0.7`
+            )} < 0.8`
           );
         } catch (error) {
           console.error("Error generating embedding for search query:", error);
@@ -319,18 +315,6 @@ export function createApp() {
 
     const total = Number(countResult[0].count);
     console.log(`Graypaper search query found ${total} results`);
-
-    // Let's check if we have any graypaper sections with embeddings
-    if (data.searchMode === "semantic") {
-      const embeddingCheckResult = await db
-        .select({ count: sql`count(*)` })
-        .from(graypaperSectionsTable)
-        .where(sql`embedding IS NOT NULL`);
-
-      console.log(
-        `Found ${embeddingCheckResult[0].count} graypaper sections with embeddings`
-      );
-    }
 
     // Get paginated results
     const results = await db

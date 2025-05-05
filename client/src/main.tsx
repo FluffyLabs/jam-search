@@ -4,9 +4,9 @@ import { createRoot } from "react-dom/client";
 import "@krystian5011/shared-ui/style.css";
 import "./index.css";
 
-scan({
-  enabled: process.env.NODE_ENV !== "production",
-});
+// scan({
+//   enabled: process.env.NODE_ENV !== "production",
+// });
 
 import App from "./App.tsx";
 import { HashRouter } from "react-router";
