@@ -49,7 +49,7 @@ const GraypaperResults = () => {
       </div>
 
       <div className="w-full max-w-4xl px-7">
-        <SearchForm />
+        <SearchForm showSearchOptions={false} />
 
         {/* Display active filters as tags */}
         {query && parseSearchQuery(query).filters.length > 0 && (

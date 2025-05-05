@@ -192,8 +192,11 @@ const getTextToDisplay = (text: string, query: string) => {
 };
 
 export const highlightText = (text: string, words: string[]) => {
+  const escapeRegExp = (str: string) =>
+    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
   // TODO: this is not secure solution as words comes from user input
-  const regex = new RegExp(`(${words.join("|")})`, "gi");
+  const regex = new RegExp(`(${words.map(escapeRegExp).join("|")})`, "gi");
   const result = [];
 
   let match = regex.exec(text);

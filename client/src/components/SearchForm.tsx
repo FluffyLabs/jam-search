@@ -84,9 +84,11 @@ const isInstantSearch = (searchMode: string, enabled: boolean) => {
 export const SearchForm = ({
   redirectToResults = false,
   instantSearch = true,
+  showSearchOptions = true,
 }: {
   redirectToResults?: boolean;
   instantSearch?: boolean;
+  showSearchOptions?: boolean;
 }) => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
@@ -240,6 +242,11 @@ export const SearchForm = ({
                     key={mode.id}
                     onClick={() => {
                       setSearchMode(mode.id);
+
+                      if (!instantSearch) {
+                        return;
+                      }
+
                       const searchMode = mode.id;
                       const queryParams = new URLSearchParams(location.search);
                       queryParams.set("q", searchQuery);
@@ -342,7 +349,7 @@ export const SearchForm = ({
         )}
       </form>
 
-      {isFocused && searchQuery.trim() === "" && (
+      {isFocused && showSearchOptions && searchQuery.trim() === "" && (
         <div className="absolute top-full left-0 right-0 mt-2 border border-input bg-card rounded-md shadow-lg z-10">
           <div className="p-4 border-b border-zinc-700">
             <h3 className="text-lg font-semibold text-zinc-200">
