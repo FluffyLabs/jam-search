@@ -1,16 +1,4 @@
-import {
-  type SQL,
-  and,
-  cosineDistance,
-  desc,
-  eq,
-  getTableColumns,
-  gt,
-  gte,
-  like,
-  lt,
-  sql,
-} from "drizzle-orm";
+import { type SQL, and, cosineDistance, desc, like, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -24,6 +12,8 @@ import {
 } from "./db/schema.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
+const escapeRegExp = (str: string) =>
+  str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export function createApp() {
   const app = new Hono();
@@ -68,74 +58,101 @@ export function createApp() {
     // Add filter conditions based on parameters
     if (data.filter_from) {
       const senderName = data.filter_from;
-      // Use LIKE for prefix matching on sender names
-      whereConditions.push(like(messagesTable.sender, `${senderName}%`));
+      whereConditions.push(
+        sql`id @@@ paradedb.regex('sender', ${`${escapeRegExp(senderName)}.*`})`
+      );
     }
 
     // Add filter condition for channelId
     if (data.channelId) {
-      whereConditions.push(eq(messagesTable.roomid, data.channelId));
+      whereConditions.push(sql`roomid @@@ ${`"${data.channelId}"`}`);
     }
 
-    // Lookup timestamp for graypaper version if filter_since_gp is provided
-    if (data.filter_since_gp) {
-      // Look up the timestamp for the specified graypaper version
-      const gpVersionResult = await db
-        .select({ timestamp: graypapersTable.timestamp })
-        .from(graypapersTable)
-        .where(like(graypapersTable.version, data.filter_since_gp))
-        .orderBy(desc(graypapersTable.timestamp))
-        .limit(1);
+    // Add filter condition for date range
+    if (data.filter_since_gp || data.filter_before || data.filter_after) {
+      let startDate = new Date("1970-01-01");
+      let endDate = new Date();
 
-      if (gpVersionResult.length > 0) {
-        // Use the timestamp from graypaper to filter messages
-        const gpTimestamp = gpVersionResult[0].timestamp;
-        // Convert Date object to ISO string for SQL comparison
-        whereConditions.push(gte(messagesTable.timestamp, gpTimestamp));
-      } else {
-        // If graypaper version not found, return empty results
-        return c.json({
-          results: [],
-          total: 0,
-          page: data.page,
-          pageSize: data.pageSize,
-          error: `Graypaper version ${data.filter_since_gp} not found`,
-        });
+      if (data.filter_before && !Number.isNaN(new Date(data.filter_before))) {
+        endDate = new Date(data.filter_before);
       }
-    }
 
-    if (data.filter_before) {
-      whereConditions.push(
-        lt(messagesTable.timestamp, new Date(data.filter_before))
-      );
-    }
+      if (data.filter_after && !Number.isNaN(new Date(data.filter_after))) {
+        startDate = new Date(data.filter_after);
+      }
 
-    if (data.filter_after) {
+      if (data.filter_since_gp) {
+        // Look up the timestamp for the specified graypaper version
+        const gpVersionResult = await db
+          .select({ timestamp: graypapersTable.timestamp })
+          .from(graypapersTable)
+          .where(like(graypapersTable.version, data.filter_since_gp))
+          .orderBy(desc(graypapersTable.timestamp))
+          .limit(1);
+
+        if (gpVersionResult.length > 0) {
+          // Use the timestamp from graypaper to filter messages
+          const gpTimestamp = gpVersionResult[0].timestamp;
+
+          startDate = gpTimestamp;
+        } else {
+          // If graypaper version not found, return empty results
+          return c.json({
+            results: [],
+            total: 0,
+            page: data.page,
+            pageSize: data.pageSize,
+            error: `Graypaper version ${data.filter_since_gp} not found`,
+          });
+        }
+      }
+
       whereConditions.push(
-        gt(messagesTable.timestamp, new Date(data.filter_after))
+        sql.raw(
+          `timestamp @@@ '[${startDate.toISOString()} TO ${endDate.toISOString()}]'`
+        )
       );
     }
 
     let orderBy: SQL = sql`paradedb.score(id) DESC, timestamp DESC, id`;
     let similarity = sql<number>`1`;
 
+    const searchTerms = data.q.toLowerCase().split(/\s+/);
     switch (data.searchMode) {
-      case "strict":
+      case "strict": {
         whereConditions.push(
           sql`id @@@ paradedb.boolean(should => ARRAY[
-            paradedb.match('content', ${data.q}, conjunction_mode => true),
-            paradedb.match('sender', ${data.q}, prefix => true)
+            ${
+              searchTerms.length > 1
+                ? sql`paradedb.phrase('content', ARRAY[${sql.join(
+                    searchTerms.map((term) => sql`${term}`),
+                    sql.raw(", ")
+                  )}])`
+                : sql`paradedb.match('content', ${data.q}, conjunction_mode => true)`
+            },
+            paradedb.match('sender', ${data.q}, conjunction_mode => true)
           ])`
         );
         break;
-      case "fuzzy":
+      }
+
+      case "fuzzy": {
         whereConditions.push(
           sql`id @@@ paradedb.boolean(should => ARRAY[
+            ${
+              searchTerms.length > 1
+                ? sql`paradedb.boost(10, paradedb.phrase('content', ARRAY[${sql.join(
+                    searchTerms.map((term) => sql`${term}`),
+                    sql.raw(", ")
+                  )}])),`
+                : sql``
+            }
             paradedb.match('content', ${data.q}),
-            paradedb.match('sender', ${data.q}, prefix => true)
+            paradedb.match('sender', ${data.q})
           ])`
         );
         break;
+      }
       case "semantic":
         // Get embeddings for the query
         try {
@@ -183,6 +200,7 @@ export function createApp() {
         timestamp: messagesTable.timestamp,
         roomid: messagesTable.roomid,
         similarity,
+        score: sql<number>`paradedb.score(id)`,
       })
       .from(messagesTable)
       .where(and(...whereConditions))
@@ -222,9 +240,46 @@ export function createApp() {
     let orderBy: SQL = sql`paradedb.score(id) DESC, id DESC`;
     let similarity = sql<number>`1`;
 
+    const searchTerms = data.q.toLowerCase().split(/\s+/);
     switch (data.searchMode) {
+      case "strict": {
+        whereConditions.push(
+          sql`id @@@ paradedb.boolean(should => ARRAY[
+            ${
+              searchTerms.length > 1
+                ? sql`paradedb.phrase('title', ARRAY[${sql.join(
+                    searchTerms.map((term) => sql`${term}`),
+                    sql.raw(", ")
+                  )}])`
+                : sql`paradedb.match('title', ${data.q}, conjunction_mode => true)`
+            },
+            ${
+              searchTerms.length > 1
+                ? sql`paradedb.phrase('text', ARRAY[${sql.join(
+                    searchTerms.map((term) => sql`${term}`),
+                    sql.raw(", ")
+                  )}])`
+                : sql`paradedb.match('text', ${data.q}, conjunction_mode => true)`
+            }
+          ])`
+        );
+        break;
+      }
       case "fuzzy":
         whereConditions.push(sql`id @@@ paradedb.boolean(should => ARRAY[
+          ${
+            searchTerms.length > 1
+              ? sql`
+            paradedb.boost(10, paradedb.phrase('title', ARRAY[${sql.join(
+              searchTerms.map((term) => sql`${term}`),
+              sql.raw(", ")
+            )}])),
+            paradedb.boost(10, paradedb.phrase('text', ARRAY[${sql.join(
+              searchTerms.map((term) => sql`${term}`),
+              sql.raw(", ")
+            )}])),`
+              : sql``
+          }
           paradedb.match('title', ${data.q}),
           paradedb.match('text', ${data.q})
         ])`);
@@ -266,13 +321,6 @@ export function createApp() {
           );
         }
         break;
-      case "strict":
-        // Strict/exact matching without distance parameter
-        whereConditions.push(sql`id @@@ paradedb.boolean(should => ARRAY[
-          paradedb.match('title', ${data.q}, conjunction_mode => true),
-          paradedb.match('text', ${data.q}, conjunction_mode => true)
-        ])`);
-        break;
       default:
         throw new Error(`Unhandled search mode: ${data.searchMode}`);
     }
@@ -294,6 +342,7 @@ export function createApp() {
         title: graypaperSectionsTable.title,
         text: graypaperSectionsTable.text,
         similarity,
+        score: sql<number>`paradedb.score(id)`,
       })
       .from(graypaperSectionsTable)
       .where(and(...whereConditions))

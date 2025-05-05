@@ -29,13 +29,13 @@ const searchModes = [
     id: "strict",
     label: "Strict Search",
     icon: Search,
-    description: "Exact matching",
+    description: "Exact matching for phrases",
   },
   {
     id: "fuzzy",
     label: "Fuzzy Search",
     icon: ScanSearch,
-    description: "Approximate matching with tolerance for typos",
+    description: "Matching for words with OR logic",
   },
   {
     id: "semantic",

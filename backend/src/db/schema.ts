@@ -20,9 +20,17 @@ export const messagesTable = pgTable(
   },
   (table) => [
     index("messages_search_idx")
-      .using("bm25", table.id, table.sender, table.content)
+      .using(
+        "bm25",
+        table.id,
+        table.sender,
+        table.content,
+        table.roomid,
+        table.timestamp
+      )
       .with({
         key_field: "id",
+        text_fields: '\'{ "roomid": { "fast": true } }\'',
       }),
     index("messages_embedding_index").using(
       "hnsw",
