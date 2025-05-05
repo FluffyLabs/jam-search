@@ -236,7 +236,26 @@ export const SearchForm = ({
                 {searchModes.map((mode) => (
                   <DropdownMenuItem
                     key={mode.id}
-                    onClick={() => setSearchMode(mode.id)}
+                    onClick={() => {
+                      setSearchMode(mode.id);
+                      const searchMode = mode.id;
+                      const queryParams = new URLSearchParams(location.search);
+                      queryParams.set("q", searchQuery);
+
+                      // Add search mode parameter (only if not strict, which is the default)
+                      if (searchMode !== "strict") {
+                        queryParams.set("searchMode", searchMode);
+                      } else {
+                        queryParams.delete("searchMode");
+                      }
+
+                      // Navigate to current path with updated query params
+                      navigate(
+                        `${
+                          redirectToResults ? "/results" : location.pathname
+                        }?${queryParams.toString()}`
+                      );
+                    }}
                     className={`flex items-center gap-2 ${
                       searchMode === mode.id ? "bg-primary/20" : ""
                     }`}
