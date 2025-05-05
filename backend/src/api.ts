@@ -244,7 +244,7 @@ export function createApp() {
     switch (data.searchMode) {
       case "strict": {
         whereConditions.push(
-          sql`id @@@ paradedb.boolean(must => ARRAY[
+          sql`id @@@ paradedb.boolean(should => ARRAY[
             ${
               searchTerms.length > 1
                 ? sql`paradedb.phrase('title', ARRAY[${sql.join(
