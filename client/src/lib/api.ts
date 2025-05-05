@@ -3,7 +3,9 @@
  */
 
 // Base URL for API requests
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://matrix-bot-jam-5e043e51602b.herokuapp.com/";
 
 /**
  * Type definitions for API responses

@@ -88,7 +88,6 @@ export const SearchForm = ({
   redirectToResults?: boolean;
   instantSearch?: boolean;
 }) => {
-  console.log("instantSearch", instantSearch);
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
   const searchModeParam =
