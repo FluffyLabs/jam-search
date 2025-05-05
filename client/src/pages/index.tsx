@@ -60,7 +60,7 @@ export const IndexPage = () => {
       <div className="max-w-3xl w-full flex flex-col items-center mt-16 relative z-10">
         <Header />
 
-        <SearchForm redirectToResults />
+        <SearchForm redirectToResults instantSearch={false} />
 
         <Features />
       </div>

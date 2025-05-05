@@ -69,8 +69,8 @@ const highlightFilters = (query: string) => {
   return highlightedQuery;
 };
 
-const isInstantSearch = (searchMode: string) => {
-  return searchMode === "strict" || searchMode === "fuzzy";
+const isInstantSearch = (searchMode: string, enabled: boolean) => {
+  return (searchMode === "strict" || searchMode === "fuzzy") && enabled;
 };
 
 /**
@@ -83,9 +83,12 @@ const isInstantSearch = (searchMode: string) => {
  */
 export const SearchForm = ({
   redirectToResults = false,
+  instantSearch = true,
 }: {
   redirectToResults?: boolean;
+  instantSearch?: boolean;
 }) => {
+  console.log("instantSearch", instantSearch);
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
   const searchModeParam =
@@ -177,7 +180,7 @@ export const SearchForm = ({
     setSearchQuery(value);
     setDisplayedValue(highlightFilters(value));
 
-    if (isInstantSearch(searchMode)) {
+    if (isInstantSearch(searchMode, instantSearch)) {
       debouncedSubmit(e);
     }
   };
@@ -192,7 +195,7 @@ export const SearchForm = ({
       e.preventDefault();
 
       // Submit form on Enter if not in instant search mode
-      if (!isInstantSearch(searchMode)) {
+      if (!isInstantSearch(searchMode, instantSearch)) {
         handleSubmit(e);
       }
     }
@@ -308,7 +311,9 @@ export const SearchForm = ({
         {searchQuery.trim() !== "" && (
           <div
             className={`absolute ${
-              !isInstantSearch(searchMode) ? "right-14" : "right-3"
+              !isInstantSearch(searchMode, instantSearch)
+                ? "right-14"
+                : "right-3"
             } top-0 z-20 h-full flex items-center justify-center`}
           >
             <Button
@@ -324,7 +329,7 @@ export const SearchForm = ({
         )}
 
         {/* Only show submit button for non-strict search modes */}
-        {!isInstantSearch(searchMode) && (
+        {!isInstantSearch(searchMode, instantSearch) && (
           <div className="absolute right-3 top-0 z-20 h-full flex items-center justify-center">
             <Button
               variant="default"
