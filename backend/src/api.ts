@@ -59,7 +59,7 @@ export function createApp() {
     if (data.filter_from) {
       const senderName = data.filter_from;
       whereConditions.push(
-        sql`id @@@ paradedb.regex('sender', ${escapeRegExp(senderName) + ".*"})`
+        sql`id @@@ paradedb.regex('sender', ${`${escapeRegExp(senderName)}.*`})`
       );
     }
 
