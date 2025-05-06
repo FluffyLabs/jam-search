@@ -26,3 +26,7 @@ migrate:
 .PHONY: embeddings
 embeddings:
 	@npm run generate-embeddings
+
+.PHONY: graypaper
+graypaper:
+	@npm run graypaper:index-search

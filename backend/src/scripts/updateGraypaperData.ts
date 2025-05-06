@@ -9,9 +9,10 @@ const pdfPath = "https://graypaper.com/graypaper.pdf";
 
 try {
   const result = await PDFParserService.getInstance().parsePDF(pdfPath);
-  const flattenedSections = result.sections.flatMap(
-    (section) => section.subsections
-  );
+  const flattenedSections = result.sections.flatMap((section) => [
+    section,
+    ...section.subsections,
+  ]);
 
   console.log(`Updating Graypaper sections from PDF: ${result.filename}`);
 

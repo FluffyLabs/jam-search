@@ -122,14 +122,14 @@ export function createApp() {
       case "strict": {
         whereConditions.push(
           sql`id @@@ paradedb.boolean(should => ARRAY[
-            ${
+            paradedb.boost(2, ${
               searchTerms.length > 1
                 ? sql`paradedb.phrase('content', ARRAY[${sql.join(
                     searchTerms.map((term) => sql`${term}`),
                     sql.raw(", ")
                   )}])`
                 : sql`paradedb.match('content', ${data.q}, conjunction_mode => true)`
-            },
+            }),
             paradedb.match('sender', ${data.q}, conjunction_mode => true)
           ])`
         );
@@ -147,7 +147,7 @@ export function createApp() {
                   )}])),`
                 : sql``
             }
-            paradedb.match('content', ${data.q}),
+            paradedb.boost(2, paradedb.match('content', ${data.q})),
             paradedb.match('sender', ${data.q})
           ])`
         );
@@ -245,14 +245,14 @@ export function createApp() {
       case "strict": {
         whereConditions.push(
           sql`id @@@ paradedb.boolean(should => ARRAY[
-            ${
+            paradedb.boost(2, ${
               searchTerms.length > 1
                 ? sql`paradedb.phrase('title', ARRAY[${sql.join(
                     searchTerms.map((term) => sql`${term}`),
                     sql.raw(", ")
                   )}])`
                 : sql`paradedb.match('title', ${data.q}, conjunction_mode => true)`
-            },
+            }),
             ${
               searchTerms.length > 1
                 ? sql`paradedb.phrase('text', ARRAY[${sql.join(
@@ -270,7 +270,7 @@ export function createApp() {
           ${
             searchTerms.length > 1
               ? sql`
-            paradedb.boost(10, paradedb.phrase('title', ARRAY[${sql.join(
+            paradedb.boost(20, paradedb.phrase('title', ARRAY[${sql.join(
               searchTerms.map((term) => sql`${term}`),
               sql.raw(", ")
             )}])),
@@ -280,7 +280,7 @@ export function createApp() {
             )}])),`
               : sql``
           }
-          paradedb.match('title', ${data.q}),
+          paradedb.boost(2, paradedb.match('title', ${data.q})),
           paradedb.match('text', ${data.q})
         ])`);
         break;
