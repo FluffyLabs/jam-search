@@ -1,4 +1,12 @@
-import { type SQL, and, cosineDistance, desc, like, sql } from "drizzle-orm";
+import {
+  type SQL,
+  and,
+  cosineDistance,
+  desc,
+  sql,
+  or,
+  ilike,
+} from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -121,18 +129,12 @@ export function createApp() {
     switch (data.searchMode) {
       case "strict": {
         whereConditions.push(
-          sql`id @@@ paradedb.boolean(should => ARRAY[
-            paradedb.boost(2, ${
-              searchTerms.length > 1
-                ? sql`paradedb.phrase('content', ARRAY[${sql.join(
-                    searchTerms.map((term) => sql`${term}`),
-                    sql.raw(", ")
-                  )}])`
-                : sql`paradedb.match('content', ${data.q}, conjunction_mode => true)`
-            }),
-            paradedb.match('sender', ${data.q}, conjunction_mode => true)
-          ])`
+          or(
+            ilike(messagesTable.content, `%${data.q}%`),
+            ilike(messagesTable.sender, `${data.q}%`)
+          )
         );
+        orderBy = sql`timestamp DESC, id`;
         break;
       }
 
@@ -237,32 +239,19 @@ export function createApp() {
     // Base search condition
     const whereConditions = [];
 
-    let orderBy: SQL = sql`paradedb.score(id) DESC, id DESC`;
+    let orderBy: SQL = sql`paradedb.score(id) DESC, id`;
     let similarity = sql<number>`1`;
 
     const searchTerms = data.q.toLowerCase().split(/\s+/);
     switch (data.searchMode) {
       case "strict": {
         whereConditions.push(
-          sql`id @@@ paradedb.boolean(should => ARRAY[
-            paradedb.boost(2, ${
-              searchTerms.length > 1
-                ? sql`paradedb.phrase('title', ARRAY[${sql.join(
-                    searchTerms.map((term) => sql`${term}`),
-                    sql.raw(", ")
-                  )}])`
-                : sql`paradedb.match('title', ${data.q}, conjunction_mode => true)`
-            }),
-            ${
-              searchTerms.length > 1
-                ? sql`paradedb.phrase('text', ARRAY[${sql.join(
-                    searchTerms.map((term) => sql`${term}`),
-                    sql.raw(", ")
-                  )}])`
-                : sql`paradedb.match('text', ${data.q}, conjunction_mode => true)`
-            }
-          ])`
+          or(
+            ilike(graypaperSectionsTable.title, `%${data.q}%`),
+            ilike(graypaperSectionsTable.text, `%${data.q}%`)
+          )
         );
+        orderBy = sql`id`;
         break;
       }
       case "fuzzy":
