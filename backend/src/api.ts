@@ -3,9 +3,9 @@ import {
   and,
   cosineDistance,
   desc,
-  sql,
-  or,
   ilike,
+  or,
+  sql,
 } from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
