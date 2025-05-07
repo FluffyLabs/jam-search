@@ -94,7 +94,7 @@ export function createApp() {
         const gpVersionResult = await db
           .select({ timestamp: graypapersTable.timestamp })
           .from(graypapersTable)
-          .where(like(graypapersTable.version, data.filter_since_gp))
+          .where(ilike(graypapersTable.version, data.filter_since_gp))
           .orderBy(desc(graypapersTable.timestamp))
           .limit(1);
 
