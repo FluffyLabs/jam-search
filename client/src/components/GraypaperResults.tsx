@@ -105,7 +105,7 @@ const SectionResult = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-3 pt-0">
         <div className="text-xs">
-          "{getTextToDisplay(text, query, searchMode)}"
+          {getTextToDisplay(text, query, searchMode)}
         </div>
         <a
           href={url}
