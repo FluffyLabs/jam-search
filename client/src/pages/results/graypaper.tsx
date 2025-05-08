@@ -3,16 +3,16 @@ import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/SearchForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Link as LinkIcon } from "lucide-react";
-import { parseSearchQuery } from "@/lib/utils";
+import { parseSearchQuery, SearchMode, highlightText } from "@/lib/utils";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
-import { highlightText } from "@/components/GraypaperResults";
 import { ShareUrl } from "@/components/ShareUrl";
 
 const GraypaperResults = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q") || "";
   const searchModeParam =
-    new URLSearchParams(location.search).get("searchMode") || "strict";
+    (new URLSearchParams(location.search).get("searchMode") as SearchMode) ||
+    "strict";
 
   // Use our graypaper search hook with 10 results per page
   const {
@@ -93,6 +93,7 @@ const GraypaperResults = () => {
                     text={section.text}
                     query={query}
                     url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
+                    searchMode={searchModeParam}
                   />
                 ))}
               </div>
@@ -131,11 +132,13 @@ const SectionResult = ({
   title,
   query,
   url,
+  searchMode,
 }: {
   text: string;
   title: string;
   query: string;
   url: string;
+  searchMode: SearchMode;
 }) => {
   return (
     <Card className="relative bg-card border-border">
@@ -145,7 +148,9 @@ const SectionResult = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-3 pt-0">
-        <div className="text-xs">"{getTextToDisplay(text, query)}"</div>
+        <div className="text-xs">
+          "{getTextToDisplay(text, query, searchMode)}"
+        </div>
         <a
           href={url}
           target="_blank"
@@ -161,7 +166,11 @@ const SectionResult = ({
 };
 
 const limit = 700;
-const getTextToDisplay = (text: string, query: string) => {
+const getTextToDisplay = (
+  text: string,
+  query: string,
+  searchMode: SearchMode
+) => {
   if (!text || !query) return text;
 
   // Get the first word from the query
@@ -230,7 +239,7 @@ const getTextToDisplay = (text: string, query: string) => {
 
   const result = [
     startIndex > 0 ? "..." : "",
-    ...highlightText(text.slice(startIndex, endIndex), queryWords),
+    ...highlightText(text.slice(startIndex, endIndex), queryWords, searchMode),
     endIndex < text.length ? "..." : "",
   ];
 

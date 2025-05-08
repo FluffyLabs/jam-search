@@ -1,5 +1,5 @@
 import { SearchResult } from "@/lib/api";
-import { highlightText } from "./GraypaperResults";
+import { highlightText, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
 import { formatDate } from "@/lib/utils";
 import { useState } from "react";
@@ -8,9 +8,14 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 interface ResultListProps {
   results: SearchResult[];
   searchQuery: string;
+  searchMode: SearchMode;
 }
 
-export const ResultList = ({ results, searchQuery }: ResultListProps) => {
+export const ResultList = ({
+  results,
+  searchQuery,
+  searchMode,
+}: ResultListProps) => {
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
 
   if (results.length === 0) {
@@ -25,8 +30,8 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
 
   return (
     <div className="space-y-6">
-      {results.map((result: SearchResult, index) => (
-        <div key={index} className="border-b border-border pb-6">
+      {results.map((result: SearchResult) => (
+        <div key={result.messageid} className="border-b border-border pb-6">
           <div className="mb-2">
             <div className="flex items-center mb-1">
               <span className="font-medium  text-foreground">
@@ -39,7 +44,11 @@ export const ResultList = ({ results, searchQuery }: ResultListProps) => {
               )}
             </div>
             <p className="text-muted-foreground text-sm mb-2">
-              {highlightText(result.content || "", searchQuery.split(/\s+/))}
+              {highlightText(
+                result.content || "",
+                searchQuery.split(/\s+/),
+                searchMode
+              )}
             </p>
             {result.messageid && (
               <div className="flex space-x-4">

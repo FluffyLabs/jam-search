@@ -8,7 +8,7 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
 import { ArrowRight } from "lucide-react";
 import { MATRIX_CHANNELS } from "@/consts";
-import { parseSearchQuery } from "@/lib/utils";
+import { parseSearchQuery, SearchMode } from "@/lib/utils";
 import { CommercialBanner } from "@/components/CommercialBanner";
 import { ShareUrl } from "@/components/ShareUrl";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -139,7 +139,10 @@ const SearchResults = () => {
 
         <div className="mb-8">
           {selectedSources.includes("graypaper") && (
-            <GraypaperResults query={query} searchMode={searchModeParam} />
+            <GraypaperResults
+              query={query}
+              searchMode={searchModeParam as SearchMode}
+            />
           )}
 
           {selectedSources.includes("matrix") && (
@@ -199,7 +202,11 @@ const SearchResults = () => {
                     </div>
                   </div>
                 ) : (
-                  <ResultList results={graypaperResults} searchQuery={query} />
+                  <ResultList
+                    results={graypaperResults}
+                    searchQuery={query}
+                    searchMode={searchModeParam as SearchMode}
+                  />
                 )}
               </div>
 
@@ -257,7 +264,11 @@ const SearchResults = () => {
                     </div>
                   </div>
                 ) : (
-                  <ResultList results={jamResults} searchQuery={query} />
+                  <ResultList
+                    results={jamResults}
+                    searchQuery={query}
+                    searchMode={searchModeParam as SearchMode}
+                  />
                 )}
               </div>
             </>
