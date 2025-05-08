@@ -4,7 +4,7 @@ import { SearchForm } from "@/components/SearchForm";
 import { ResultList } from "@/components/ResultList";
 import { useSearch } from "@/hooks/useSearch";
 import { MATRIX_CHANNELS } from "@/consts";
-import { parseSearchQuery } from "@/lib/utils";
+import { parseSearchQuery, SearchMode } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { ShareUrl } from "@/components/ShareUrl";
 
@@ -92,7 +92,11 @@ const MatrixResults = () => {
           {isLoading && !results.length ? (
             <div className="text-center p-8">Loading results...</div>
           ) : (
-            <ResultList results={results} searchQuery={query} />
+            <ResultList
+              results={results}
+              searchQuery={query}
+              searchMode={searchMode as SearchMode}
+            />
           )}
         </div>
 

@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Link as RouterLink, useLocation } from "react-router";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { CommercialBanner } from "./CommercialBanner";
+import { highlightText, SearchMode } from "@/lib/utils";
 
 interface GraypaperResultsProps {
   query: string;
-  searchMode?: string;
+  searchMode?: SearchMode;
 }
 
 export const GraypaperResults = ({
@@ -74,6 +75,7 @@ export const GraypaperResults = ({
             text={section.text}
             query={query}
             url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
+            searchMode={searchMode}
           />
         ))}
       </div>
@@ -86,11 +88,13 @@ const SectionResult = ({
   title,
   query,
   url,
+  searchMode,
 }: {
   text: string;
   title: string;
   query: string;
   url: string;
+  searchMode: SearchMode;
 }) => {
   return (
     <Card className="relative bg-card border-border">
@@ -100,7 +104,9 @@ const SectionResult = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-3 pt-0">
-        <div className="text-xs">"{getTextToDisplay(text, query)}"</div>
+        <div className="text-xs">
+          {getTextToDisplay(text, query, searchMode)}
+        </div>
         <a
           href={url}
           target="_blank"
@@ -115,7 +121,11 @@ const SectionResult = ({
   );
 };
 
-const getTextToDisplay = (text: string, query: string) => {
+const getTextToDisplay = (
+  text: string,
+  query: string,
+  searchMode: SearchMode
+) => {
   if (!text || !query) return text;
 
   // Get the first word from the query
@@ -184,34 +194,9 @@ const getTextToDisplay = (text: string, query: string) => {
 
   const result = [
     startIndex > 0 ? "..." : "",
-    ...highlightText(text.slice(startIndex, endIndex), queryWords),
+    ...highlightText(text.slice(startIndex, endIndex), queryWords, searchMode),
     endIndex < text.length ? "..." : "",
   ];
-
-  return result;
-};
-
-export const highlightText = (text: string, words: string[]) => {
-  const escapeRegExp = (str: string) =>
-    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-  // TODO: this is not secure solution as words comes from user input
-  const regex = new RegExp(`(${words.map(escapeRegExp).join("|")})`, "gi");
-  const result = [];
-
-  let match = regex.exec(text);
-  let lastIndex = 0;
-
-  while (match) {
-    const before = text.slice(lastIndex, match.index);
-    result.push(before);
-    result.push(<span className="text-foreground font-bold">{match[0]}</span>);
-    lastIndex = match.index + match[0].length;
-    match = regex.exec(text);
-  }
-
-  const after = text.slice(lastIndex);
-  result.push(after);
 
   return result;
 };
