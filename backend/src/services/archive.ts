@@ -1,5 +1,5 @@
 import { load } from "cheerio";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
 // Define message interface to match what MessagesLogger expects
 interface MessageEvent {
