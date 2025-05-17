@@ -4,8 +4,8 @@ import { type Job, scheduleJob } from "node-schedule";
 import { createApp } from "./api.js";
 import { env } from "./env.js";
 import { fillArchivedMessages } from "./scripts/fillArchivedMessages.js";
-import { updateGraypapers } from "./scripts/updateGraypapers.js";
 import { processBatchEmbeddings } from "./scripts/generateEmbeddingsBatch.js";
+import { updateGraypapers } from "./scripts/updateGraypapers.js";
 
 const isDev = process.env.NODE_ENV === "development";
 async function main() {
