@@ -5,6 +5,7 @@ import { createApp } from "./api.js";
 import { env } from "./env.js";
 import { fillArchivedMessages } from "./scripts/fillArchivedMessages.js";
 import { updateGraypapers } from "./scripts/updateGraypapers.js";
+import { processBatchEmbeddings } from "./scripts/generateEmbeddingsBatch.js";
 
 const isDev = process.env.NODE_ENV === "development";
 async function main() {
@@ -13,7 +14,7 @@ async function main() {
   const app = createApp();
 
   if (!isDev) {
-    // Schedule daily job to fetch messages from yesterday at 3:20 UTC
+    // Schedule daily job to fetch messages from yesterday at 4:00 UTC
     // Immediately after https://github.com/paritytech/matrix-archiver/blob/master/.github/workflows/archive.yml#L10
     matrixJob = scheduleJob("0 4 * * *", async () => {
       console.log(
@@ -28,6 +29,7 @@ async function main() {
 
         // Fetch messages from yesterday to today
         await fillArchivedMessages(yesterdayStr, yesterdayStr);
+        await processBatchEmbeddings();
         console.log("Message fetch job completed successfully");
       } catch (error) {
         console.error("Error in message fetch job:", error);

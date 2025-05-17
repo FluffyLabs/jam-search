@@ -20,7 +20,7 @@
     "test:watch": "vitest",
     "graypaper:index-search": "tsx ./src/scripts/updateGraypaperData.ts",
     "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts",
-    "fill-archived-messages-for-n-days": "tsx ./src/scripts/fillArchivedMessageForNDays.ts",
+    "fill-archived-messages-for-n-days": "tsx ./src/scripts/runFillArchivedMessages.ts",
     "generate-embeddings": "tsx ./src/scripts/generateEmbeddingsBatch.ts"
   },
   "dependencies": {

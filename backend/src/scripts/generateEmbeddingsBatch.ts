@@ -128,7 +128,7 @@ async function createTempFile(data: string): Promise<string> {
 }
 
 // Process the batch embeddings
-async function processBatchEmbeddings() {
+export async function processBatchEmbeddings() {
   // Check for in-progress batches
   console.log("Checking for in-progress batch jobs...");
 
@@ -292,14 +292,3 @@ async function processBatchEmbeddings() {
     `Batch embedding process completed! Updated ${updatedCount} embeddings.`
   );
 }
-
-// Main execution
-(async () => {
-  try {
-    await processBatchEmbeddings();
-    await db.$client.end();
-  } catch (error) {
-    console.error("Error generating embeddings:", error);
-    process.exit(1);
-  }
-})();
