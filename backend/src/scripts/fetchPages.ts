@@ -54,6 +54,20 @@ async function fetchPageContent(
   };
 }
 
+function cleanContent(content: string): string | null {
+  // Remove "[Skip to main content](url) On this page" pattern
+  const cleanedContent = content
+    .replace(/\[Skip to main content\]\([^)]+\)\s*On this page/g, "")
+    .trim();
+
+  // If content is empty or only contains whitespace after cleaning, return null
+  if (!cleanedContent) {
+    return null;
+  }
+
+  return cleanedContent;
+}
+
 export async function fetchAndStorePages(
   input: string | string[] | { sitemapUrl: string }
 ) {
@@ -90,18 +104,26 @@ export async function fetchAndStorePages(
           console.log(`Fetching ${pageUrl.url}...`);
           const pageContent = await fetchPageContent(pageUrl.url);
 
+          const cleanedContent = cleanContent(pageContent.content);
+
+          // Skip if content is empty after cleaning
+          if (!cleanedContent) {
+            console.log(`Skipping ${pageUrl.url} - no valid content`);
+            continue;
+          }
+
           await tx
             .insert(pagesTable)
             .values({
               url: pageUrl.url,
-              content: pageContent.content,
+              content: cleanedContent,
               title: pageContent.title,
               lastModified: pageUrl.lastModified || new Date(),
             })
             .onConflictDoUpdate({
               target: pagesTable.url,
               set: {
-                content: pageContent.content,
+                content: cleanedContent,
                 title: pageContent.title,
                 lastModified: pageUrl.lastModified || new Date(),
               },

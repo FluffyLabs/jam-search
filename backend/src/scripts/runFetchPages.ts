@@ -6,7 +6,7 @@ await fetchAndStorePages({ sitemapUrl: "https://docs.jamcha.in/sitemap.xml" });
 
 // 2. Fetch single URL
 // await fetchAndStorePages(
-// "https://jam-docs.onrender.com/advanced/rpc/jip2-node-rpc"
+//   "https://jam-docs.onrender.com/advanced/rpc/jip2-node-rpc"
 // );
 
 // 3. Fetch multiple URLs
