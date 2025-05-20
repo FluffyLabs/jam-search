@@ -41,7 +41,6 @@ async function fetchPageContent(
   const firecrawl = new FirecrawlApp({ apiKey: process.env.FIRECRAWL_API_KEY });
   const result = await firecrawl.scrapeUrl(url, {
     formats: ["markdown"],
-    onlyMainContent: true,
   });
 
   if (!result.success) {
@@ -56,12 +55,13 @@ async function fetchPageContent(
 
 function cleanContent(content: string): string | null {
   // Remove "[Skip to main content](url) On this page" pattern
-  const cleanedContent = content
-    .replace(/\[Skip to main content\]\([^)]+\)\s*On this page/g, "")
-    .trim();
+  const cleanedContent = content.replace(
+    /\[Skip to main content\]\([^)]+\)\s*On this page/g,
+    ""
+  );
 
   // If content is empty or only contains whitespace after cleaning, return null
-  if (!cleanedContent) {
+  if (!cleanedContent.trim()) {
     return null;
   }
 
