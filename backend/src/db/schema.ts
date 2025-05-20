@@ -73,3 +73,31 @@ export const graypaperSectionsTable = pgTable(
 );
 
 export type GraypaperSection = typeof graypaperSectionsTable.$inferSelect;
+
+export const pagesTable = pgTable(
+  "pages",
+  {
+    id: serial("id").primaryKey(),
+    url: text("url").notNull().unique(),
+    content: text("content").notNull(),
+    title: text("title").notNull(),
+    lastModified: timestamp("last_modified", {
+      mode: "date",
+      precision: 3,
+    }).notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+  },
+  (table) => [
+    index("pages_search_idx")
+      .using("bm25", table.id, table.url, table.content, table.title)
+      .with({
+        key_field: "id",
+      }),
+    index("pages_embedding_index").using(
+      "hnsw",
+      table.embedding.op("vector_cosine_ops")
+    ),
+  ]
+);
+
+export type Page = typeof pagesTable.$inferSelect;
