@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "lucide-react";
 import { highlightText, SearchMode } from "@/lib/utils";
+import ReactMarkdown from "react-markdown";
 
 interface PageResult {
   id: number;
@@ -57,12 +58,8 @@ export const PageResults = ({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-sm text-muted-foreground">
-              {highlightText(
-                result.content,
-                [searchQuery],
-                searchMode || "strict"
-              )}
+            <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none overflow-hidden [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:break-words [&_p]:break-words [&_table]:w-full [&_table]:overflow-x-auto [&_img]:max-w-full [&_img]:h-auto">
+              <ReactMarkdown>{result.content}</ReactMarkdown>
             </div>
             {result.similarity && (
               <div className="text-xs text-muted-foreground mt-2">
