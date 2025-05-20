@@ -3,7 +3,7 @@ import { SearchForm } from "@/components/SearchForm";
 import { useSearch } from "@/hooks/useSearch";
 import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ResultList } from "@/components/ResultList";
+import { MatrixResultList } from "@/components/MatrixResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
 import { ArrowRight } from "lucide-react";
@@ -202,7 +202,7 @@ const SearchResults = () => {
                     </div>
                   </div>
                 ) : (
-                  <ResultList
+                  <MatrixResultList
                     results={graypaperResults}
                     searchQuery={query}
                     searchMode={searchModeParam as SearchMode}
@@ -264,7 +264,7 @@ const SearchResults = () => {
                     </div>
                   </div>
                 ) : (
-                  <ResultList
+                  <MatrixResultList
                     results={jamResults}
                     searchQuery={query}
                     searchMode={searchModeParam as SearchMode}

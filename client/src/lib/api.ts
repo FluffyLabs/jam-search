@@ -127,3 +127,43 @@ export async function searchGraypaper(
 
   return fetchApi(`/search/graypaper?${queryParams.toString()}`);
 }
+
+export interface PageSearchResponse {
+  results: Array<{
+    id: number;
+    url: string;
+    title: string;
+    content: string;
+    lastModified: string;
+    similarity?: number;
+    score?: number;
+  }>;
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export async function searchPages(
+  query: string,
+  options: {
+    page?: number;
+    pageSize?: number;
+    searchMode?: string;
+  } = {}
+): Promise<PageSearchResponse> {
+  const { page = 1, pageSize = 10, searchMode = "strict" } = options;
+
+  const queryParams = new URLSearchParams();
+  queryParams.append("q", query);
+  queryParams.append("page", page.toString());
+  queryParams.append("pageSize", pageSize.toString());
+
+  // Add searchMode parameter if not strict (default)
+  if (searchMode !== "strict") {
+    queryParams.append("searchMode", searchMode);
+  }
+
+  return fetchApi<PageSearchResponse>(
+    `/search/pages?${queryParams.toString()}`
+  );
+}
