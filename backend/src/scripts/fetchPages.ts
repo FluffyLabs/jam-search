@@ -23,6 +23,10 @@ interface PageUrl {
   lastModified?: Date;
 }
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
   const response = await fetch(sitemapUrl);
   const xml = await response.text();
@@ -130,8 +134,13 @@ export async function fetchAndStorePages(
             });
 
           console.log(`Stored ${pageUrl.url}`);
+
+          // Add delay between requests to avoid rate limiting
+          await delay(4000); // 4 second delay
         } catch (error) {
           console.error(`Error processing ${pageUrl.url}:`, error);
+          // Add delay even after errors to maintain rate limiting
+          throw error;
         }
       }
 
