@@ -53,19 +53,21 @@ async function fetchPageContent(
 
   return {
     content: result.markdown || "",
-    title: result.title || "",
+    title: result.metadata?.title || "",
   };
 }
 
 function cleanContent(content: string): string | null {
-  // Remove "[Skip to main content](url) On this page" pattern
-  const cleanedContent = content.replace(
-    /\[Skip to main content\]\([^)]+\)\s*On this page/g,
-    ""
-  );
+  // Remove both patterns:
+  // 1. "[Skip to main content](url) On this page"
+  // 2. "[Skip to main content](url)"
+  const cleanedContent = content
+    .replace(/\[Skip to main content\]\([^)]+\)\s*On this page/g, "")
+    .replace(/\[Skip to main content\]\([^)]+\)/g, "")
+    .trim();
 
   // If content is empty or only contains whitespace after cleaning, return null
-  if (!cleanedContent.trim()) {
+  if (!cleanedContent) {
     return null;
   }
 
