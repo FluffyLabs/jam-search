@@ -9,6 +9,7 @@ export const searchPagesRequestSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
   searchMode: z.enum(["fuzzy", "semantic", "strict"]).default("strict"),
+  site: z.string().optional(),
 });
 
 export async function searchPages(
@@ -16,6 +17,11 @@ export async function searchPages(
 ) {
   // Base search condition
   const whereConditions = [];
+
+  // Add site filter if provided
+  if (data.site) {
+    whereConditions.push(ilike(pagesTable.site, `%${data.site}%`));
+  }
 
   let orderBy: SQL = sql`paradedb.score(id) DESC, id`;
   let similarity = sql<number>`1`;
@@ -105,6 +111,7 @@ export async function searchPages(
       url: pagesTable.url,
       title: pagesTable.title,
       content: pagesTable.content,
+      site: pagesTable.site,
       lastModified: pagesTable.lastModified,
       similarity,
       score: sql<number>`paradedb.score(id)`,

@@ -74,6 +74,16 @@ function cleanContent(content: string): string | null {
   return cleanedContent;
 }
 
+function extractSiteFromUrl(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.origin;
+  } catch (error) {
+    console.error(`Error extracting site from URL ${url}:`, error);
+    return "";
+  }
+}
+
 export async function fetchAndStorePages(
   input: string | string[] | { sitemapUrl: string }
 ) {
@@ -118,12 +128,15 @@ export async function fetchAndStorePages(
             continue;
           }
 
+          const site = extractSiteFromUrl(pageUrl.url);
+
           await tx
             .insert(pagesTable)
             .values({
               url: pageUrl.url,
               content: cleanedContent,
               title: pageContent.title,
+              site,
               lastModified: pageUrl.lastModified || new Date(),
             })
             .onConflictDoUpdate({
@@ -131,6 +144,7 @@ export async function fetchAndStorePages(
               set: {
                 content: cleanedContent,
                 title: pageContent.title,
+                site,
                 lastModified: pageUrl.lastModified || new Date(),
               },
             });

@@ -81,6 +81,7 @@ export const pagesTable = pgTable(
     url: text("url").notNull().unique(),
     content: text("content").notNull(),
     title: text("title").notNull(),
+    site: text("site"),
     lastModified: timestamp("last_modified", {
       mode: "date",
       precision: 3,
@@ -97,6 +98,7 @@ export const pagesTable = pgTable(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
+    index("pages_site_idx").on(table.site),
   ]
 );
 
