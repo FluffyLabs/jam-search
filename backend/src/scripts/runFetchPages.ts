@@ -6,7 +6,7 @@ await fetchAndStorePages(
   {
     sitemapUrl: "https://docs.jamcha.in/sitemap.xml",
   },
-  "https://docs.jamcha.in"
+  "docs.jamcha.in"
 );
 
 // 2. Fetch single URL

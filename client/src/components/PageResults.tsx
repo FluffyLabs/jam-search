@@ -165,7 +165,7 @@ export const PageResults = ({
           <div className="mb-2">
             <div className="flex items-center mb-1">
               <a
-                href={result.site + result.url}
+                href={`https://${result.site}${result.url}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline flex items-center gap-2"

@@ -49,9 +49,7 @@ const PagesResults = () => {
             </Link>
             <span className="text-muted-foreground text-sm">
               {site && (
-                <span className="text-lg font-medium">
-                  {site.replace("https://", "")}
-                </span>
+                <span className="text-lg font-medium">@&nbsp;{site}</span>
               )}
               &nbsp;(
               {results.length.toLocaleString()} results)
