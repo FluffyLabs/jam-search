@@ -34,7 +34,10 @@ async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
   const result = parser.parse(xml) as Sitemap;
 
   return result.urlset.url.map((item) => ({
-    url: item.loc,
+    url: item.loc.replace(
+      "https://jam-docs.onrender.com",
+      "https://docs.jamcha.in"
+    ),
     lastModified: item.lastmod ? new Date(item.lastmod) : undefined,
   }));
 }
@@ -72,17 +75,6 @@ function cleanContent(content: string): string | null {
   }
 
   return cleanedContent;
-}
-
-function removeSiteFromUrl(url: string, site: string): string {
-  try {
-    const urlObj = new URL(url);
-    const path = urlObj.pathname + urlObj.search + urlObj.hash;
-    return path.startsWith("/") ? path : "/" + path;
-  } catch (error) {
-    console.error(`Error removing site from URL ${url}:`, error);
-    return url;
-  }
 }
 
 export async function fetchAndStorePages(
@@ -130,12 +122,10 @@ export async function fetchAndStorePages(
             continue;
           }
 
-          const urlWithoutSite = removeSiteFromUrl(pageUrl.url, site);
-
           await tx
             .insert(pagesTable)
             .values({
-              url: urlWithoutSite,
+              url: pageUrl.url,
               content: cleanedContent,
               title: pageContent.title,
               site,
@@ -151,7 +141,7 @@ export async function fetchAndStorePages(
               },
             });
 
-          console.log(`Stored ${urlWithoutSite}`);
+          console.log(`Stored ${pageUrl.url}`);
 
           // Add delay between requests to avoid rate limiting
           await delay(4000); // 4 second delay
