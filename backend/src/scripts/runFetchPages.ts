@@ -2,7 +2,12 @@ import { fetchAndStorePages } from "./fetchPages.js";
 
 // Example usage:
 // 1. Fetch from sitemap
-await fetchAndStorePages({ sitemapUrl: "https://docs.jamcha.in/sitemap.xml" });
+await fetchAndStorePages(
+  {
+    sitemapUrl: "https://docs.jamcha.in/sitemap.xml",
+  },
+  "https://docs.jamcha.in"
+);
 
 // 2. Fetch single URL
 // await fetchAndStorePages(

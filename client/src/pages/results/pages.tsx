@@ -12,6 +12,7 @@ const PagesResults = () => {
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
   const searchMode = searchParams.get("searchMode") || "strict";
+  const site = searchParams.get("site") || undefined;
 
   // Parse the query to extract filters
   const { query } = parseSearchQuery(richQuery);
@@ -22,6 +23,7 @@ const PagesResults = () => {
       query,
       pageSize: 10,
       searchMode,
+      site,
     });
 
   if (isError) {
@@ -46,7 +48,13 @@ const PagesResults = () => {
               </Button>
             </Link>
             <span className="text-muted-foreground text-sm">
-              ({results.length.toLocaleString()} results)
+              {site && (
+                <span className="text-lg font-medium">
+                  {site.replace("https://", "")}
+                </span>
+              )}
+              &nbsp;(
+              {results.length.toLocaleString()} results)
             </span>
           </div>
           <ShareUrl />

@@ -74,18 +74,20 @@ function cleanContent(content: string): string | null {
   return cleanedContent;
 }
 
-function extractSiteFromUrl(url: string): string {
+function removeSiteFromUrl(url: string, site: string): string {
   try {
     const urlObj = new URL(url);
-    return urlObj.origin;
+    const path = urlObj.pathname + urlObj.search + urlObj.hash;
+    return path.startsWith("/") ? path : "/" + path;
   } catch (error) {
-    console.error(`Error extracting site from URL ${url}:`, error);
-    return "";
+    console.error(`Error removing site from URL ${url}:`, error);
+    return url;
   }
 }
 
 export async function fetchAndStorePages(
-  input: string | string[] | { sitemapUrl: string }
+  input: string | string[] | { sitemapUrl: string },
+  site: string
 ) {
   let pageUrls: PageUrl[] = [];
 
@@ -128,12 +130,12 @@ export async function fetchAndStorePages(
             continue;
           }
 
-          const site = extractSiteFromUrl(pageUrl.url);
+          const urlWithoutSite = removeSiteFromUrl(pageUrl.url, site);
 
           await tx
             .insert(pagesTable)
             .values({
-              url: pageUrl.url,
+              url: urlWithoutSite,
               content: cleanedContent,
               title: pageContent.title,
               site,
@@ -149,7 +151,7 @@ export async function fetchAndStorePages(
               },
             });
 
-          console.log(`Stored ${pageUrl.url}`);
+          console.log(`Stored ${urlWithoutSite}`);
 
           // Add delay between requests to avoid rate limiting
           await delay(4000); // 4 second delay

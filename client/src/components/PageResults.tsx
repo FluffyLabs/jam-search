@@ -6,6 +6,7 @@ import { Components } from "react-markdown";
 interface PageResult {
   id: number;
   url: string;
+  site: string;
   title: string;
   content: string;
   lastModified: string;
@@ -164,7 +165,7 @@ export const PageResults = ({
           <div className="mb-2">
             <div className="flex items-center mb-1">
               <a
-                href={result.url}
+                href={result.site + result.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline flex items-center gap-2"

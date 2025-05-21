@@ -132,6 +132,7 @@ export interface PageSearchResponse {
   results: Array<{
     id: number;
     url: string;
+    site: string;
     title: string;
     content: string;
     lastModified: string;
@@ -149,9 +150,10 @@ export async function searchPages(
     page?: number;
     pageSize?: number;
     searchMode?: string;
+    site?: string;
   } = {}
 ): Promise<PageSearchResponse> {
-  const { page = 1, pageSize = 10, searchMode = "strict" } = options;
+  const { page = 1, pageSize = 10, searchMode = "strict", site } = options;
 
   const queryParams = new URLSearchParams();
   queryParams.append("q", query);
@@ -161,6 +163,11 @@ export async function searchPages(
   // Add searchMode parameter if not strict (default)
   if (searchMode !== "strict") {
     queryParams.append("searchMode", searchMode);
+  }
+
+  // Add site parameter if provided
+  if (site) {
+    queryParams.append("site", site);
   }
 
   return fetchApi<PageSearchResponse>(

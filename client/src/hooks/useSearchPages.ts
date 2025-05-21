@@ -7,6 +7,7 @@ interface UseSearchPagesOptions {
   initialPage?: number;
   pageSize?: number;
   searchMode?: string;
+  site?: string;
 }
 
 export function useSearchPages({
@@ -14,14 +15,15 @@ export function useSearchPages({
   initialPage = 1,
   pageSize = 10,
   searchMode = "strict",
+  site,
 }: UseSearchPagesOptions) {
   const [page, setPage] = useState(initialPage);
   const currentPageSize = pageSize;
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["pages-search", query, page, currentPageSize, searchMode],
+    queryKey: ["pages-search", query, page, currentPageSize, searchMode, site],
     queryFn: () =>
-      searchPages(query, { page, pageSize: currentPageSize, searchMode }),
+      searchPages(query, { page, pageSize: currentPageSize, searchMode, site }),
     enabled: !!query.trim(),
     staleTime: 0,
   });
