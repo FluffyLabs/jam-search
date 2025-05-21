@@ -4,15 +4,15 @@ import { z } from "zod";
 import { db } from "../db/db.js";
 import { graypaperSectionsTable } from "../db/schema.js";
 
-export const searchGraypapersRequestSchema = z.object({
+export const searchGraypaperRequestSchema = z.object({
   q: z.string(),
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
   searchMode: z.enum(["fuzzy", "semantic", "strict"]).default("strict"),
 });
 
-export async function searchGraypapers(
-  data: z.infer<typeof searchGraypapersRequestSchema>
+export async function searchGraypaper(
+  data: z.infer<typeof searchGraypaperRequestSchema>
 ) {
   // Base search condition
   const whereConditions = [];

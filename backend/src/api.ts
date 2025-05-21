@@ -25,8 +25,8 @@ import {
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import {
-  searchGraypapers,
-  searchGraypapersRequestSchema,
+  searchGraypaper,
+  searchGraypaperRequestSchema,
 } from "./api/searchGraypapers.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -61,9 +61,9 @@ export function createApp() {
     return c.json(await searchPages(data));
   });
 
-  app.get("/search/graypapers", async (c) => {
-    const data = searchGraypapersRequestSchema.parse(c.req.query());
-    return c.json(await searchGraypapers(data));
+  app.get("/search/graypaper", async (c) => {
+    const data = searchGraypaperRequestSchema.parse(c.req.query());
+    return c.json(await searchGraypaper(data));
   });
 
   return app;
