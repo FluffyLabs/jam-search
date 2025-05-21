@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "lucide-react";
 import { highlightText, SearchMode } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
@@ -159,11 +158,11 @@ export const PageResults = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {results.map((result) => (
-        <Card key={result.id} className="bg-card">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">
+        <div key={result.id} className="border-b border-border pb-6">
+          <div className="mb-2">
+            <div className="flex items-center mb-1">
               <a
                 href={result.url}
                 target="_blank"
@@ -173,20 +172,14 @@ export const PageResults = ({
                 {result.title}
                 <Link className="h-4 w-4" />
               </a>
-            </CardTitle>
-            <div className="text-sm text-muted-foreground">
-              Last modified:{" "}
-              {new Date(result.lastModified).toLocaleDateString()}
             </div>
-          </CardHeader>
-          <CardContent>
             <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none overflow-hidden [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:break-words [&_p]:break-words [&_table]:w-full [&_table]:overflow-x-auto [&_img]:max-w-full [&_img]:h-auto">
               <ReactMarkdown components={markdownComponents}>
                 {truncateContent(result.content, searchQuery, searchMode)}
               </ReactMarkdown>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
     </div>
   );

@@ -37,19 +37,24 @@ const PagesResults = () => {
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
-      <div className="w-full max-w-4xl px-7">
-        <div className="flex items-center justify-between mb-4">
-          <Link
-            to={`/results?${backParams.toString()}`}
-            className="flex items-center text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to all results
-          </Link>
+      <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Link to={`/results?${backParams.toString()}`}>
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <span className="text-muted-foreground text-sm">
+              ({results.length.toLocaleString()} results)
+            </span>
+          </div>
           <ShareUrl />
         </div>
+      </div>
 
-        <SearchForm />
+      <div className="w-full max-w-4xl px-7">
+        <SearchForm showSearchOptions={false} />
 
         <div className="mb-8">
           {isLoading && !results.length ? (
