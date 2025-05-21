@@ -12,6 +12,15 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import OpenAI from "openai";
 import { z } from "zod";
+import {
+  searchGraypaper,
+  searchGraypaperRequestSchema,
+} from "./api/searchGraypapers.js";
+import {
+  searchMessages,
+  searchMessagesRequestSchema,
+} from "./api/searchMessages.js";
+import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { db } from "./db/db.js";
 import {
   graypaperSectionsTable,
@@ -19,15 +28,6 @@ import {
   messagesTable,
   pagesTable,
 } from "./db/schema.js";
-import {
-  searchMessages,
-  searchMessagesRequestSchema,
-} from "./api/searchMessages.js";
-import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
-import {
-  searchGraypaper,
-  searchGraypaperRequestSchema,
-} from "./api/searchGraypapers.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const escapeRegExp = (str: string) =>

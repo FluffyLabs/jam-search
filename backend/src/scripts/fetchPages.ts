@@ -1,9 +1,9 @@
 import { sql } from "drizzle-orm";
+import { XMLParser } from "fast-xml-parser";
+import FirecrawlApp from "firecrawl";
+import fetch from "node-fetch";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
-import { XMLParser } from "fast-xml-parser";
-import fetch from "node-fetch";
-import FirecrawlApp from "firecrawl";
 
 interface SitemapUrl {
   loc: string;

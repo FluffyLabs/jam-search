@@ -92,9 +92,7 @@
         "docs_pages_url_unique": {
           "name": "docs_pages_url_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "url"
-          ]
+          "columns": ["url"]
         }
       },
       "policies": {},
@@ -358,9 +356,7 @@
         "messages_messageid_unique": {
           "name": "messages_messageid_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "messageid"
-          ]
+          "columns": ["messageid"]
         }
       },
       "policies": {},
