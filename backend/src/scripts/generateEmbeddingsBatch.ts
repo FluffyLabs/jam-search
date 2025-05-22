@@ -8,8 +8,10 @@ import { db } from "../db/db.js";
 import {
   type GraypaperSection,
   type Message,
+  type Page,
   graypaperSectionsTable,
   messagesTable,
+  pagesTable,
 } from "../db/schema.js";
 
 // Load environment variables
@@ -29,7 +31,8 @@ const openai = new OpenAI({
 // Process messages and graypaper sections into a batch data string
 async function createBatchData(
   messages: Pick<Message, "id" | "content">[],
-  graypaperSections: Pick<GraypaperSection, "id" | "title" | "text">[]
+  graypaperSections: Pick<GraypaperSection, "id" | "title" | "text">[],
+  pages: Pick<Page, "id" | "title" | "content">[]
 ): Promise<string> {
   let batchData = "";
 
@@ -71,6 +74,24 @@ async function createBatchData(
     batchData += `${JSON.stringify(payload)}\n`;
   }
 
+  // Add pages to the batch data
+  for (const page of pages) {
+    const content = `${page.title}\n${page.content}`;
+
+    const payload = {
+      custom_id: `page_${page.id}`,
+      method: "POST",
+      url: "/v1/embeddings",
+      body: {
+        input: content,
+        model: "text-embedding-3-small",
+        dimensions: 1536,
+      },
+    };
+
+    batchData += `${JSON.stringify(payload)}\n`;
+  }
+
   return batchData;
 }
 
@@ -78,6 +99,7 @@ async function createBatchData(
 async function fetchItemsWithoutEmbeddings(): Promise<{
   messages: Pick<Message, "id" | "content">[];
   graypaperSections: Pick<GraypaperSection, "id" | "title" | "text">[];
+  pages: Pick<Page, "id" | "title" | "content">[];
   totalItems: number;
 }> {
   // Fetch messages without embeddings
@@ -111,9 +133,23 @@ async function fetchItemsWithoutEmbeddings(): Promise<{
     `Found ${graypaperSections.length} graypaper sections without embeddings`
   );
 
-  const totalItems = messages.length + graypaperSections.length;
+  // Fetch pages without embeddings
+  console.log("Fetching pages without embeddings...");
+  const pages = await db
+    .select({
+      id: pagesTable.id,
+      title: pagesTable.title,
+      content: pagesTable.content,
+    })
+    .from(pagesTable)
+    .where(isNull(pagesTable.embedding))
+    .execute();
 
-  return { messages, graypaperSections, totalItems };
+  console.log(`Found ${pages.length} pages without embeddings`);
+
+  const totalItems = messages.length + graypaperSections.length + pages.length;
+
+  return { messages, graypaperSections, pages, totalItems };
 }
 
 // Create a temporary file that will be deleted after use
@@ -163,7 +199,7 @@ export async function processBatchEmbeddings() {
   } else {
     // Create a new batch job
     // Fetch items without embeddings
-    const { messages, graypaperSections, totalItems } =
+    const { messages, graypaperSections, pages, totalItems } =
       await fetchItemsWithoutEmbeddings();
 
     if (totalItems === 0) {
@@ -172,7 +208,7 @@ export async function processBatchEmbeddings() {
     }
 
     // Create batch data in memory
-    const batchData = await createBatchData(messages, graypaperSections);
+    const batchData = await createBatchData(messages, graypaperSections, pages);
     console.log(`Created batch data with ${totalItems} items`);
 
     // Create a temporary file (will be auto-deleted)
@@ -279,6 +315,13 @@ export async function processBatchEmbeddings() {
           .update(graypaperSectionsTable)
           .set({ embedding })
           .where(sql`${graypaperSectionsTable.id} = ${sectionId}`)
+          .execute();
+      } else if (customId.startsWith("page_")) {
+        const pageId = Number.parseInt(customId.split("_")[1], 10);
+        await tx
+          .update(pagesTable)
+          .set({ embedding })
+          .where(sql`${pagesTable.id} = ${pageId}`)
           .execute();
       }
       updatedCount += 1;
