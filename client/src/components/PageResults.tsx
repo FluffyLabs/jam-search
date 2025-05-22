@@ -2,6 +2,7 @@ import { Link } from "lucide-react";
 import { highlightText, SearchMode } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import { Components } from "react-markdown";
+import React from "react";
 
 interface PageResult {
   id: number;
@@ -58,18 +59,24 @@ const truncateContent = (
   return truncated;
 };
 
-const HighlightedText = ({
-  children,
-  searchQuery,
-  searchMode,
-}: {
-  children: React.ReactNode;
-  searchQuery: string;
-  searchMode: SearchMode;
-}) => {
-  if (typeof children !== "string") return <>{children}</>;
-
-  return highlightText(children, [searchQuery], searchMode);
+const createHighlightedComponent = (
+  Component: React.ElementType,
+  searchQuery: string,
+  searchMode: SearchMode
+) => {
+  return ({
+    children,
+    ...props
+  }: { children?: React.ReactNode } & Record<string, unknown>) => {
+    if (typeof children === "string") {
+      return (
+        <Component {...props}>
+          {highlightText(children, [searchQuery], searchMode)}
+        </Component>
+      );
+    }
+    return <Component {...props}>{children}</Component>;
+  };
 };
 
 export const PageResults = ({
@@ -86,76 +93,56 @@ export const PageResults = ({
   }
 
   const markdownComponents: Components = {
-    p: ({ children }) => (
-      <p>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </p>
-    ),
-    h1: ({ children }) => (
-      <h1>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </h1>
-    ),
-    h2: ({ children }) => (
-      <h2>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </h2>
-    ),
-    h3: ({ children }) => (
-      <h3>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </h3>
-    ),
-    h4: ({ children }) => (
-      <h4>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </h4>
-    ),
-    h5: ({ children }) => (
-      <h5>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </h5>
-    ),
-    h6: ({ children }) => (
-      <h6>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </h6>
-    ),
-    li: ({ children }) => (
-      <li>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </li>
-    ),
-    code: ({ children }) => (
-      <code>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </code>
-    ),
-    pre: ({ children }) => (
-      <pre>
-        <HighlightedText searchQuery={searchQuery} searchMode={searchMode}>
-          {children}
-        </HighlightedText>
-      </pre>
-    ),
+    p: createHighlightedComponent(
+      "p",
+      searchQuery,
+      searchMode
+    ) as Components["p"],
+    h1: createHighlightedComponent(
+      "h1",
+      searchQuery,
+      searchMode
+    ) as Components["h1"],
+    h2: createHighlightedComponent(
+      "h2",
+      searchQuery,
+      searchMode
+    ) as Components["h2"],
+    h3: createHighlightedComponent(
+      "h3",
+      searchQuery,
+      searchMode
+    ) as Components["h3"],
+    h4: createHighlightedComponent(
+      "h4",
+      searchQuery,
+      searchMode
+    ) as Components["h4"],
+    h5: createHighlightedComponent(
+      "h5",
+      searchQuery,
+      searchMode
+    ) as Components["h5"],
+    h6: createHighlightedComponent(
+      "h6",
+      searchQuery,
+      searchMode
+    ) as Components["h6"],
+    li: createHighlightedComponent(
+      "li",
+      searchQuery,
+      searchMode
+    ) as Components["li"],
+    code: createHighlightedComponent(
+      "code",
+      searchQuery,
+      searchMode
+    ) as Components["code"],
+    pre: createHighlightedComponent(
+      "pre",
+      searchQuery,
+      searchMode
+    ) as Components["pre"],
   };
 
   return (
