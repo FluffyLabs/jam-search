@@ -14,6 +14,8 @@ import { ShareUrl } from "@/components/ShareUrl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSearchPages } from "@/hooks/useSearchPages";
 import { PageResults } from "@/components/PageResults";
+import JamchainLogo from "@/assets/logos/jamchain.webp";
+import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
 
 interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
@@ -193,6 +195,13 @@ const SearchResults = () => {
                 <div className="mb-4">
                   <CommercialBanner
                     title="Matrix archiver"
+                    logo={
+                      <img
+                        src={MatrixArchiverLogo}
+                        className="size-6 p-0.5"
+                        alt="Matrix Archiver Logo"
+                      />
+                    }
                     url={{
                       display: "paritytech.github.io/matrix-archiver",
                       href: "https://paritytech.github.io/matrix-archiver",
@@ -255,6 +264,13 @@ const SearchResults = () => {
                 <div className="mb-4">
                   <CommercialBanner
                     title="Matrix archiver"
+                    logo={
+                      <img
+                        src={MatrixArchiverLogo}
+                        className="size-6 p-0.5"
+                        alt="Matrix Archiver Logo"
+                      />
+                    }
                     url={{
                       display: "paritytech.github.io/matrix-archiver",
                       href: "https://paritytech.github.io/matrix-archiver",
@@ -317,6 +333,13 @@ const SearchResults = () => {
 
               <div className="mb-4">
                 <CommercialBanner
+                  logo={
+                    <img
+                      src={JamchainLogo}
+                      className="size-6"
+                      alt="JamCha.in Logo"
+                    />
+                  }
                   title="JamCha.in Documentation"
                   url={{
                     display: "docs.jamcha.in",
