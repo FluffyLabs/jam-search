@@ -5,7 +5,7 @@ import { Link as RouterLink, useLocation } from "react-router";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { CommercialBanner } from "./CommercialBanner";
 import { highlightText, SearchMode } from "@/lib/utils";
-
+import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
 interface GraypaperResultsProps {
   query: string;
   searchMode?: SearchMode;
@@ -42,6 +42,7 @@ export const GraypaperResults = ({
       display: "graypaper.fluffylabs.dev",
       href: "https://graypaper.fluffylabs.dev",
     },
+    logo: GraypaperReaderLogo,
   };
 
   return (
@@ -64,6 +65,13 @@ export const GraypaperResults = ({
       </div>
 
       <CommercialBanner
+        logo={
+          <img
+            src={graypaperReader.logo}
+            className="size-6"
+            alt="Gray Paper Reader Logo"
+          />
+        }
         title={graypaperReader.title}
         url={graypaperReader.url}
       />

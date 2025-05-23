@@ -5,17 +5,17 @@ import { formatDate } from "@/lib/utils";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
-interface ResultListProps {
+interface MatrixResultListProps {
   results: SearchResult[];
   searchQuery: string;
   searchMode: SearchMode;
 }
 
-export const ResultList = ({
+export const MatrixResultList = ({
   results,
   searchQuery,
   searchMode,
-}: ResultListProps) => {
+}: MatrixResultListProps) => {
   const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
 
   if (results.length === 0) {

@@ -1,12 +1,14 @@
 import { Card, CardContent, CardTitle } from "./ui/card";
-import Logo from "@/assets/logo.svg";
+import { ReactNode } from "react";
 
 export const CommercialBanner = ({
   title,
   url,
+  logo,
   description,
 }: {
   title: string;
+  logo: ReactNode;
   url: {
     display: string;
     href: string;
@@ -17,7 +19,7 @@ export const CommercialBanner = ({
     <Card className="relative bg-secondary border-border">
       <CardContent className="p-1.5 flex gap-2 shrink-0 items-center">
         <div className="bg-muted p-2 rounded-full border-border border">
-          <img src={Logo} className="size-6" alt="Fluffy Labs Logo" />
+          {logo}
         </div>
         <div className="flex gap-1">
           <div className="flex flex-col items-start sm:items-center sm:flex-row sm:gap-3">

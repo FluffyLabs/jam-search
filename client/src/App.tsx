@@ -6,6 +6,7 @@ import { IndexPage } from "./pages";
 import SearchResults from "./pages/results";
 import GraypaperResults from "./pages/results/graypaper";
 import MatrixResults from "./pages/results/matrix";
+import PagesResults from "./pages/results/pages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -39,6 +40,7 @@ function App() {
               <Route path="/results" element={<SearchResults />} />
               <Route path="/results/graypaper" element={<GraypaperResults />} />
               <Route path="/results/matrix" element={<MatrixResults />} />
+              <Route path="/results/pages" element={<PagesResults />} />
             </Routes>
           </div>
         </div>

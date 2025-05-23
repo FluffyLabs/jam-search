@@ -3,7 +3,7 @@ import { SearchForm } from "@/components/SearchForm";
 import { useSearch } from "@/hooks/useSearch";
 import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ResultList } from "@/components/ResultList";
+import { MatrixResultList } from "@/components/MatrixResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
 import { ArrowRight } from "lucide-react";
@@ -12,6 +12,10 @@ import { parseSearchQuery, SearchMode } from "@/lib/utils";
 import { CommercialBanner } from "@/components/CommercialBanner";
 import { ShareUrl } from "@/components/ShareUrl";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSearchPages } from "@/hooks/useSearchPages";
+import { PageResults } from "@/components/PageResults";
+import JamchainLogo from "@/assets/logos/jamchain.webp";
+import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
 
 interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
@@ -20,12 +24,12 @@ interface ResultHeaderProps {
 const SOURCE_OPTIONS = [
   { label: "Matrix channels", value: "matrix" },
   { label: "Graypaper.pdf", value: "graypaper" },
-  { label: "JamCha.in/docs", value: "jamchain", disabled: true },
+  { label: "docs.jamcha.in", value: "jamchain" },
   { label: "Web3 Foundation", value: "w3f", disabled: true },
   { label: "GitHub Source Code", value: "github", disabled: true },
 ];
 
-const initialSources = ["matrix", "graypaper"];
+const initialSources = ["matrix", "graypaper", "jamchain"];
 
 const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
   const [selectedSources, setSelectedSources] =
@@ -95,12 +99,25 @@ const SearchResults = () => {
     searchMode: searchModeParam,
   });
 
+  // Search for JamCha.in docs
+  const {
+    results: docsResults,
+    totalResults: docsTotalResults,
+    isLoading: isDocsLoading,
+    isError: isDocsError,
+  } = useSearchPages({
+    query,
+    pageSize: 2, // Limit to 2 items
+    searchMode: searchModeParam,
+    site: "docs.jamcha.in",
+  });
+
   const handleSourceChange = (sources: string[]) => {
     setSelectedSources(sources);
     // TODO: Implement source filtering logic here
   };
 
-  const isError = isGraypaperError || isJamError;
+  const isError = isGraypaperError || isJamError || isDocsError;
   if (isError) {
     return (
       <div className="text-center text-2xl p-8 text-destructive-foreground">
@@ -178,6 +195,13 @@ const SearchResults = () => {
                 <div className="mb-4">
                   <CommercialBanner
                     title="Matrix archiver"
+                    logo={
+                      <img
+                        src={MatrixArchiverLogo}
+                        className="size-6 p-0.5"
+                        alt="Matrix Archiver Logo"
+                      />
+                    }
                     url={{
                       display: "paritytech.github.io/matrix-archiver",
                       href: "https://paritytech.github.io/matrix-archiver",
@@ -202,7 +226,7 @@ const SearchResults = () => {
                     </div>
                   </div>
                 ) : (
-                  <ResultList
+                  <MatrixResultList
                     results={graypaperResults}
                     searchQuery={query}
                     searchMode={searchModeParam as SearchMode}
@@ -240,6 +264,13 @@ const SearchResults = () => {
                 <div className="mb-4">
                   <CommercialBanner
                     title="Matrix archiver"
+                    logo={
+                      <img
+                        src={MatrixArchiverLogo}
+                        className="size-6 p-0.5"
+                        alt="Matrix Archiver Logo"
+                      />
+                    }
                     url={{
                       display: "paritytech.github.io/matrix-archiver",
                       href: "https://paritytech.github.io/matrix-archiver",
@@ -264,7 +295,7 @@ const SearchResults = () => {
                     </div>
                   </div>
                 ) : (
-                  <ResultList
+                  <MatrixResultList
                     results={jamResults}
                     searchQuery={query}
                     searchMode={searchModeParam as SearchMode}
@@ -272,6 +303,76 @@ const SearchResults = () => {
                 )}
               </div>
             </>
+          )}
+
+          {selectedSources.includes("jamchain") && (
+            <div className="mt-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-sm">
+                  docs.jamcha.in ({docsTotalResults} results)
+                </h2>
+                {docsTotalResults > 2 && (
+                  <Link
+                    to={(() => {
+                      const params = new URLSearchParams(location.search);
+                      params.set("site", "docs.jamcha.in");
+                      return `/results/pages?${params.toString()}`;
+                    })()}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-primary flex items-center text-xs"
+                    >
+                      View all {docsTotalResults} results
+                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <CommercialBanner
+                  logo={
+                    <img
+                      src={JamchainLogo}
+                      className="size-6"
+                      alt="JamCha.in Logo"
+                    />
+                  }
+                  title="JamCha.in Documentation"
+                  url={{
+                    display: "docs.jamcha.in",
+                    href: "https://docs.jamcha.in",
+                  }}
+                />
+              </div>
+
+              {isDocsLoading && !docsResults.length ? (
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-2 border-b border-border pb-6">
+                    <Skeleton className="h-4 w-[160px] my-1" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-2 w-[80px] mt-1" />
+                  </div>
+                  <div className="flex flex-col gap-2 border-b border-border pb-6">
+                    <Skeleton className="h-4 w-[160px] my-1" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-2 w-[80px] mt-1" />
+                  </div>
+                </div>
+              ) : (
+                <PageResults
+                  results={docsResults}
+                  searchQuery={query}
+                  searchMode={searchModeParam as SearchMode}
+                />
+              )}
+            </div>
           )}
         </div>
       </div>
