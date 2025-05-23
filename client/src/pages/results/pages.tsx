@@ -35,7 +35,7 @@ const PagesResults = () => {
   }
 
   const backParams = new URLSearchParams(location.search);
-  backParams.delete("channelId");
+  backParams.delete("site");
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
