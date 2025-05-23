@@ -76,7 +76,8 @@ async function createBatchData(
 
   // Add pages to the batch data
   for (const page of pages) {
-    const content = `${page.title}\n${page.content}`;
+    // Limit the content to 20000 characters
+    const content = `${page.title}\n${page.content.slice(0, 20000)}`;
 
     const payload = {
       custom_id: `page_${page.id}`,
