@@ -16,6 +16,7 @@ import { useSearchPages } from "@/hooks/useSearchPages";
 import { PageResults } from "@/components/PageResults";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
 import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
+import GithubLogo from "@/assets/logos/github.png";
 
 interface ResultHeaderProps {
   onSourceChange?: (sources: string[]) => void;
@@ -25,6 +26,7 @@ const SOURCE_OPTIONS = [
   { label: "Matrix channels", value: "matrix" },
   { label: "Graypaper.pdf", value: "graypaper" },
   { label: "docs.jamcha.in", value: "jamchain" },
+  { label: "github.com/w3f/jamtestvectors", value: "githubW3fJamtestvectors" },
   { label: "Web3 Foundation", value: "w3f", disabled: true },
   { label: "GitHub Source Code", value: "github", disabled: true },
 ];
@@ -112,12 +114,29 @@ const SearchResults = () => {
     site: "docs.jamcha.in",
   });
 
+  // Search for  github.com/w3f/jamtestvectors pages
+  const {
+    results: githubW3fJamtestvectorsResults,
+    totalResults: githubW3fJamtestvectorsTotalResults,
+    isLoading: isGithubW3fJamtestvectorsLoading,
+    isError: isGithubW3fJamtestvectorsError,
+  } = useSearchPages({
+    query,
+    pageSize: 2, // Limit to 2 items
+    searchMode: searchModeParam,
+    site: "github.com/w3f/jamtestvectors",
+  });
+
   const handleSourceChange = (sources: string[]) => {
     setSelectedSources(sources);
     // TODO: Implement source filtering logic here
   };
 
-  const isError = isGraypaperError || isJamError || isDocsError;
+  const isError =
+    isGraypaperError ||
+    isJamError ||
+    isDocsError ||
+    isGithubW3fJamtestvectorsError;
   if (isError) {
     return (
       <div className="text-center text-2xl p-8 text-destructive-foreground">
@@ -337,7 +356,7 @@ const SearchResults = () => {
                     <img
                       src={JamchainLogo}
                       className="size-6"
-                      alt="JamCha.in Logo"
+                      alt="Github Logo"
                     />
                   }
                   title="JamCha.in Documentation"
@@ -368,6 +387,79 @@ const SearchResults = () => {
               ) : (
                 <PageResults
                   results={docsResults}
+                  searchQuery={query}
+                  searchMode={searchModeParam as SearchMode}
+                />
+              )}
+            </div>
+          )}
+
+          {selectedSources.includes("githubW3fJamtestvectors") && (
+            <div className="mt-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-sm">
+                  github.com/w3f/jamtestvectors (
+                  {githubW3fJamtestvectorsTotalResults} results)
+                </h2>
+
+                {githubW3fJamtestvectorsTotalResults > 2 && (
+                  <Link
+                    to={(() => {
+                      const params = new URLSearchParams(location.search);
+                      params.set("site", "github.com/w3f/jamtestvectors");
+                      return `/results/pages?${params.toString()}`;
+                    })()}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-primary flex items-center text-xs"
+                    >
+                      View all {githubW3fJamtestvectorsTotalResults} results
+                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <CommercialBanner
+                  logo={
+                    <img
+                      src={GithubLogo}
+                      className="size-6"
+                      alt="Github Logo"
+                    />
+                  }
+                  title="W3F Jam Test Vectors"
+                  url={{
+                    display: "github.com/w3f/jamtestvectors",
+                    href: "https://github.com/w3f/jamtestvectors",
+                  }}
+                />
+              </div>
+
+              {isGithubW3fJamtestvectorsLoading &&
+              !githubW3fJamtestvectorsResults.length ? (
+                <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-2 border-b border-border pb-6">
+                    <Skeleton className="h-4 w-[160px] my-1" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-2 w-[80px] mt-1" />
+                  </div>
+                  <div className="flex flex-col gap-2 border-b border-border pb-6">
+                    <Skeleton className="h-4 w-[160px] my-1" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-2 w-[80px] mt-1" />
+                  </div>
+                </div>
+              ) : (
+                <PageResults
+                  results={githubW3fJamtestvectorsResults}
                   searchQuery={query}
                   searchMode={searchModeParam as SearchMode}
                 />

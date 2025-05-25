@@ -9,7 +9,7 @@ interface GitHubConfig {
   token?: string;
 }
 
-interface IssueWithComments {
+interface GitHubContent {
   number: number;
   title: string;
   body: string;
@@ -23,9 +23,10 @@ interface IssueWithComments {
       login: string;
     };
   }>;
+  type: "issue" | "pull_request";
 }
 
-function shouldSkipIssue(body: string): boolean {
+function shouldSkipContent(body: string): boolean {
   const skipPatterns = [
     /^Closes https:\/\/github\.com/i,
     /^### ⚠️ Temporarily closed in favor of https:\/\/github\.com/i,
@@ -34,14 +35,16 @@ function shouldSkipIssue(body: string): boolean {
   return skipPatterns.some((pattern) => pattern.test(body.trim()));
 }
 
-async function fetchIssuesWithComments(
+async function fetchGitHubContent(
   config: GitHubConfig
-): Promise<IssueWithComments[]> {
+): Promise<GitHubContent[]> {
   const octokit = new Octokit({
     auth: config.token || process.env.GITHUB_TOKEN,
   });
 
-  // Fetch all issues
+  const content: GitHubContent[] = [];
+
+  // Fetch all issues (including pull requests)
   const issues = await octokit.paginate(octokit.rest.issues.listForRepo, {
     owner: config.owner,
     repo: config.repo,
@@ -49,62 +52,104 @@ async function fetchIssuesWithComments(
     per_page: 100,
   });
 
-  // Fetch comments for each issue
-  const issuesWithComments: IssueWithComments[] = [];
+  // Process each issue/PR
+  for (const item of issues) {
+    // Skip items with no body or no user
+    if (!item.body || !item.user || shouldSkipContent(item.body)) continue;
 
-  for (const issue of issues) {
-    // Skip issues with no body, no user, or matching skip patterns
-    if (!issue.body || !issue.user || shouldSkipIssue(issue.body)) continue;
+    // Determine if it's a PR or an issue
+    const isPR = "pull_request" in item;
+    const type = isPR ? "pull_request" : "issue";
 
-    const comments = await octokit.paginate(octokit.rest.issues.listComments, {
-      owner: config.owner,
-      repo: config.repo,
-      issue_number: issue.number,
-      per_page: 100,
-    });
+    // Fetch regular comments
+    const regularComments = await octokit.paginate(
+      octokit.rest.issues.listComments,
+      {
+        owner: config.owner,
+        repo: config.repo,
+        issue_number: item.number,
+        per_page: 100,
+      }
+    );
 
-    // Filter out comments with no body or no user
-    const validComments = comments
-      .filter((comment) => comment.body && comment.user)
-      .map((comment) => ({
-        body: comment.body!,
-        user: { login: comment.user!.login },
-      }));
+    // If it's a PR, fetch review comments
+    let reviewComments: Array<{ body: string; user: { login: string } }> = [];
+    if (isPR) {
+      const prReviewComments = await octokit.paginate(
+        octokit.rest.pulls.listReviewComments,
+        {
+          owner: config.owner,
+          repo: config.repo,
+          pull_number: item.number,
+          per_page: 100,
+        }
+      );
 
-    issuesWithComments.push({
-      number: issue.number,
-      title: issue.title,
-      body: issue.body,
-      html_url: issue.html_url,
-      user: { login: issue.user.login },
+      // Convert review comments to the same format as regular comments
+      reviewComments = prReviewComments
+        .filter((rc) => rc.user)
+        .map((rc) => ({
+          body: rc.body || rc.diff_hunk || "",
+          user: { login: rc.user!.login },
+        }));
+    }
+
+    // Combine and filter all comments
+    const validComments = [
+      ...regularComments
+        .filter((comment) => comment.body && comment.user)
+        .map((comment) => ({
+          body: comment.body!,
+          user: { login: comment.user!.login },
+        })),
+      ...reviewComments,
+    ];
+
+    content.push({
+      number: item.number,
+      title: item.title,
+      body: item.body,
+      html_url: item.html_url,
+      user: { login: item.user.login },
       comments: validComments,
+      type,
     });
   }
 
-  return issuesWithComments;
+  return content;
 }
 
-async function storeIssuesInDatabase(
-  issues: IssueWithComments[],
-  site: string
-) {
+async function storeContentInDatabase(content: GitHubContent[], site: string) {
   await db.transaction(async (tx) => {
-    for (const issue of issues) {
-      // Create content with issue body and comments
+    for (const item of content) {
+      // Create content with body and comments using markdown formatting
       const content = [
-        `Issue by ${issue.user.login}:`,
-        issue.body,
-        ...issue.comments.map(
-          (comment) => `\nComment by ${comment.user.login}:\n${comment.body}`
+        "",
+        `# ${item.title}`,
+        "",
+        `## ${item.type === "pull_request" ? "Pull Request" : "Issue"} by @${
+          item.user.login
+        }`,
+        "",
+        item.body,
+        "",
+        ...item.comments.map((comment) =>
+          [
+            "",
+            `## Comment by @${comment.user.login}`,
+            "",
+            comment.body,
+            "",
+          ].join("\n")
         ),
-      ].join("\n\n");
+      ].join("\n");
 
       await tx
         .insert(pagesTable)
         .values({
-          url: issue.html_url,
+          url: item.html_url,
           content: content,
-          title: issue.title,
+          title: item.title,
           site,
           lastModified: new Date(),
         })
@@ -112,7 +157,7 @@ async function storeIssuesInDatabase(
           target: pagesTable.url,
           set: {
             content: content,
-            title: issue.title,
+            title: item.title,
             site,
             lastModified: new Date(),
           },
@@ -131,12 +176,16 @@ const config: GitHubConfig = {
   token: process.env.GITHUB_TOKEN,
 };
 
-// Fetch and store GitHub issues with comments
-fetchIssuesWithComments(config)
-  .then(async (issues) => {
-    console.log(`Found ${issues.length} issues with comments`);
-    await storeIssuesInDatabase(
-      issues,
+// Fetch and store GitHub content
+fetchGitHubContent(config)
+  .then(async (content) => {
+    console.log(
+      `Found ${content.length} items (${
+        content.filter((c) => c.type === "pull_request").length
+      } PRs, ${content.filter((c) => c.type === "issue").length} issues)`
+    );
+    await storeContentInDatabase(
+      content,
       `github.com/${config.owner}/${config.repo}`
     );
     console.log("Done! Closing connection...");
