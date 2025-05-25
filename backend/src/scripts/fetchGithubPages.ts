@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
+import { sql } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
-import { sql } from "drizzle-orm";
 
 export interface GitHubConfig {
   owner: string;
@@ -90,7 +90,7 @@ export async function fetchGitHubContent(
         .filter((rc) => rc.user)
         .map((rc) => ({
           body: rc.body || rc.diff_hunk || "",
-          user: { login: rc.user!.login },
+          user: { login: rc.user?.login },
         }));
     }
 
@@ -99,8 +99,8 @@ export async function fetchGitHubContent(
       ...regularComments
         .filter((comment) => comment.body && comment.user)
         .map((comment) => ({
-          body: comment.body!,
-          user: { login: comment.user!.login },
+          body: comment.body || "",
+          user: { login: comment.user?.login || "" },
         })),
       ...reviewComments,
     ];

@@ -1,8 +1,8 @@
-import { type Job } from "node-schedule";
-import { setupMatrixJob } from "./matrixJob.js";
-import { setupGraypaperJob } from "./graypaperJob.js";
-import { setupGithubPagesJob } from "./githubPagesJob.js";
+import type { Job } from "node-schedule";
 import { setupDocsPagesJob } from "./docsPagesJob.js";
+import { setupGithubPagesJob } from "./githubPagesJob.js";
+import { setupGraypaperJob } from "./graypaperJob.js";
+import { setupMatrixJob } from "./matrixJob.js";
 
 export interface CronJobs {
   matrixJob: Job | null;

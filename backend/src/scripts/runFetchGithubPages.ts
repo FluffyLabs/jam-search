@@ -1,5 +1,8 @@
-import { GitHubConfig, storeContentInDatabase } from "./fetchGithubPages.js";
 import { db } from "../db/db.js";
+import {
+  type GitHubConfig,
+  storeContentInDatabase,
+} from "./fetchGithubPages.js";
 import { fetchGitHubContent } from "./fetchGithubPages.js";
 
 // Example usage:
