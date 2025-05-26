@@ -356,7 +356,7 @@ const SearchResults = () => {
                     <img
                       src={JamchainLogo}
                       className="size-6"
-                      alt="Github Logo"
+                      alt="JamChain Logo"
                     />
                   }
                   title="JamCha.in Documentation"
