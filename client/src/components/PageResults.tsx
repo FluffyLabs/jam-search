@@ -166,16 +166,15 @@ export const PageResults = ({
                 className="text-primary hover:underline flex items-center gap-2"
               >
                 {result.title}
-                {result.site.includes("github") && (
-                  <span className="text-xs text-muted-foreground">
-                    {result.title.includes("PR") ? "PR" : "Issue"}
-                    {" - "}
-                    {formatDate(result.createdAt)}
-                  </span>
-                )}
-
-                <Link className="h-4 w-4" />
+                <Link className="h-4 w-4 mr-2" />
               </a>
+              {result.site.includes("github") && (
+                <span className="text-xs text-muted-foreground">
+                  {result.url.includes("/pull/") ? "PR" : "Issue"}
+                  {" - "}
+                  {formatDate(result.createdAt)}
+                </span>
+              )}
             </div>
             <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none overflow-hidden [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:break-words [&_p]:break-words [&_table]:w-full [&_table]:overflow-x-auto [&_img]:max-w-full [&_img]:h-auto">
               <ReactMarkdown components={markdownComponents}>
