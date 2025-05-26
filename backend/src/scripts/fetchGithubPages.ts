@@ -17,11 +17,13 @@ export interface GitHubContent {
   user: {
     login: string;
   };
+  created_at: string;
   comments: Array<{
     body: string;
     user: {
       login: string;
     };
+    created_at: string;
   }>;
   type: "issue" | "pull_request";
 }
@@ -73,7 +75,11 @@ export async function fetchGitHubContent(
     );
 
     // If it's a PR, fetch review comments
-    let reviewComments: Array<{ body: string; user: { login: string } }> = [];
+    let reviewComments: Array<{
+      body: string;
+      user: { login: string };
+      created_at: string;
+    }> = [];
     if (isPR) {
       const prReviewComments = await octokit.paginate(
         octokit.rest.pulls.listReviewComments,
@@ -91,6 +97,7 @@ export async function fetchGitHubContent(
         .map((rc) => ({
           body: rc.body || rc.diff_hunk || "",
           user: { login: rc.user?.login },
+          created_at: rc.created_at,
         }));
     }
 
@@ -101,6 +108,7 @@ export async function fetchGitHubContent(
         .map((comment) => ({
           body: comment.body || "",
           user: { login: comment.user?.login || "" },
+          created_at: comment.created_at,
         })),
       ...reviewComments,
     ];
@@ -111,6 +119,7 @@ export async function fetchGitHubContent(
       body: item.body,
       html_url: item.html_url,
       user: { login: item.user.login },
+      created_at: item.created_at,
       comments: validComments,
       type,
     });
@@ -147,6 +156,14 @@ export async function storeContentInDatabase(
         ),
       ].join("\n");
 
+      // Find the latest date between the issue/PR and its comments
+      //   Use original issue/PR date as last modified date
+      //   const dates = [
+      //     new Date(item.created_at),
+      //     ...item.comments.map((comment) => new Date(comment.created_at)),
+      //   ];
+      const lastModified = new Date(item.created_at);
+
       await tx
         .insert(pagesTable)
         .values({
@@ -154,7 +171,8 @@ export async function storeContentInDatabase(
           content: content,
           title: item.title,
           site,
-          lastModified: new Date(),
+          created_at: new Date(item.created_at),
+          lastModified,
         })
         .onConflictDoUpdate({
           target: pagesTable.url,
@@ -162,7 +180,8 @@ export async function storeContentInDatabase(
             content: content,
             title: item.title,
             site,
-            lastModified: new Date(),
+            created_at: new Date(item.created_at),
+            lastModified,
           },
         });
     }

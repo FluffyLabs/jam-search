@@ -50,6 +50,13 @@
       "when": 1747689803902,
       "tag": "0006_shallow_magdalene",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1748251277504,
+      "tag": "0007_needy_star_brand",
+      "breakpoints": true
     }
   ]
 }

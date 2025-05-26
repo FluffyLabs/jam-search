@@ -82,6 +82,10 @@ export const pagesTable = pgTable(
     content: text("content").notNull(),
     title: text("title").notNull(),
     site: text("site"),
+    created_at: timestamp("created_at", {
+      mode: "date",
+      precision: 3,
+    }).notNull(),
     lastModified: timestamp("last_modified", {
       mode: "date",
       precision: 3,
