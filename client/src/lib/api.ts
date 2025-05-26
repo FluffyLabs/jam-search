@@ -136,6 +136,7 @@ export interface PageSearchResponse {
     title: string;
     content: string;
     lastModified: string;
+    createdAt: string;
     similarity?: number;
     score?: number;
   }>;
