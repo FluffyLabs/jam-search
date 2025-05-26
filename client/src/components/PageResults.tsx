@@ -1,5 +1,5 @@
 import { Link } from "lucide-react";
-import { cn, highlightText, SearchMode } from "@/lib/utils";
+import { cn, formatDate, highlightText, SearchMode } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import { Components } from "react-markdown";
 import React from "react";
@@ -14,6 +14,7 @@ interface PageResult {
   lastModified: string;
   similarity?: number;
   score?: number;
+  createdAt: string;
 }
 
 interface PageResultsProps {
@@ -165,6 +166,14 @@ export const PageResults = ({
                 className="text-primary hover:underline flex items-center gap-2"
               >
                 {result.title}
+                {result.site.includes("github") && (
+                  <span className="text-xs text-muted-foreground">
+                    {result.title.includes("PR") ? "PR" : "Issue"}
+                    {" - "}
+                    {formatDate(result.createdAt)}
+                  </span>
+                )}
+
                 <Link className="h-4 w-4" />
               </a>
             </div>

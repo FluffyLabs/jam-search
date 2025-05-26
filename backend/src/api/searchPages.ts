@@ -113,6 +113,7 @@ export async function searchPages(
       content: pagesTable.content,
       site: pagesTable.site,
       lastModified: pagesTable.lastModified,
+      createdAt: pagesTable.created_at,
       similarity,
       score: sql<number>`paradedb.score(id)`,
     })
