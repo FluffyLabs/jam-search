@@ -31,7 +31,12 @@ const SOURCE_OPTIONS = [
   { label: "GitHub Source Code", value: "github", disabled: true },
 ];
 
-const initialSources = ["matrix", "graypaper", "jamchain"];
+const initialSources = [
+  "matrix",
+  "graypaper",
+  "jamchain",
+  "githubW3fJamtestvectors",
+];
 
 const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
   const [selectedSources, setSelectedSources] =
