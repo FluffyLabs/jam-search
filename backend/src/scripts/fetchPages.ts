@@ -139,7 +139,6 @@ export async function fetchAndStorePages(
                 title: pageContent.title,
                 site,
                 lastModified: pageUrl.lastModified || new Date(),
-                created_at: new Date(),
               },
             });
 
