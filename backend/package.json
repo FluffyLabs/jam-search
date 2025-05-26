@@ -22,10 +22,12 @@
     "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts",
     "fill-archived-messages-for-n-days": "tsx ./src/scripts/runFillArchivedMessages.ts",
     "generate-embeddings": "tsx ./src/scripts/runGenerateEmbeddingsBatch.ts",
-    "fetch-pages": "tsx ./src/scripts/runFetchPages.ts"
+    "fetch-pages": "tsx ./src/scripts/runFetchPages.ts",
+    "fetch-github": "tsx ./src/scripts/runFetchGithubPages.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
+    "@octokit/rest": "^20.0.2",
     "cheerio": "^1.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",

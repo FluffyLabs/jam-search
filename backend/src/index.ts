@@ -1,54 +1,13 @@
 import { serve } from "@hono/node-server";
-import { format, subDays } from "date-fns";
-import { type Job, scheduleJob } from "node-schedule";
 import { createApp } from "./api.js";
 import { env } from "./env.js";
-import { fillArchivedMessages } from "./scripts/fillArchivedMessages.js";
-import { processBatchEmbeddings } from "./scripts/generateEmbeddingsBatch.js";
-import { updateGraypapers } from "./scripts/updateGraypapers.js";
+import { setupCronJobs } from "./jobs/index.js";
 
 const isDev = process.env.NODE_ENV === "development";
+
 async function main() {
-  let matrixJob: Job | null = null;
-  let graypaperJob: Job | null = null;
   const app = createApp();
-
-  if (!isDev) {
-    // Schedule daily job to fetch messages from yesterday at 4:00 UTC
-    // Immediately after https://github.com/paritytech/matrix-archiver/blob/master/.github/workflows/archive.yml#L10
-    matrixJob = scheduleJob("0 4 * * *", async () => {
-      console.log(
-        "Running scheduled message fetch job at",
-        new Date().toISOString()
-      );
-      try {
-        // Calculate yesterday and today dates
-        const today = new Date();
-        const yesterday = subDays(today, 1);
-        const yesterdayStr = format(yesterday, "yyyy-MM-dd");
-
-        // Fetch messages from yesterday to today
-        await fillArchivedMessages(yesterdayStr, yesterdayStr);
-        await processBatchEmbeddings();
-        console.log("Message fetch job completed successfully");
-      } catch (error) {
-        console.error("Error in message fetch job:", error);
-      }
-    });
-
-    graypaperJob = scheduleJob("0 0 * * *", async () => {
-      console.log(
-        "Running scheduled graypaper update job at",
-        new Date().toISOString()
-      );
-      try {
-        await updateGraypapers();
-        console.log("Graypaper update job completed successfully");
-      } catch (error) {
-        console.error("Error in graypaper update job:", error);
-      }
-    });
-  }
+  const jobs = !isDev ? setupCronJobs() : null;
 
   // Start HTTP server
   const server = serve({
@@ -62,8 +21,12 @@ async function main() {
   const shutdown = async () => {
     console.log("🛑 Shutting down...");
     server.close();
-    matrixJob?.cancel();
-    graypaperJob?.cancel();
+    if (jobs) {
+      jobs.matrixJob?.cancel();
+      jobs.graypaperJob?.cancel();
+      jobs.githubPagesJob?.cancel();
+      jobs.docsPagesJob?.cancel();
+    }
     process.exit(0);
   };
 

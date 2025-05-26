@@ -1,8 +1,9 @@
 import { Link } from "lucide-react";
-import { highlightText, SearchMode } from "@/lib/utils";
+import { cn, highlightText, SearchMode } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import { Components } from "react-markdown";
 import React from "react";
+import { ClassValue } from "clsx";
 
 interface PageResult {
   id: number;
@@ -70,7 +71,13 @@ const createHighlightedComponent = (
   }: { children?: React.ReactNode } & Record<string, unknown>) => {
     if (typeof children === "string") {
       return (
-        <Component {...props}>
+        <Component
+          {...props}
+          className={cn(
+            (Component as string).includes("h") ? "font-bold" : "",
+            props.className as ClassValue
+          )}
+        >
           {highlightText(children, [searchQuery], searchMode)}
         </Component>
       );
