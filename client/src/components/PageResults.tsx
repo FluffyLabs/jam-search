@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { Components } from "react-markdown";
 import React from "react";
 import { ClassValue } from "clsx";
+import { ViewEmbeddedDialog } from "./ViewEmbeddedDialog";
 
 interface PageResult {
   id: number;
@@ -180,6 +181,9 @@ export const PageResults = ({
               <ReactMarkdown components={markdownComponents}>
                 {truncateContent(result.content, searchQuery, searchMode)}
               </ReactMarkdown>
+            </div>
+            <div className="mt-2">
+              <ViewEmbeddedDialog url={result.url} />
             </div>
           </div>
         </div>

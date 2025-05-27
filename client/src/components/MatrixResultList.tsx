@@ -2,8 +2,7 @@ import { SearchResult } from "@/lib/api";
 import { highlightText, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
 import { formatDate } from "@/lib/utils";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { ViewEmbeddedDialog } from "./ViewEmbeddedDialog";
 
 interface MatrixResultListProps {
   results: SearchResult[];
@@ -16,8 +15,6 @@ export const MatrixResultList = ({
   searchQuery,
   searchMode,
 }: MatrixResultListProps) => {
-  const [selectedUrl, setSelectedUrl] = useState<string | null>(null);
-
   if (results.length === 0) {
     return (
       <div className="text-center p-8">
@@ -27,6 +24,13 @@ export const MatrixResultList = ({
       </div>
     );
   }
+
+  const getUrl = (result: SearchResult) => {
+    const channelUrl = MATRIX_CHANNELS.find(
+      (channel) => channel.id === result.roomid
+    )?.archiveUrl;
+    return `${channelUrl}#${result.messageid}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -74,51 +78,7 @@ export const MatrixResultList = ({
                   Go to thread
                 </a>
 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button
-                      onClick={() => {
-                        const channelUrl = MATRIX_CHANNELS.find(
-                          (channel) => channel.id === result.roomid
-                        )?.archiveUrl;
-                        setSelectedUrl(`${channelUrl}#${result.messageid}`);
-                      }}
-                      className="text-xs text-brand flex items-center w-fit hover:opacity-60"
-                    >
-                      <svg
-                        className="w-3 h-3 mr-1"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <rect
-                          x="2"
-                          y="3"
-                          width="20"
-                          height="14"
-                          rx="2"
-                          ry="2"
-                        ></rect>
-                        <line x1="8" y1="21" x2="16" y2="21"></line>
-                        <line x1="12" y1="17" x2="12" y2="21"></line>
-                      </svg>
-                      View embedded
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-full sm:max-w-[80vw] w-[105ch] h-[80vh] p-0 border border-border rounded-2xl overflow-hidden">
-                    {selectedUrl && (
-                      <iframe
-                        src={selectedUrl}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                        }}
-                        title="Embedded thread view"
-                      />
-                    )}
-                  </DialogContent>
-                </Dialog>
+                <ViewEmbeddedDialog url={getUrl(result)} />
               </div>
             )}
           </div>
