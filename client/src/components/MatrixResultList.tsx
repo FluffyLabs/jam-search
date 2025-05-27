@@ -38,7 +38,7 @@ export const MatrixResultList = ({
         <div key={result.messageid} className="border-b border-border pb-6">
           <div className="mb-2">
             <div className="flex items-center mb-1">
-              <span className="font-medium  text-foreground">
+              <span className="font-medium text-foreground">
                 {result.sender}{" "}
               </span>
               {result.timestamp && (

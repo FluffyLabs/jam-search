@@ -1,4 +1,3 @@
-import { Link } from "lucide-react";
 import { cn, formatDate, highlightText, SearchMode } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import { Components } from "react-markdown";
@@ -160,15 +159,7 @@ export const PageResults = ({
         <div key={result.id} className="border-b border-border pb-6">
           <div className="mb-2">
             <div className="flex items-center mb-1">
-              <a
-                href={result.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline flex items-center gap-2"
-              >
-                {result.title}
-                <Link className="h-4 w-4 mr-2" />
-              </a>
+              <div className="font-medium text-foreground">{result.title}</div>
               {result.site.includes("github") && (
                 <span className="text-xs text-muted-foreground">
                   {result.url.includes("/pull/") ? "PR" : "Issue"}
@@ -182,7 +173,25 @@ export const PageResults = ({
                 {truncateContent(result.content, searchQuery, searchMode)}
               </ReactMarkdown>
             </div>
-            <div className="mt-2">
+            <div className="flex space-x-4 mt-2">
+              <a
+                href={result.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-brand flex items-center w-fit hover:opacity-60"
+              >
+                <svg
+                  className="w-3 h-3 mr-1"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Go to page
+              </a>
+
               <ViewEmbeddedDialog url={result.url} />
             </div>
           </div>
