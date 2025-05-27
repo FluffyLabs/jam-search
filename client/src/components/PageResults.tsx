@@ -159,7 +159,9 @@ export const PageResults = ({
         <div key={result.id} className="border-b border-border pb-6">
           <div className="mb-2">
             <div className="flex items-center mb-1">
-              <div className="font-medium text-foreground">{result.title}</div>
+              <div className="font-medium text-foreground mr-2">
+                {result.title}
+              </div>
               {result.site.includes("github") && (
                 <span className="text-xs text-muted-foreground">
                   {result.url.includes("/pull/") ? "PR" : "Issue"}
