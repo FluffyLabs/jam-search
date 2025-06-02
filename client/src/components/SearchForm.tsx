@@ -12,6 +12,8 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useDebouncedCallback } from "use-debounce";
+import {useResults} from "@/hooks/useResults";
+import {initialSources} from "@/lib/sources";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -96,6 +98,7 @@ export const SearchForm = ({
     new URLSearchParams(location.search).get("searchMode") || "strict";
 
   const [searchQuery, setSearchQuery] = useState(richQuery);
+  const [prefetchingQuery, setPrefetchingQuery] = useState(richQuery);
   const [isFocused, setIsFocused] = useState(false);
   const [searchMode, setSearchMode] = useState(searchModeParam);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -122,20 +125,27 @@ export const SearchForm = ({
     };
   }, []);
 
+  // prefetch the results
+  useResults(prefetchingQuery, searchModeParam, initialSources)
+
+  const getQueryParams = () => {
+    // Get current URL parameters and update only the search-related ones
+    const queryParams = new URLSearchParams(location.search);
+    queryParams.set("q", searchQuery);
+
+    // Add search mode parameter (only if not strict, which is the default)
+    if (searchMode !== "strict") {
+      queryParams.set("searchMode", searchMode);
+    } else {
+      queryParams.delete("searchMode");
+    }
+    return queryParams;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Get current URL parameters and update only the search-related ones
-      const queryParams = new URLSearchParams(location.search);
-      queryParams.set("q", searchQuery);
-
-      // Add search mode parameter (only if not strict, which is the default)
-      if (searchMode !== "strict") {
-        queryParams.set("searchMode", searchMode);
-      } else {
-        queryParams.delete("searchMode");
-      }
-
+      const queryParams = getQueryParams();
       // Navigate to current path with updated query params
       navigate(
         `${
@@ -145,7 +155,12 @@ export const SearchForm = ({
     }
   };
 
+  const handlePrefetch = () => {
+    setPrefetchingQuery(searchQuery);
+  };
+
   const debouncedSubmit = useDebouncedCallback(handleSubmit, 300);
+  const debouncedPrefetch = useDebouncedCallback(handlePrefetch, 100, { leading: true, trailing: true });
 
   const addSearchOption = (option: string) => {
     if (!inputRef.current) return;
@@ -180,6 +195,7 @@ export const SearchForm = ({
     const value = e.target.value;
     setSearchQuery(value);
     setDisplayedValue(highlightFilters(value));
+    debouncedPrefetch();
 
     if (isInstantSearch(searchMode, instantSearch)) {
       debouncedSubmit(e);

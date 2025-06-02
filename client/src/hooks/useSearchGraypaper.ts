@@ -7,6 +7,7 @@ interface UseSearchGraypaperOptions {
   initialPage?: number;
   pageSize?: number;
   searchMode?: string;
+  enabled?: boolean;
 }
 
 export function useSearchGraypaper({
@@ -14,6 +15,7 @@ export function useSearchGraypaper({
   initialPage = 1,
   pageSize = 10,
   searchMode = "strict",
+  enabled = true,
 }: UseSearchGraypaperOptions) {
   const [page, setPage] = useState(initialPage);
   const currentPageSize = pageSize;
@@ -22,8 +24,7 @@ export function useSearchGraypaper({
     queryKey: ["graypaper-search", query, page, currentPageSize, searchMode],
     queryFn: () =>
       searchGraypaper(query, { page, pageSize: currentPageSize, searchMode }),
-    enabled: !!query.trim(),
-    staleTime: 0,
+    enabled: enabled && !!query.trim(),
   });
 
   // Calculate total pages

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { SearchForm } from "@/components/SearchForm";
-import { useSearch } from "@/hooks/useSearch";
 import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MatrixResultList } from "@/components/MatrixResultList";
@@ -8,41 +7,27 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { GraypaperResults } from "@/components/GraypaperResults";
 import { ArrowRight } from "lucide-react";
 import { MATRIX_CHANNELS } from "@/consts";
-import { parseSearchQuery, SearchMode } from "@/lib/utils";
+import { SearchMode } from "@/lib/utils";
 import { CommercialBanner } from "@/components/CommercialBanner";
 import { ShareUrl } from "@/components/ShareUrl";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSearchPages } from "@/hooks/useSearchPages";
 import { PageResults } from "@/components/PageResults";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
 import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
 import GithubLogo from "@/assets/logos/github.png";
+import {useResults} from "@/hooks/useResults";
+import {initialSources, Source, SOURCE_OPTIONS, stringToSource} from "@/lib/sources";
 
 interface ResultHeaderProps {
-  onSourceChange?: (sources: string[]) => void;
+  onSourceChange?: (sources: Source[]) => void;
 }
-
-const SOURCE_OPTIONS = [
-  { label: "Matrix channels", value: "matrix" },
-  { label: "Graypaper.pdf", value: "graypaper" },
-  { label: "docs.jamcha.in", value: "jamchain" },
-  { label: "github.com/w3f/jamtestvectors", value: "githubW3fJamtestvectors" },
-  { label: "Web3 Foundation", value: "w3f", disabled: true },
-  { label: "GitHub Source Code", value: "github", disabled: true },
-];
-
-const initialSources = [
-  "matrix",
-  "graypaper",
-  "jamchain",
-  "githubW3fJamtestvectors",
-];
 
 const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
   const [selectedSources, setSelectedSources] =
-    useState<string[]>(initialSources);
+    useState<Source[]>(initialSources);
 
-  const handleSourceChange = (sources: string[]) => {
+  const handleSourceChange = (stringSources: string[]) => {
+    const sources = stringSources.map(x => stringToSource(x)!);
     setSelectedSources(sources);
     onSourceChange?.(sources);
   };
@@ -73,75 +58,20 @@ const SearchResults = () => {
   const searchModeParam =
     new URLSearchParams(location.search).get("searchMode") || "strict";
   const [selectedSources, setSelectedSources] =
-    useState<string[]>(initialSources);
+    useState<Source[]>(initialSources);
 
-  // Parse the query to extract filters
-  const { query, filters } = parseSearchQuery(richQuery);
-
-  // Search for graypaper channel
-  const {
-    results: graypaperResults,
-    totalResults: graypaperTotalResults,
-    isLoading: isGraypaperLoading,
-    isError: isGraypaperError,
-  } = useSearch({
-    query,
-    channelId: MATRIX_CHANNELS[0].id,
-    pageSize: 2, // Limit to 2 items
-    filters,
-    searchMode: searchModeParam,
-  });
-
-  // Search for jam channel
-  const {
-    results: jamResults,
-    totalResults: jamTotalResults,
-    isLoading: isJamLoading,
-    isError: isJamError,
-  } = useSearch({
-    query,
-    channelId: MATRIX_CHANNELS[1].id,
-    pageSize: 2, // Limit to 2 items
-    filters,
-    searchMode: searchModeParam,
-  });
-
-  // Search for JamCha.in docs
-  const {
-    results: docsResults,
-    totalResults: docsTotalResults,
-    isLoading: isDocsLoading,
-    isError: isDocsError,
-  } = useSearchPages({
-    query,
-    pageSize: 2, // Limit to 2 items
-    searchMode: searchModeParam,
-    site: "docs.jamcha.in",
-  });
-
-  // Search for  github.com/w3f/jamtestvectors pages
-  const {
-    results: githubW3fJamtestvectorsResults,
-    totalResults: githubW3fJamtestvectorsTotalResults,
-    isLoading: isGithubW3fJamtestvectorsLoading,
-    isError: isGithubW3fJamtestvectorsError,
-  } = useSearchPages({
-    query,
-    pageSize: 2, // Limit to 2 items
-    searchMode: searchModeParam,
-    site: "github.com/w3f/jamtestvectors",
-  });
-
-  const handleSourceChange = (sources: string[]) => {
+  const { query, filters, graypaperChat, jamChat, jamchain, w3f, graypaper } = useResults(richQuery, searchModeParam, selectedSources);
+  
+  const handleSourceChange = (sources: Source[]) => {
     setSelectedSources(sources);
     // TODO: Implement source filtering logic here
   };
 
   const isError =
-    isGraypaperError ||
-    isJamError ||
-    isDocsError ||
-    isGithubW3fJamtestvectorsError;
+    graypaperChat.isError ||
+    jamChat.isError ||
+    jamchain.isError ||
+    w3f.isError;
   if (isError) {
     return (
       <div className="text-center text-2xl p-8 text-destructive-foreground">
@@ -179,24 +109,23 @@ const SearchResults = () => {
         )}
 
         <div className="mb-8">
-          {selectedSources.includes("graypaper") && (
+          {selectedSources.includes(Source.Graypaper) && (
             <GraypaperResults
+              queryResult={graypaper}
               query={query}
               searchMode={searchModeParam as SearchMode}
             />
           )}
 
-          {selectedSources.includes("matrix") && (
+          {selectedSources.includes(Source.Matrix) && (
             <>
               {/* Graypaper channel results */}
               <div className="mt-6">
                 <div className="flex justify-between items-center mb-3">
                   <h2 className="text-sm">
-                    {MATRIX_CHANNELS[0].name} @ Matrix ({graypaperTotalResults}{" "}
+                    {MATRIX_CHANNELS[0].name} @ Matrix ({graypaperChat.totalResults}{" "}
                     results)
                   </h2>
-
-                  {graypaperTotalResults > 2 && (
                     <Link
                       to={(() => {
                         const params = new URLSearchParams(location.search);
@@ -209,11 +138,12 @@ const SearchResults = () => {
                         size="sm"
                         className="text-primary flex items-center text-xs"
                       >
-                        View all {graypaperTotalResults} results
-                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                        {graypaperChat.pagination.hasNextPage && (<>
+                          View all {graypaperChat.totalResults} results
+                          <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                        </>)}
                       </Button>
                     </Link>
-                  )}
                 </div>
 
                 <div className="mb-4">
@@ -232,7 +162,7 @@ const SearchResults = () => {
                     }}
                   />
                 </div>
-                {isGraypaperLoading && !graypaperResults.length ? (
+                {graypaperChat.isLoading && !graypaperChat.results.length ? (
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2 border-b border-border pb-6">
                       <Skeleton className="h-4 w-[160px] my-1" />
@@ -251,7 +181,7 @@ const SearchResults = () => {
                   </div>
                 ) : (
                   <MatrixResultList
-                    results={graypaperResults}
+                    results={graypaperChat.results}
                     searchQuery={query}
                     searchMode={searchModeParam as SearchMode}
                   />
@@ -262,27 +192,27 @@ const SearchResults = () => {
               <div className="mt-6">
                 <div className="flex justify-between items-center mb-3">
                   <h2 className="text-sm">
-                    {MATRIX_CHANNELS[1].name} @ Matrix ({jamTotalResults}{" "}
+                    {MATRIX_CHANNELS[1].name} @ Matrix ({jamChat.totalResults}{" "}
                     results)
                   </h2>
-                  {jamTotalResults > 2 && (
-                    <Link
-                      to={(() => {
-                        const params = new URLSearchParams(location.search);
-                        params.set("channelId", MATRIX_CHANNELS[1].id);
-                        return `/results/matrix?${params.toString()}`;
-                      })()}
+                  <Link
+                    to={(() => {
+                      const params = new URLSearchParams(location.search);
+                      params.set("channelId", MATRIX_CHANNELS[1].id);
+                      return `/results/matrix?${params.toString()}`;
+                    })()}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-primary flex items-center text-xs"
                     >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-primary flex items-center text-xs"
-                      >
-                        View all {jamTotalResults} results
+                      {jamChat.pagination.hasNextPage && (<>
+                        View all {jamChat.totalResults} results
                         <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                      </Button>
-                    </Link>
-                  )}
+                      </>)}
+                    </Button>
+                  </Link>
                 </div>
 
                 <div className="mb-4">
@@ -301,7 +231,7 @@ const SearchResults = () => {
                     }}
                   />
                 </div>
-                {isJamLoading && !jamResults.length ? (
+                {jamChat.isLoading && !jamChat.results.length ? (
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2 border-b border-border pb-6">
                       <Skeleton className="h-4 w-[160px] my-1" />
@@ -320,7 +250,7 @@ const SearchResults = () => {
                   </div>
                 ) : (
                   <MatrixResultList
-                    results={jamResults}
+                    results={jamChat.results}
                     searchQuery={query}
                     searchMode={searchModeParam as SearchMode}
                   />
@@ -329,13 +259,12 @@ const SearchResults = () => {
             </>
           )}
 
-          {selectedSources.includes("jamchain") && (
+          {selectedSources.includes(Source.Jamchain) && (
             <div className="mt-6">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-sm">
-                  docs.jamcha.in ({docsTotalResults} results)
+                  docs.jamcha.in ({jamchain.totalResults} results)
                 </h2>
-                {docsTotalResults > 2 && (
                   <Link
                     to={(() => {
                       const params = new URLSearchParams(location.search);
@@ -348,11 +277,12 @@ const SearchResults = () => {
                       size="sm"
                       className="text-primary flex items-center text-xs"
                     >
-                      View all {docsTotalResults} results
-                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                      {jamchain.pagination.hasNextPage && (<>
+                        View all {jamchain.totalResults} results
+                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                      </>)}
                     </Button>
                   </Link>
-                )}
               </div>
 
               <div className="mb-4">
@@ -372,7 +302,7 @@ const SearchResults = () => {
                 />
               </div>
 
-              {isDocsLoading && !docsResults.length ? (
+              {jamchain.isLoading && !jamchain.results.length ? (
                 <div className="flex flex-col gap-6">
                   <div className="flex flex-col gap-2 border-b border-border pb-6">
                     <Skeleton className="h-4 w-[160px] my-1" />
@@ -391,7 +321,7 @@ const SearchResults = () => {
                 </div>
               ) : (
                 <PageResults
-                  results={docsResults}
+                  results={jamchain.results}
                   searchQuery={query}
                   searchMode={searchModeParam as SearchMode}
                 />
@@ -399,15 +329,14 @@ const SearchResults = () => {
             </div>
           )}
 
-          {selectedSources.includes("githubW3fJamtestvectors") && (
+          {selectedSources.includes(Source.GithubW3fJamtestvectors) && (
             <div className="mt-6">
               <div className="flex justify-between items-center mb-3">
                 <h2 className="text-sm">
                   github.com/w3f/jamtestvectors (
-                  {githubW3fJamtestvectorsTotalResults} results)
+                  {w3f.totalResults} results)
                 </h2>
 
-                {githubW3fJamtestvectorsTotalResults > 2 && (
                   <Link
                     to={(() => {
                       const params = new URLSearchParams(location.search);
@@ -420,11 +349,12 @@ const SearchResults = () => {
                       size="sm"
                       className="text-primary flex items-center text-xs"
                     >
-                      View all {githubW3fJamtestvectorsTotalResults} results
-                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
+{w3f.pagination.hasNextPage && (<>
+                        View all {w3f.totalResults} results
+                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                      </>)}
                     </Button>
                   </Link>
-                )}
               </div>
 
               <div className="mb-4">
@@ -444,8 +374,8 @@ const SearchResults = () => {
                 />
               </div>
 
-              {isGithubW3fJamtestvectorsLoading &&
-              !githubW3fJamtestvectorsResults.length ? (
+              {w3f.isLoading &&
+              !w3f.results.length ? (
                 <div className="flex flex-col gap-6">
                   <div className="flex flex-col gap-2 border-b border-border pb-6">
                     <Skeleton className="h-4 w-[160px] my-1" />
@@ -464,7 +394,7 @@ const SearchResults = () => {
                 </div>
               ) : (
                 <PageResults
-                  results={githubW3fJamtestvectorsResults}
+                  results={w3f.results}
                   searchQuery={query}
                   searchMode={searchModeParam as SearchMode}
                 />

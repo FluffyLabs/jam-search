@@ -10,6 +10,7 @@ interface UseSearchOptions {
   channelId?: (typeof MATRIX_CHANNELS)[number]["id"];
   filters?: SearchFilter[];
   searchMode?: string;
+  enabled?: boolean;
 }
 
 interface SearchFilter {
@@ -24,6 +25,7 @@ export function useSearch({
   channelId,
   filters = [],
   searchMode = "strict",
+  enabled = true,
 }: UseSearchOptions) {
   // Only manage pagination state
   const [page, setPage] = useState(initialPage);
@@ -39,7 +41,7 @@ export function useSearch({
         channelId,
         searchMode,
       }),
-    enabled: !!query.trim(), // Only fetch if we have a non-empty query
+    enabled: enabled && !!query.trim(), // Only fetch if we have a non-empty query
   });
 
   // Extract results
