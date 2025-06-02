@@ -10,6 +10,7 @@ scan({
 
 import App from "./App.tsx";
 import { HashRouter } from "react-router";
+import {EmbeddedViewerProvider} from "./providers/EmbeddedResultsContext.tsx";
 // import { isDarkMode, setColorMode } from "@krystian5011/shared-ui";
 
 // setColorMode(isDarkMode());
@@ -19,7 +20,9 @@ document.documentElement.classList.toggle("dark", true);
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HashRouter>
-      <App />
+      <EmbeddedViewerProvider>
+        <App />
+      </EmbeddedViewerProvider>
     </HashRouter>
   </StrictMode>
 );

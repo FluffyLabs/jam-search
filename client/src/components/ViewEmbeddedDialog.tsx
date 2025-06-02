@@ -1,8 +1,9 @@
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { SearchResult } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
 import { useState } from "react";
+import {useEmbeddedViewer} from "@/providers/EmbeddedResultsContext";
+import {Button} from "./ui/button";
 
 interface ViewEmbeddedDialogProps {
   url: string;
@@ -14,8 +15,36 @@ export const ViewEmbeddedDialog = ({
   url,
   results,
 }: ViewEmbeddedDialogProps) => {
+  const embeddedViewer = useEmbeddedViewer();
+  const content = (
+    <Content url={url} results={results} close={() => embeddedViewer.close()}></Content>
+  );
+
+  return (
+    <button
+      onMouseEnter={() => embeddedViewer.render(content, false) }
+      onClick={() => embeddedViewer.render(content)}
+      className="text-xs text-brand flex items-center w-fit hover:opacity-60">
+      <svg
+        className="w-3 h-3 mr-1"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+      View embedded
+    </button>
+  );
+};
+   
+const Content = ({
+  url, results, close
+}: ViewEmbeddedDialogProps & { close: () => void }) => {
   const [currentUrl, setCurrentUrl] = useState(url);
-  const [isOpen, setIsOpen] = useState(false);
   const hasSidebar = results && results.length > 0;
 
   const getUrl = (result: SearchResult) => {
@@ -32,46 +61,25 @@ export const ViewEmbeddedDialog = ({
   };
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <button className="text-xs text-brand flex items-center w-fit hover:opacity-60">
-            <svg
-              className="w-3 h-3 mr-1"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-              <line x1="8" y1="21" x2="16" y2="21"></line>
-              <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            View embedded
-          </button>
-        </DialogTrigger>
-        <DialogContent
-          className={`w-full max-w-full h-full p-0 mt-[100px] ml-[-110px] border border-border rounded-2xl overflow-hidden ${
-            hasSidebar ? "w-[calc(100vw-410px)]" : ""
-          }`}
-        >
-          {currentUrl && (
-            <iframe
-              src={currentUrl}
-              style={{
-                width: "100%",
-                height: "100%",
-                colorScheme: "dark",
-              }}
-              title="Embedded thread view"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Sidebar positioned outside the modal */}
-      {hasSidebar && isOpen && (
-        <div className="fixed top-[84px] right-0 w-[300px] h-full bg-card border border-border rounded-2xl shadow-lg z-[60] overflow-hidden flex flex-col">
+    <div className="flex p-2 h-full">
+      <div className="h-full flex-1 p-0 mr-2 border border-border rounded-2xl overflow-hidden relative" >
+        <Button variant="ghost" className="text-brand absolute right-0" onClick={close}>
+          <CloseIcon />
+        </Button>
+        {currentUrl && (
+          <iframe
+            src={currentUrl}
+            style={{
+              width: "100%",
+              height: "100%",
+              colorScheme: "dark",
+            }}
+            title="Embedded thread view"
+          />
+        )}
+      </div>
+      {hasSidebar && (
+        <div className="w-[300px] h-full bg-card border border-border rounded-2xl shadow-lg overflow-hidden flex flex-col">
           <div className="flex-1 overflow-y-auto">
             <div className="p-2">
               {results.map((result: SearchResult) => {
@@ -143,8 +151,36 @@ export const ViewEmbeddedDialog = ({
               })}
             </div>
           </div>
-        </div>
+          </div>
       )}
-    </>
+    </div>
   );
 };
+
+const CloseIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    aria-label="Close"
+    role="img"
+  >
+    <line
+      x1="6"
+      y1="6"
+      x2="18"
+      y2="18"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+    <line
+      x1="6"
+      y1="18"
+      x2="18"
+      y2="6"
+      stroke="currentColor"
+    />
+  </svg>
+);
