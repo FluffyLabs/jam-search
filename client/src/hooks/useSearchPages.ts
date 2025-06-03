@@ -8,6 +8,7 @@ interface UseSearchPagesOptions {
   pageSize?: number;
   searchMode?: string;
   site?: string;
+  enabled?: boolean;
 }
 
 export function useSearchPages({
@@ -16,6 +17,7 @@ export function useSearchPages({
   pageSize = 10,
   searchMode = "strict",
   site,
+  enabled = true,
 }: UseSearchPagesOptions) {
   const [page, setPage] = useState(initialPage);
   const currentPageSize = pageSize;
@@ -24,8 +26,7 @@ export function useSearchPages({
     queryKey: ["pages-search", query, page, currentPageSize, searchMode, site],
     queryFn: () =>
       searchPages(query, { page, pageSize: currentPageSize, searchMode, site }),
-    enabled: !!query.trim(),
-    staleTime: 0,
+    enabled: enabled && !!query.trim(),
   });
 
   // Calculate total pages

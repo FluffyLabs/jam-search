@@ -35,7 +35,7 @@ export const MatrixResultList = ({
   return (
     <div className="space-y-6">
       {results.map((result: SearchResult) => (
-        <div key={result.messageid} className="border-b border-border pb-6">
+        <div key={result.messageid ?? result.id} className="border-b border-border pb-6">
           <div className="mb-2">
             <div className="flex items-center mb-1">
               <span className="font-medium text-foreground">
