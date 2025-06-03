@@ -27,7 +27,6 @@ export function useSearchPages({
     queryFn: () =>
       searchPages(query, { page, pageSize: currentPageSize, searchMode, site }),
     enabled: enabled && !!query.trim(),
-    staleTime: 0,
   });
 
   // Calculate total pages
