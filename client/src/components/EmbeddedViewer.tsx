@@ -10,8 +10,8 @@ export const EmbeddedViewer = () => {
       cn(
         "absolute inset-0 bg-background",
         {
-          'z-100': isDisplayed,
-          'invisible -z-1': !isDisplayed,
+          'animate-in fade-in-0 z-100': isDisplayed,
+          'animate-out fade-out-0 invisible': !isDisplayed,
         }
       )}>
       {data.portalContent}

@@ -5,7 +5,7 @@ import React from "react";
 import { ClassValue } from "clsx";
 import { ViewEmbeddedDialog } from "./ViewEmbeddedDialog";
 
-interface PageResult {
+export interface PageResult {
   id: number;
   url: string;
   site: string;
@@ -194,7 +194,12 @@ export const PageResults = ({
                 Go to page
               </a>
 
-              <ViewEmbeddedDialog url={result.url} />
+              <ViewEmbeddedDialog 
+                url={result.url}
+                results={results}
+                searchQuery={searchQuery}
+                searchMode={searchMode}
+              />
             </div>
           </div>
         </div>

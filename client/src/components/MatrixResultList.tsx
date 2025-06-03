@@ -78,7 +78,7 @@ export const MatrixResultList = ({
                   Go to thread
                 </a>
 
-                <ViewEmbeddedDialog url={getUrl(result)} results={results} />
+              <ViewEmbeddedDialog url={getUrl(result)} searchQuery={searchQuery} searchMode={searchMode} results={results} />
               </div>
             )}
           </div>

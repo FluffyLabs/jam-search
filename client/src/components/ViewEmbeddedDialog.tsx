@@ -1,23 +1,34 @@
 import { SearchResult } from "@/lib/api";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate, highlightText, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {useEmbeddedViewer} from "@/providers/EmbeddedResultsContext";
 import {Button} from "./ui/button";
+import {PageResult} from "./PageResults";
 
 interface ViewEmbeddedDialogProps {
   url: string;
   className?: string;
-  results?: SearchResult[];
+  searchQuery: string;
+  searchMode: SearchMode;
+  results?: SearchResult[] | PageResult[];
 }
 
 export const ViewEmbeddedDialog = ({
   url,
   results,
+  searchQuery,
+  searchMode,
 }: ViewEmbeddedDialogProps) => {
   const embeddedViewer = useEmbeddedViewer();
   const content = (
-    <Content url={url} results={results} close={() => embeddedViewer.close()}></Content>
+    <Content
+      url={url}
+      results={results}
+      searchQuery={searchQuery}
+      searchMode={searchMode}
+      close={() => embeddedViewer.close()}
+    ></Content>
   );
 
   return (
@@ -42,9 +53,15 @@ export const ViewEmbeddedDialog = ({
 };
    
 const Content = ({
-  url, results, close
+  url, results, close, searchQuery, searchMode,
 }: ViewEmbeddedDialogProps & { close: () => void }) => {
   const [currentUrl, setCurrentUrl] = useState(url);
+
+  // update the iframe content when the external url changes.
+  useEffect(() => {
+    setCurrentUrl(url);
+  }, [url]);
+
   const hasSidebar = results && results.length > 0;
 
   const getUrl = (result: SearchResult) => {
@@ -54,99 +71,88 @@ const Content = ({
     return `${channelUrl}#${result.messageid}`;
   };
 
-  const handleItemClick = (result: SearchResult) => {
+  const handleItemClick = (newUrl: string) => {
     setCurrentUrl("");
-    const newUrl = getUrl(result);
     setCurrentUrl(newUrl);
   };
 
+
   return (
-    <div className="flex p-2 h-full">
-      <div className="h-full flex-1 p-0 mr-2 border border-border rounded-2xl overflow-hidden relative" >
-        <Button variant="ghost" className="text-brand absolute right-0" onClick={close}>
+    <div className={cn(
+      "flex h-full",
+      {
+        "p-8 relative": !hasSidebar
+      }
+    )}>
+      <div className={cn(
+        "m-2 flex-1 border border-border rounded-2xl overflow-hidden",
+        { "relative": hasSidebar }
+      )}>
+        <Button variant="ghost"  className="text-brand absolute top-0 right-0" onClick={close}>
           <CloseIcon />
         </Button>
-        {currentUrl && (
-          <iframe
-            src={currentUrl}
-            style={{
-              width: "100%",
-              height: "100%",
-              colorScheme: "dark",
-            }}
-            title="Embedded thread view"
-          />
-        )}
+        <iframe
+          src={currentUrl ?? 'about:blank'}
+          style={{
+            width: "100%",
+            height: "100%",
+            colorScheme: "dark",
+          }}
+          title="Embedded thread view"
+        />
       </div>
       {hasSidebar && (
-        <div className="w-[300px] h-full bg-card border border-border rounded-2xl shadow-lg overflow-hidden flex flex-col">
+        <div className="w-[300px] h-full bg-card border border-border shadow-lg overflow-hidden flex flex-col">
           <div className="flex-1 overflow-y-auto">
             <div className="p-2">
-              {results.map((result: SearchResult) => {
-                const itemUrl = getUrl(result);
+              {results.map((inResult: SearchResult | PageResult) => {
+                const res = detectType(inResult);
+                const { isPageResult, result } = res;
+              
+                const itemUrl =  isPageResult ? result.url : getUrl(result);
                 const isSelected = currentUrl === itemUrl;
+                const id = isPageResult ? result.id : result.messageid ?? result.id;
 
                 return (
+                  <a
+                    key={id}
+                    href={itemUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleItemClick(itemUrl)
+                    }}>
                   <div
-                    key={result.messageid}
-                    className={`p-3 rounded-md mb-2 cursor-pointer transition-colors border ${
+                    className={`p-2 rounded-md mb-2 cursor-pointer transition-colors border ${
                       isSelected
-                        ? "bg-accent border-brand/50 shadow-sm"
+                        ? "bg-brand-dark/15 border-brand/50 shadow-sm"
                         : "bg-background border-border hover:bg-muted/50 hover:border-border"
                     }`}
-                    onClick={() => handleItemClick(result)}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <span
                         className={`font-medium text-sm truncate pr-2 ${
-                          isSelected ? "text-brand" : "text-foreground"
+                          isSelected ? "text-brand" : "text-white light:text-neutral-800"
                         }`}
                       >
-                        {result.sender}
+                        {isPageResult ? result.title : result.sender}
                       </span>
-                      {result.timestamp && (
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {formatDate(result.timestamp)}
-                        </span>
-                      )}
+                      <span className="text-sm text-muted-foreground whitespace-nowrap">
+                        {isPageResult ? formatDate(result.lastModified) : formatDate(result.timestamp)}
+                      </span>
                     </div>
 
-                    <p className="text-muted-foreground text-xs leading-relaxed line-clamp-3 mb-3">
-                      {result.content}
+                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+                      { /* TODO [ToDr] use markdown highlighter for pages */ }
+                      {highlightText(
+                        result.content || "",
+                        searchQuery.split(/\s+/),
+                        searchMode
+                      )}
                     </p>
-
-                    {result.messageid && (
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={`text-xs ${
-                            isSelected
-                              ? "text-brand/80"
-                              : "text-muted-foreground"
-                          }`}
-                        >
-                          Click to view
-                        </span>
-                        <a
-                          href={itemUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-brand flex items-center hover:opacity-70 transition-opacity"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <svg
-                            className="w-3 h-3 mr-1"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                          </svg>
-                          Open
-                        </a>
-                      </div>
-                    )}
                   </div>
+                  </a>
                 );
               })}
             </div>
@@ -156,6 +162,18 @@ const Content = ({
     </div>
   );
 };
+
+function detectType(result: SearchResult | PageResult): ({
+  isPageResult: true,
+  result: PageResult,
+} | {
+  isPageResult: false,
+  result: SearchResult,
+}) {
+  return 'url' in result 
+    ? { isPageResult: true, result }
+    : { isPageResult: false, result }
+}
 
 const CloseIcon = () => (
   <svg
