@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import {useEmbeddedViewer} from "@/providers/EmbeddedResultsContext";
 import {Button} from "./ui/button";
 import {PageResult} from "./PageResults";
+import {PageResultHighlighter} from "./PageResultHighlighter";
 
 interface ViewEmbeddedDialogProps {
   url: string;
@@ -143,14 +144,21 @@ const Content = ({
                       </span>
                     </div>
 
-                    <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
-                      { /* TODO [ToDr] use markdown highlighter for pages */ }
-                      {highlightText(
-                        result.content || "",
-                        searchQuery.split(/\s+/),
-                        searchMode
+                    { isPageResult ? (
+                      <PageResultHighlighter
+                        result={result}
+                        searchQuery={searchQuery}
+                        searchMode={searchMode}
+                        options={{maxLength: 150, contextLength: 50}}
+                      /> ) : (
+                        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+                          {highlightText(
+                            result.content || "",
+                            searchQuery.split(/\s+/),
+                            searchMode
+                          )}
+                        </p>
                       )}
-                    </p>
                   </div>
                   </a>
                 );
