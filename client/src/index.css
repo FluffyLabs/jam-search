@@ -1,5 +1,7 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:300,400,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata&display=swap");
 
+@import "tailwindcss";
 @import "tw-animate-css";
 
 :root {
@@ -50,7 +52,7 @@
   --brand-dark: hsl(174.46 100% 12.75%);
 
   --background: hsl(0 0% 20%);
-  --foreground: hsl(0 0% 70%);
+  --foreground: hsl(0 0% 90%);
   --card: hsl(0 0% 14%);
   --title: hsl(0 0% 18%);
   --title-foreground: hsl(0 0% 56%);
@@ -114,14 +116,8 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
 }
 
-body {
-  @font-face {
-    font-family: Oswald;
-    font-style: normal;
-    font-weight: 200 700;
-    font-display: swap;
-    src: url("/fonts/Oswald.woff2") format("woff2");
-  }
+html,:root {
+  font-family: Poppins, sans-serif, system-ui;
 }
 
 button:not(:disabled),
