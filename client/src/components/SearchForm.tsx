@@ -160,7 +160,7 @@ export const SearchForm = ({
   };
 
   const debouncedSubmit = useDebouncedCallback(handleSubmit, 300);
-  const debouncedPrefetch = useDebouncedCallback(handlePrefetch, 100, { leading: true, trailing: true });
+  const debouncedPrefetch = useDebouncedCallback(handlePrefetch, 100);
 
   const addSearchOption = (option: string) => {
     if (!inputRef.current) return;
