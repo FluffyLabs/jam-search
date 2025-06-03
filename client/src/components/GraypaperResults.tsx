@@ -218,7 +218,7 @@ const getTextToDisplay = (
     startIndex > 0 ? "..." : "",
     ...highlightText(text.slice(startIndex, endIndex), queryWords, searchMode),
     endIndex < text.length ? "..." : "",
-  ].join(' ');
+  ];
 
   return result;
 };
