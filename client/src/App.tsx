@@ -9,6 +9,9 @@ import MatrixResults from "./pages/results/matrix";
 import PagesResults from "./pages/results/pages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import {useEmbeddedViewer} from "./providers/EmbeddedResultsContext";
+import {cn} from "./lib/utils";
+import {EmbeddedViewer} from "./components/EmbeddedViewer";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -21,6 +24,8 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const isUsingEmbeddedViewer = useEmbeddedViewer().isVisible;
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex flex-col overflow-hidden h-[100dvh]">
@@ -34,14 +39,22 @@ function App() {
             />
           </div>
 
-          <div className="w-full bg-background p-4 h-[calc(100dvh-77px)] sm:h-[calc(100dvh-87px)] overflow-y-auto">
-            <Routes>
-              <Route index element={<IndexPage />} />
-              <Route path="/results" element={<SearchResults />} />
-              <Route path="/results/graypaper" element={<GraypaperResults />} />
-              <Route path="/results/matrix" element={<MatrixResults />} />
-              <Route path="/results/pages" element={<PagesResults />} />
-            </Routes>
+          <div className={cn(
+            "w-full bg-background h-[calc(100dvh-77px)] sm:h-[calc(100dvh-87px)]",
+            { 
+              "relative": isUsingEmbeddedViewer,
+            }
+          )}>
+            <EmbeddedViewer />
+            <div className={cn("p-4 h-full overflow-y-auto", { invisible: isUsingEmbeddedViewer })}>
+              <Routes>
+                <Route index element={<IndexPage />} />
+                <Route path="/results" element={<SearchResults />} />
+                <Route path="/results/graypaper" element={<GraypaperResults />} />
+                <Route path="/results/matrix" element={<MatrixResults />} />
+                <Route path="/results/pages" element={<PagesResults />} />
+              </Routes>
+            </div>
           </div>
         </div>
       </div>
