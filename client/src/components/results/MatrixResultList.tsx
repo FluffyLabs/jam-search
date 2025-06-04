@@ -2,7 +2,8 @@ import { SearchResult } from "@/lib/api";
 import { highlightText, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
 import { formatDate } from "@/lib/utils";
-import { ViewEmbeddedDialog } from "./ViewEmbeddedDialog";
+import { ViewEmbeddedDialog } from "../ViewEmbeddedDialog";
+import {NoResults} from "./NoResults";
 
 interface MatrixResultListProps {
   results: SearchResult[];
@@ -17,11 +18,7 @@ export const MatrixResultList = ({
 }: MatrixResultListProps) => {
   if (results.length === 0) {
     return (
-      <div className="text-center p-8">
-        <p className="text-muted-foreground">
-          No results found for your search.
-        </p>
-      </div>
+      <NoResults isError={false} />
     );
   }
 

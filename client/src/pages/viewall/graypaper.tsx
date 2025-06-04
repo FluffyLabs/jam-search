@@ -7,7 +7,9 @@ import { parseSearchQuery, SearchMode, highlightText } from "@/lib/utils";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { ShareUrl } from "@/components/ShareUrl";
 
-const GraypaperResults = () => {
+// TODO [ToDr] de-duplicate
+
+const GraypaperResultsAll = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("q") || "";
   const searchModeParam =
@@ -246,4 +248,4 @@ const getTextToDisplay = (
   return result;
 };
 
-export default GraypaperResults;
+export default GraypaperResultsAll;

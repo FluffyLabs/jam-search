@@ -7,7 +7,7 @@ import { parseSearchQuery, SearchMode } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { ShareUrl } from "@/components/ShareUrl";
 
-const PagesResults = () => {
+const PagesResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
@@ -100,4 +100,4 @@ const PagesResults = () => {
   );
 };
 
-export default PagesResults;
+export default PagesResultsAll;

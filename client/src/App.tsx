@@ -4,9 +4,9 @@ import { AppsSidebar } from "@krystian5011/shared-ui";
 import { Header } from "./components/Header";
 import { IndexPage } from "./pages";
 import SearchResults from "./pages/results";
-import GraypaperResults from "./pages/results/graypaper";
-import MatrixResults from "./pages/results/matrix";
-import PagesResults from "./pages/results/pages";
+import GraypaperResultsAll from "./pages/viewall/graypaper";
+import MatrixResultsAll from "./pages/viewall/matrix";
+import PagesResultsAll from "./pages/viewall/pages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {useEmbeddedViewer} from "./providers/EmbeddedResultsContext";
@@ -52,9 +52,9 @@ function App() {
               <Routes>
                 <Route index element={<IndexPage />} />
                 <Route path="/results" element={<SearchResults />} />
-                <Route path="/results/graypaper" element={<GraypaperResults />} />
-                <Route path="/results/matrix" element={<MatrixResults />} />
-                <Route path="/results/pages" element={<PagesResults />} />
+                <Route path="/results/graypaper" element={<GraypaperResultsAll />} />
+                <Route path="/results/matrix" element={<MatrixResultsAll />} />
+                <Route path="/results/pages" element={<PagesResultsAll />} />
               </Routes>
             </div>
           </div>

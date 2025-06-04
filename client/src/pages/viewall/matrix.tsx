@@ -1,14 +1,14 @@
 import { useLocation, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/SearchForm";
-import { MatrixResultList } from "@/components/MatrixResultList";
+import { MatrixResultList } from "@/components/results/MatrixResultList";
 import { useSearch } from "@/hooks/useSearch";
 import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery, SearchMode } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { ShareUrl } from "@/components/ShareUrl";
 
-const MatrixResults = () => {
+const MatrixResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
@@ -126,4 +126,4 @@ const MatrixResults = () => {
   );
 };
 
-export default MatrixResults;
+export default MatrixResultsAll;
