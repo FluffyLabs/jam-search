@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import {ResultHeader} from "@/components/results/ResultHeader";
 import {Paging} from "@/components/Paging";
 import {useRef} from "react";
+import {Container} from "@/components/Container";
 
 const PagesResultsAll = () => {
   const location = useLocation();
@@ -35,15 +36,16 @@ const PagesResultsAll = () => {
       <div ref={topRef}></div>
       <ResultHeader 
         left={
-          <Button variant="ghost" size="icon" className="mt-0 w-10 h-8" asChild>
+          <Button variant="ghost" size="icon" className="mt-0 w-auto h-8" asChild>
             <Link to={`/results?${backParams.toString()}`}>
               <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">All sources</span>
             </Link>
           </Button>
         }
       />
 
-      <div className="w-full max-w-4xl px-8">
+      <Container>
         <h1 className="text-md font-medium text-white mb-2">{query}</h1>
         <span className="text-muted-foreground text-sm font-light">
           Found {queryResult.totalResults.toLocaleString()} matches at <span className="text-white">{site}</span>
@@ -58,7 +60,7 @@ const PagesResultsAll = () => {
 
           <Paging queryResult={queryResult} scrollTo={topRef} />
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

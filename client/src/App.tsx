@@ -31,7 +31,9 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex flex-col overflow-hidden h-[100dvh]">
-        <Header />
+        <div className="h-[87px]">
+          <Header />
+        </div>
         <div className="flex h-full">
           <div className="max-sm:hidden">
             <AppsSidebar

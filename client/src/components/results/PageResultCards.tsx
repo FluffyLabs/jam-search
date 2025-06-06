@@ -39,7 +39,6 @@ export const PageResultCards = ({
 
         return (
           <ResultCard
-            noBorder
             key={result.id}
             header={<>
               <span>

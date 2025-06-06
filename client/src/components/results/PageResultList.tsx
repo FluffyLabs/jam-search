@@ -53,6 +53,7 @@ export const PageResultList = ({
 
           return (
             <ResultCard
+              lightBorder
               key={result.id}
               header={
                 <>

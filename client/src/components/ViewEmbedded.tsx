@@ -5,6 +5,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import {useEmbeddedViewer} from "@/providers/EmbeddedResultsContext";
 import {Button} from "./ui/button";
 import {PageResultHighlighter} from "./PageResultHighlighter";
+import {SquareX} from "lucide-react";
 
 interface ViewEmbeddedProps {
   label?: ReactNode,
@@ -128,7 +129,7 @@ const Content = ({
         { "relative": hasSidebar }
       )}>
         <Button variant="ghost"  className="text-brand absolute top-0 right-0" onClick={close}>
-          <CloseIcon />
+          <SquareX />
         </Button>
         <iframe
           onLoadStart={handleIframeLoadStart}
@@ -226,31 +227,3 @@ function detectType(result: SearchResult | PageResult): ({
     ? { isPageResult: true, result }
     : { isPageResult: false, result }
 }
-
-const CloseIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    aria-label="Close"
-    role="img"
-  >
-    <line
-      x1="6"
-      y1="6"
-      x2="18"
-      y2="18"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-    />
-    <line
-      x1="6"
-      y1="18"
-      x2="18"
-      y2="6"
-      stroke="currentColor"
-    />
-  </svg>
-);

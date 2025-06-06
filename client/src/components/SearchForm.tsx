@@ -235,7 +235,7 @@ export const SearchForm = ({
   };
 
   return (
-    <div ref={searchRef} className="relative w-full">
+    <div ref={searchRef} className="relative w-full max-w-4xl">
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative">
           {/* Search mode dropdown on the left */}

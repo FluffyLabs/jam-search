@@ -40,6 +40,7 @@ export const MatrixResultList = ({
       <div className="grid grid-cols-1 gap-4">
       {results.map((result: SearchResult) => (
         <ResultCard
+          lightBorder
           key={result.messageid ?? result.id}
           header={
             <>

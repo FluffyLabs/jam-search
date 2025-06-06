@@ -13,6 +13,7 @@ import {MatrixResults} from "@/components/results/MatrixResults";
 import {PageResultCards} from "@/components/results/PageResultCards";
 import {ResultHeader} from "@/components/results/ResultHeader";
 import {ShowAll} from "@/components/ShowAll";
+import {Container} from "@/components/Container";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -47,7 +48,7 @@ const SearchResults = () => {
         showSearchOptions={selectedSources.length === 1 && selectedSources[0] === Source.Matrix}
       />
 
-      <div className="w-full max-w-4xl px-7">
+      <Container>
         {/* Display active filters as tags */}
         {query && filters.length > 0 && (
           <div className="mb-6">
@@ -163,7 +164,7 @@ const SearchResults = () => {
             </div>
           )}
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

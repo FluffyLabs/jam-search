@@ -9,6 +9,7 @@ import {ViewEmbedded} from "@/components/ViewEmbedded";
 import {ResultHeader} from "@/components/results/ResultHeader";
 import {Paging} from "@/components/Paging";
 import {useRef} from "react";
+import {Container} from "@/components/Container";
 
 const GraypaperResultsAll = () => {
   const location = useLocation();
@@ -38,15 +39,16 @@ const GraypaperResultsAll = () => {
       <div ref={topRef}></div>
       <ResultHeader 
         left={
-          <Button variant="ghost" size="icon" className="mt-0 w-10 h-8" asChild>
+          <Button variant="ghost" size="icon" className="mt-0 w-auto h-8" asChild>
             <Link to={`/results${location.search}`}>
               <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline ml-2">All sources</span>
             </Link>
           </Button>
         }
       />
 
-      <div className="w-full max-w-4xl px-8">
+      <Container>
         <h1 className="text-md font-medium text-white mb-2">{query}</h1>
         <span className="text-muted-foreground text-sm font-light">
           Found {totalResults.toLocaleString()} matches in <span className="text-white">Gray Paper</span>
@@ -54,45 +56,43 @@ const GraypaperResultsAll = () => {
 
         <div className="mt-8">
           <div className="flex flex-col gap-4">
-          {isLoading && results.length === 0 ? (
-            <>
-              <Skeleton className="w-full h-3 my-4" />
-              <Skeleton className="w-full h-3 my-4" />
-              <Skeleton className="w-full h-3 my-4" />
-              <Skeleton className="w-full h-3 my-4" />
-              <Skeleton className="w-full h-3 my-4" />
-
-              {pages}
-            </>
-          ) : isError ? (
-            <div className="text-center p-8 text-destructive">
-              Error loading graypaper results
-            </div>
-          ) : !results || results.length === 0 ? (
-            <div className="text-center p-8">
-              No graypaper results found for your search.
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 gap-4">
-                {results.map((section) => (
-                  <SectionResult
-                    key={section.text}
-                    title={section.title}
-                    text={section.text}
-                    query={query}
-                    url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
-                    searchMode={searchModeParam}
-                  />
-                ))}
+            {isLoading && results.length === 0 ? (
+              <>
+                <Skeleton className="w-full h-3 my-4" />
+                <Skeleton className="w-full h-3 my-4" />
+                <Skeleton className="w-full h-3 my-4" />
+                <Skeleton className="w-full h-3 my-4" />
+                <Skeleton className="w-full h-3 my-4" />
+              </>
+            ) : isError ? (
+              <div className="text-center p-8 text-destructive">
+                Error loading graypaper results
               </div>
+            ) : !results || results.length === 0 ? (
+              <div className="text-center p-8">
+                No graypaper results found for your search.
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-4">
+                  {results.map((section) => (
+                    <SectionResult
+                      key={section.text}
+                      title={section.title}
+                      text={section.text}
+                      query={query}
+                      url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
+                      searchMode={searchModeParam}
+                    />
+                  ))}
+                </div>
 
-              {pages}
-            </>
-          )}
+                {pages}
+              </>
+            )}
+          </div>
         </div>
-        </div>
-      </div>
+      </Container>
     </div>
   );
 };
@@ -111,7 +111,7 @@ const SectionResult = ({
   searchMode: SearchMode;
 }) => {
   return (
-    <Card className="relative bg-card border-border hover:bg-accent">
+    <Card className="relative bg-card border-border border-0 border-b rounded-none hover:bg-accent">
       <CardHeader className="p-3 pb-1">
         <CardTitle className="text-sm text-white font-normal truncate">
           {title}
