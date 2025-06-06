@@ -1,4 +1,4 @@
-import { formatDate, SearchMode } from "@/lib/utils";
+import { cn, formatDate, SearchMode } from "@/lib/utils";
 import { ViewEmbedded } from "../ViewEmbedded";
 import {PageResultHighlighter} from "../PageResultHighlighter";
 import {NoResults} from "./NoResults";
@@ -42,8 +42,13 @@ export const PageResultCards = ({
             noBorder
             key={result.id}
             header={<>
-              {githubId} {result.title}
-              <span className="text-xs text-muted-foreground ml-2">
+              <span>
+                {result.title} <span className="text-muted-foreground">{githubId}</span>
+              </span>
+              <span className={cn(
+                "text-xs text-muted-foreground ml-2",
+                !isGithub ? 'font-mono' : ''
+              )}>
                 {isGithub ? (
                 <>
                   {result.url.includes("/pull/") ? "PR" : "Issue"}
