@@ -46,7 +46,7 @@ const MatrixResultsAll = () => {
           <Button variant="ghost" size="icon" className="mt-0 w-auto h-8" asChild>
             <Link to={`/results?${backParams.toString()}`}>
               <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline ml-2">All sources</span>
+              <span className="hidden sm:inline mx-2 text-xs">All sources</span>
             </Link>
           </Button>
         }
