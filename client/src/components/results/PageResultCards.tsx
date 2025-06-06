@@ -39,7 +39,7 @@ export const PageResultCards = ({
 
         return (
           <ResultCard
-            lightBorder
+            noBorder
             key={result.id}
             header={<>
               {githubId} {result.title}

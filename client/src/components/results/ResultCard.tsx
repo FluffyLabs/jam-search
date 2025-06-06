@@ -8,18 +8,18 @@ export const ResultCard = ({
   footer,
   content,
   noHover = false,
-  lightBorder = false,
+  noBorder = false,
 }: {
   header: ReactNode;
   footer: ReactNode;
   content: ReactNode;
   noHover?: boolean;
-  lightBorder?: boolean;
+  noBorder?: boolean;
 }) => {
   return (
     <Card className={cn(
       "relative bg-card",
-      lightBorder ? 'border-0 border-l rounded-none border-border' : 'border-border',
+      noBorder ? 'border-0 rounded-none' : 'border-border',
       noHover ? '' : 'hover:bg-accent'
       )}>
       <CardHeader className="p-3 pb-1">

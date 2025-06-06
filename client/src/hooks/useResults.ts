@@ -37,7 +37,7 @@ export function useResults(
   // Search for JamCha.in docs
   const jamchain = useSearchPages({
     query,
-    pageSize: 2, // Limit to 2 items
+    pageSize: 4,
     searchMode: searchMode,
     site: "docs.jamcha.in",
     enabled: selectedSources.includes(Source.Jamchain),
@@ -46,7 +46,7 @@ export function useResults(
   // Search for  github.com/w3f/jamtestvectors pages
   const w3f = useSearchPages({
     query,
-    pageSize: 2, // Limit to 2 items
+    pageSize: 4,
     searchMode: searchMode,
     site: "github.com/w3f/jamtestvectors",
     enabled: selectedSources.includes(Source.GithubW3fJamtestvectors),
