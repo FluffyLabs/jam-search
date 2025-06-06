@@ -1,12 +1,13 @@
 import { useLocation, Link } from "react-router";
 import { Button } from "@/components/ui/button";
-import { SearchForm } from "@/components/SearchForm";
 import { MatrixResultList } from "@/components/results/MatrixResultList";
-import { useSearch } from "@/hooks/useSearch";
+import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { MATRIX_CHANNELS } from "@/consts";
 import { parseSearchQuery, SearchMode } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
-import { ShareUrl } from "@/components/ShareUrl";
+import {ResultHeader} from "@/components/results/ResultHeader";
+import {Paging} from "@/components/Paging";
+import {useRef} from "react";
 
 const MatrixResultsAll = () => {
   const location = useLocation();
@@ -18,59 +19,41 @@ const MatrixResultsAll = () => {
   const channel =
     MATRIX_CHANNELS.find((ch) => ch.id === channelId) || MATRIX_CHANNELS[0];
 
+  const topRef = useRef(null);
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
 
   // Use our search hook with the extracted query and filters
-  const {
-    results,
-    totalResults,
-    currentPage,
-    totalPages,
-    isLoading,
-    isError,
-    pagination,
-  } = useSearch({
+  const queryResult = useSearchMatrix({
     query,
     channelId,
-    pageSize: 10,
+    pageSize: 20,
     filters,
     searchMode,
   });
 
-  if (isError) {
-    return (
-      <div className="text-center text-2xl p-8 text-destructive-foreground">
-        Error loading search results
-      </div>
-    );
-  }
-
   const backParams = new URLSearchParams(location.search);
   backParams.delete("channelId");
 
+  const pages = (<Paging queryResult={queryResult} scrollTo={topRef} />);
+
   return (
-    <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
-      <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+    <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl text-card-foreground">
+      <div ref={topRef}></div>
+      <ResultHeader 
+        left={
+          <Button variant="ghost" size="icon" className="mt-0 w-10 h-8" asChild>
             <Link to={`/results?${backParams.toString()}`}>
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
+              <ArrowLeft className="h-4 w-4" />
             </Link>
-            <h1 className="text-lg font-medium">{channel.name} @ Matrix</h1>
-            <span className="text-muted-foreground text-sm">
-              ({totalResults.toLocaleString()} results)
-            </span>
-          </div>
-          <ShareUrl />
-        </div>
-      </div>
+          </Button>
+        }
+        showSearchOptions
+      />
 
-      <div className="w-full max-w-4xl px-7">
-        <SearchForm />
-
+      <div className="w-full max-w-4xl px-8">
+        <h1 className="text-md font-medium text-white mb-2">{query}</h1>
+    
         {/* Display active filters as tags */}
         {query && filters.length > 0 && (
           <div className="mb-6">
@@ -88,39 +71,21 @@ const MatrixResultsAll = () => {
           </div>
         )}
 
-        <div className="mb-8">
-          {isLoading && !results.length ? (
-            <div className="text-center p-8">Loading results...</div>
-          ) : (
-            <MatrixResultList
-              results={results}
-              searchQuery={query}
-              searchMode={searchMode as SearchMode}
-            />
-          )}
-        </div>
+        <span className="text-muted-foreground text-sm font-light">
+          Found {queryResult.totalResults.toLocaleString()} matches in <span className="text-white">{channel.name} @ Matrix</span>
+        </span>
 
-        {results.length > 0 && (
-          <div className="flex justify-center items-center mt-6 mb-8 space-x-2">
-            <Button
-              onClick={pagination.previousPage}
-              disabled={!pagination.hasPreviousPage}
-              className="px-3 py-1 bg-muted rounded disabled:opacity-50 text-muted-foreground"
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages || 1}
-            </span>
-            <Button
-              onClick={pagination.nextPage}
-              disabled={!pagination.hasNextPage}
-              className="px-3 py-1 bg-muted rounded disabled:opacity-50 text-muted-foreground"
-            >
-              Next
-            </Button>
-          </div>
-        )}
+        <div className="my-8">
+          <MatrixResultList
+            channel={channel}
+            queryResult={queryResult}
+            searchQuery={query}
+            searchMode={searchMode as SearchMode}
+          />
+          
+          {pages}
+
+        </div>
       </div>
     </div>
   );

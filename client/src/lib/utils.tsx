@@ -47,6 +47,88 @@ export const parseSearchQuery = (
 
 export type SearchMode = "strict" | "fuzzy" | "semantic";
 
+/** Truncate and display just the relevant text. */
+export const getTextToDisplay = (
+  text: string,
+  query: string,
+  searchMode: SearchMode,
+  maxContext: number = 100,
+) => {
+  if (!text || !query) return `${text.slice(0, maxContext)}...`;
+
+  // Get the first word from the query
+  const queryWords = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((word) => word.length > 2);
+
+  if (queryWords.length === 0)
+    return text.length > maxContext ? `${text.slice(0, maxContext)}...` : text;
+
+  const normalizedText = text.toLowerCase();
+
+  // Find the first occurrence of any query word
+  const matchedWordResult = queryWords.reduce(
+    (result, word) => {
+      if (result.index !== -1) return result;
+
+      const index = normalizedText.indexOf(word);
+      if (index !== -1) {
+        return {
+          index,
+          word,
+        };
+      }
+      return result;
+    },
+    {
+      index: -1,
+      word: "",
+    }
+  );
+
+  if (matchedWordResult.index === -1) {
+    return text.length > maxContext ? `${text.slice(0, maxContext)}...` : text;
+  }
+
+  // Calculate initial start and end indices for the context window
+  let startIndex = Math.max(0, matchedWordResult.index - maxContext/2);
+  let endIndex = Math.min(
+    text.length,
+    matchedWordResult.index + matchedWordResult.word.length + maxContext / 2
+  );
+
+  // Adjust startIndex to include full words
+  if (startIndex > 0) {
+    // Find the beginning of the first word
+    const beforeText = text.slice(0, startIndex);
+    const lastSpaceBeforeStart = beforeText.lastIndexOf(" ");
+    if (lastSpaceBeforeStart !== -1) {
+      startIndex = lastSpaceBeforeStart + 1;
+    }
+  }
+
+  // Adjust endIndex to include full words
+  if (endIndex < text.length) {
+    // Find the end of the last word
+    const nextSpaceAfterEnd = text.indexOf(" ", endIndex);
+    if (nextSpaceAfterEnd !== -1) {
+      endIndex = nextSpaceAfterEnd;
+    } else {
+      // If no more spaces, include the rest of the text
+      endIndex = text.length;
+    }
+  }
+
+  const result = [
+    startIndex > 0 ? "..." : "",
+    ...highlightText(text.slice(startIndex, endIndex), queryWords, searchMode),
+    endIndex < text.length ? "..." : "",
+  ];
+
+  return result;
+};
+
 export const highlightText = (
   text: string,
   words: string[],

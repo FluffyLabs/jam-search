@@ -42,7 +42,7 @@ function App() {
           </div>
 
           <div className={cn(
-            "w-full bg-background h-[calc(100dvh-77px)] sm:h-[calc(100dvh-87px)]",
+            "w-full bg-background h-[calc(100dvh-77px)]",
             { 
               "relative": isUsingEmbeddedViewer,
             }

@@ -1,86 +1,80 @@
 import { SearchResult } from "@/lib/api";
-import { highlightText, SearchMode } from "@/lib/utils";
+import { getTextToDisplay, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
 import { formatDate } from "@/lib/utils";
-import { ViewEmbeddedDialog } from "../ViewEmbeddedDialog";
+import { ViewEmbedded } from "../ViewEmbedded";
 import {NoResults} from "./NoResults";
+import {useResults} from "@/hooks/useResults";
+import {ResultCard} from "./ResultCard";
 
 interface MatrixResultListProps {
-  results: SearchResult[];
+  channel: typeof MATRIX_CHANNELS[0],
+  queryResult: ReturnType<typeof useResults>['jamChat'],
   searchQuery: string;
   searchMode: SearchMode;
 }
 
 export const MatrixResultList = ({
-  results,
+  channel,
+  queryResult,
   searchQuery,
   searchMode,
 }: MatrixResultListProps) => {
-  if (results.length === 0) {
+  const {isLoading, isError, results} = queryResult;
+
+  if (results.length === 0 && !isLoading) {
     return (
-      <NoResults isError={false} />
+      <NoResults isError={isError} />
     );
   }
 
   const getUrl = (result: SearchResult) => {
-    const channelUrl = MATRIX_CHANNELS.find(
-      (channel) => channel.id === result.roomid
-    )?.archiveUrl;
-    return `${channelUrl}#${result.messageid}`;
+    return `${channel.archiveUrl}#${result.messageid}`;
   };
 
   return (
     <div className="space-y-6">
+      {isLoading && results.length === 0 ? (
+        <div className="text-center p-8">Loading results...</div>
+      ) : null }
+      <div className="grid grid-cols-1 gap-4">
       {results.map((result: SearchResult) => (
-        <div key={result.messageid ?? result.id} className="border-b border-border pb-6">
-          <div className="mb-2">
-            <div className="flex items-center mb-1">
+        <ResultCard
+          key={result.messageid ?? result.id}
+          header={
+            <>
               <span className="font-medium text-foreground">
                 {result.sender}{" "}
               </span>
               {result.timestamp && (
-                <span className="text-xs text-muted-foreground ml-2">
+                <span className="text-muted-foreground ml-2">
                   {formatDate(result.timestamp)}
                 </span>
               )}
-            </div>
-            <p className="text-muted-foreground text-sm mb-2">
-              {highlightText(
+            </>
+          }
+          content={
+            <p className="text-muted-foreground font-light mb-2">
+              {getTextToDisplay(
                 result.content || "",
-                searchQuery.split(/\s+/),
-                searchMode
+                searchQuery,
+                searchMode,
+                400
               )}
             </p>
-            {result.messageid && (
-              <div className="flex space-x-4">
-                <a
-                  href={`${
-                    MATRIX_CHANNELS.find(
-                      (channel) => channel.id === result.roomid
-                    )?.archiveUrl
-                  }#${result.messageid}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-brand flex items-center w-fit hover:opacity-60"
-                >
-                  <svg
-                    className="w-3 h-3 mr-1"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                  Go to thread
-                </a>
-
-              <ViewEmbeddedDialog url={getUrl(result)} searchQuery={searchQuery} searchMode={searchMode} results={results} />
-              </div>
-            )}
-          </div>
-        </div>
+          }
+          footer={
+            <ViewEmbedded 
+              label="View message"
+              url={getUrl(result)}
+              searchQuery={searchQuery}
+              searchMode={searchMode}
+              results={results}
+            />
+          }
+        />
       ))}
+      </div>
     </div>
   );
 };

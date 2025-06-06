@@ -14,19 +14,19 @@ export const Section = ({
 }) => {
   return (
     <Card className="relative bg-accent border-border">
-      <CardContent className="p-1 flex gap-2 shrink-0 items-center">
-        <div className="bg-card p-2 rounded-full border-border border">
+      <CardContent className="p-1 flex gap-2 items-center">
+        <div className="bg-card p-2 rounded-full border-border border shrink-0">
           {logo}
         </div>
-        <div className="flex gap-1">
-          <div className="flex flex-col items-start sm:items-center sm:flex-row sm:gap-3">
-            <CardTitle className="text-sm text-muted-foreground font-medium">
-              <a href={url} target="_blank">{title}</a>
-            </CardTitle>
-          </div>
+        <div className="flex gap-1 shrink-1 overflow-hidden text-ellipsis">
+          <CardTitle className="text-xs sm:text-sm text-muted-foreground font-medium">
+            <a href={url} target="_blank">{title}</a>
+          </CardTitle>
         </div>
         <div className="flex-1"></div>
-        { endBlock }
+        <div className="overflow-hidden shrink-0">
+          { endBlock }
+        </div>
       </CardContent>
     </Card>
   );
