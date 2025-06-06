@@ -1,10 +1,10 @@
 import { Header as FluffyHeader } from "@krystian5011/shared-ui";
 import ToolName from "@/assets/tool-name.svg";
-import { DropdownMenuContent } from "../ui/dropdown-menu";
-import { DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { DropdownMenu } from "../ui/dropdown-menu";
-import { DropdownMenuItem } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
+import { DropdownMenuContent } from "./ui/dropdown-menu";
+import { DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { DropdownMenu } from "./ui/dropdown-menu";
+import { DropdownMenuItem } from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 import { EllipsisVertical } from "lucide-react";
 
 const EndSlot = () => {

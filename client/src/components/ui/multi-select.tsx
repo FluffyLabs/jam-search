@@ -245,7 +245,7 @@ export const MultiSelect = React.forwardRef<
             {...props}
             onClick={handleTogglePopover}
             className={cn(
-              "flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit",
+              "flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit text-xs",
               required && !selectedValues.length ? "border-destructive" : "",
               className
             )}
@@ -266,8 +266,8 @@ export const MultiSelect = React.forwardRef<
                       })}
                     {!showOptionsAsTags && selectedValues.length > maxCount && (
                       <span className="text-[#858585] px-2">
-                        <span className="hidden sm:inline">Sources</span>{" "}
-                        <span className="bg-secondary ml-2 p-2 rounded-xl w-[15px] h-[15px]">
+                        <span className="hidden md:inline">Sources</span>{" "}
+                        <span className="bg-secondary ml-1 p-1 rounded-xl w-[15px] h-[15px]">
                           {selectedValues.length}
                         </span>
                       </span>
@@ -324,19 +324,19 @@ export const MultiSelect = React.forwardRef<
                 <div className="flex items-center justify-between">
                   {showClearAll && (
                     <XIcon
-                      className="h-4 mx-2 cursor-pointer text-muted-foreground"
+                      className="h-4 cursor-pointer text-muted-foreground"
                       onClick={(event) => {
                         event.stopPropagation();
                         handleClear();
                       }}
                     />
                   )}
-                  <ChevronDown className="h-4 mx-2 cursor-pointer text-muted-foreground" />
+                  <ChevronDown className="h-4 cursor-pointer text-muted-foreground" />
                 </div>
               </div>
             ) : (
               <div className="flex items-center justify-between w-full mx-auto">
-                <span className="text-smtext- muted-foreground mx-3">
+                <span className="text-sm text-muted-foreground mx-3">
                   {placeholder}
                 </span>
                 <ChevronDown className="h-4 cursor-pointer text-muted-foreground mx-2" />

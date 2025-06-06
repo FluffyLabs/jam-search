@@ -19,6 +19,18 @@ export interface SearchResult {
   timestamp: string;
 }
 
+export interface PageResult {
+  id: number;
+  url: string;
+  site: string;
+  title: string;
+  content: string;
+  lastModified: string;
+  similarity?: number;
+  score?: number;
+  createdAt: string;
+}
+
 export interface SearchResponse {
   results: SearchResult[];
   total: number;

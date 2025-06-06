@@ -14,6 +14,7 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import {useResults} from "@/hooks/useResults";
 import {initialSources} from "@/lib/sources";
+import {cn} from "@/lib/utils";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -87,10 +88,12 @@ export const SearchForm = ({
   redirectToResults = false,
   instantSearch = true,
   showSearchOptions = true,
+  size = "lg"
 }: {
   redirectToResults?: boolean;
   instantSearch?: boolean;
   showSearchOptions?: boolean;
+  size?: "lg" | "sm";
 }) => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
@@ -232,7 +235,7 @@ export const SearchForm = ({
   };
 
   return (
-    <div ref={searchRef} className="relative w-full mb-7 mt-4">
+    <div ref={searchRef} className="relative w-full max-w-4xl">
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative">
           {/* Search mode dropdown on the left */}
@@ -302,7 +305,13 @@ export const SearchForm = ({
           {/* padding top is 16px to align with the visible display - this is a hack to make the textarea look centered */}
           <Textarea
             ref={inputRef}
-            className="pr-12 pl-14 pt-4 pb-2 min-h-[58px] h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal"
+            className={cn(
+              "pr-12 pl-14 h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal",
+              {
+                "pt-3 pb-1 min-h-[40px]": size === 'sm',
+                "pt-4 pb-2 min-h-[58px]": size === 'lg',
+              }
+            )}
             value={searchQuery}
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
@@ -312,7 +321,13 @@ export const SearchForm = ({
 
           {/* Visible styled display with highlighted filters */}
           <div
-            className="pr-12 pl-14 pt-2 pb-2 min-h-[58px] h-auto flex pointer-events-none border border-input rounded-md bg-background text-foreground overflow-auto font-sans text-base leading-normal"
+            className={cn(
+              "pr-12 pl-14 h-auto flex pointer-events-none border border-input rounded-md bg-background text-foreground overflow-auto font-sans text-base leading-normal",
+              {
+                "pt-1 pb-1 min-h-[40px]": size === 'sm',
+                "pt-2 pb-2 min-h-[58px]": size === 'lg',
+            }
+            )}
             aria-hidden="true"
             ref={displayedValueRef}
           >
@@ -322,7 +337,7 @@ export const SearchForm = ({
                 dangerouslySetInnerHTML={{ __html: displayedValue }}
               />
             ) : (
-              <span className="text-muted-foreground py-2">
+              <span className="font-light text-muted-foreground py-2">
                 Examples: grandpa, contest, pvm
               </span>
             )}
@@ -368,11 +383,11 @@ export const SearchForm = ({
       {isFocused && showSearchOptions && searchQuery.trim() === "" && (
         <div className="absolute top-full left-0 right-0 mt-2 border border-input bg-card rounded-md shadow-lg z-10">
           <div className="p-4 border-b border-zinc-700">
-            <h3 className="text-lg font-semibold text-zinc-200">
+            <p className="text-sm font-normal text-zinc-200">
               Search Options
-            </h3>
+            </p>
           </div>
-          <div className="p-2 max-h-[300px] overflow-y-auto">
+          <div className="p-2 max-h-[300px] overflow-y-auto text-xs font-light">
             {searchOptions.map((option) => (
               <div
                 key={option.label}
@@ -380,10 +395,10 @@ export const SearchForm = ({
                 onClick={() => addSearchOption(option.label)}
               >
                 <div className="flex flex-col">
-                  <span className="text-zinc-200 font-medium">
+                  <span className="text-zinc-200 font-normal">
                     {option.label}:
                   </span>
-                  <span className="text-zinc-400 text-sm">
+                  <span className="text-zinc-400">
                     {option.description}
                   </span>
                 </div>

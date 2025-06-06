@@ -10,24 +10,19 @@ export const ShareUrl = () => {
   };
   const [copied, setCopied] = useState(false);
 
+  const Ico = copied ? Check : Share;
+
   return (
     <Button
       variant="outline"
       size="sm"
-      className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+      className="w-full text-xs flex items-center text-muted-foreground hover:text-foreground transition-colors min-w-auto"
       onClick={handleCopyLink}
     >
-      {copied ? (
-        <div className="flex items-center">
-          <Check className="w-4 h-4 mr-1.5" />
-          copied!
-        </div>
-      ) : (
-        <div className="flex items-center">
-          <Share className="w-4 h-4 mr-1.5" />
-          share results
-        </div>
-      )}
+      <Ico className="w-4 h-4" />
+      <span className="hidden md:inline overflow-hidden ml-1.5">
+        { copied ? 'copied!' : 'share results' }
+      </span>
     </Button>
   );
 };

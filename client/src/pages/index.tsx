@@ -20,9 +20,9 @@ const Header = () => {
 };
 const Features = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-8">
       <div className="flex flex-col items-center text-center">
-        <div className="mb-4 bg-card p-3 rounded-md">
+        <div className="mb-4 p-3 rounded-md">
           <Star className="h-6 w-6 text-brand" />
         </div>
         <h3 className="text-lg font-semibold mb-2">Clear and precise</h3>
@@ -32,7 +32,7 @@ const Features = () => {
       </div>
 
       <div className="flex flex-col items-center text-center">
-        <div className="mb-4 bg-card p-3 rounded-md">
+        <div className="mb-4 p-3 rounded-md">
           <Target className="h-6 w-6 text-brand" />
         </div>
         <h3 className="text-lg font-semibold mb-2">Targeted solutions</h3>
@@ -42,7 +42,7 @@ const Features = () => {
       </div>
 
       <div className="flex flex-col items-center text-center">
-        <div className="mb-4 bg-card p-3 rounded-md">
+        <div className="mb-4 p-3 rounded-md">
           <Sparkles className="h-6 w-6 text-brand" />
         </div>
         <h3 className="text-lg font-semibold mb-2">Code-driven efficiency</h3>

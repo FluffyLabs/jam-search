@@ -1,69 +1,94 @@
-import { SearchResult } from "@/lib/api";
+import { PageResult, SearchResult } from "@/lib/api";
 import { cn, formatDate, highlightText, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
-import { useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import {useEmbeddedViewer} from "@/providers/EmbeddedResultsContext";
 import {Button} from "./ui/button";
-import {PageResult} from "./PageResults";
 import {PageResultHighlighter} from "./PageResultHighlighter";
+import {SquareX} from "lucide-react";
 
-interface ViewEmbeddedDialogProps {
+interface ViewEmbeddedProps {
+  label?: ReactNode,
+  noEmbed?: boolean,
   url: string;
   className?: string;
   searchQuery: string;
   searchMode: SearchMode;
+  loadMore?: () => Promise<SearchResult[] | PageResult[]>;
   results?: SearchResult[] | PageResult[];
 }
 
-export const ViewEmbeddedDialog = ({
+export const ViewEmbedded = ({
+  label = 'Preview',
   url,
+  loadMore,
   results,
   searchQuery,
   searchMode,
-}: ViewEmbeddedDialogProps) => {
+  noEmbed = false,
+}: ViewEmbeddedProps) => {
   const embeddedViewer = useEmbeddedViewer();
-  const content = (
+  const content = useMemo(() => (
     <Content
       url={url}
+      loadMore={loadMore}
       results={results}
       searchQuery={searchQuery}
       searchMode={searchMode}
       close={() => embeddedViewer.close()}
     ></Content>
-  );
+  ), [url, loadMore, results, searchQuery, searchMode, embeddedViewer]);
 
   return (
-    <button
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
       onMouseEnter={() => embeddedViewer.render(content, false) }
-      onClick={() => embeddedViewer.render(content)}
-      className="text-xs text-brand flex items-center w-fit hover:opacity-60">
-      <svg
-        className="w-3 h-3 mr-1"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-        <line x1="8" y1="21" x2="16" y2="21"></line>
-        <line x1="12" y1="17" x2="12" y2="21"></line>
-      </svg>
-      View embedded
-    </button>
+      onClick={(e) => {
+        // allow opening in new tab
+        if (e.ctrlKey || e.metaKey || e.button === 1) {
+          return;
+        }
+        // no iframe if we don't want it
+        if (noEmbed) {
+          return;
+        }
+        e.preventDefault();
+        embeddedViewer.render(content)
+      }}
+      className="inline-flex items-center text-primary text-xs gap-1 after:absolute after:inset-0 hover:text-accent-foreground transition-colors"
+    >
+      {label}
+    </a>
   );
 };
    
 const Content = ({
-  url, results, close, searchQuery, searchMode,
-}: ViewEmbeddedDialogProps & { close: () => void }) => {
+  url, results: initialResults, loadMore, close, searchQuery, searchMode,
+}: ViewEmbeddedProps & { close: () => void }) => {
+  const [results, setResults] = useState(initialResults);
   const [currentUrl, setCurrentUrl] = useState(url);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setResults(initialResults);
+  }, [initialResults]);
+
+  const handleLoadMore = useCallback(async () => {
+    if (loadMore) {
+      setResults(await loadMore());
+    }
+  }, [loadMore]);
 
   // update the iframe content when the external url changes.
   useEffect(() => {
     setCurrentUrl(url);
   }, [url]);
 
-  const hasSidebar = results && results.length > 0;
+  // TODO [ToDr] changing iframe's src causes history
+  // entries to be created which fucks up back/forward
+  const hasSidebar = results && results.length > 0 && window.innerWidth > 500;
 
   const getUrl = (result: SearchResult) => {
     const channelUrl = MATRIX_CHANNELS.find(
@@ -72,17 +97,31 @@ const Content = ({
     return `${channelUrl}#${result.messageid}`;
   };
 
-  const handleItemClick = (newUrl: string) => {
-    setCurrentUrl("");
+  const handleItemClick = useCallback((newUrl: string) => {
     setCurrentUrl(newUrl);
-  };
+  }, []);
 
+  const handleIframeLoadStart = useCallback(() => {
+    setIsLoaded(false);
+  }, []);
+
+  const handleIframeLoad = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
+
+  const pages = loadMore !== undefined ? (
+    <Button
+      variant="ghost"
+      onClick={handleLoadMore}
+      className="text-primary w-full text-sm"
+    >more</Button>
+  ) : null;
 
   return (
     <div className={cn(
       "flex h-full",
       {
-        "p-8 relative": !hasSidebar
+        "px-4 py-8 relative": !hasSidebar
       }
     )}>
       <div className={cn(
@@ -90,15 +129,19 @@ const Content = ({
         { "relative": hasSidebar }
       )}>
         <Button variant="ghost"  className="text-brand absolute top-0 right-0" onClick={close}>
-          <CloseIcon />
+          <SquareX />
         </Button>
         <iframe
+          onLoadStart={handleIframeLoadStart}
+          onLoad={handleIframeLoad}
           src={currentUrl ?? 'about:blank'}
           style={{
             width: "100%",
             height: "100%",
             colorScheme: "dark",
+            opacity: isLoaded ? 100 : 0,
           }}
+          className="animate-in fade-in-0"
           title="Embedded thread view"
         />
       </div>
@@ -125,21 +168,21 @@ const Content = ({
                       handleItemClick(itemUrl)
                     }}>
                   <div
-                    className={`p-2 rounded-md mb-2 cursor-pointer transition-colors border ${
+                    className={`text-xs p-2 rounded-md mb-2 cursor-pointer transition-colors border ${
                       isSelected
                         ? "bg-brand-dark/15 border-brand/50 shadow-sm"
-                        : "bg-background border-border hover:bg-muted/50 hover:border-border"
+                        : "bg-card border-border hover:bg-accent hover:border-brand/50"
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <span
-                        className={`font-medium text-sm truncate pr-2 ${
+                        className={`font-medium truncate pr-2 ${
                           isSelected ? "text-brand" : "text-white light:text-neutral-800"
                         }`}
                       >
                         {isPageResult ? result.title : result.sender}
                       </span>
-                      <span className="text-sm text-muted-foreground whitespace-nowrap">
+                      <span className="text-muted-foreground whitespace-nowrap">
                         {isPageResult ? formatDate(result.lastModified) : formatDate(result.timestamp)}
                       </span>
                     </div>
@@ -151,7 +194,7 @@ const Content = ({
                         searchMode={searchMode}
                         options={{maxLength: 150, contextLength: 50}}
                       /> ) : (
-                        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+                        <p className="text-muted-foreground leading-relaxed line-clamp-3">
                           {highlightText(
                             result.content || "",
                             searchQuery.split(/\s+/),
@@ -163,6 +206,8 @@ const Content = ({
                   </a>
                 );
               })}
+
+              {pages}
             </div>
           </div>
           </div>
@@ -182,31 +227,3 @@ function detectType(result: SearchResult | PageResult): ({
     ? { isPageResult: true, result }
     : { isPageResult: false, result }
 }
-
-const CloseIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    aria-label="Close"
-    role="img"
-  >
-    <line
-      x1="6"
-      y1="6"
-      x2="18"
-      y2="18"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-    />
-    <line
-      x1="6"
-      y1="18"
-      x2="18"
-      y2="6"
-      stroke="currentColor"
-    />
-  </svg>
-);

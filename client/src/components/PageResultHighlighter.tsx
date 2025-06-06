@@ -1,8 +1,8 @@
 import ReactMarkdown from "react-markdown";
 import { Components } from "react-markdown";
-import {PageResult} from "./PageResults";
 import {cn, highlightText, SearchMode} from "@/lib/utils";
 import {ClassValue} from "clsx";
+import {PageResult} from "@/lib/api";
 
 interface PageResultHighlighterProps {
   result: PageResult;
@@ -23,6 +23,11 @@ export const PageResultHighlighter = ({
       searchQuery,
       searchMode
     ) as Components["p"],
+    em: createHighlightedComponent(
+      "em",
+      searchQuery,
+      searchMode
+    ) as Components["em"],
     h1: createHighlightedComponent(
       "h1",
       searchQuery,
@@ -71,7 +76,7 @@ export const PageResultHighlighter = ({
   };
 
   return (
-    <div className="text-sm text-muted-foreground prose prose-sm dark:prose-invert max-w-none overflow-hidden [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:break-words [&_p]:break-words [&_table]:w-full [&_table]:overflow-x-auto [&_img]:max-w-full [&_img]:h-auto">
+    <div className="text-muted-foreground font-light prose prose-sm dark:prose-invert max-w-none overflow-hidden [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:break-words [&_p]:break-words [&_table]:w-full [&_table]:overflow-x-auto [&_img]:max-w-full [&_img]:h-auto">
       <ReactMarkdown components={markdownComponents}>
         {truncateContent(result.content, searchQuery, searchMode, options)}
       </ReactMarkdown>
@@ -89,20 +94,19 @@ const createHighlightedComponent = (
     children,
     ...props
   }: { children?: React.ReactNode } & Record<string, unknown>) => {
-    if (typeof children === "string") {
-      return (
-        <Component
-          {...props}
-          className={cn(
-            (Component as string).includes("h") ? "font-bold" : "",
-            props.className as ClassValue
-          )}
-        >
-          {highlightText(children, [searchQuery], searchMode)}
-        </Component>
-      );
-    }
-    return <Component {...props}>{children}</Component>;
+    const childArray = Array.isArray(children) ? children : [children];
+
+    return (
+      <Component
+        {...props}
+        className={cn(
+          (Component as string).includes("h") ? "font-normal underline" : "",
+          props.className as ClassValue
+        )}
+      >
+      {childArray.map(child => typeof child === 'string' ? highlightText(child, [searchQuery], searchMode) : child)}
+      </Component>
+    );
   };
 };
 
