@@ -23,7 +23,8 @@
     "fill-archived-messages-for-n-days": "tsx ./src/scripts/runFillArchivedMessages.ts",
     "generate-embeddings": "tsx ./src/scripts/runGenerateEmbeddingsBatch.ts",
     "fetch-pages": "tsx ./src/scripts/runFetchPages.ts",
-    "fetch-github": "tsx ./src/scripts/runFetchGithubPages.ts"
+    "fetch-github": "tsx ./src/scripts/runFetchGithubPages.ts",
+    "fetch-discord": "tsx ./src/scripts/runFetchDiscordMessages.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",

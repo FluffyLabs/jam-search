@@ -2,6 +2,7 @@ import {
   Client,
   GatewayIntentBits,
   TextChannel,
+  ThreadChannel,
   Message,
   Collection,
 } from "discord.js";
@@ -15,6 +16,7 @@ export interface DiscordConfig {
   startDate?: string; // Start date in yyyy-MM-dd format (optional)
   endDate?: string; // End date in yyyy-MM-dd format (optional)
   maxMessages?: number; // Maximum number of messages to fetch per channel (optional, default: 1000)
+  includeThreads?: boolean; // Whether to include messages from threads (optional, default: true)
 }
 
 export interface DiscordMessage {
@@ -38,8 +40,13 @@ async function fetchChannelMessages(
   } = {}
 ): Promise<DiscordMessage[]> {
   const channel = await client.channels.fetch(channelId);
-  if (!channel || !(channel instanceof TextChannel)) {
-    throw new Error(`Channel ${channelId} not found or not a text channel`);
+  if (
+    !channel ||
+    !(channel instanceof TextChannel || channel instanceof ThreadChannel)
+  ) {
+    throw new Error(
+      `Channel ${channelId} not found or not a text/thread channel`
+    );
   }
 
   const maxMessages = config.maxMessages || 1000;
@@ -54,7 +61,8 @@ async function fetchChannelMessages(
   let lastMessageId: string | undefined;
   let fetchedCount = 0;
 
-  console.log(`Fetching messages from channel ${channelId}...`);
+  const channelType = channel instanceof ThreadChannel ? "thread" : "channel";
+  console.log(`Fetching messages from ${channelType} ${channelId}...`);
   if (startDate) console.log(`  Start date: ${startDate.toISOString()}`);
   if (endDate) console.log(`  End date: ${endDate.toISOString()}`);
   console.log(`  Max messages: ${maxMessages}`);
@@ -134,6 +142,41 @@ async function fetchChannelMessages(
   return allMessages;
 }
 
+async function fetchThreadsFromChannel(
+  client: Client,
+  channelId: string
+): Promise<ThreadChannel[]> {
+  const channel = await client.channels.fetch(channelId);
+  if (!channel || !(channel instanceof TextChannel)) {
+    return [];
+  }
+
+  const threads: ThreadChannel[] = [];
+
+  try {
+    // Fetch active threads
+    const activeThreads = await channel.threads.fetchActive();
+    threads.push(...Array.from(activeThreads.threads.values()));
+
+    // Fetch archived threads (both public and private)
+    const archivedPublic = await channel.threads.fetchArchived({
+      type: "public",
+    });
+    threads.push(...Array.from(archivedPublic.threads.values()));
+
+    const archivedPrivate = await channel.threads.fetchArchived({
+      type: "private",
+    });
+    threads.push(...Array.from(archivedPrivate.threads.values()));
+
+    console.log(`Found ${threads.length} threads in channel ${channelId}`);
+    return threads;
+  } catch (error) {
+    console.warn(`Failed to fetch threads from channel ${channelId}:`, error);
+    return [];
+  }
+}
+
 export async function fetchDiscordContent(
   config: DiscordConfig
 ): Promise<DiscordMessage[]> {
@@ -150,14 +193,47 @@ export async function fetchDiscordContent(
     console.log("Successfully logged in to Discord");
 
     const allMessages: DiscordMessage[] = [];
+    const includeThreads = config.includeThreads !== false; // Default to true
+
     for (const channelId of config.channels) {
       console.log(`Fetching messages from channel ${channelId}`);
-      const messages = await fetchChannelMessages(client, channelId, {
+
+      // Fetch messages from the main channel
+      const channelMessages = await fetchChannelMessages(client, channelId, {
         startDate: config.startDate,
         endDate: config.endDate,
         maxMessages: config.maxMessages,
       });
-      allMessages.push(...messages);
+      allMessages.push(...channelMessages);
+
+      // Fetch messages from threads if enabled
+      if (includeThreads) {
+        console.log(`Fetching threads from channel ${channelId}`);
+        const threads = await fetchThreadsFromChannel(client, channelId);
+
+        for (const thread of threads) {
+          console.log(
+            `Fetching messages from thread "${thread.name}" (${thread.id})`
+          );
+          try {
+            const threadMessages = await fetchChannelMessages(
+              client,
+              thread.id,
+              {
+                startDate: config.startDate,
+                endDate: config.endDate,
+                maxMessages: config.maxMessages,
+              }
+            );
+            allMessages.push(...threadMessages);
+          } catch (error) {
+            console.warn(
+              `Failed to fetch messages from thread ${thread.id}:`,
+              error
+            );
+          }
+        }
+      }
     }
 
     return allMessages;
@@ -166,10 +242,7 @@ export async function fetchDiscordContent(
   }
 }
 
-export async function storeContentInDatabase(
-  messages: DiscordMessage[],
-  roomId: string
-) {
+export async function storeContentInDatabase(messages: DiscordMessage[]) {
   await db.transaction(async (tx) => {
     for (const message of messages) {
       // Skip empty messages
@@ -180,7 +253,6 @@ export async function storeContentInDatabase(
         .values({
           messageid: message.id,
           channelid: message.channelId,
-          roomid: roomId,
           sender: message.author.username,
           author_id: message.author.id,
           content: message.content,

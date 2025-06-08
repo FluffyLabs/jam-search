@@ -20,6 +20,10 @@ import {
   searchMessages,
   searchMessagesRequestSchema,
 } from "./api/searchMessages.js";
+import {
+  searchDiscords,
+  searchDiscordsRequestSchema,
+} from "./api/searchDiscords.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { db } from "./db/db.js";
 import {
@@ -54,6 +58,11 @@ export function createApp() {
   app.get("/search/messages", async (c) => {
     const data = searchMessagesRequestSchema.parse(c.req.query());
     return c.json(await searchMessages(data));
+  });
+
+  app.get("/search/discords", async (c) => {
+    const data = searchDiscordsRequestSchema.parse(c.req.query());
+    return c.json(await searchDiscords(data));
   });
 
   app.get("/search/pages", async (c) => {

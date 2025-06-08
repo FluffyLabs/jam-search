@@ -10,7 +10,7 @@ const config: DiscordConfig = {
   token: process.env.DISCORD_TOKEN || "",
   channels: [
     // Add your Discord channel IDs here
-    "123456789012345678", // Example channel ID
+    "1357838246276497590", // Example channel ID
   ],
 };
 
@@ -18,7 +18,7 @@ const config: DiscordConfig = {
 fetchDiscordContent(config)
   .then(async (messages) => {
     console.log(`Found ${messages.length} messages`);
-    await storeContentInDatabase(messages, "discord-channel");
+    await storeContentInDatabase(messages);
     console.log("Done! Closing connection...");
     await db.$client.end();
   })
