@@ -1,9 +1,9 @@
 import type { Job } from "node-schedule";
+import { setupDiscordJob } from "./discordJob.js";
 import { setupDocsPagesJob } from "./docsPagesJob.js";
 import { setupGithubPagesJob } from "./githubPagesJob.js";
 import { setupGraypaperJob } from "./graypaperJob.js";
 import { setupMatrixJob } from "./matrixJob.js";
-import { setupDiscordJob } from "./discordJob.js";
 
 export interface CronJobs {
   matrixJob: Job | null;

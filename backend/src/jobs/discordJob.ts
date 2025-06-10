@@ -1,9 +1,9 @@
 import { format, subDays } from "date-fns";
 import { type Job, scheduleJob } from "node-schedule";
 import {
+  type DiscordConfig,
   fetchDiscordContent,
   storeContentInDatabase,
-  type DiscordConfig,
 } from "../scripts/fetchDiscordMessages.js";
 import { processBatchEmbeddings } from "../scripts/generateEmbeddingsBatch.js";
 

@@ -13,6 +13,10 @@ import { logger } from "hono/logger";
 import OpenAI from "openai";
 import { z } from "zod";
 import {
+  searchDiscords,
+  searchDiscordsRequestSchema,
+} from "./api/searchDiscords.js";
+import {
   searchGraypaper,
   searchGraypaperRequestSchema,
 } from "./api/searchGraypapers.js";
@@ -20,10 +24,6 @@ import {
   searchMessages,
   searchMessagesRequestSchema,
 } from "./api/searchMessages.js";
-import {
-  searchDiscords,
-  searchDiscordsRequestSchema,
-} from "./api/searchDiscords.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { db } from "./db/db.js";
 import {

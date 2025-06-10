@@ -1,14 +1,14 @@
 import {
   Client,
+  Collection,
   GatewayIntentBits,
+  Message,
   TextChannel,
   ThreadChannel,
-  Message,
-  Collection,
 } from "discord.js";
+import { sql } from "drizzle-orm";
 import { db } from "../db/db.js";
 import { discordsTable } from "../db/schema.js";
-import { sql } from "drizzle-orm";
 
 export interface DiscordConfig {
   token: string;
@@ -51,10 +51,10 @@ async function fetchChannelMessages(
 
   const maxMessages = config.maxMessages || 1000;
   const startDate = config.startDate
-    ? new Date(config.startDate + "T00:00:00.000Z")
+    ? new Date(`${config.startDate}T00:00:00.000Z`)
     : null;
   const endDate = config.endDate
-    ? new Date(config.endDate + "T23:59:59.999Z")
+    ? new Date(`${config.endDate}T23:59:59.999Z`)
     : null;
 
   const allMessages: DiscordMessage[] = [];
@@ -63,9 +63,9 @@ async function fetchChannelMessages(
 
   const channelType = channel instanceof ThreadChannel ? "thread" : "channel";
   console.log(`Fetching messages from ${channelType} ${channelId}...`);
-  if (startDate) console.log(`  Start date: ${startDate.toISOString()}`);
-  if (endDate) console.log(`  End date: ${endDate.toISOString()}`);
-  console.log(`  Max messages: ${maxMessages}`);
+  if (startDate) console.log(`Start date: ${startDate.toISOString()}`);
+  if (endDate) console.log(`End date: ${endDate.toISOString()}`);
+  console.log(`Max messages: ${maxMessages}`);
 
   while (fetchedCount < maxMessages) {
     const limit = Math.min(100, maxMessages - fetchedCount); // Discord API limit is 100
@@ -78,7 +78,7 @@ async function fetchChannelMessages(
     const messages = await channel.messages.fetch(fetchOptions);
 
     if (messages.size === 0) {
-      console.log(`  No more messages available`);
+      console.log("No more messages available");
       break;
     }
 
@@ -94,7 +94,7 @@ async function fetchChannelMessages(
       }
 
       if (startDate && messageDate < startDate) {
-        console.log(`  Reached messages older than start date, stopping fetch`);
+        console.log("Reached messages older than start date, stopping fetch");
         return allMessages;
       }
 
@@ -120,11 +120,11 @@ async function fetchChannelMessages(
     }
 
     console.log(
-      `  Fetched batch: ${addedInThisBatch} messages (total: ${fetchedCount})`
+      `Fetched batch: ${addedInThisBatch} messages (total: ${fetchedCount})`
     );
 
     if (addedInThisBatch === 0) {
-      console.log(`  No messages in date range found in this batch, stopping`);
+      console.log("No messages in date range found in this batch, stopping");
       break;
     }
 
@@ -133,12 +133,12 @@ async function fetchChannelMessages(
 
     // If we got fewer messages than requested, we've reached the end
     if (messages.size < limit) {
-      console.log(`  Reached end of channel messages`);
+      console.log("Reached end of channel messages");
       break;
     }
   }
 
-  console.log(`  Total messages fetched: ${allMessages.length}`);
+  console.log(`Total messages fetched: ${allMessages.length}`);
   return allMessages;
 }
 
