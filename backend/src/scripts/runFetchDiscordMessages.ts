@@ -5,13 +5,9 @@ import {
   storeContentInDatabase,
 } from "./fetchDiscordMessages.js";
 
-// Example usage:
 const config: DiscordConfig = {
   token: process.env.DISCORD_TOKEN || "",
-  channels: [
-    // Add your Discord channel IDs here
-    "1357838246276497590", // Example channel ID
-  ],
+  channels: ["1357838246276497590"],
 };
 
 // Fetch and store Discord messages
