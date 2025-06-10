@@ -1,56 +1,19 @@
-import { useState } from "react";
-import { SearchForm } from "@/components/SearchForm";
+import { useCallback, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { MatrixResultList } from "@/components/MatrixResultList";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { GraypaperResults } from "@/components/GraypaperResults";
-import { ArrowRight } from "lucide-react";
+import { GraypaperResults } from "@/components/results/GraypaperResults";
 import { MATRIX_CHANNELS } from "@/consts";
 import { SearchMode } from "@/lib/utils";
-import { CommercialBanner } from "@/components/CommercialBanner";
-import { ShareUrl } from "@/components/ShareUrl";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PageResults } from "@/components/PageResults";
+import { Section } from "@/components/results/Section";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
-import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
 import GithubLogo from "@/assets/logos/github.png";
 import {useResults} from "@/hooks/useResults";
 import {initialSources, Source, SOURCE_OPTIONS, stringToSource} from "@/lib/sources";
-
-interface ResultHeaderProps {
-  onSourceChange?: (sources: Source[]) => void;
-}
-
-const ResultHeader = ({ onSourceChange }: ResultHeaderProps) => {
-  const [selectedSources, setSelectedSources] =
-    useState<Source[]>(initialSources);
-
-  const handleSourceChange = (stringSources: string[]) => {
-    const sources = stringSources.map(x => stringToSource(x)!);
-    setSelectedSources(sources);
-    onSourceChange?.(sources);
-  };
-
-  return (
-    <div className="w-full bg-card border-b border-border mb-6 sticky top-0 z-10 px-2">
-      <div className="flex items-center justify-between py-3 px-2">
-        <div className="flex items-center bg-card/80 border border-border rounded-md">
-          <MultiSelect
-            options={SOURCE_OPTIONS}
-            selectedValues={selectedSources}
-            onValueChange={handleSourceChange}
-            placeholder="Select sources"
-            className="min-w-[90px] sm:min-w-[155px]"
-            maxCount={0}
-            required
-          />
-        </div>
-        <ShareUrl />
-      </div>
-    </div>
-  );
-};
+import {MatrixResults} from "@/components/results/MatrixResults";
+import {PageResultCards} from "@/components/results/PageResultCards";
+import {ResultHeader} from "@/components/results/ResultHeader";
+import {ShowAll} from "@/components/ShowAll";
+import {Container} from "@/components/Container";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -60,37 +23,32 @@ const SearchResults = () => {
   const [selectedSources, setSelectedSources] =
     useState<Source[]>(initialSources);
 
+  const handleSourceChange = useCallback((stringSources: string[]) => {
+    const sources = stringSources.map(x => stringToSource(x)!);
+    setSelectedSources(sources);
+  }, []);
+
   const { query, filters, graypaperChat, jamChat, jamchain, w3f, graypaper } = useResults(richQuery, searchModeParam, selectedSources);
   
-  const handleSourceChange = (sources: Source[]) => {
-    setSelectedSources(sources);
-    // TODO: Implement source filtering logic here
-  };
-
-  const isError =
-    graypaperChat.isError ||
-    jamChat.isError ||
-    jamchain.isError ||
-    w3f.isError;
-  if (isError) {
-    return (
-      <div className="text-center text-2xl p-8 text-destructive-foreground">
-        Error loading search results
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
-      <ResultHeader onSourceChange={handleSourceChange} />
+      <ResultHeader 
+        left={
+          <div className="flex items-center bg-card/80 border border-border rounded-md">
+            <MultiSelect
+              options={SOURCE_OPTIONS}
+              selectedValues={selectedSources}
+              onValueChange={handleSourceChange}
+              placeholder="Select sources"
+              maxCount={0}
+              required
+            />
+          </div>
+        }
+        showSearchOptions={selectedSources.length === 1 && selectedSources[0] === Source.Matrix}
+      />
 
-      <div className="w-full max-w-4xl px-7">
-        <SearchForm
-          showSearchOptions={
-            selectedSources.length === 1 && selectedSources[0] === "matrix"
-          }
-        />
-
+      <Container>
         {/* Display active filters as tags */}
         {query && filters.length > 0 && (
           <div className="mb-6">
@@ -119,290 +77,94 @@ const SearchResults = () => {
 
           {selectedSources.includes(Source.Matrix) && (
             <>
-              {/* Graypaper channel results */}
-              <div className="mt-6">
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-sm">
-                    {MATRIX_CHANNELS[0].name} @ Matrix ({graypaperChat.totalResults}{" "}
-                    results)
-                  </h2>
-                    <Link
-                      to={(() => {
-                        const params = new URLSearchParams(location.search);
-                        params.set("channelId", MATRIX_CHANNELS[0].id);
-                        return `/results/matrix?${params.toString()}`;
-                      })()}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-primary flex items-center text-xs"
-                      >
-                        {graypaperChat.pagination.hasNextPage && (<>
-                          View all {graypaperChat.totalResults} results
-                          <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                        </>)}
-                      </Button>
-                    </Link>
-                </div>
-
-                <div className="mb-4">
-                  <CommercialBanner
-                    title="Matrix archiver"
-                    logo={
-                      <img
-                        src={MatrixArchiverLogo}
-                        className="size-6 p-0.5"
-                        alt="Matrix Archiver Logo"
-                      />
-                    }
-                    url={{
-                      display: "paritytech.github.io/matrix-archiver",
-                      href: "https://paritytech.github.io/matrix-archiver",
-                    }}
-                  />
-                </div>
-                {graypaperChat.isLoading && !graypaperChat.results.length ? (
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-2 border-b border-border pb-6">
-                      <Skeleton className="h-4 w-[160px] my-1" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-2 w-[80px] mt-1" />
-                    </div>
-                    <div className="flex flex-col gap-2 border-b border-border pb-6">
-                      <Skeleton className="h-4 w-[160px] my-1" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-2 w-[80px] mt-1" />
-                    </div>
-                  </div>
-                ) : (
-                  <MatrixResultList
-                    results={graypaperChat.results}
-                    searchQuery={query}
-                    searchMode={searchModeParam as SearchMode}
-                  />
-                )}
-              </div>
-
-              {/* Jam channel results */}
-              <div className="mt-6">
-                <div className="flex justify-between items-center mb-3">
-                  <h2 className="text-sm">
-                    {MATRIX_CHANNELS[1].name} @ Matrix ({jamChat.totalResults}{" "}
-                    results)
-                  </h2>
-                  <Link
-                    to={(() => {
-                      const params = new URLSearchParams(location.search);
-                      params.set("channelId", MATRIX_CHANNELS[1].id);
-                      return `/results/matrix?${params.toString()}`;
-                    })()}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary flex items-center text-xs"
-                    >
-                      {jamChat.pagination.hasNextPage && (<>
-                        View all {jamChat.totalResults} results
-                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                      </>)}
-                    </Button>
-                  </Link>
-                </div>
-
-                <div className="mb-4">
-                  <CommercialBanner
-                    title="Matrix archiver"
-                    logo={
-                      <img
-                        src={MatrixArchiverLogo}
-                        className="size-6 p-0.5"
-                        alt="Matrix Archiver Logo"
-                      />
-                    }
-                    url={{
-                      display: "paritytech.github.io/matrix-archiver",
-                      href: "https://paritytech.github.io/matrix-archiver",
-                    }}
-                  />
-                </div>
-                {jamChat.isLoading && !jamChat.results.length ? (
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-2 border-b border-border pb-6">
-                      <Skeleton className="h-4 w-[160px] my-1" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-2 w-[80px] mt-1" />
-                    </div>
-                    <div className="flex flex-col gap-2 border-b border-border pb-6">
-                      <Skeleton className="h-4 w-[160px] my-1" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-3 w-full" />
-                      <Skeleton className="h-2 w-[80px] mt-1" />
-                    </div>
-                  </div>
-                ) : (
-                  <MatrixResultList
-                    results={jamChat.results}
-                    searchQuery={query}
-                    searchMode={searchModeParam as SearchMode}
-                  />
-                )}
-              </div>
+              <MatrixResults
+                channel={MATRIX_CHANNELS[0]}
+                queryResult={graypaperChat}
+                query={query}
+                searchMode={searchModeParam as SearchMode}
+              />
+              <MatrixResults
+                channel={MATRIX_CHANNELS[1]}
+                queryResult={jamChat}
+                query={query}
+                searchMode={searchModeParam as SearchMode}
+              />
             </>
           )}
 
           {selectedSources.includes(Source.Jamchain) && (
             <div className="mt-6">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-sm">
-                  docs.jamcha.in ({jamchain.totalResults} results)
-                </h2>
-                  <Link
-                    to={(() => {
-                      const params = new URLSearchParams(location.search);
-                      params.set("site", "docs.jamcha.in");
-                      return `/results/pages?${params.toString()}`;
-                    })()}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary flex items-center text-xs"
-                    >
-                      {jamchain.pagination.hasNextPage && (<>
-                        View all {jamchain.totalResults} results
-                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                      </>)}
-                    </Button>
-                  </Link>
-              </div>
-
               <div className="mb-4">
-                <CommercialBanner
-                  logo={
-                    <img
-                      src={JamchainLogo}
-                      className="size-6"
-                      alt="JamChain Logo"
-                    />
+                <Section
+                  logo={<img
+                    src={JamchainLogo}
+                    className="size-4"
+                    alt="JamChain Logo"
+                  />}
+                  url="https://docs.jamcha.in"
+                  title="docs.jamcha.in"
+                  endBlock={
+                    <Link
+                      to={ (() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set("site", "docs.jamcha.in");
+                        return `/results/pages?${params.toString()}`;
+                      })()}
+                    >
+                      <ShowAll
+                        hasNextPage={jamchain.pagination.hasNextPage} 
+                        totalResults={jamchain.totalResults}
+                      />
+                    </Link>
                   }
-                  title="JamCha.in Documentation"
-                  url={{
-                    display: "docs.jamcha.in",
-                    href: "https://docs.jamcha.in",
-                  }}
                 />
               </div>
-
-              {jamchain.isLoading && !jamchain.results.length ? (
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-col gap-2 border-b border-border pb-6">
-                    <Skeleton className="h-4 w-[160px] my-1" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-2 w-[80px] mt-1" />
-                  </div>
-                  <div className="flex flex-col gap-2 border-b border-border pb-6">
-                    <Skeleton className="h-4 w-[160px] my-1" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-2 w-[80px] mt-1" />
-                  </div>
-                </div>
-              ) : (
-                <PageResults
-                  results={jamchain.results}
-                  searchQuery={query}
-                  searchMode={searchModeParam as SearchMode}
-                />
-              )}
+              <PageResultCards
+                queryResult={jamchain}
+                searchQuery={query}
+                searchMode={searchModeParam as SearchMode}
+              />
             </div>
           )}
 
           {selectedSources.includes(Source.GithubW3fJamtestvectors) && (
             <div className="mt-6">
-              <div className="flex justify-between items-center mb-3">
-                <h2 className="text-sm">
-                  github.com/w3f/jamtestvectors (
-                  {w3f.totalResults} results)
-                </h2>
-
-                  <Link
-                    to={(() => {
-                      const params = new URLSearchParams(location.search);
-                      params.set("site", "github.com/w3f/jamtestvectors");
-                      return `/results/pages?${params.toString()}`;
-                    })()}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary flex items-center text-xs"
-                    >
-{w3f.pagination.hasNextPage && (<>
-                        View all {w3f.totalResults} results
-                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                      </>)}
-                    </Button>
-                  </Link>
-              </div>
-
               <div className="mb-4">
-                <CommercialBanner
+                <Section
                   logo={
                     <img
                       src={GithubLogo}
-                      className="size-6"
+                      className="size-4"
                       alt="Github Logo"
                     />
                   }
-                  title="W3F Jam Test Vectors"
-                  url={{
-                    display: "github.com/w3f/jamtestvectors",
-                    href: "https://github.com/w3f/jamtestvectors",
-                  }}
+                  url="https://github.com/w3f/jamtestvectors"
+                  title="w3f/jamtestvectors"
+                  endBlock={
+                    <Link
+                      to={(() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set("site", "github.com/w3f/jamtestvectors");
+                        return `/results/pages?${params.toString()}`;
+                      })()}
+                    >
+                      <ShowAll
+                        hasNextPage={w3f.pagination.hasNextPage} 
+                        totalResults={w3f.totalResults}
+                      />
+                    </Link>
+                  }
                 />
               </div>
-
-              {w3f.isLoading &&
-              !w3f.results.length ? (
-                <div className="flex flex-col gap-6">
-                  <div className="flex flex-col gap-2 border-b border-border pb-6">
-                    <Skeleton className="h-4 w-[160px] my-1" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-2 w-[80px] mt-1" />
-                  </div>
-                  <div className="flex flex-col gap-2 border-b border-border pb-6">
-                    <Skeleton className="h-4 w-[160px] my-1" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-2 w-[80px] mt-1" />
-                  </div>
-                </div>
-              ) : (
-                <PageResults
-                  results={w3f.results}
-                  searchQuery={query}
-                  searchMode={searchModeParam as SearchMode}
-                />
-              )}
+              <PageResultCards
+                queryResult={w3f}
+                searchQuery={query}
+                searchMode={searchModeParam as SearchMode}
+              />
             </div>
           )}
         </div>
-      </div>
+      </Container>
     </div>
   );
 };
