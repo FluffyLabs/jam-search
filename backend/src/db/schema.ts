@@ -112,10 +112,10 @@ export const discordsTable = pgTable(
   "discords",
   {
     id: serial("id").primaryKey(),
-    messageid: text("messageid").unique(),
-    channelid: text("channelid"),
+    messageId: text("message_id").unique(),
+    channelId: text("channel_id"),
     sender: text("sender"),
-    author_id: text("author_id"),
+    authorId: text("author_id"),
     content: text("content"),
     timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
     embedding: vector("embedding", { dimensions: 1536 }),
@@ -127,18 +127,18 @@ export const discordsTable = pgTable(
         table.id,
         table.sender,
         table.content,
-        table.channelid,
+        table.channelId,
         table.timestamp
       )
       .with({
         key_field: "id",
-        text_fields: '\'{ "channelid": { "fast": true } }\'',
+        text_fields: '\'{ "channel_id": { "fast": true } }\'',
       }),
     index("discords_embedding_index").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
-    index("discords_channelid_idx").on(table.channelid),
+    index("discords_channel_id_idx").on(table.channelId),
   ]
 );
 

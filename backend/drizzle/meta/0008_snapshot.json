@@ -1,5 +1,5 @@
 {
-  "id": "7e1b6cd5-e8f5-42bc-919c-45b8bea477f3",
+  "id": "c7c70bdd-a705-4c2b-89c1-e1905d8cbf13",
   "prevId": "22d516b4-20f5-4eb1-bca6-72cbde0b0460",
   "version": "7",
   "dialect": "postgresql",
@@ -14,14 +14,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "messageid": {
-          "name": "messageid",
+        "message_id": {
+          "name": "message_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "channelid": {
-          "name": "channelid",
+        "channel_id": {
+          "name": "channel_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -80,7 +80,7 @@
               "nulls": "last"
             },
             {
-              "expression": "channelid",
+              "expression": "channel_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -97,7 +97,7 @@
           "method": "bm25",
           "with": {
             "key_field": "id",
-            "text_fields": "'{ \"channelid\": { \"fast\": true } }'"
+            "text_fields": "'{ \"channel_id\": { \"fast\": true } }'"
           }
         },
         "discords_embedding_index": {
@@ -116,11 +116,11 @@
           "method": "hnsw",
           "with": {}
         },
-        "discords_channelid_idx": {
-          "name": "discords_channelid_idx",
+        "discords_channel_id_idx": {
+          "name": "discords_channel_id_idx",
           "columns": [
             {
-              "expression": "channelid",
+              "expression": "channel_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -135,11 +135,11 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "discords_messageid_unique": {
-          "name": "discords_messageid_unique",
+        "discords_message_id_unique": {
+          "name": "discords_message_id_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "messageid"
+            "message_id"
           ]
         }
       },
