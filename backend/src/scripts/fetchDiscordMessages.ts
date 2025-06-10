@@ -251,20 +251,20 @@ export async function storeContentInDatabase(messages: DiscordMessage[]) {
       await tx
         .insert(discordsTable)
         .values({
-          messageid: message.id,
-          channelid: message.channelId,
+          messageId: message.id,
+          channelId: message.channelId,
           sender: message.author.username,
-          author_id: message.author.id,
+          authorId: message.author.id,
           content: message.content,
           timestamp: message.timestamp,
         })
         .onConflictDoUpdate({
-          target: discordsTable.messageid,
+          target: discordsTable.messageId,
           set: {
             content: message.content,
             sender: message.author.username,
-            author_id: message.author.id,
-            channelid: message.channelId,
+            authorId: message.author.id,
+            channelId: message.channelId,
             timestamp: message.timestamp,
           },
         });

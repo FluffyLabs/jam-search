@@ -166,10 +166,10 @@ export async function searchDiscords(
 
   const query = db
     .select({
-      messageid: discordsTable.messageid,
-      channelid: discordsTable.channelid,
+      messageId: discordsTable.messageId,
+      channelId: discordsTable.channelId,
       sender: discordsTable.sender,
-      author_id: discordsTable.author_id,
+      authorId: discordsTable.authorId,
       content: discordsTable.content,
       timestamp: discordsTable.timestamp,
       similarity,
