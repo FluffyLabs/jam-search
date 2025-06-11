@@ -1,10 +1,11 @@
 export enum Source {
-  Matrix = 'matrix',
-  Graypaper = 'graypaper',
-  Jamchain = 'jamchain',
-  GithubW3fJamtestvectors = 'githubW3fJamtestvectors',
-  W3f = 'w3f',
-  Github = 'github',
+  Matrix = "matrix",
+  Graypaper = "graypaper",
+  Jamchain = "jamchain",
+  GithubW3fJamtestvectors = "githubW3fJamtestvectors",
+  W3f = "w3f",
+  Github = "github",
+  JamDaoDiscord = "jamDaoDiscord",
 }
 
 export function stringToSource(x: string): Source | undefined {
@@ -20,7 +21,12 @@ export const SOURCE_OPTIONS = [
   { label: "Matrix channels", value: Source.Matrix },
   { label: "Graypaper.pdf", value: Source.Graypaper },
   { label: "docs.jamcha.in", value: Source.Jamchain },
-  { label: "github.com/w3f/jamtestvectors", value: Source.GithubW3fJamtestvectors},
+  {
+    label: "github.com/w3f/jamtestvectors",
+    value: Source.GithubW3fJamtestvectors,
+  },
+  { label: "JAM DAO Discord", value: Source.JamDaoDiscord },
+
   { label: "Web3 Foundation", value: Source.W3f, disabled: true },
   { label: "GitHub Source Code", value: Source.Github, disabled: true },
 ];
@@ -30,4 +36,5 @@ export const initialSources = [
   Source.Graypaper,
   Source.Jamchain,
   Source.GithubW3fJamtestvectors,
+  Source.JamDaoDiscord,
 ];

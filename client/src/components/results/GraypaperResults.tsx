@@ -3,14 +3,14 @@ import { Link as RouterLink, useLocation } from "react-router";
 import { Section } from "./Section";
 import { getTextToDisplay, SearchMode } from "@/lib/utils";
 import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
-import {useResults} from "@/hooks/useResults";
-import {NoResults} from "./NoResults";
-import {ResultCard} from "./ResultCard";
-import {ViewEmbedded} from "../ViewEmbedded";
-import {ShowAll} from "../ShowAll";
+import { useResults } from "@/hooks/useResults";
+import { NoResults } from "./NoResults";
+import { ResultCard } from "./ResultCard";
+import { ViewEmbedded } from "../ViewEmbedded";
+import { ShowAll } from "../ShowAll";
 
 interface GraypaperResultsProps {
-  queryResult: ReturnType<typeof useResults>['graypaper'],
+  queryResult: ReturnType<typeof useResults>["graypaper"];
   query: string;
   searchMode?: SearchMode;
 }
@@ -25,7 +25,7 @@ export const GraypaperResults = ({
 
   const graypaperReader = {
     title: "Gray Paper",
-    url: 'https://graypaper.fluffylabs.dev',
+    url: "https://graypaper.fluffylabs.dev",
     logo: GraypaperReaderLogo,
   };
 
@@ -44,7 +44,7 @@ export const GraypaperResults = ({
         endBlock={
           <RouterLink to={`/results/graypaper${location.search}`}>
             <ShowAll
-              hasNextPage={queryResult.pagination.hasNextPage} 
+              hasNextPage={queryResult.pagination.hasNextPage}
               totalResults={queryResult.totalResults}
             />
           </RouterLink>
@@ -54,23 +54,27 @@ export const GraypaperResults = ({
         <NoResults isError={isError} />
       ) : null}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        { isLoading && results.length === 0 ? (<>
-          <ResultCard.Skeleton />
-          <ResultCard.Skeleton />
-          <ResultCard.Skeleton />
-          <ResultCard.Skeleton />
-          <ResultCard.Skeleton />
-          <ResultCard.Skeleton />
-        </>) : null }
+        {isLoading && results.length === 0 ? (
+          <>
+            <ResultCard.Skeleton />
+            <ResultCard.Skeleton />
+            <ResultCard.Skeleton />
+            <ResultCard.Skeleton />
+            <ResultCard.Skeleton />
+            <ResultCard.Skeleton />
+          </>
+        ) : null}
         {results.map((section) => (
           <ResultCard
-            key={section.text}
+            key={section.id}
             header={section.title}
             footer={
               <ViewEmbedded
-                label={<>
-                  <BookOpenText className="h-3 -mr-1" /> Open reader
-                </>}
+                label={
+                  <>
+                    <BookOpenText className="h-3 -mr-1" /> Open reader
+                  </>
+                }
                 url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
                 results={[]}
                 searchQuery={query}
