@@ -9,9 +9,11 @@ import {
   type GraypaperSection,
   type Message,
   type Page,
+  type Discord,
   graypaperSectionsTable,
   messagesTable,
   pagesTable,
+  discordsTable,
 } from "../db/schema.js";
 
 // Load environment variables
@@ -32,7 +34,8 @@ const openai = new OpenAI({
 async function createBatchData(
   messages: Pick<Message, "id" | "content">[],
   graypaperSections: Pick<GraypaperSection, "id" | "title" | "text">[],
-  pages: Pick<Page, "id" | "title" | "content">[]
+  pages: Pick<Page, "id" | "title" | "content">[],
+  discords: Pick<Discord, "id" | "content" | "sender" | "channelId">[]
 ): Promise<string> {
   let batchData = "";
 
@@ -93,6 +96,29 @@ async function createBatchData(
     batchData += `${JSON.stringify(payload)}\n`;
   }
 
+  // Add discord messages to the batch data
+  for (const discord of discords) {
+    if (!discord.content) continue;
+
+    // Include sender and channel info with the content for better context
+    const content = `${discord.sender ? `${discord.sender}: ` : ""}${
+      discord.content
+    }${discord.channelId ? ` #${discord.channelId}` : ""}`;
+
+    const payload = {
+      custom_id: `discord_${discord.id}`,
+      method: "POST",
+      url: "/v1/embeddings",
+      body: {
+        input: content,
+        model: "text-embedding-3-small",
+        dimensions: 1536,
+      },
+    };
+
+    batchData += `${JSON.stringify(payload)}\n`;
+  }
+
   return batchData;
 }
 
@@ -101,6 +127,7 @@ async function fetchItemsWithoutEmbeddings(): Promise<{
   messages: Pick<Message, "id" | "content">[];
   graypaperSections: Pick<GraypaperSection, "id" | "title" | "text">[];
   pages: Pick<Page, "id" | "title" | "content">[];
+  discords: Pick<Discord, "id" | "content" | "sender" | "channelId">[];
   totalItems: number;
 }> {
   // Fetch messages without embeddings
@@ -148,9 +175,27 @@ async function fetchItemsWithoutEmbeddings(): Promise<{
 
   console.log(`Found ${pages.length} pages without embeddings`);
 
-  const totalItems = messages.length + graypaperSections.length + pages.length;
+  // Fetch discord messages without embeddings
+  console.log("Fetching discord messages without embeddings...");
+  const discords = await db
+    .select({
+      id: discordsTable.id,
+      content: discordsTable.content,
+      sender: discordsTable.sender,
+      channelId: discordsTable.channelId,
+    })
+    .from(discordsTable)
+    .where(
+      and(isNull(discordsTable.embedding), isNotNull(discordsTable.content))
+    )
+    .execute();
 
-  return { messages, graypaperSections, pages, totalItems };
+  console.log(`Found ${discords.length} discord messages without embeddings`);
+
+  const totalItems =
+    messages.length + graypaperSections.length + pages.length + discords.length;
+
+  return { messages, graypaperSections, pages, discords, totalItems };
 }
 
 // Create a temporary file that will be deleted after use
@@ -200,7 +245,7 @@ export async function processBatchEmbeddings() {
   } else {
     // Create a new batch job
     // Fetch items without embeddings
-    const { messages, graypaperSections, pages, totalItems } =
+    const { messages, graypaperSections, pages, discords, totalItems } =
       await fetchItemsWithoutEmbeddings();
 
     if (totalItems === 0) {
@@ -209,7 +254,12 @@ export async function processBatchEmbeddings() {
     }
 
     // Create batch data in memory
-    const batchData = await createBatchData(messages, graypaperSections, pages);
+    const batchData = await createBatchData(
+      messages,
+      graypaperSections,
+      pages,
+      discords
+    );
     console.log(`Created batch data with ${totalItems} items`);
 
     // Create a temporary file (will be auto-deleted)
@@ -323,6 +373,13 @@ export async function processBatchEmbeddings() {
           .update(pagesTable)
           .set({ embedding })
           .where(sql`${pagesTable.id} = ${pageId}`)
+          .execute();
+      } else if (customId.startsWith("discord_")) {
+        const discordId = Number.parseInt(customId.split("_")[1], 10);
+        await tx
+          .update(discordsTable)
+          .set({ embedding })
+          .where(sql`${discordsTable.id} = ${discordId}`)
           .execute();
       }
       updatedCount += 1;
