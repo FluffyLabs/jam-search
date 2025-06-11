@@ -44,7 +44,7 @@ export async function searchDiscords(
   // Add filter condition for channelId
   if (data.channelId) {
     whereConditions.push(
-      sql`id @@@ paradedb.match('channelid', ${data.channelId})`
+      sql`id @@@ paradedb.match('channel_id', ${data.channelId})`
     );
   }
 

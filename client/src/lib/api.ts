@@ -106,6 +106,49 @@ export async function fetchSearchResults(
   return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
 }
 
+// Fetch Discord search results
+export async function fetchDiscordSearchResults(
+  query: string,
+  options: {
+    page?: number;
+    pageSize?: number;
+    filters?: Array<{ key: string; value: string }>;
+    channelId?: string;
+    searchMode?: string;
+  } = {}
+): Promise<SearchResponse> {
+  const {
+    page = 1,
+    pageSize = 10,
+    filters = [],
+    channelId,
+    searchMode = "strict",
+  } = options;
+
+  // Build the query parameters
+  const queryParams = new URLSearchParams();
+  queryParams.append("q", query);
+  queryParams.append("page", page.toString());
+  queryParams.append("pageSize", pageSize.toString());
+
+  // Add filter parameters if provided
+  filters.forEach((filter) => {
+    queryParams.append(`filter_${filter.key}`, filter.value);
+  });
+
+  // Add channelId parameter if provided
+  if (channelId) {
+    queryParams.append("channelId", channelId);
+  }
+
+  // Add searchMode parameter if not strict (default)
+  if (searchMode !== "strict") {
+    queryParams.append("searchMode", searchMode);
+  }
+
+  return fetchApi<SearchResponse>(`/search/discords?${queryParams.toString()}`);
+}
+
 export interface GraypaperSearchResult {
   id: number;
   title: string;

@@ -8,6 +8,7 @@ import {
 const config: DiscordConfig = {
   token: process.env.DISCORD_TOKEN || "",
   channels: ["1357838246276497590"],
+  includeThreads: false,
 };
 
 // Fetch and store Discord messages

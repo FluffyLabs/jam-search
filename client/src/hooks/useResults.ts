@@ -3,13 +3,14 @@ import { MATRIX_CHANNELS } from "@/consts";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { useSearchPages } from "@/hooks/useSearchPages";
 import { parseSearchQuery } from "@/lib/utils";
-import {useSearchGraypaper} from "./useSearchGraypaper";
-import {Source} from "@/lib/sources";
+import { useSearchGraypaper } from "./useSearchGraypaper";
+import { Source } from "@/lib/sources";
+import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 
 export function useResults(
   richQuery: string,
   searchMode: string,
-  selectedSources: string[],
+  selectedSources: string[]
 ) {
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
@@ -32,6 +33,16 @@ export function useResults(
     filters,
     searchMode: searchMode,
     enabled: selectedSources.includes(Source.Matrix),
+  });
+
+  // Search for Discord #implementers channel messages
+  const implementersDiscord = useSearchDiscord({
+    query,
+    pageSize: 6,
+    filters,
+    channelId: "1357838246276497590",
+    searchMode: searchMode,
+    enabled: selectedSources.includes(Source.JamDaoDiscord),
   });
 
   // Search for JamCha.in docs
@@ -66,6 +77,7 @@ export function useResults(
     graypaper,
     graypaperChat,
     jamChat,
+    implementersDiscord,
     jamchain,
     w3f,
   };
