@@ -2,6 +2,7 @@ CREATE TABLE "discords" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"message_id" text,
 	"channel_id" text,
+	"server_id" text,
 	"sender" text,
 	"author_id" text,
 	"content" text,

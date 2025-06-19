@@ -114,6 +114,7 @@ export const discordsTable = pgTable(
     id: serial("id").primaryKey(),
     messageId: text("message_id").unique(),
     channelId: text("channel_id"),
+    serverId: text("server_id"),
     sender: text("sender"),
     authorId: text("author_id"),
     content: text("content"),

@@ -7,7 +7,9 @@ import {
 
 const config: DiscordConfig = {
   token: process.env.DISCORD_TOKEN || "",
-  channels: ["1357838246276497590"],
+  channels: [
+    { serverId: "1354783684867264604", channelId: "1357838246276497590" },
+  ],
   includeThreads: false,
 };
 

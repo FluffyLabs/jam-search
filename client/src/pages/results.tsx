@@ -7,13 +7,20 @@ import { SearchMode } from "@/lib/utils";
 import { Section } from "@/components/results/Section";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
 import GithubLogo from "@/assets/logos/github.png";
-import {useResults} from "@/hooks/useResults";
-import {initialSources, Source, SOURCE_OPTIONS, stringToSource} from "@/lib/sources";
-import {MatrixResults} from "@/components/results/MatrixResults";
-import {PageResultCards} from "@/components/results/PageResultCards";
-import {ResultHeader} from "@/components/results/ResultHeader";
-import {ShowAll} from "@/components/ShowAll";
-import {Container} from "@/components/Container";
+import { useResults } from "@/hooks/useResults";
+import {
+  initialSources,
+  Source,
+  SOURCE_OPTIONS,
+  stringToSource,
+} from "@/lib/sources";
+import { MatrixResults } from "@/components/results/MatrixResults";
+import { DiscordResults } from "@/components/results/DiscordResults";
+import { DISCORD_CHANNELS } from "@/consts";
+import { PageResultCards } from "@/components/results/PageResultCards";
+import { ResultHeader } from "@/components/results/ResultHeader";
+import { ShowAll } from "@/components/ShowAll";
+import { Container } from "@/components/Container";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -24,15 +31,24 @@ const SearchResults = () => {
     useState<Source[]>(initialSources);
 
   const handleSourceChange = useCallback((stringSources: string[]) => {
-    const sources = stringSources.map(x => stringToSource(x)!);
+    const sources = stringSources.map((x) => stringToSource(x)!);
     setSelectedSources(sources);
   }, []);
 
-  const { query, filters, graypaperChat, jamChat, jamchain, w3f, graypaper } = useResults(richQuery, searchModeParam, selectedSources);
-  
+  const {
+    query,
+    filters,
+    graypaperChat,
+    jamChat,
+    jamchain,
+    w3f,
+    graypaper,
+    implementersDiscord,
+  } = useResults(richQuery, searchModeParam, selectedSources);
+
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
-      <ResultHeader 
+      <ResultHeader
         left={
           <div className="flex items-center bg-card/80 border border-border rounded-md">
             <MultiSelect
@@ -45,7 +61,9 @@ const SearchResults = () => {
             />
           </div>
         }
-        showSearchOptions={selectedSources.length === 1 && selectedSources[0] === Source.Matrix}
+        showSearchOptions={
+          selectedSources.length === 1 && selectedSources[0] === Source.Matrix
+        }
       />
 
       <Container>
@@ -96,23 +114,25 @@ const SearchResults = () => {
             <div className="mt-6">
               <div className="mb-4">
                 <Section
-                  logo={<img
-                    src={JamchainLogo}
-                    className="size-4"
-                    alt="JamChain Logo"
-                  />}
+                  logo={
+                    <img
+                      src={JamchainLogo}
+                      className="size-4"
+                      alt="JamChain Logo"
+                    />
+                  }
                   url="https://docs.jamcha.in"
                   title="docs.jamcha.in"
                   endBlock={
                     <Link
-                      to={ (() => {
+                      to={(() => {
                         const params = new URLSearchParams(location.search);
                         params.set("site", "docs.jamcha.in");
                         return `/results/pages?${params.toString()}`;
                       })()}
                     >
                       <ShowAll
-                        hasNextPage={jamchain.pagination.hasNextPage} 
+                        hasNextPage={jamchain.pagination.hasNextPage}
                         totalResults={jamchain.totalResults}
                       />
                     </Link>
@@ -149,7 +169,7 @@ const SearchResults = () => {
                       })()}
                     >
                       <ShowAll
-                        hasNextPage={w3f.pagination.hasNextPage} 
+                        hasNextPage={w3f.pagination.hasNextPage}
                         totalResults={w3f.totalResults}
                       />
                     </Link>
@@ -162,6 +182,15 @@ const SearchResults = () => {
                 searchMode={searchModeParam as SearchMode}
               />
             </div>
+          )}
+
+          {selectedSources.includes(Source.JamDaoDiscord) && (
+            <DiscordResults
+              channel={DISCORD_CHANNELS[0]}
+              queryResult={implementersDiscord}
+              query={query}
+              searchMode={searchModeParam as SearchMode}
+            />
           )}
         </div>
       </Container>

@@ -16,7 +16,9 @@ export function setupDiscordJob(): Job {
     try {
       // Get Discord configuration from environment variables
       const discordToken = process.env.DISCORD_TOKEN;
-      const discordChannels = ["1357838246276497590"];
+      const discordChannels = [
+        { serverId: "1354783684867264604", channelId: "1357838246276497590" },
+      ];
 
       if (!discordToken) {
         console.log("Discord token not configured, skipping Discord job");
@@ -38,7 +40,7 @@ export function setupDiscordJob(): Job {
         channels: discordChannels,
         startDate: startDate,
         maxMessages: 1000,
-        includeThreads: true,
+        includeThreads: false,
       };
 
       console.log(

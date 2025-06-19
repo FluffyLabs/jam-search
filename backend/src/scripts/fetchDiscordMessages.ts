@@ -12,7 +12,7 @@ import { discordsTable } from "../db/schema.js";
 
 export interface DiscordConfig {
   token: string;
-  channels: string[]; // Channel IDs to fetch messages from
+  channels: { channelId: string; serverId: string }[]; // Channel IDs to fetch messages from
   startDate?: string; // Start date in yyyy-MM-dd format (optional)
   endDate?: string; // End date in yyyy-MM-dd format (optional)
   maxMessages?: number; // Maximum number of messages to fetch per channel (optional, default: 1000)
@@ -22,6 +22,7 @@ export interface DiscordConfig {
 export interface DiscordMessage {
   id: string;
   channelId: string;
+  serverId: string;
   content: string;
   author: {
     username: string;
@@ -102,6 +103,7 @@ async function fetchChannelMessages(
       const discordMessage: DiscordMessage = {
         id: msg.id,
         channelId: msg.channelId,
+        serverId: msg.guildId,
         content: msg.content,
         author: {
           username: msg.author.username,
@@ -193,9 +195,9 @@ export async function fetchDiscordContent(
     console.log("Successfully logged in to Discord");
 
     const allMessages: DiscordMessage[] = [];
-    const includeThreads = config.includeThreads !== false; // Default to true
+    const includeThreads = config.includeThreads || false;
 
-    for (const channelId of config.channels) {
+    for (const { serverId, channelId } of config.channels) {
       console.log(`Fetching messages from channel ${channelId}`);
 
       // Fetch messages from the main channel
@@ -253,6 +255,7 @@ export async function storeContentInDatabase(messages: DiscordMessage[]) {
         .values({
           messageId: message.id,
           channelId: message.channelId,
+          serverId: message.serverId,
           sender: message.author.username,
           authorId: message.author.id,
           content: message.content,
@@ -265,6 +268,7 @@ export async function storeContentInDatabase(messages: DiscordMessage[]) {
             sender: message.author.username,
             authorId: message.author.id,
             channelId: message.channelId,
+            serverId: message.serverId,
             timestamp: message.timestamp,
           },
         });
