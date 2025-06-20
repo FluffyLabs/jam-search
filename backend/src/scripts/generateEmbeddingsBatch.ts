@@ -6,14 +6,14 @@ import { and, isNotNull, isNull, sql } from "drizzle-orm";
 import OpenAI from "openai";
 import { db } from "../db/db.js";
 import {
+  type Discord,
   type GraypaperSection,
   type Message,
   type Page,
-  type Discord,
+  discordsTable,
   graypaperSectionsTable,
   messagesTable,
   pagesTable,
-  discordsTable,
 } from "../db/schema.js";
 
 // Load environment variables
