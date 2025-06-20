@@ -25,7 +25,7 @@ export const SOURCE_OPTIONS = [
     label: "github.com/w3f/jamtestvectors",
     value: Source.GithubW3fJamtestvectors,
   },
-  { label: "JAM DAO Discord", value: Source.JamDaoDiscord },
+  { label: "JAM DAO", value: Source.JamDaoDiscord },
 ];
 
 export const initialSources = [
