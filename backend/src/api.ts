@@ -13,6 +13,10 @@ import { logger } from "hono/logger";
 import OpenAI from "openai";
 import { z } from "zod";
 import {
+  searchDiscords,
+  searchDiscordsRequestSchema,
+} from "./api/searchDiscords.js";
+import {
   searchGraypaper,
   searchGraypaperRequestSchema,
 } from "./api/searchGraypapers.js";
@@ -54,6 +58,11 @@ export function createApp() {
   app.get("/search/messages", async (c) => {
     const data = searchMessagesRequestSchema.parse(c.req.query());
     return c.json(await searchMessages(data));
+  });
+
+  app.get("/search/discords", async (c) => {
+    const data = searchDiscordsRequestSchema.parse(c.req.query());
+    return c.json(await searchDiscords(data));
   });
 
   app.get("/search/pages", async (c) => {

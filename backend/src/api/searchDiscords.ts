@@ -10,12 +10,12 @@ import {
 import OpenAI from "openai";
 import { z } from "zod";
 import { db } from "../db/db.js";
-import { graypapersTable, messagesTable } from "../db/schema.js";
+import { discordsTable, graypapersTable } from "../db/schema.js";
 
 const escapeRegExp = (str: string) =>
   str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-export const searchMessagesRequestSchema = z.object({
+export const searchDiscordsRequestSchema = z.object({
   q: z.string(),
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
@@ -27,8 +27,8 @@ export const searchMessagesRequestSchema = z.object({
   searchMode: z.enum(["fuzzy", "semantic", "strict"]).default("strict"),
 });
 
-export async function searchMessages(
-  data: z.infer<typeof searchMessagesRequestSchema>
+export async function searchDiscords(
+  data: z.infer<typeof searchDiscordsRequestSchema>
 ) {
   // Initialize additional filter conditions
   const whereConditions = [];
@@ -43,7 +43,9 @@ export async function searchMessages(
 
   // Add filter condition for channelId
   if (data.channelId) {
-    whereConditions.push(sql`roomid @@@ ${`"${data.channelId}"`}`);
+    whereConditions.push(
+      sql`id @@@ paradedb.match('channel_id', ${data.channelId})`
+    );
   }
 
   // Add filter condition for date range
@@ -99,8 +101,8 @@ export async function searchMessages(
     case "strict": {
       whereConditions.push(
         or(
-          ilike(messagesTable.content, `%${data.q}%`),
-          ilike(messagesTable.sender, `${data.q}%`)
+          ilike(discordsTable.content, `%${data.q}%`),
+          ilike(discordsTable.sender, `${data.q}%`)
         )
       );
       orderBy = sql`timestamp DESC, id`;
@@ -139,13 +141,13 @@ export async function searchMessages(
 
         const embedding = response.data[0].embedding;
         similarity = sql<number>`1 - (${cosineDistance(
-          messagesTable.embedding,
+          discordsTable.embedding,
           embedding
         )}) AS similarity`;
 
         orderBy = sql`similarity DESC, timestamp DESC, id`;
         whereConditions.push(
-          sql`${cosineDistance(messagesTable.embedding, embedding)} < 0.8`
+          sql`${cosineDistance(discordsTable.embedding, embedding)} < 0.8`
         );
       } catch (error) {
         console.error("Error generating embedding for search query:", error);
@@ -159,27 +161,31 @@ export async function searchMessages(
 
   const countResult = await db
     .select({ count: sql`count(*)` })
-    .from(messagesTable)
+    .from(discordsTable)
     .where(and(...whereConditions));
+
   const query = db
     .select({
-      messageId: messagesTable.messageId,
-      sender: messagesTable.sender,
-      content: messagesTable.content,
-      timestamp: messagesTable.timestamp,
-      roomId: messagesTable.roomId,
+      messageId: discordsTable.messageId,
+      channelId: discordsTable.channelId,
+      serverId: discordsTable.serverId,
+      sender: discordsTable.sender,
+      authorId: discordsTable.authorId,
+      content: discordsTable.content,
+      timestamp: discordsTable.timestamp,
       similarity,
       score: sql<number>`paradedb.score(id)`,
     })
-    .from(messagesTable)
+    .from(discordsTable)
     .where(and(...whereConditions))
     .orderBy(orderBy)
     .offset((data.page - 1) * data.pageSize)
     .limit(data.pageSize);
+
   const results = await query;
 
   const total = Number(countResult[0].count);
-  console.log(`Message search query found ${total} results`);
+  console.log(`Discord search query found ${total} results`);
 
   return {
     results,

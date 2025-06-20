@@ -11,8 +11,8 @@ export const messagesTable = pgTable(
   "messages",
   {
     id: serial("id").primaryKey(),
-    messageid: text("messageid").unique(),
-    roomid: text("roomid"),
+    messageId: text("messageid").unique(),
+    roomId: text("roomid"),
     sender: text("sender"),
     content: text("content"),
     timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
@@ -25,7 +25,7 @@ export const messagesTable = pgTable(
         table.id,
         table.sender,
         table.content,
-        table.roomid,
+        table.roomId,
         table.timestamp
       )
       .with({
@@ -36,9 +36,9 @@ export const messagesTable = pgTable(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
-    index("messages_roomid_idx").on(table.roomid),
+    index("messages_roomid_idx").on(table.roomId),
     index("messages_roomid_timestamp_idx").on(
-      table.roomid,
+      table.roomId,
       table.timestamp.desc()
     ),
   ]
@@ -107,3 +107,40 @@ export const pagesTable = pgTable(
 );
 
 export type Page = typeof pagesTable.$inferSelect;
+
+export const discordsTable = pgTable(
+  "discords",
+  {
+    id: serial("id").primaryKey(),
+    messageId: text("message_id").unique(),
+    channelId: text("channel_id"),
+    serverId: text("server_id"),
+    sender: text("sender"),
+    authorId: text("author_id"),
+    content: text("content"),
+    timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }),
+  },
+  (table) => [
+    index("discords_search_idx")
+      .using(
+        "bm25",
+        table.id,
+        table.sender,
+        table.content,
+        table.channelId,
+        table.timestamp
+      )
+      .with({
+        key_field: "id",
+        text_fields: '\'{ "channel_id": { "fast": true } }\'',
+      }),
+    index("discords_embedding_index").using(
+      "hnsw",
+      table.embedding.op("vector_cosine_ops")
+    ),
+    index("discords_channel_id_idx").on(table.channelId),
+  ]
+);
+
+export type Discord = typeof discordsTable.$inferSelect;

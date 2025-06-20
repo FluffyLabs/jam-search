@@ -18,8 +18,8 @@ type Dependencies = {
 
 const toDbMessage = (newMessage: Message) => {
   return {
-    messageid: newMessage.messageId,
-    roomid: newMessage.roomId,
+    messageId: newMessage.messageId,
+    roomId: newMessage.roomId,
     sender: newMessage.sender,
     content: newMessage.content,
     timestamp: newMessage.timestamp,
@@ -90,10 +90,10 @@ export class MessagesLogger {
         .update(messagesTable)
         .set({
           content: newContent,
-          messageid: editMessageId,
+          messageId: editMessageId,
           // Optionally track edit timestamp, but keeping original message ID
         })
-        .where(eq(messagesTable.messageid, originalMessageId));
+        .where(eq(messagesTable.messageId, originalMessageId));
 
       console.log(`Updated message ${originalMessageId} with new content`);
     } catch (error) {

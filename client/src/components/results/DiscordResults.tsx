@@ -1,20 +1,20 @@
-import { MATRIX_CHANNELS } from "@/consts";
+import { DISCORD_CHANNELS } from "@/consts";
 import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/utils";
 import { Section } from "./Section";
-import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
 import { Link, useLocation } from "react-router-dom";
-import { MatrixResultCards } from "./MatrixResultCards";
+import { DiscordResultCards } from "./DiscordResultCards";
 import { ShowAll } from "../ShowAll";
+import DiscordLogo from "@/assets/logos/discord.svg";
 
-export const MatrixResults = ({
+export const DiscordResults = ({
   channel,
   queryResult,
   query,
   searchMode,
 }: {
-  channel: (typeof MATRIX_CHANNELS)[0];
-  queryResult: ReturnType<typeof useResults>["graypaperChat"];
+  channel: (typeof DISCORD_CHANNELS)[0];
+  queryResult: ReturnType<typeof useResults>["implementersDiscord"];
   query: string;
   searchMode: SearchMode;
 }) => {
@@ -24,13 +24,13 @@ export const MatrixResults = ({
     <div className="mt-6">
       <div className="mb-4">
         <Section
-          title={channel.name}
-          url={channel.archiveUrl}
+          title={`${channel.name} @ ${channel.serverName}`}
+          url={channel.discordUrl}
           logo={
             <img
-              src={MatrixArchiverLogo}
-              className="size-4 p-0.5"
-              alt="Matrix Archiver Logo"
+              src={DiscordLogo}
+              className="size-6 p-0.5"
+              alt="Discord Logo"
             />
           }
           endBlock={
@@ -38,7 +38,7 @@ export const MatrixResults = ({
               to={(() => {
                 const params = new URLSearchParams(location.search);
                 params.set("channelId", channel.id);
-                return `/results/matrix?${params.toString()}`;
+                return `/results/discord?${params.toString()}`;
               })()}
             >
               <ShowAll
@@ -49,8 +49,7 @@ export const MatrixResults = ({
           }
         />
       </div>
-      <MatrixResultCards
-        channel={channel}
+      <DiscordResultCards
         queryResult={queryResult}
         searchQuery={query}
         searchMode={searchMode}
