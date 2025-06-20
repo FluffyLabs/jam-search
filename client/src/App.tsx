@@ -9,9 +9,10 @@ import MatrixResultsAll from "./pages/viewall/matrix";
 import PagesResultsAll from "./pages/viewall/pages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {useEmbeddedViewer} from "./providers/EmbeddedResultsContext";
-import {cn} from "./lib/utils";
-import {EmbeddedViewer} from "./components/EmbeddedViewer";
+import { useEmbeddedViewer } from "./providers/EmbeddedResultsContext";
+import { cn } from "./lib/utils";
+import { EmbeddedViewer } from "./components/EmbeddedViewer";
+import DiscordResultsAll from "./pages/viewall/discord";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -43,20 +44,30 @@ function App() {
             />
           </div>
 
-          <div className={cn(
-            "w-full bg-background h-[calc(100dvh-77px)]",
-            { 
-              "relative": isUsingEmbeddedViewer,
-            }
-          )}>
+          <div
+            className={cn("w-full bg-background h-[calc(100dvh-77px)]", {
+              relative: isUsingEmbeddedViewer,
+            })}
+          >
             <EmbeddedViewer />
-            <div className={cn("p-4 h-full overflow-y-auto", { invisible: isUsingEmbeddedViewer })}>
+            <div
+              className={cn("p-4 h-full overflow-y-auto", {
+                invisible: isUsingEmbeddedViewer,
+              })}
+            >
               <Routes>
                 <Route index element={<IndexPage />} />
                 <Route path="/results" element={<SearchResults />} />
-                <Route path="/results/graypaper" element={<GraypaperResultsAll />} />
+                <Route
+                  path="/results/graypaper"
+                  element={<GraypaperResultsAll />}
+                />
                 <Route path="/results/matrix" element={<MatrixResultsAll />} />
                 <Route path="/results/pages" element={<PagesResultsAll />} />
+                <Route
+                  path="/results/discord"
+                  element={<DiscordResultsAll />}
+                />
               </Routes>
             </div>
           </div>

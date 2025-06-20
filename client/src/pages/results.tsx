@@ -110,6 +110,15 @@ const SearchResults = () => {
             </>
           )}
 
+          {selectedSources.includes(Source.JamDaoDiscord) && (
+            <DiscordResults
+              channel={DISCORD_CHANNELS[0]}
+              queryResult={implementersDiscord}
+              query={query}
+              searchMode={searchModeParam as SearchMode}
+            />
+          )}
+
           {selectedSources.includes(Source.Jamchain) && (
             <div className="mt-6">
               <div className="mb-4">
@@ -182,15 +191,6 @@ const SearchResults = () => {
                 searchMode={searchModeParam as SearchMode}
               />
             </div>
-          )}
-
-          {selectedSources.includes(Source.JamDaoDiscord) && (
-            <DiscordResults
-              channel={DISCORD_CHANNELS[0]}
-              queryResult={implementersDiscord}
-              query={query}
-              searchMode={searchModeParam as SearchMode}
-            />
           )}
         </div>
       </Container>

@@ -11,8 +11,8 @@ export const messagesTable = pgTable(
   "messages",
   {
     id: serial("id").primaryKey(),
-    messageid: text("messageid").unique(),
-    roomid: text("roomid"),
+    messageId: text("messageid").unique(),
+    roomId: text("roomid"),
     sender: text("sender"),
     content: text("content"),
     timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
@@ -25,7 +25,7 @@ export const messagesTable = pgTable(
         table.id,
         table.sender,
         table.content,
-        table.roomid,
+        table.roomId,
         table.timestamp
       )
       .with({
@@ -36,9 +36,9 @@ export const messagesTable = pgTable(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
-    index("messages_roomid_idx").on(table.roomid),
+    index("messages_roomid_idx").on(table.roomId),
     index("messages_roomid_timestamp_idx").on(
-      table.roomid,
+      table.roomId,
       table.timestamp.desc()
     ),
   ]

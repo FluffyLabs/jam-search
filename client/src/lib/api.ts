@@ -12,8 +12,8 @@ const API_URL =
  */
 export interface SearchResult {
   id: number;
-  messageid: string | null;
-  roomid: string | null;
+  messageId: string | null;
+  roomId: string | null;
   sender: string | null;
   content: string | null;
   timestamp: string;
@@ -106,6 +106,22 @@ export async function fetchSearchResults(
   return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
 }
 
+export interface DiscordSearchResult {
+  id: string;
+  messageId: string;
+  authorId: string;
+  channelId: string;
+  serverId: string;
+  sender: string;
+  content: string;
+  timestamp: string;
+}
+
+export interface DiscordSearchResponse {
+  results: DiscordSearchResult[];
+  total: number;
+}
+
 // Fetch Discord search results
 export async function fetchDiscordSearchResults(
   query: string,
@@ -116,7 +132,7 @@ export async function fetchDiscordSearchResults(
     channelId?: string;
     searchMode?: string;
   } = {}
-): Promise<SearchResponse> {
+): Promise<DiscordSearchResponse> {
   const {
     page = 1,
     pageSize = 10,
@@ -146,7 +162,9 @@ export async function fetchDiscordSearchResults(
     queryParams.append("searchMode", searchMode);
   }
 
-  return fetchApi<SearchResponse>(`/search/discords?${queryParams.toString()}`);
+  return fetchApi<DiscordSearchResponse>(
+    `/search/discords?${queryParams.toString()}`
+  );
 }
 
 export interface GraypaperSearchResult {

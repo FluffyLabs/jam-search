@@ -26,9 +26,6 @@ export const SOURCE_OPTIONS = [
     value: Source.GithubW3fJamtestvectors,
   },
   { label: "JAM DAO Discord", value: Source.JamDaoDiscord },
-
-  { label: "Web3 Foundation", value: Source.W3f, disabled: true },
-  { label: "GitHub Source Code", value: Source.Github, disabled: true },
 ];
 
 export const initialSources = [

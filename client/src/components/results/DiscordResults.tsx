@@ -2,10 +2,10 @@ import { DISCORD_CHANNELS } from "@/consts";
 import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/utils";
 import { Section } from "./Section";
-import { MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { DiscordResultCards } from "./DiscordResultCards";
 import { ShowAll } from "../ShowAll";
+import DiscordLogo from "@/assets/logos/discord.svg";
 
 export const DiscordResults = ({
   channel,
@@ -26,7 +26,13 @@ export const DiscordResults = ({
         <Section
           title={`${channel.name} @ ${channel.serverName}`}
           url={channel.discordUrl}
-          logo={<MessageCircle className="size-4" />}
+          logo={
+            <img
+              src={DiscordLogo}
+              className="size-6 p-0.5"
+              alt="Discord Logo"
+            />
+          }
           endBlock={
             <Link
               to={(() => {
@@ -44,7 +50,6 @@ export const DiscordResults = ({
         />
       </div>
       <DiscordResultCards
-        channel={channel}
         queryResult={queryResult}
         searchQuery={query}
         searchMode={searchMode}

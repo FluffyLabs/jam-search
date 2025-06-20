@@ -18,6 +18,7 @@ export const DISCORD_CHANNELS = [
     id: "1357838246276497590",
     name: "#implementers",
     serverName: "JAM DAO",
-    discordUrl: "https://discord.gg/jamprotocol",
+    discordUrl:
+      "https://discord.com/channels/1354783684867264604/1357838246276497590",
   },
 ];

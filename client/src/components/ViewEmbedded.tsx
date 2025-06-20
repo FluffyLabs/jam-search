@@ -2,14 +2,14 @@ import { PageResult, SearchResult } from "@/lib/api";
 import { cn, formatDate, highlightText, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import {useEmbeddedViewer} from "@/providers/EmbeddedResultsContext";
-import {Button} from "./ui/button";
-import {PageResultHighlighter} from "./PageResultHighlighter";
-import {SquareX} from "lucide-react";
+import { useEmbeddedViewer } from "@/providers/EmbeddedResultsContext";
+import { Button } from "./ui/button";
+import { PageResultHighlighter } from "./PageResultHighlighter";
+import { SquareX } from "lucide-react";
 
 interface ViewEmbeddedProps {
-  label?: ReactNode,
-  noEmbed?: boolean,
+  label?: ReactNode;
+  noEmbed?: boolean;
   url: string;
   className?: string;
   searchQuery: string;
@@ -19,7 +19,7 @@ interface ViewEmbeddedProps {
 }
 
 export const ViewEmbedded = ({
-  label = 'Preview',
+  label = "Preview",
   url,
   loadMore,
   results,
@@ -28,23 +28,26 @@ export const ViewEmbedded = ({
   noEmbed = false,
 }: ViewEmbeddedProps) => {
   const embeddedViewer = useEmbeddedViewer();
-  const content = useMemo(() => (
-    <Content
-      url={url}
-      loadMore={loadMore}
-      results={results}
-      searchQuery={searchQuery}
-      searchMode={searchMode}
-      close={() => embeddedViewer.close()}
-    ></Content>
-  ), [url, loadMore, results, searchQuery, searchMode, embeddedViewer]);
+  const content = useMemo(
+    () => (
+      <Content
+        url={url}
+        loadMore={loadMore}
+        results={results}
+        searchQuery={searchQuery}
+        searchMode={searchMode}
+        close={() => embeddedViewer.close()}
+      ></Content>
+    ),
+    [url, loadMore, results, searchQuery, searchMode, embeddedViewer]
+  );
 
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      onMouseEnter={() => embeddedViewer.render(content, false) }
+      onMouseEnter={() => embeddedViewer.render(content, false)}
       onClick={(e) => {
         // allow opening in new tab
         if (e.ctrlKey || e.metaKey || e.button === 1) {
@@ -55,7 +58,7 @@ export const ViewEmbedded = ({
           return;
         }
         e.preventDefault();
-        embeddedViewer.render(content)
+        embeddedViewer.render(content);
       }}
       className="inline-flex items-center text-primary text-xs gap-1 after:absolute after:inset-0 hover:text-accent-foreground transition-colors"
     >
@@ -63,9 +66,14 @@ export const ViewEmbedded = ({
     </a>
   );
 };
-   
+
 const Content = ({
-  url, results: initialResults, loadMore, close, searchQuery, searchMode,
+  url,
+  results: initialResults,
+  loadMore,
+  close,
+  searchQuery,
+  searchMode,
 }: ViewEmbeddedProps & { close: () => void }) => {
   const [results, setResults] = useState(initialResults);
   const [currentUrl, setCurrentUrl] = useState(url);
@@ -92,9 +100,9 @@ const Content = ({
 
   const getUrl = (result: SearchResult) => {
     const channelUrl = MATRIX_CHANNELS.find(
-      (channel) => channel.id === result.roomid
+      (channel) => channel.id === result.roomId
     )?.archiveUrl;
-    return `${channelUrl}#${result.messageid}`;
+    return `${channelUrl}#${result.messageId}`;
   };
 
   const handleItemClick = useCallback((newUrl: string) => {
@@ -109,32 +117,40 @@ const Content = ({
     setIsLoaded(true);
   }, []);
 
-  const pages = loadMore !== undefined ? (
-    <Button
-      variant="ghost"
-      onClick={handleLoadMore}
-      className="text-primary w-full text-sm"
-    >more</Button>
-  ) : null;
+  const pages =
+    loadMore !== undefined ? (
+      <Button
+        variant="ghost"
+        onClick={handleLoadMore}
+        className="text-primary w-full text-sm"
+      >
+        more
+      </Button>
+    ) : null;
 
   return (
-    <div className={cn(
-      "flex h-full",
-      {
-        "px-4 py-8 relative": !hasSidebar
-      }
-    )}>
-      <div className={cn(
-        "m-2 flex-1 border border-border rounded-2xl overflow-hidden",
-        { "relative": hasSidebar }
-      )}>
-        <Button variant="ghost"  className="text-brand absolute top-0 right-0" onClick={close}>
+    <div
+      className={cn("flex h-full", {
+        "px-4 py-8 relative": !hasSidebar,
+      })}
+    >
+      <div
+        className={cn(
+          "m-2 flex-1 border border-border rounded-2xl overflow-hidden",
+          { relative: hasSidebar }
+        )}
+      >
+        <Button
+          variant="ghost"
+          className="text-brand absolute top-0 right-0"
+          onClick={close}
+        >
           <SquareX />
         </Button>
         <iframe
           onLoadStart={handleIframeLoadStart}
           onLoad={handleIframeLoad}
-          src={currentUrl ?? 'about:blank'}
+          src={currentUrl ?? "about:blank"}
           style={{
             width: "100%",
             height: "100%",
@@ -152,10 +168,12 @@ const Content = ({
               {results.map((inResult: SearchResult | PageResult) => {
                 const res = detectType(inResult);
                 const { isPageResult, result } = res;
-              
-                const itemUrl =  isPageResult ? result.url : getUrl(result);
+
+                const itemUrl = isPageResult ? result.url : getUrl(result);
                 const isSelected = currentUrl === itemUrl;
-                const id = isPageResult ? result.id : result.messageid ?? result.id;
+                const id = isPageResult
+                  ? result.id
+                  : result.messageId ?? result.id;
 
                 return (
                   <a
@@ -165,35 +183,41 @@ const Content = ({
                     rel="noopener noreferrer"
                     onClick={(e) => {
                       e.preventDefault();
-                      handleItemClick(itemUrl)
-                    }}>
-                  <div
-                    className={`text-xs p-2 rounded-md mb-2 cursor-pointer transition-colors border ${
-                      isSelected
-                        ? "bg-brand-dark/15 border-brand/50 shadow-sm"
-                        : "bg-card border-border hover:bg-accent hover:border-brand/50"
-                    }`}
+                      handleItemClick(itemUrl);
+                    }}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <span
-                        className={`font-medium truncate pr-2 ${
-                          isSelected ? "text-brand" : "text-white light:text-neutral-800"
-                        }`}
-                      >
-                        {isPageResult ? result.title : result.sender}
-                      </span>
-                      <span className="text-muted-foreground whitespace-nowrap">
-                        {isPageResult ? formatDate(result.lastModified) : formatDate(result.timestamp)}
-                      </span>
-                    </div>
+                    <div
+                      className={`text-xs p-2 rounded-md mb-2 cursor-pointer transition-colors border ${
+                        isSelected
+                          ? "bg-brand-dark/15 border-brand/50 shadow-sm"
+                          : "bg-card border-border hover:bg-accent hover:border-brand/50"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <span
+                          className={`font-medium truncate pr-2 ${
+                            isSelected
+                              ? "text-brand"
+                              : "text-white light:text-neutral-800"
+                          }`}
+                        >
+                          {isPageResult ? result.title : result.sender}
+                        </span>
+                        <span className="text-muted-foreground whitespace-nowrap">
+                          {isPageResult
+                            ? formatDate(result.lastModified)
+                            : formatDate(result.timestamp)}
+                        </span>
+                      </div>
 
-                    { isPageResult ? (
-                      <PageResultHighlighter
-                        result={result}
-                        searchQuery={searchQuery}
-                        searchMode={searchMode}
-                        options={{maxLength: 150, contextLength: 50}}
-                      /> ) : (
+                      {isPageResult ? (
+                        <PageResultHighlighter
+                          result={result}
+                          searchQuery={searchQuery}
+                          searchMode={searchMode}
+                          options={{ maxLength: 150, contextLength: 50 }}
+                        />
+                      ) : (
                         <p className="text-muted-foreground leading-relaxed line-clamp-3">
                           {highlightText(
                             result.content || "",
@@ -202,7 +226,7 @@ const Content = ({
                           )}
                         </p>
                       )}
-                  </div>
+                    </div>
                   </a>
                 );
               })}
@@ -210,20 +234,22 @@ const Content = ({
               {pages}
             </div>
           </div>
-          </div>
+        </div>
       )}
     </div>
   );
 };
 
-function detectType(result: SearchResult | PageResult): ({
-  isPageResult: true,
-  result: PageResult,
-} | {
-  isPageResult: false,
-  result: SearchResult,
-}) {
-  return 'url' in result 
+function detectType(result: SearchResult | PageResult):
+  | {
+      isPageResult: true;
+      result: PageResult;
+    }
+  | {
+      isPageResult: false;
+      result: SearchResult;
+    } {
+  return "url" in result
     ? { isPageResult: true, result }
-    : { isPageResult: false, result }
+    : { isPageResult: false, result };
 }

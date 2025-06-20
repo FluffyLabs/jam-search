@@ -163,11 +163,11 @@ export async function searchMessages(
     .where(and(...whereConditions));
   const query = db
     .select({
-      messageid: messagesTable.messageid,
+      messageId: messagesTable.messageId,
       sender: messagesTable.sender,
       content: messagesTable.content,
       timestamp: messagesTable.timestamp,
-      roomid: messagesTable.roomid,
+      roomId: messagesTable.roomId,
       similarity,
       score: sql<number>`paradedb.score(id)`,
     })

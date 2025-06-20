@@ -168,6 +168,7 @@ export async function searchDiscords(
     .select({
       messageId: discordsTable.messageId,
       channelId: discordsTable.channelId,
+      serverId: discordsTable.serverId,
       sender: discordsTable.sender,
       authorId: discordsTable.authorId,
       content: discordsTable.content,

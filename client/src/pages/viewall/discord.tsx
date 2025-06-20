@@ -87,12 +87,10 @@ const DiscordResultsAll = () => {
 
         <div className="my-8">
           <DiscordResultList
-            channel={channel}
             queryResult={queryResult}
             searchQuery={query}
             searchMode={searchMode as SearchMode}
           />
-
           {pages}
         </div>
       </Container>

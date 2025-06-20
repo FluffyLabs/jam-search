@@ -1,20 +1,20 @@
-import {MATRIX_CHANNELS} from "@/consts";
-import {useResults} from "@/hooks/useResults";
-import {SearchMode} from "@/lib/utils";
-import {Section} from "./Section";
+import { MATRIX_CHANNELS } from "@/consts";
+import { useResults } from "@/hooks/useResults";
+import { SearchMode } from "@/lib/utils";
+import { Section } from "./Section";
 import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
 import { Link, useLocation } from "react-router-dom";
-import {MatrixResultCards} from "./MatrixResultCards";
-import {ShowAll} from "../ShowAll";
+import { MatrixResultCards } from "./MatrixResultCards";
+import { ShowAll } from "../ShowAll";
 
 export const MatrixResults = ({
   channel,
   queryResult,
   query,
-  searchMode
+  searchMode,
 }: {
-  channel: typeof MATRIX_CHANNELS[0],
-  queryResult: ReturnType<typeof useResults>['graypaperChat'],
+  channel: (typeof MATRIX_CHANNELS)[0];
+  queryResult: ReturnType<typeof useResults>["graypaperChat"];
   query: string;
   searchMode: SearchMode;
 }) => {
@@ -42,7 +42,7 @@ export const MatrixResults = ({
               })()}
             >
               <ShowAll
-                hasNextPage={queryResult.pagination.hasNextPage} 
+                hasNextPage={queryResult.pagination.hasNextPage}
                 totalResults={queryResult.totalResults}
               />
             </Link>

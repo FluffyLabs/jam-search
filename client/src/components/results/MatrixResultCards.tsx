@@ -27,7 +27,7 @@ export const MatrixResultCards = ({
   }
 
   const getUrl = (result: SearchResult) => {
-    return `${channel.archiveUrl}#${result.messageid}`;
+    return `${channel.archiveUrl}#${result.messageId}`;
   };
 
   return (
@@ -44,7 +44,7 @@ export const MatrixResultCards = ({
       ) : null}
       {results.map((result: SearchResult) => (
         <ResultCard
-          key={result.messageid ?? result.id}
+          key={result.messageId ?? result.id}
           header={
             <>
               {result.sender}{" "}
@@ -56,7 +56,7 @@ export const MatrixResultCards = ({
             </>
           }
           footer={
-            result.messageid && (
+            result.messageId && (
               <ViewEmbedded
                 label={
                   <>
