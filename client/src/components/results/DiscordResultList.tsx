@@ -1,33 +1,29 @@
-import { SearchResult } from "@/lib/api";
+import { DiscordSearchResult } from "@/lib/api";
 import { getTextToDisplay, SearchMode } from "@/lib/utils";
-import { MATRIX_CHANNELS } from "@/consts";
 import { formatDate } from "@/lib/utils";
-import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
 import { useResults } from "@/hooks/useResults";
 import { ResultCard } from "./ResultCard";
 
-interface MatrixResultListProps {
-  channel: (typeof MATRIX_CHANNELS)[0];
-  queryResult: ReturnType<typeof useResults>["jamChat"];
+interface DiscordResultListProps {
+  queryResult: ReturnType<typeof useResults>["implementersDiscord"];
   searchQuery: string;
   searchMode: SearchMode;
 }
 
-export const MatrixResultList = ({
-  channel,
+export const DiscordResultList = ({
   queryResult,
   searchQuery,
   searchMode,
-}: MatrixResultListProps) => {
+}: DiscordResultListProps) => {
   const { isLoading, isError, results } = queryResult;
 
   if (results.length === 0 && !isLoading) {
     return <NoResults isError={isError} />;
   }
 
-  const getUrl = (result: SearchResult) => {
-    return `${channel.archiveUrl}#${result.messageId}`;
+  const getUrl = (result: DiscordSearchResult) => {
+    return `https://discord.com/channels/${result.serverId}/${result.channelId}/${result.messageId}`;
   };
 
   return (
@@ -36,10 +32,10 @@ export const MatrixResultList = ({
         <div className="text-center p-8">Loading results...</div>
       ) : null}
       <div className="grid grid-cols-1 gap-4">
-        {results.map((result: SearchResult) => (
+        {results.map((result: DiscordSearchResult) => (
           <ResultCard
             lightBorder
-            key={result.messageId ?? result.id}
+            key={result.id}
             header={
               <>
                 <span className="font-medium text-foreground">
@@ -57,19 +53,19 @@ export const MatrixResultList = ({
                 {getTextToDisplay(
                   result.content || "",
                   searchQuery,
-                  searchMode,
-                  400
+                  searchMode
                 )}
               </p>
             }
             footer={
-              <ViewEmbedded
-                label="View message"
-                url={getUrl(result)}
-                searchQuery={searchQuery}
-                searchMode={searchMode}
-                results={results}
-              />
+              <a
+                href={getUrl(result)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-primary text-xs gap-1 after:absolute after:inset-0 hover:text-accent-foreground transition-colors"
+              >
+                Open Discord
+              </a>
             }
           />
         ))}

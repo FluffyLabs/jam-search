@@ -12,3 +12,13 @@ export const MATRIX_CHANNELS = [
       "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
   },
 ];
+
+export const DISCORD_CHANNELS = [
+  {
+    id: "1357838246276497590",
+    name: "#implementers",
+    serverName: "JAM DAO",
+    discordUrl:
+      "https://discord.com/channels/1354783684867264604/1357838246276497590",
+  },
+];

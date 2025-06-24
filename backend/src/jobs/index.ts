@@ -1,4 +1,5 @@
 import type { Job } from "node-schedule";
+import { setupDiscordJob } from "./discordJob.js";
 import { setupDocsPagesJob } from "./docsPagesJob.js";
 import { setupGithubPagesJob } from "./githubPagesJob.js";
 import { setupGraypaperJob } from "./graypaperJob.js";
@@ -9,6 +10,7 @@ export interface CronJobs {
   graypaperJob: Job | null;
   githubPagesJob: Job | null;
   docsPagesJob: Job | null;
+  discordJob: Job | null;
 }
 
 export function setupCronJobs(): CronJobs {
@@ -17,5 +19,6 @@ export function setupCronJobs(): CronJobs {
     graypaperJob: setupGraypaperJob(),
     githubPagesJob: setupGithubPagesJob(),
     docsPagesJob: setupDocsPagesJob(),
+    discordJob: setupDiscordJob(),
   };
 }

@@ -12,8 +12,8 @@ const API_URL =
  */
 export interface SearchResult {
   id: number;
-  messageid: string | null;
-  roomid: string | null;
+  messageId: string | null;
+  roomId: string | null;
   sender: string | null;
   content: string | null;
   timestamp: string;
@@ -104,6 +104,67 @@ export async function fetchSearchResults(
   }
 
   return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
+}
+
+export interface DiscordSearchResult {
+  id: string;
+  messageId: string;
+  authorId: string;
+  channelId: string;
+  serverId: string;
+  sender: string;
+  content: string;
+  timestamp: string;
+}
+
+export interface DiscordSearchResponse {
+  results: DiscordSearchResult[];
+  total: number;
+}
+
+// Fetch Discord search results
+export async function fetchDiscordSearchResults(
+  query: string,
+  options: {
+    page?: number;
+    pageSize?: number;
+    filters?: Array<{ key: string; value: string }>;
+    channelId?: string;
+    searchMode?: string;
+  } = {}
+): Promise<DiscordSearchResponse> {
+  const {
+    page = 1,
+    pageSize = 10,
+    filters = [],
+    channelId,
+    searchMode = "strict",
+  } = options;
+
+  // Build the query parameters
+  const queryParams = new URLSearchParams();
+  queryParams.append("q", query);
+  queryParams.append("page", page.toString());
+  queryParams.append("pageSize", pageSize.toString());
+
+  // Add filter parameters if provided
+  filters.forEach((filter) => {
+    queryParams.append(`filter_${filter.key}`, filter.value);
+  });
+
+  // Add channelId parameter if provided
+  if (channelId) {
+    queryParams.append("channelId", channelId);
+  }
+
+  // Add searchMode parameter if not strict (default)
+  if (searchMode !== "strict") {
+    queryParams.append("searchMode", searchMode);
+  }
+
+  return fetchApi<DiscordSearchResponse>(
+    `/search/discords?${queryParams.toString()}`
+  );
 }
 
 export interface GraypaperSearchResult {
