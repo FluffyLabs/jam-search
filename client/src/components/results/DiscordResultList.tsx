@@ -53,7 +53,8 @@ export const DiscordResultList = ({
                 {getTextToDisplay(
                   result.content || "",
                   searchQuery,
-                  searchMode
+                  searchMode,
+                  400
                 )}
               </p>
             }
