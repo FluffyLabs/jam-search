@@ -10,27 +10,45 @@ export function setupGithubPagesJob(): Job {
       "Running scheduled GitHub pages fetch job at",
       new Date().toISOString()
     );
-    try {
-      const config = {
+
+    const repositories = [
+      {
         owner: "w3f",
         repo: "jamtestvectors",
         token: process.env.GITHUB_TOKEN,
-      };
+      },
+      {
+        owner: "w3f",
+        repo: "jam-milestone-delivery",
+        token: process.env.GITHUB_TOKEN,
+      },
+    ];
 
-      const content = await fetchGitHubContent(config);
-      console.log(
-        `Found ${content.length} items (${
-          content.filter((c) => c.type === "pull_request").length
-        } PRs, ${content.filter((c) => c.type === "issue").length} issues)`
-      );
+    for (const config of repositories) {
+      try {
+        console.log(`Fetching content from ${config.owner}/${config.repo}...`);
 
-      await storeContentInDatabase(
-        content,
-        `github.com/${config.owner}/${config.repo}`
-      );
-      console.log("GitHub pages fetch job completed successfully");
-    } catch (error) {
-      console.error("Error in GitHub pages fetch job:", error);
+        const content = await fetchGitHubContent(config);
+        console.log(
+          `Found ${content.length} items from ${config.owner}/${config.repo} (${
+            content.filter((c) => c.type === "pull_request").length
+          } PRs, ${content.filter((c) => c.type === "issue").length} issues)`
+        );
+
+        await storeContentInDatabase(
+          content,
+          `github.com/${config.owner}/${config.repo}`
+        );
+        console.log(`Successfully processed ${config.owner}/${config.repo}`);
+      } catch (error) {
+        console.error(
+          `Error processing ${config.owner}/${config.repo}:`,
+          error
+        );
+        // Continue with next repository even if one fails
+      }
     }
+
+    console.log("GitHub pages fetch job completed");
   });
 }
