@@ -1,5 +1,5 @@
-import { type Job, scheduleJob } from "node-schedule";
 import FirecrawlApp from "firecrawl";
+import { type Job, scheduleJob } from "node-schedule";
 import { fetchAndStorePages } from "../scripts/fetchPages.js";
 
 export function setupDocsPagesJob(): Job {
