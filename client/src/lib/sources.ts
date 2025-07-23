@@ -7,6 +7,7 @@ export enum Source {
   W3f = "w3f",
   Github = "github",
   JamDaoDiscord = "jamDaoDiscord",
+  JamWeb3Foundation = "jamWeb3Foundation",
 }
 
 export function stringToSource(x: string): Source | undefined {
@@ -31,6 +32,10 @@ export const SOURCE_OPTIONS = [
     label: "github.com/w3f/jam-milestone-delivery",
     value: Source.GithubW3fJamMilestoneDelivery,
   },
+  {
+    label: "jam.web3.foundation",
+    value: Source.JamWeb3Foundation,
+  },
 ];
 
 export const initialSources = [
@@ -39,6 +44,7 @@ export const initialSources = [
   Source.Jamchain,
   Source.GithubW3fJamtestvectors,
   // Source.GithubW3fJamMilestoneDelivery,
+  // Source.JamWeb3Foundation,
   Source.JamDaoDiscord,
 ];
 
