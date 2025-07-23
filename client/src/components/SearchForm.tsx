@@ -12,9 +12,9 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useDebouncedCallback } from "use-debounce";
-import {useResults} from "@/hooks/useResults";
-import {initialSources} from "@/lib/sources";
-import {cn} from "@/lib/utils";
+import { useResults } from "@/hooks/useResults";
+import { getStoredSources } from "@/lib/sources";
+import { cn } from "@/lib/utils";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -88,7 +88,7 @@ export const SearchForm = ({
   redirectToResults = false,
   instantSearch = true,
   showSearchOptions = true,
-  size = "lg"
+  size = "lg",
 }: {
   redirectToResults?: boolean;
   instantSearch?: boolean;
@@ -129,7 +129,7 @@ export const SearchForm = ({
   }, []);
 
   // prefetch the results
-  useResults(prefetchingQuery, searchModeParam, initialSources)
+  useResults(prefetchingQuery, searchModeParam, getStoredSources());
 
   const getQueryParams = () => {
     // Get current URL parameters and update only the search-related ones
@@ -308,8 +308,8 @@ export const SearchForm = ({
             className={cn(
               "pr-12 pl-14 h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal",
               {
-                "pt-3 pb-1 min-h-[40px]": size === 'sm',
-                "pt-4 pb-2 min-h-[58px]": size === 'lg',
+                "pt-3 pb-1 min-h-[40px]": size === "sm",
+                "pt-4 pb-2 min-h-[58px]": size === "lg",
               }
             )}
             value={searchQuery}
@@ -324,9 +324,9 @@ export const SearchForm = ({
             className={cn(
               "pr-12 pl-14 h-auto flex pointer-events-none border border-input rounded-md bg-background text-foreground overflow-auto font-sans text-base leading-normal",
               {
-                "pt-1 pb-1 min-h-[40px]": size === 'sm',
-                "pt-2 pb-2 min-h-[58px]": size === 'lg',
-            }
+                "pt-1 pb-1 min-h-[40px]": size === "sm",
+                "pt-2 pb-2 min-h-[58px]": size === "lg",
+              }
             )}
             aria-hidden="true"
             ref={displayedValueRef}
@@ -383,9 +383,7 @@ export const SearchForm = ({
       {isFocused && showSearchOptions && searchQuery.trim() === "" && (
         <div className="absolute top-full left-0 right-0 mt-2 border border-input bg-card rounded-md shadow-lg z-10">
           <div className="p-4 border-b border-zinc-700">
-            <p className="text-sm font-normal text-zinc-200">
-              Search Options
-            </p>
+            <p className="text-sm font-normal text-zinc-200">Search Options</p>
           </div>
           <div className="p-2 max-h-[300px] overflow-y-auto text-xs font-light">
             {searchOptions.map((option) => (
@@ -398,9 +396,7 @@ export const SearchForm = ({
                   <span className="text-zinc-200 font-normal">
                     {option.label}:
                   </span>
-                  <span className="text-zinc-400">
-                    {option.description}
-                  </span>
+                  <span className="text-zinc-400">{option.description}</span>
                 </div>
               </div>
             ))}

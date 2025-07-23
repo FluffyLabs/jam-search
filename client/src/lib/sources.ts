@@ -41,3 +41,44 @@ export const initialSources = [
   // Source.GithubW3fJamMilestoneDelivery,
   Source.JamDaoDiscord,
 ];
+
+// localStorage key for user's selected sources
+const SOURCES_STORAGE_KEY = "jam-search-selected-sources";
+
+/**
+ * Get the user's selected sources from localStorage, fallback to initialSources
+ */
+export function getStoredSources(): Source[] {
+  try {
+    const stored = localStorage.getItem(SOURCES_STORAGE_KEY);
+    if (stored) {
+      const parsedSources = JSON.parse(stored);
+      // Validate that all stored sources are valid
+      const validSources = parsedSources
+        .map((source: string) => stringToSource(source))
+        .filter(
+          (source: Source | undefined): source is Source => source !== undefined
+        );
+
+      // If we have valid sources, return them, otherwise fallback to initial
+      if (validSources.length > 0) {
+        return validSources;
+      }
+    }
+  } catch (error) {
+    console.warn("Failed to load sources from localStorage:", error);
+  }
+
+  return initialSources;
+}
+
+/**
+ * Store the user's selected sources to localStorage
+ */
+export function setStoredSources(sources: Source[]): void {
+  try {
+    localStorage.setItem(SOURCES_STORAGE_KEY, JSON.stringify(sources));
+  } catch (error) {
+    console.warn("Failed to save sources to localStorage:", error);
+  }
+}

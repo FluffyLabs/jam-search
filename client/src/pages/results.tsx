@@ -9,7 +9,8 @@ import JamchainLogo from "@/assets/logos/jamchain.webp";
 import GithubLogo from "@/assets/logos/github.png";
 import { useResults } from "@/hooks/useResults";
 import {
-  initialSources,
+  getStoredSources,
+  setStoredSources,
   Source,
   SOURCE_OPTIONS,
   stringToSource,
@@ -28,11 +29,13 @@ const SearchResults = () => {
   const searchModeParam =
     new URLSearchParams(location.search).get("searchMode") || "strict";
   const [selectedSources, setSelectedSources] =
-    useState<Source[]>(initialSources);
+    useState<Source[]>(getStoredSources);
 
   const handleSourceChange = useCallback((stringSources: string[]) => {
     const sources = stringSources.map((x) => stringToSource(x)!);
     setSelectedSources(sources);
+    // Save the updated sources to localStorage
+    setStoredSources(sources);
   }, []);
 
   const {
