@@ -55,12 +55,20 @@ export function useResults(
   });
 
   // Search for  github.com/w3f/jamtestvectors pages
-  const w3f = useSearchPages({
+  const w3fJamtestvectors = useSearchPages({
     query,
     pageSize: 4,
     searchMode: searchMode,
     site: "github.com/w3f/jamtestvectors",
     enabled: selectedSources.includes(Source.GithubW3fJamtestvectors),
+  });
+
+  const w3fMilestoneDelivery = useSearchPages({
+    query,
+    pageSize: 4,
+    searchMode: searchMode,
+    site: "github.com/w3f/jam-milestone-delivery",
+    enabled: selectedSources.includes(Source.GithubW3fJamMilestoneDelivery),
   });
 
   // Use our graypaper search hook with 6 results per page (for compact view)
@@ -79,6 +87,7 @@ export function useResults(
     jamChat,
     implementersDiscord,
     jamchain,
-    w3f,
+    w3fJamtestvectors,
+    w3fMilestoneDelivery,
   };
 }

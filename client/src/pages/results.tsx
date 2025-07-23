@@ -41,7 +41,8 @@ const SearchResults = () => {
     graypaperChat,
     jamChat,
     jamchain,
-    w3f,
+    w3fJamtestvectors,
+    w3fMilestoneDelivery,
     graypaper,
     implementersDiscord,
   } = useResults(richQuery, searchModeParam, selectedSources);
@@ -178,15 +179,57 @@ const SearchResults = () => {
                       })()}
                     >
                       <ShowAll
-                        hasNextPage={w3f.pagination.hasNextPage}
-                        totalResults={w3f.totalResults}
+                        hasNextPage={w3fJamtestvectors.pagination.hasNextPage}
+                        totalResults={w3fJamtestvectors.totalResults}
                       />
                     </Link>
                   }
                 />
               </div>
               <PageResultCards
-                queryResult={w3f}
+                queryResult={w3fJamtestvectors}
+                searchQuery={query}
+                searchMode={searchModeParam as SearchMode}
+              />
+            </div>
+          )}
+
+          {selectedSources.includes(Source.GithubW3fJamMilestoneDelivery) && (
+            <div className="mt-6">
+              <div className="mb-4">
+                <Section
+                  logo={
+                    <img
+                      src={GithubLogo}
+                      className="size-4"
+                      alt="Github Logo"
+                    />
+                  }
+                  url="https://github.com/w3f/jam-milestone-delivery"
+                  title="w3f/jam-milestone-delivery"
+                  endBlock={
+                    <Link
+                      to={(() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set(
+                          "site",
+                          "github.com/w3f/jam-milestone-delivery"
+                        );
+                        return `/results/pages?${params.toString()}`;
+                      })()}
+                    >
+                      <ShowAll
+                        hasNextPage={
+                          w3fMilestoneDelivery.pagination.hasNextPage
+                        }
+                        totalResults={w3fMilestoneDelivery.totalResults}
+                      />
+                    </Link>
+                  }
+                />
+              </div>
+              <PageResultCards
+                queryResult={w3fMilestoneDelivery}
                 searchQuery={query}
                 searchMode={searchModeParam as SearchMode}
               />

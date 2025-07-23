@@ -3,6 +3,7 @@ export enum Source {
   Graypaper = "graypaper",
   Jamchain = "jamchain",
   GithubW3fJamtestvectors = "githubW3fJamtestvectors",
+  GithubW3fJamMilestoneDelivery = "githubW3fJamMilestoneDelivery",
   W3f = "w3f",
   Github = "github",
   JamDaoDiscord = "jamDaoDiscord",
@@ -26,6 +27,10 @@ export const SOURCE_OPTIONS = [
     value: Source.GithubW3fJamtestvectors,
   },
   { label: "JAM DAO", value: Source.JamDaoDiscord },
+  {
+    label: "github.com/w3f/jam-milestone-delivery",
+    value: Source.GithubW3fJamMilestoneDelivery,
+  },
 ];
 
 export const initialSources = [
@@ -33,5 +38,6 @@ export const initialSources = [
   Source.Graypaper,
   Source.Jamchain,
   Source.GithubW3fJamtestvectors,
+  // Source.GithubW3fJamMilestoneDelivery,
   Source.JamDaoDiscord,
 ];
