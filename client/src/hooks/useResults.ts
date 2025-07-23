@@ -71,6 +71,14 @@ export function useResults(
     enabled: selectedSources.includes(Source.GithubW3fJamMilestoneDelivery),
   });
 
+  const jamWeb3Foundation = useSearchPages({
+    query,
+    pageSize: 4,
+    searchMode: searchMode,
+    site: "jam.web3.foundation",
+    enabled: selectedSources.includes(Source.JamWeb3Foundation),
+  });
+
   // Use our graypaper search hook with 6 results per page (for compact view)
   const graypaper = useSearchGraypaper({
     query,
@@ -89,5 +97,6 @@ export function useResults(
     jamchain,
     w3fJamtestvectors,
     w3fMilestoneDelivery,
+    jamWeb3Foundation,
   };
 }

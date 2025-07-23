@@ -48,6 +48,7 @@ const SearchResults = () => {
     w3fMilestoneDelivery,
     graypaper,
     implementersDiscord,
+    jamWeb3Foundation,
   } = useResults(richQuery, searchModeParam, selectedSources);
 
   return (
@@ -233,6 +234,43 @@ const SearchResults = () => {
               </div>
               <PageResultCards
                 queryResult={w3fMilestoneDelivery}
+                searchQuery={query}
+                searchMode={searchModeParam as SearchMode}
+              />
+            </div>
+          )}
+
+          {selectedSources.includes(Source.JamWeb3Foundation) && (
+            <div className="mt-6">
+              <div className="mb-4">
+                <Section
+                  logo={
+                    <img
+                      src={JamchainLogo}
+                      className="size-4"
+                      alt="JamChain Logo"
+                    />
+                  }
+                  url="https://jam.web3.foundation"
+                  title="jam.web3.foundation"
+                  endBlock={
+                    <Link
+                      to={(() => {
+                        const params = new URLSearchParams(location.search);
+                        params.set("site", "jam.web3.foundation");
+                        return `/results/pages?${params.toString()}`;
+                      })()}
+                    >
+                      <ShowAll
+                        hasNextPage={jamWeb3Foundation.pagination.hasNextPage}
+                        totalResults={jamWeb3Foundation.totalResults}
+                      />
+                    </Link>
+                  }
+                />
+              </div>
+              <PageResultCards
+                queryResult={jamWeb3Foundation}
                 searchQuery={query}
                 searchMode={searchModeParam as SearchMode}
               />
