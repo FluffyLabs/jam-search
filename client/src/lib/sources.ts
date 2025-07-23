@@ -26,11 +26,11 @@ export const SOURCE_OPTIONS = [
     label: "github.com/w3f/jamtestvectors",
     value: Source.GithubW3fJamtestvectors,
   },
+  { label: "JAM DAO", value: Source.JamDaoDiscord },
   {
     label: "github.com/w3f/jam-milestone-delivery",
     value: Source.GithubW3fJamMilestoneDelivery,
   },
-  { label: "JAM DAO", value: Source.JamDaoDiscord },
 ];
 
 export const initialSources = [
@@ -38,6 +38,6 @@ export const initialSources = [
   Source.Graypaper,
   Source.Jamchain,
   Source.GithubW3fJamtestvectors,
-  Source.GithubW3fJamMilestoneDelivery,
+  // Source.GithubW3fJamMilestoneDelivery,
   Source.JamDaoDiscord,
 ];

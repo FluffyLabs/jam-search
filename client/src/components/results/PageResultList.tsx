@@ -1,13 +1,13 @@
 import { formatDate, SearchMode } from "@/lib/utils";
 import { ViewEmbedded } from "../ViewEmbedded";
-import {PageResultHighlighter} from "../PageResultHighlighter";
-import {NoResults} from "./NoResults";
-import {useResults} from "@/hooks/useResults";
-import {Skeleton} from "../ui/skeleton";
-import {ResultCard} from "./ResultCard";
+import { PageResultHighlighter } from "../PageResultHighlighter";
+import { NoResults } from "./NoResults";
+import { useResults } from "@/hooks/useResults";
+import { Skeleton } from "../ui/skeleton";
+import { ResultCard } from "./ResultCard";
 
 interface PageResultListProps {
-  queryResult: ReturnType<typeof useResults>['jamchain'],
+  queryResult: ReturnType<typeof useResults>["jamchain"];
   searchQuery: string;
   searchMode?: SearchMode;
 }
@@ -20,9 +20,7 @@ export const PageResultList = ({
   const { isLoading, isError, results } = queryResult;
 
   if (results.length === 0 && !isLoading) {
-    return (
-      <NoResults isError={isError} />
-    );
+    return <NoResults isError={isError} />;
   }
 
   return (
@@ -44,12 +42,13 @@ export const PageResultList = ({
             <Skeleton className="h-2 w-[80px] mt-1" />
           </div>
         </div>
-      ) : null }
+      ) : null}
       <div className="grid grid-cols-1 gap-4">
         {results.map((result) => {
           const isGithub = result.site.includes("github");
-          const githubNumber = result.url.split('/').pop();
-          const githubId = (isGithub && githubNumber) ? `#${githubNumber}` : '';
+          const githubNumber = Number(result.url.split("/").pop());
+          const githubId =
+            isGithub && Number.isFinite(githubNumber) ? `#${githubNumber}` : "";
 
           return (
             <ResultCard
@@ -63,12 +62,23 @@ export const PageResultList = ({
                   <span className="text-muted-foreground">
                     {isGithub ? (
                       <>
-                        {result.url.includes("/pull/") ? "PR" : "Issue"}
-                        {githubId}
-                        {" - "}
+                        {result.url.includes("/pull/") ||
+                        result.url.includes("/issues/") ? (
+                          <>
+                            {result.url.includes("/pull/") ? "PR" : "Issue"}
+                            {githubId}
+                            {" - "}
+                          </>
+                        ) : (
+                          <></>
+                        )}
                         {formatDate(result.createdAt)}
                       </>
-                    ) : result.url.replace(/http[s]:\/\//, '').replace(result.site, '') }
+                    ) : (
+                      result.url
+                        .replace(/http[s]:\/\//, "")
+                        .replace(result.site, "")
+                    )}
                   </span>
                 </>
               }
@@ -77,12 +87,12 @@ export const PageResultList = ({
                   result={result}
                   searchQuery={searchQuery}
                   searchMode={searchMode}
-                  options={{maxLength: 500, contextLength: 300}}
+                  options={{ maxLength: 500, contextLength: 300 }}
                 />
               }
               footer={
                 <ViewEmbedded
-                  label={isGithub ? 'Open Github' : 'Open page'}
+                  label={isGithub ? "Open Github" : "Open page"}
                   noEmbed={isGithub}
                   url={result.url}
                   results={results}
@@ -91,7 +101,8 @@ export const PageResultList = ({
                 />
               }
             />
-          )})}
+          );
+        })}
       </div>
     </div>
   );
