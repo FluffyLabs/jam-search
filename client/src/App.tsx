@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router";
 import "./App.css";
-import { AppsSidebar } from "@krystian5011/shared-ui";
+import { AppsSidebar } from "@fluffylabs/shared-ui";
 import { Header } from "./components/Header";
 import { IndexPage } from "./pages";
 import SearchResults from "./pages/results";
