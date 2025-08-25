@@ -11,6 +11,12 @@ export const MATRIX_CHANNELS = [
     archiveUrl:
       "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
   },
+  {
+    id: "!ksYpYHcVftKsUAsdMa:matrix.org",
+    name: "#jam-conformance:matrix.org",
+    archiveUrl:
+      "https://paritytech.github.io/matrix-archiver/archive/_21ksYpYHcVftKsUAsdMa_3Amatrix.org/index.html",
+  },
 ];
 
 export const DISCORD_CHANNELS = [

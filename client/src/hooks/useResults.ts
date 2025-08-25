@@ -35,6 +35,16 @@ export function useResults(
     enabled: selectedSources.includes(Source.Matrix),
   });
 
+  // Search for jam-conformance channel
+  const jamConformanceChat = useSearchMatrix({
+    query,
+    channelId: MATRIX_CHANNELS[2].id,
+    pageSize: 6,
+    filters,
+    searchMode: searchMode,
+    enabled: selectedSources.includes(Source.Matrix),
+  });
+
   // Search for Discord #implementers channel messages
   const implementersDiscord = useSearchDiscord({
     query,
@@ -93,6 +103,7 @@ export function useResults(
     graypaper,
     graypaperChat,
     jamChat,
+    jamConformanceChat,
     implementersDiscord,
     jamchain,
     w3fJamtestvectors,

@@ -14,6 +14,11 @@ const ROOMS = [
     archiveUrl:
       "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
   },
+  {
+    id: "!ksYpYHcVftKsUAsdMa:matrix.org",
+    archiveUrl:
+      "https://paritytech.github.io/matrix-archiver/archive/_21ksYpYHcVftKsUAsdMa_3Amatrix.org/index.html",
+  },
 ];
 
 /**

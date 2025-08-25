@@ -43,6 +43,7 @@ const SearchResults = () => {
     filters,
     graypaperChat,
     jamChat,
+    jamConformanceChat,
     jamchain,
     w3fJamtestvectors,
     w3fMilestoneDelivery,
@@ -109,6 +110,12 @@ const SearchResults = () => {
               <MatrixResults
                 channel={MATRIX_CHANNELS[1]}
                 queryResult={jamChat}
+                query={query}
+                searchMode={searchModeParam as SearchMode}
+              />
+              <MatrixResults
+                channel={MATRIX_CHANNELS[2]}
+                queryResult={jamConformanceChat}
                 query={query}
                 searchMode={searchModeParam as SearchMode}
               />
