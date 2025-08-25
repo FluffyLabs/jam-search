@@ -6,6 +6,7 @@ import { MATRIX_CHANNELS } from "@/consts";
 import { SearchMode } from "@/lib/utils";
 import { Section } from "@/components/results/Section";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
+import JamWeb3FoundationLogo from "@/assets/logos/jam-web3-foundation.png";
 import GithubLogo from "@/assets/logos/github.png";
 import { useResults } from "@/hooks/useResults";
 import {
@@ -253,9 +254,9 @@ const SearchResults = () => {
                 <Section
                   logo={
                     <img
-                      src={JamchainLogo}
+                      src={JamWeb3FoundationLogo}
                       className="size-4"
-                      alt="JamChain Logo"
+                      alt="Jam Web3 Foundation Logo"
                     />
                   }
                   url="https://jam.web3.foundation"
