@@ -4,15 +4,20 @@ import { fetchArchivedMessages } from "../services/archive.js";
 import { MessagesLogger } from "../services/logger.js";
 
 const ROOMS = [
+  // {
+  //   id: "!ddsEwXlCWnreEGuqXZ:polkadot.io",
+  //   archiveUrl:
+  //     "https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html",
+  // },
+  // {
+  //   id: "!wBOJlzaOULZOALhaRh:polkadot.io",
+  //   archiveUrl:
+  //     "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
+  // },
   {
-    id: "!ddsEwXlCWnreEGuqXZ:polkadot.io",
+    id: "!ksYpYHcVftKsUAsdMa:matrix.org",
     archiveUrl:
-      "https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html",
-  },
-  {
-    id: "!wBOJlzaOULZOALhaRh:polkadot.io",
-    archiveUrl:
-      "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
+      "https://paritytech.github.io/matrix-archiver/archive/_21ksYpYHcVftKsUAsdMa_3Amatrix.org/index.html",
   },
 ];
 
