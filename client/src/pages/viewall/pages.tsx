@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router";
+import { useLocation, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PageResultList } from "@/components/results/PageResultList";
 import { useSearchPages } from "@/hooks/useSearchPages";
