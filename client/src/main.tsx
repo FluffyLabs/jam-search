@@ -9,7 +9,7 @@ scan({
 });
 
 import App from "./App.tsx";
-import { HashRouter } from "react-router";
+import { HashRouter } from "react-router-dom";
 import {EmbeddedViewerProvider} from "./providers/EmbeddedResultsContext.tsx";
 
 document.documentElement.classList.toggle("dark", true);

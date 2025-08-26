@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { AppsSidebar } from "@fluffylabs/shared-ui";
 import { Header } from "./components/Header";

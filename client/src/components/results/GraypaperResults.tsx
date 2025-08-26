@@ -1,5 +1,5 @@
 import { BookOpenText } from "lucide-react";
-import { Link as RouterLink, useLocation } from "react-router";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import { Section } from "./Section";
 import { getTextToDisplay, SearchMode } from "@/lib/utils";
 import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
