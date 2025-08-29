@@ -1,21 +1,24 @@
 import ReactMarkdown from "react-markdown";
 import { Components } from "react-markdown";
-import {cn, highlightText, SearchMode} from "@/lib/utils";
-import {ClassValue} from "clsx";
-import {PageResult} from "@/lib/api";
+import { cn, highlightText, SearchMode } from "@/lib/utils";
+import { ClassValue } from "clsx";
+import { PageResult } from "@/lib/api";
 
 interface PageResultHighlighterProps {
   result: PageResult;
   searchQuery: string;
   searchMode: SearchMode;
   options: {
-    maxLength: number,
-    contextLength: number,
-  },
-};
+    maxLength: number;
+    contextLength: number;
+  };
+}
 
 export const PageResultHighlighter = ({
-  result, searchQuery, searchMode, options
+  result,
+  searchQuery,
+  searchMode,
+  options,
 }: PageResultHighlighterProps) => {
   const markdownComponents: Components = {
     p: createHighlightedComponent(
@@ -84,7 +87,6 @@ export const PageResultHighlighter = ({
   );
 };
 
-
 const createHighlightedComponent = (
   Component: React.ElementType,
   searchQuery: string,
@@ -104,49 +106,88 @@ const createHighlightedComponent = (
           props.className as ClassValue
         )}
       >
-      {childArray.map(child => typeof child === 'string' ? highlightText(child, [searchQuery], searchMode) : child)}
+        {childArray.map((child) =>
+          typeof child === "string"
+            ? highlightText(child, [searchQuery], searchMode)
+            : child
+        )}
       </Component>
     );
   };
 };
 
+// This function assumes that the content and search query words are separated with spaces
+const findBestMatch = (
+  content: string,
+  searchQuery: string,
+  searchMode: SearchMode
+) => {
+  const contentLower = content.toLowerCase();
+  const searchQueryLower = searchQuery.toLowerCase();
+
+  if (searchMode === "strict") {
+    const index = contentLower.indexOf(searchQueryLower);
+    return index !== -1 ? { index, length: searchQueryLower.length } : null;
+  }
+
+  const queryWords = searchQueryLower
+    .split(" ")
+    .filter((word) => word.length > 0);
+  if (queryWords.length === 0) return null;
+
+  // Try to find consecutive subsequences, starting with the longest
+  for (let length = queryWords.length; length >= 1; length--) {
+    for (let start = 0; start <= queryWords.length - length; start++) {
+      const subsequence = queryWords.slice(start, start + length);
+      const searchText = subsequence.join(" ");
+
+      const index = contentLower.indexOf(searchText);
+      if (index === -1) continue;
+
+      return {
+        index,
+        length: searchText.length,
+      };
+    }
+  }
+
+  return null;
+};
 
 const truncateContent = (
   content: string,
   searchQuery: string,
   searchMode: SearchMode,
   options: {
-    maxLength: number,
-    contextLength: number,
+    maxLength: number;
+    contextLength: number;
   }
 ): string => {
+  // Normalize spaces in both content and query
+  const normalizedContent = content.replace(/\s+/g, " ");
+  const normalizedQuery = searchQuery.replace(/\s+/g, " ");
 
-  // Find the first occurrence of the search query
-  const regex = new RegExp(
-    searchMode === "strict" ? searchQuery : searchQuery.split("").join(".*?"),
-    "i"
-  );
-  const match = content.match(regex);
+  // Find the best match of the search query
+  const match = findBestMatch(normalizedContent, normalizedQuery, searchMode);
 
   if (!match) {
     // If no match found, return first MAX_LENGTH characters
-    return content.length > options.maxLength
-      ? content.slice(0, options.maxLength) + "..."
-      : content;
+    return normalizedContent.length > options.maxLength
+      ? normalizedContent.slice(0, options.maxLength) + "..."
+      : normalizedContent;
   }
 
-  const matchIndex = match.index || 0;
-  const start = Math.max(0, matchIndex - options.contextLength);
+  const start = Math.max(0, match.index - options.contextLength);
   const end = Math.min(
-    content.length,
-    matchIndex + match[0].length + options.contextLength
+    normalizedContent.length,
+    match.index + match.length + options.contextLength
   );
 
-  let truncated = content.slice(start, end);
+  let truncated = normalizedContent.slice(start, end);
 
   // Add ellipsis if we're not at the start/end of the content
   if (start > 0) truncated = "..." + truncated;
-  if (end < content.length) truncated = truncated + "...";
+  if (end < normalizedContent.length) truncated = truncated + "...";
 
   return truncated;
 };
