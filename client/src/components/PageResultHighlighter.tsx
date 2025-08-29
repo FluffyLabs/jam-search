@@ -117,11 +117,14 @@ const createHighlightedComponent = (
 };
 
 // This function assumes that the content and search query words are separated with spaces
-const findBestMatch = (
+// eslint-disable-next-line react-refresh/only-export-components
+export const findBestMatch = (
   content: string,
   searchQuery: string,
   searchMode: SearchMode
 ) => {
+  if (searchQuery.length === 0) return null;
+
   const contentLower = content.toLowerCase();
   const searchQueryLower = searchQuery.toLowerCase();
 
@@ -131,27 +134,43 @@ const findBestMatch = (
   }
 
   const queryWords = searchQueryLower
-    .split(" ")
+    .split(/\s+/)
     .filter((word) => word.length > 0);
   if (queryWords.length === 0) return null;
 
-  // Try to find consecutive subsequences, starting with the longest
-  for (let length = queryWords.length; length >= 1; length--) {
-    for (let start = 0; start <= queryWords.length - length; start++) {
-      const subsequence = queryWords.slice(start, start + length);
+  // Binary search for the longest matching subsequence
+  // Invariant: If a subsequence of length k exists, then subsequences of all lengths ≤ k also exist
+  let left = 1;
+  let right = queryWords.length;
+  let bestMatch = null;
+
+  // Helper function to check if any subsequence of given length exists
+  const hasMatchOfLength = (targetLength: number) => {
+    for (let start = 0; start <= queryWords.length - targetLength; start++) {
+      const subsequence = queryWords.slice(start, start + targetLength);
       const searchText = subsequence.join(" ");
-
       const index = contentLower.indexOf(searchText);
-      if (index === -1) continue;
 
-      return {
-        index,
-        length: searchText.length,
-      };
+      if (index !== -1) {
+        bestMatch = { index, length: searchText.length };
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Binary search to find maximum length with a match
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+
+    if (hasMatchOfLength(mid)) {
+      left = mid + 1; // Try longer sequences
+    } else {
+      right = mid - 1; // Try shorter sequences
     }
   }
 
-  return null;
+  return bestMatch;
 };
 
 const truncateContent = (
