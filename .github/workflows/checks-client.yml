@@ -1,0 +1,47 @@
+name: FE Checks
+
+on:
+  pull_request:
+    paths:
+      - client/**
+      - .github/actions/**
+      - .github/workflows/checks-client.yml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: client
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: client
+      - run: npm run lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: client
+      - run: npm run test
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-packages
+        with:
+          working-directory: client
+      - run: npm run typecheck
