@@ -10,7 +10,7 @@ const config: DiscordConfig = {
   channels: [
     { serverId: "1354783684867264604", channelId: "1357838246276497590" },
   ],
-  includeThreads: false,
+  includeThreads: true,
 };
 
 // Fetch and store Discord messages

@@ -24,6 +24,7 @@ export const searchDiscordsRequestSchema = z.object({
   filter_before: z.string().optional(),
   filter_after: z.string().optional(),
   channelId: z.string().optional(),
+  threadId: z.string().optional(),
   searchMode: z.enum(["fuzzy", "semantic", "strict"]).default("strict"),
 });
 
@@ -45,6 +46,13 @@ export async function searchDiscords(
   if (data.channelId) {
     whereConditions.push(
       sql`id @@@ paradedb.match('channel_id', ${data.channelId})`
+    );
+  }
+
+  // Add filter condition for threadId
+  if (data.threadId) {
+    whereConditions.push(
+      sql`id @@@ paradedb.match('thread_id', ${data.threadId})`
     );
   }
 
@@ -168,6 +176,7 @@ export async function searchDiscords(
     .select({
       messageId: discordsTable.messageId,
       channelId: discordsTable.channelId,
+      threadId: discordsTable.threadId,
       serverId: discordsTable.serverId,
       sender: discordsTable.sender,
       authorId: discordsTable.authorId,

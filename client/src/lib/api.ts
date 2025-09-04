@@ -111,6 +111,7 @@ export interface DiscordSearchResult {
   messageId: string;
   authorId: string;
   channelId: string;
+  threadId?: string;
   serverId: string;
   sender: string;
   content: string;

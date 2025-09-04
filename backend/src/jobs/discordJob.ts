@@ -40,7 +40,7 @@ export function setupDiscordJob(): Job {
         channels: discordChannels,
         startDate: startDate,
         maxMessages: 1000,
-        includeThreads: false,
+        includeThreads: true,
       };
 
       console.log(
