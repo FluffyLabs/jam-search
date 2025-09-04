@@ -192,9 +192,7 @@
         "discords_message_id_unique": {
           "name": "discords_message_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "message_id"
-          ]
+          "columns": ["message_id"]
         }
       },
       "policies": {},
@@ -458,9 +456,7 @@
         "messages_messageid_unique": {
           "name": "messages_messageid_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "messageid"
-          ]
+          "columns": ["messageid"]
         }
       },
       "policies": {},
@@ -594,9 +590,7 @@
         "pages_url_unique": {
           "name": "pages_url_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "url"
-          ]
+          "columns": ["url"]
         }
       },
       "policies": {},
