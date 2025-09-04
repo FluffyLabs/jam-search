@@ -114,6 +114,7 @@ export const discordsTable = pgTable(
     id: serial("id").primaryKey(),
     messageId: text("message_id").unique(),
     channelId: text("channel_id"),
+    threadId: text("thread_id"), // New field for thread messages
     serverId: text("server_id"),
     sender: text("sender"),
     authorId: text("author_id"),
@@ -129,17 +130,21 @@ export const discordsTable = pgTable(
         table.sender,
         table.content,
         table.channelId,
+        table.threadId,
         table.timestamp
       )
       .with({
         key_field: "id",
-        text_fields: '\'{ "channel_id": { "fast": true } }\'',
+        text_fields:
+          '\'{ "channel_id": { "fast": true }, "thread_id": { "fast": true } }\'',
       }),
     index("discords_embedding_index").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
     index("discords_channel_id_idx").on(table.channelId),
+    index("discords_thread_id_idx").on(table.threadId),
+    index("discords_channel_thread_idx").on(table.channelId, table.threadId),
   ]
 );
 

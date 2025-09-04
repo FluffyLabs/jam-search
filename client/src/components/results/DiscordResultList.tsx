@@ -23,7 +23,9 @@ export const DiscordResultList = ({
   }
 
   const getUrl = (result: DiscordSearchResult) => {
-    return `https://discord.com/channels/${result.serverId}/${result.channelId}/${result.messageId}`;
+    // For thread messages, use threadId as the channel part
+    const channelPart = result.threadId || result.channelId;
+    return `https://discord.com/channels/${result.serverId}/${channelPart}/${result.messageId}`;
   };
 
   return (
@@ -41,6 +43,11 @@ export const DiscordResultList = ({
                 <span className="font-medium text-foreground">
                   {result.sender}{" "}
                 </span>
+                {result.threadId && (
+                  <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded ml-2">
+                    Thread
+                  </span>
+                )}
                 {result.timestamp && (
                   <span className="text-muted-foreground ml-2">
                     {formatDate(result.timestamp)}

@@ -22,6 +22,7 @@ export interface DiscordConfig {
 export interface DiscordMessage {
   id: string;
   channelId: string;
+  threadId?: string; // Optional thread ID for thread messages
   serverId: string;
   content: string;
   author: {
@@ -227,7 +228,15 @@ export async function fetchDiscordContent(
                 maxMessages: config.maxMessages,
               }
             );
-            allMessages.push(...threadMessages);
+
+            // For thread messages, set threadId and ensure channelId is the parent channel
+            const processedThreadMessages = threadMessages.map((msg) => ({
+              ...msg,
+              channelId: channelId, // Use parent channel ID
+              threadId: thread.id, // Set thread ID
+            }));
+
+            allMessages.push(...processedThreadMessages);
           } catch (error) {
             console.warn(
               `Failed to fetch messages from thread ${thread.id}:`,
@@ -255,6 +264,7 @@ export async function storeContentInDatabase(messages: DiscordMessage[]) {
         .values({
           messageId: message.id,
           channelId: message.channelId,
+          threadId: message.threadId,
           serverId: message.serverId,
           sender: message.author.username,
           authorId: message.author.id,
@@ -268,6 +278,7 @@ export async function storeContentInDatabase(messages: DiscordMessage[]) {
             sender: message.author.username,
             authorId: message.author.id,
             channelId: message.channelId,
+            threadId: message.threadId,
             serverId: message.serverId,
             timestamp: message.timestamp,
           },
