@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
-    "@tanstack/react-query-devtools": "^5.71.5",
+    "@tanstack/react-query-devtools": "^5.87.3",
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.13.13",
     "@types/react": "^19.0.12",
