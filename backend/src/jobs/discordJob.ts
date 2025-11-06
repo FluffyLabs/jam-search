@@ -21,7 +21,7 @@ try {
   await main();
   process.exit(0);
 } catch (error) {
-  console.error('Error in Discord job:', error);
+  console.error("Error in Discord job:", error);
   process.exit(1);
 }
 

@@ -23,7 +23,7 @@ try {
   await main();
   process.exit(0);
 } catch (error) {
-  console.error('Error in GitHub pages job:', error);
+  console.error("Error in GitHub pages job:", error);
   process.exit(1);
 }
 

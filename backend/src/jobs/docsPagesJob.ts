@@ -1,7 +1,7 @@
 import FirecrawlApp from "firecrawl";
+import { db } from "../db/db.js";
 import { env } from "../env.js";
 import { fetchAndStorePages } from "../scripts/fetchPages.js";
-import {db} from "../db/db.js";
 
 const FIRECRAWL_API_KEY = env.FIRECRAWL_API_KEY;
 
@@ -9,7 +9,7 @@ try {
   await main();
   process.exit(0);
 } catch (error) {
-  console.error('Error in docs pages job:', error);
+  console.error("Error in docs pages job:", error);
   process.exit(1);
 }
 

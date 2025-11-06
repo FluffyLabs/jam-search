@@ -11,7 +11,7 @@ try {
   await main();
   process.exit(0);
 } catch (error) {
-  console.error('Error in graypaper job:', error);
+  console.error("Error in graypaper job:", error);
   process.exit(1);
 }
 
