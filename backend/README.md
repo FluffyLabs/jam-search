@@ -18,10 +18,9 @@ npm install
 ```
 
 Configure environment variables (see `src/env.ts` for required vars):
-- `DATABASE_URL` - PostgreSQL connection string
+- `POSTGRES_URL` - PostgreSQL connection string
 - `OPENAI_API_KEY` - OpenAI API key
 - `DISCORD_TOKEN` - Discord bot token
-- `MATRIX_ACCESS_TOKEN` - Matrix access token
 - `GITHUB_TOKEN` - GitHub personal access token
 - `FIRECRAWL_API_KEY` - Firecrawl API key
 
