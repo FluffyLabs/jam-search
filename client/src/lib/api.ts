@@ -3,9 +3,7 @@
  */
 
 // Base URL for API requests
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://search-api.fluffylabs.dev";
+const API_URL = import.meta.env.VITE_API_URL || "https://search-api.fluffylabs.dev";
 
 /**
  * Type definitions for API responses
