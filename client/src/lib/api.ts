@@ -6,11 +6,7 @@
 const API_URL = import.meta.env.VITE_API_URL || "https://search-api.fluffylabs.dev";
 
 function getApiUrl() {
-  const ls = window.localStorage.getItem('API_URL');
-  if (ls !== undefined) {
-    return ls;
-  }
-  return API_URL;
+  return window.localStorage.getItem('API_URL') || API_URL;
 }
 
 /**
