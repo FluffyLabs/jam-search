@@ -5,6 +5,10 @@
 // Base URL for API requests
 const API_URL = import.meta.env.VITE_API_URL || "https://search-api.fluffylabs.dev";
 
+function getApiUrl() {
+  return window.localStorage.getItem('API_URL') || API_URL;
+}
+
 /**
  * Type definitions for API responses
  */
@@ -41,7 +45,7 @@ export async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_URL}${endpoint}`;
+  const url = `${getApiUrl()}${endpoint}`;
 
   const response = await fetch(url, {
     headers: {
