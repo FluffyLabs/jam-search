@@ -31,7 +31,7 @@ jobs:
       - name: Run graypaper job
         run: npx tsx ./src/jobs/graypaperJob.ts
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_INDEX_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
