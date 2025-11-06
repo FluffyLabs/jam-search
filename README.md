@@ -5,7 +5,7 @@ A search engine aggregating content from multiple sources including Discord serv
 ## Live Instances
 
 - **Production**: https://search.fluffylabs.dev
-- **Beta**: https://jam-search.netlify.app
+- **Beta**: https://jam-search2.netlify.app
 
 ## Tech Stack
 
