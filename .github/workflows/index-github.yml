@@ -14,6 +14,7 @@ jobs:
   run-github-pages-job:
     name: Update GitHub repos
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v4
 

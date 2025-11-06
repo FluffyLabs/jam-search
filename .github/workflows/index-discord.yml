@@ -14,6 +14,7 @@ jobs:
   run-discord-job:
     name: Update Discord Messages
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v4
 
