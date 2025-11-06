@@ -45,7 +45,9 @@ async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
 async function fetchPageContent(
   url: string
 ): Promise<{ content: string; title: string }> {
-  const firecrawl = new FirecrawlApp({ apiKey: process.env.FIRECRAWL_API_KEY });
+  const firecrawl = new FirecrawlApp({
+    apiKey: process.env.FIRECRAWL_API_KEY,
+  });
   const result = await firecrawl.scrapeUrl(url, {
     formats: ["markdown"],
   });
@@ -83,84 +85,66 @@ export async function fetchAndStorePages(
 ) {
   let pageUrls: PageUrl[] = [];
 
-  try {
-    // Handle different input types
-    if (typeof input === "string") {
-      // Single URL
-      pageUrls = [{ url: input }];
-    } else if (Array.isArray(input)) {
-      // Array of URLs
-      pageUrls = input.map((url) => ({ url }));
-    } else if (input.sitemapUrl) {
-      // Sitemap URL
-      console.log("Fetching sitemap...");
-      pageUrls = await fetchSitemap(input.sitemapUrl);
-    } else {
-      throw new Error(
-        "Invalid input format. Expected string, string[], or { sitemapUrl: string }"
-      );
-    }
+  // Handle different input types
+  if (typeof input === "string") {
+    // Single URL
+    pageUrls = [{ url: input }];
+  } else if (Array.isArray(input)) {
+    // Array of URLs
+    pageUrls = input.map((url) => ({ url }));
+  } else if (input.sitemapUrl) {
+    // Sitemap URL
+    console.log("Fetching sitemap...");
+    pageUrls = await fetchSitemap(input.sitemapUrl);
+  } else {
+    throw new Error(
+      "Invalid input format. Expected string, string[], or { sitemapUrl: string }"
+    );
+  }
 
-    console.log(`Found ${pageUrls.length} pages to process`);
+  console.log(`Found ${pageUrls.length} pages to process`);
+
+  // Fetch and store each page
+  for (const pageUrl of pageUrls) {
+    // Add delay between requests to avoid rate limiting
+    await delay(4000); // 4 second delay
 
     await db.transaction(async (tx) => {
-      // Clear existing pages
-      // await tx.delete(pagesTable);
-      // console.log("Cleared existing pages");
+      console.log(`Fetching ${pageUrl.url}...`);
+      const pageContent = await fetchPageContent(pageUrl.url);
 
-      // Fetch and store each page
-      for (const pageUrl of pageUrls) {
-        try {
-          console.log(`Fetching ${pageUrl.url}...`);
-          const pageContent = await fetchPageContent(pageUrl.url);
+      const cleanedContent = cleanContent(pageContent.content);
 
-          const cleanedContent = cleanContent(pageContent.content);
-
-          // Skip if content is empty after cleaning
-          if (!cleanedContent) {
-            console.log(`Skipping ${pageUrl.url} - no valid content`);
-            continue;
-          }
-
-          await tx
-            .insert(pagesTable)
-            .values({
-              url: pageUrl.url,
-              content: cleanedContent,
-              title: pageContent.title,
-              site,
-              lastModified: pageUrl.lastModified || new Date(),
-              created_at: new Date(),
-            })
-            .onConflictDoUpdate({
-              target: pagesTable.url,
-              set: {
-                content: cleanedContent,
-                title: pageContent.title,
-                site,
-                lastModified: pageUrl.lastModified || new Date(),
-              },
-            });
-
-          console.log(`Stored ${pageUrl.url}`);
-
-          // Add delay between requests to avoid rate limiting
-          await delay(4000); // 4 second delay
-        } catch (error) {
-          console.error(`Error processing ${pageUrl.url}:`, error);
-          // Add delay even after errors to maintain rate limiting
-          throw error;
-        }
+      // Skip if content is empty after cleaning
+      if (!cleanedContent) {
+        console.log(`Skipping ${pageUrl.url} - no valid content`);
+        return;
       }
 
-      console.log("Reindexing pages_search_idx");
-      await tx.execute(sql`REINDEX INDEX pages_search_idx;`);
-    });
+      await tx
+        .insert(pagesTable)
+        .values({
+          url: pageUrl.url,
+          content: cleanedContent,
+          title: pageContent.title,
+          site,
+          lastModified: pageUrl.lastModified || new Date(),
+          created_at: new Date(),
+        })
+        .onConflictDoUpdate({
+          target: pagesTable.url,
+          set: {
+            content: cleanedContent,
+            title: pageContent.title,
+            site,
+            lastModified: pageUrl.lastModified || new Date(),
+          },
+        });
 
-    console.log("Done! Closing connection...");
-    await db.$client.end();
-  } catch (error) {
-    console.error("Error fetching and storing pages:", error);
-    process.exit(1);
+      console.log(`Stored ${pageUrl.url}`);
+    });
   }
+
+  console.log("Reindexing pages_search_idx");
+  await db.execute(sql`REINDEX INDEX pages_search_idx;`);
 }

@@ -3,23 +3,10 @@ import { db } from "../db/db.js";
 import { fetchArchivedMessages } from "../services/archive.js";
 import { MessagesLogger } from "../services/logger.js";
 
-const ROOMS = [
-  {
-    id: "!ddsEwXlCWnreEGuqXZ:polkadot.io",
-    archiveUrl:
-      "https://paritytech.github.io/matrix-archiver/archive/_21ddsEwXlCWnreEGuqXZ_3Apolkadot.io/index.html",
-  },
-  {
-    id: "!wBOJlzaOULZOALhaRh:polkadot.io",
-    archiveUrl:
-      "https://paritytech.github.io/matrix-archiver/archive/_21wBOJlzaOULZOALhaRh_3Apolkadot.io/index.html",
-  },
-  {
-    id: "!ksYpYHcVftKsUAsdMa:matrix.org",
-    archiveUrl:
-      "https://paritytech.github.io/matrix-archiver/archive/_21ksYpYHcVftKsUAsdMa_3Amatrix.org/index.html",
-  },
-];
+type Room = {
+  id: string;
+  archiveUrl: string;
+};
 
 /**
  * Validates if a string is in the format yyyy-MM-dd
@@ -39,7 +26,11 @@ function isValidDateFormat(dateStr: string): boolean {
   return isValid(parsedDate);
 }
 
-export async function fillArchivedMessages(fromDate: string, toDate: string) {
+export async function fillArchivedMessages(
+  rooms: Room[],
+  fromDate: string,
+  toDate: string
+) {
   // Validate date formats
   if (!isValidDateFormat(fromDate)) {
     throw new Error(
@@ -54,15 +45,13 @@ export async function fillArchivedMessages(fromDate: string, toDate: string) {
   }
 
   // Extract just the room IDs for the MessagesLogger
-  const logger = new MessagesLogger({
-    roomIds: ROOMS.map((room) => room.id),
-    db,
-  });
+  const logger = new MessagesLogger(db);
 
   console.log(`Fetching messages from ${fromDate} to ${toDate}`);
 
-  try {
-    for (const room of ROOMS) {
+  const errors = [];
+  for (const room of rooms) {
+    try {
       console.log(`Fetching archived messages for room ${room.id}`);
       console.log(`Using archive URL: ${room.archiveUrl}`);
 
@@ -87,8 +76,16 @@ export async function fillArchivedMessages(fromDate: string, toDate: string) {
           `No messages found for room ${room.id} in the specified date range`
         );
       }
+    } catch (error) {
+      console.error("Error fetching and inserting historical messages:", error);
+      errors.push(error);
     }
-  } catch (error) {
-    console.error("Error fetching and inserting historical messages:", error);
+  }
+
+  if (errors.length) {
+    throw new AggregateError(
+      errors,
+      `Failed to fetch messages for ${errors.length} room(s)`
+    );
   }
 }

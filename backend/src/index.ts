@@ -1,13 +1,9 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./api.js";
 import { env } from "./env.js";
-import { setupCronJobs } from "./jobs/index.js";
-
-const isDev = process.env.NODE_ENV === "development";
 
 async function main() {
   const app = createApp();
-  const jobs = !isDev ? setupCronJobs() : null;
 
   // Start HTTP server
   const server = serve({
@@ -21,12 +17,6 @@ async function main() {
   const shutdown = async () => {
     console.log("🛑 Shutting down...");
     server.close();
-    if (jobs) {
-      jobs.matrixJob?.cancel();
-      jobs.graypaperJob?.cancel();
-      jobs.githubPagesJob?.cancel();
-      jobs.docsPagesJob?.cancel();
-    }
     process.exit(0);
   };
 

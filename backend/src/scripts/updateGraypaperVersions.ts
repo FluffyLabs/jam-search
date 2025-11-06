@@ -43,28 +43,16 @@ async function addNewRelease(release: GitHubRelease): Promise<void> {
   }
 }
 
-export async function updateGraypapers(): Promise<void> {
+export async function updateGraypaperVersions(): Promise<boolean> {
   const releases = await fetchLatestReleases();
   const existingVersions = await getExistingVersions();
 
   for (const release of releases) {
     if (!existingVersions.includes(release.tag_name)) {
       await addNewRelease(release);
+      return true;
     }
   }
-}
 
-// Run the function if this script is executed directly
-// In ESM, we don't have the require.main check, so we can use a condition based on import.meta instead
-const isMainModule = import.meta.url === `file://${process.argv[1]}`;
-if (isMainModule) {
-  updateGraypapers()
-    .then(() => {
-      console.log("Graypaper update completed");
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error("Error updating graypapers:", error);
-      process.exit(1);
-    });
+  return false;
 }

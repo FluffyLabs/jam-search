@@ -15,7 +15,10 @@ export const messagesTable = pgTable(
     roomId: text("roomid"),
     sender: text("sender"),
     content: text("content"),
-    timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
+    timestamp: timestamp("timestamp", {
+      mode: "date",
+      precision: 3,
+    }).notNull(),
     embedding: vector("embedding", { dimensions: 1536 }),
   },
   (table) => [
@@ -119,7 +122,10 @@ export const discordsTable = pgTable(
     sender: text("sender"),
     authorId: text("author_id"),
     content: text("content"),
-    timestamp: timestamp("timestamp", { mode: "date", precision: 3 }).notNull(),
+    timestamp: timestamp("timestamp", {
+      mode: "date",
+      precision: 3,
+    }).notNull(),
     embedding: vector("embedding", { dimensions: 1536 }),
   },
   (table) => [
