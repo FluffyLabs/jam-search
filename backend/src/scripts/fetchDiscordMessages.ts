@@ -1,8 +1,6 @@
 import {
   Client,
-  Collection,
   GatewayIntentBits,
-  Message,
   TextChannel,
   ThreadChannel,
 } from "discord.js";
@@ -16,7 +14,7 @@ export interface DiscordConfig {
   startDate?: string; // Start date in yyyy-MM-dd format (optional)
   endDate?: string; // End date in yyyy-MM-dd format (optional)
   maxMessages?: number; // Maximum number of messages to fetch per channel (optional, default: 1000)
-  includeThreads?: boolean; // Whether to include messages from threads (optional, default: true)
+  includeThreads?: boolean; // Whether to include messages from threads (optional, default: false)
 }
 
 export interface DiscordMessage {
@@ -198,7 +196,7 @@ export async function fetchDiscordContent(
     const allMessages: DiscordMessage[] = [];
     const includeThreads = config.includeThreads || false;
 
-    for (const { serverId, channelId } of config.channels) {
+    for (const { serverId: _serverId, channelId } of config.channels) {
       console.log(`Fetching messages from channel ${channelId}`);
 
       // Fetch messages from the main channel

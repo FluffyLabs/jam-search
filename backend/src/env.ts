@@ -3,6 +3,9 @@ import "dotenv/config";
 import { z } from "zod";
 
 export const envSchema = z.object({
+  GITHUB_TOKEN: z.string(),
+  DISCORD_TOKEN: z.string(),
+  FIRECRAWL_API_KEY: z.string(),
   POSTGRES_URL: z.string().url(),
   PORT: z.coerce.number().default(3000),
 });

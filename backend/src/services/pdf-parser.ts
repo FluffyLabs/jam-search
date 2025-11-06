@@ -1,5 +1,4 @@
 import type {
-  PDFDocumentProxy,
   PDFPageProxy,
 } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { TextItem } from "pdfjs-dist/types/src/display/api.js";
@@ -82,7 +81,10 @@ export class PDFParserService {
         if (item.items && item.items.length > 0) {
           titles.push(
             ...flattenOutline(
-              item.items as Array<{ title: string; items?: unknown[] }>
+              item.items as Array<{
+                title: string;
+                items?: unknown[];
+              }>
             )
           );
         }
@@ -136,7 +138,10 @@ export class PDFParserService {
         let subsections: PDFSection[] = [];
         if (item.items && item.items.length > 0) {
           subsections = buildSections(
-            item.items as Array<{ title: string; items?: unknown[] }>,
+            item.items as Array<{
+              title: string;
+              items?: unknown[];
+            }>,
             text,
             indices,
             thisIdxObj

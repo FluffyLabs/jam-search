@@ -1,65 +1,68 @@
-import { format, subDays } from "date-fns";
-import { type Job, scheduleJob } from "node-schedule";
+import {format, subDays} from "date-fns";
 import {
   type DiscordConfig,
   fetchDiscordContent,
   storeContentInDatabase,
 } from "../scripts/fetchDiscordMessages.js";
 import { processBatchEmbeddings } from "../scripts/generateEmbeddingsBatch.js";
+import {env} from "../env.js";
 
-export function setupDiscordJob(): Job {
-  return scheduleJob("0 5 * * *", async () => {
-    console.log(
-      "Running scheduled Discord fetch job at",
-      new Date().toISOString()
-    );
-    try {
-      // Get Discord configuration from environment variables
-      const discordToken = process.env.DISCORD_TOKEN;
-      const discordChannels = [
-        { serverId: "1354783684867264604", channelId: "1357838246276497590" },
-      ];
+const DISCORD_TOKEN = env.DISCORD_TOKEN;
 
-      if (!discordToken) {
-        console.log("Discord token not configured, skipping Discord job");
-        return;
-      }
+const DISCORD_CHANNELS = [
+  /** JAM DAO / #implementers */
+  {
+    serverId: "1354783684867264604",
+    channelId: "1357838246276497590",
+  },
+];
 
-      if (discordChannels.length === 0) {
-        console.log("No Discord channels configured, skipping Discord job");
-        return;
-      }
+await main();
 
-      // Fetch messages from the last 2 days to ensure we don't miss anything
-      const today = new Date();
-      const twoDaysAgo = subDays(today, 2);
-      const startDate = format(twoDaysAgo, "yyyy-MM-dd");
+async function main() {
+  console.log(
+    "Running Discord fetch job at",
+    new Date().toISOString()
+  );
+  // Get Discord configuration from environment variables
+  const discordToken = DISCORD_TOKEN;
 
-      const config: DiscordConfig = {
-        token: discordToken,
-        channels: discordChannels,
-        startDate: startDate,
-        maxMessages: 1000,
-        includeThreads: true,
-      };
+  if (!discordToken) {
+    console.log("Discord token not configured, skipping Discord job");
+    return;
+  }
 
-      console.log(
-        `Fetching Discord messages from ${discordChannels.length} channels since ${startDate}`
-      );
-      const messages = await fetchDiscordContent(config);
+  if (DISCORD_CHANNELS.length === 0) {
+    console.log("No Discord channels configured, skipping Discord job");
+    return;
+  }
 
-      if (messages.length > 0) {
-        console.log(`Storing ${messages.length} Discord messages in database`);
-        await storeContentInDatabase(messages);
+  // Fetch messages from the last 2 days to ensure we don't miss anything
+  const today = new Date();
+  const twoDaysAgo = subDays(today, 2);
+  const startDate = format(twoDaysAgo, "yyyy-MM-dd");
 
-        // Generate embeddings for new messages
-        await processBatchEmbeddings();
-        console.log("Discord fetch job completed successfully");
-      } else {
-        console.log("No new Discord messages found");
-      }
-    } catch (error) {
-      console.error("Error in Discord fetch job:", error);
-    }
-  });
+  const config: DiscordConfig = {
+    token: discordToken,
+    channels: DISCORD_CHANNELS,
+    startDate: startDate,
+    maxMessages: 1000,
+    includeThreads: true,
+  };
+
+  console.log(
+    `Fetching Discord messages from ${DISCORD_CHANNELS.length} channels since ${startDate}`
+  );
+  const messages = await fetchDiscordContent(config);
+
+  if (messages.length > 0) {
+    console.log(`Storing ${messages.length} Discord messages in database`);
+    await storeContentInDatabase(messages);
+
+    // Generate embeddings for new messages
+    await processBatchEmbeddings();
+    console.log("Discord fetch job completed successfully");
+  } else {
+    console.log("No new Discord messages found");
+  }
 }

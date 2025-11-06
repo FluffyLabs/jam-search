@@ -28,7 +28,7 @@ jobs:
           cache-dependency-path: backend/package-lock.json
       - name: Install dependencies
         run: npm ci
-      - run: npm run lint:ci
+      - run: npm run qa
 
   test:
     name: Test
