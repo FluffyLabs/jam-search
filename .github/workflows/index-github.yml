@@ -1,4 +1,4 @@
-name: "Index: Github"
+name: "Index: GitHub"
 
 on:
   workflow_dispatch:

@@ -7,7 +7,13 @@ import { PDFParserService } from "../services/pdf-parser.js";
 
 const LATEST_GP_PDF = "https://graypaper.com/graypaper.pdf";
 
-await main();
+try {
+  await main();
+  process.exit(0);
+} catch (error) {
+  console.error('Error in graypaper job:', error);
+  process.exit(1);
+}
 
 async function main() {
   console.log(

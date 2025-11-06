@@ -4,7 +4,13 @@ import { fetchAndStorePages } from "../scripts/fetchPages.js";
 
 const FIRECRAWL_API_KEY = env.FIRECRAWL_API_KEY;
 
-await main();
+try {
+  await main();
+  process.exit(0);
+} catch (error) {
+  console.error('Error in docs pages job:', error);
+  process.exit(1);
+}
 
 async function main() {
   console.log("Running docs pages fetch job at", new Date().toISOString());

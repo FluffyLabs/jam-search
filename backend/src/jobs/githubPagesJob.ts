@@ -19,7 +19,13 @@ const REPOSITORIES = [
   },
 ];
 
-await main();
+try {
+  await main();
+  process.exit(0);
+} catch (error) {
+  console.error('Error in GitHub pages job:', error);
+  process.exit(1);
+}
 
 async function main() {
   console.log("Running GitHub pages fetch job at", new Date().toISOString());

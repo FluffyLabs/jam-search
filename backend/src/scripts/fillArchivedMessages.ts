@@ -83,6 +83,6 @@ export async function fillArchivedMessages(
   }
 
   if (errors.length) {
-    throw errors;
+    throw new AggregateError(errors, `Failed to fetch messages for ${errors.length} room(s)`);
   }
 }

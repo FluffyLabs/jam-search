@@ -17,7 +17,13 @@ const DISCORD_CHANNELS = [
   },
 ];
 
-await main();
+try {
+  await main();
+  process.exit(0);
+} catch (error) {
+  console.error('Error in Discord job:', error);
+  process.exit(1);
+}
 
 async function main() {
   console.log("Running Discord fetch job at", new Date().toISOString());
