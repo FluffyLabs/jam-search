@@ -7,6 +7,15 @@ A search engine aggregating content from multiple sources including Discord serv
 - **Production**: https://search.fluffylabs.dev
 - **Beta**: https://jam-search2.netlify.app
 
+## Indexing Job Status
+
+[![Index: Discord](https://github.com/FluffyLabs/jam-search/actions/workflows/index-discord.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-discord.yml)
+[![Index: GitHub](https://github.com/FluffyLabs/jam-search/actions/workflows/index-github.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-github.yml)
+[![Index: Pages](https://github.com/FluffyLabs/jam-search/actions/workflows/index-pages.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-pages.yml)
+[![Index: Graypaper](https://github.com/FluffyLabs/jam-search/actions/workflows/index-graypaper.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-graypaper.yml)
+[![Index: Matrix](https://github.com/FluffyLabs/jam-search/actions/workflows/index-matrix.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-matrix.yml)
+[![Index: Embeddings](https://github.com/FluffyLabs/jam-search/actions/workflows/index-embeddings.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-embeddings.yml)
+
 ## Tech Stack
 
 ### Frontend
@@ -72,7 +81,7 @@ Automated jobs run daily to keep content updated.
 
 ## Deployment
 
-- **Backend**: Deployed to Heroku
+- **Backend**: Deployed to <https://search-api.fluffylabs.dev>
 - **Frontend**: Deployed to Netlify (beta) and custom domain (production)
 
 ## License
