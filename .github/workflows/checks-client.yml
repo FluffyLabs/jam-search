@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - client/**
-      - .github/actions/**
       - .github/workflows/checks-client.yml
 
 concurrency:
@@ -21,9 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-packages
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v4
         with:
-          working-directory: client
+          node-version-file: client/.nvmrc
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+      - name: Install dependencies
+        run: npm ci
       - run: npm run lint
 
   test:
@@ -31,9 +35,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-packages
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v4
         with:
-          working-directory: client
+          node-version-file: client/.nvmrc
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+      - name: Install dependencies
+        run: npm ci
       - run: npm run test
 
   typecheck:
@@ -41,7 +50,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-packages
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v4
         with:
-          working-directory: client
+          node-version-file: client/.nvmrc
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+      - name: Install dependencies
+        run: npm ci
       - run: npm run typecheck
