@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
-import {env} from "../env.js";
+import { env } from "../env.js";
 
 export const searchPagesRequestSchema = z.object({
   q: z.string(),

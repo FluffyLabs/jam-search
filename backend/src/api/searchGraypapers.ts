@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { graypaperSectionsTable } from "../db/schema.js";
-import {env} from "../env.js";
+import { env } from "../env.js";
 
 export const searchGraypaperRequestSchema = z.object({
   q: z.string(),

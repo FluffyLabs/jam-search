@@ -1,4 +1,4 @@
-import {env} from "../env.js";
+import { env } from "../env.js";
 import {
   fetchGitHubContent,
   storeContentInDatabase,
@@ -22,10 +22,7 @@ const REPOSITORIES = [
 await main();
 
 async function main() {
-  console.log(
-    "Running GitHub pages fetch job at",
-    new Date().toISOString()
-  );
+  console.log("Running GitHub pages fetch job at", new Date().toISOString());
 
   const errors = [];
   for (const config of REPOSITORIES) {
@@ -45,10 +42,7 @@ async function main() {
       );
       console.log(`Successfully processed ${config.owner}/${config.repo}`);
     } catch (error) {
-      console.error(
-        `Error processing ${config.owner}/${config.repo}:`,
-        error
-      );
+      console.error(`Error processing ${config.owner}/${config.repo}:`, error);
       errors.push(error);
       // Continue with next repository even if one fails
     }

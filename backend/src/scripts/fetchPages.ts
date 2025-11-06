@@ -124,24 +124,24 @@ export async function fetchAndStorePages(
         }
 
         await tx
-        .insert(pagesTable)
-        .values({
-          url: pageUrl.url,
-          content: cleanedContent,
-          title: pageContent.title,
-          site,
-          lastModified: pageUrl.lastModified || new Date(),
-          created_at: new Date(),
-        })
-        .onConflictDoUpdate({
-          target: pagesTable.url,
-          set: {
+          .insert(pagesTable)
+          .values({
+            url: pageUrl.url,
             content: cleanedContent,
             title: pageContent.title,
             site,
             lastModified: pageUrl.lastModified || new Date(),
-          },
-        });
+            created_at: new Date(),
+          })
+          .onConflictDoUpdate({
+            target: pagesTable.url,
+            set: {
+              content: cleanedContent,
+              title: pageContent.title,
+              site,
+              lastModified: pageUrl.lastModified || new Date(),
+            },
+          });
 
         console.log(`Stored ${pageUrl.url}`);
 

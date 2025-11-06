@@ -1,11 +1,11 @@
-import {format, subDays} from "date-fns";
+import { format, subDays } from "date-fns";
+import { env } from "../env.js";
 import {
   type DiscordConfig,
   fetchDiscordContent,
   storeContentInDatabase,
 } from "../scripts/fetchDiscordMessages.js";
 import { processBatchEmbeddings } from "../scripts/generateEmbeddingsBatch.js";
-import {env} from "../env.js";
 
 const DISCORD_TOKEN = env.DISCORD_TOKEN;
 
@@ -20,10 +20,7 @@ const DISCORD_CHANNELS = [
 await main();
 
 async function main() {
-  console.log(
-    "Running Discord fetch job at",
-    new Date().toISOString()
-  );
+  console.log("Running Discord fetch job at", new Date().toISOString());
   // Get Discord configuration from environment variables
   const discordToken = DISCORD_TOKEN;
 

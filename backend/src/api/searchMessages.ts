@@ -11,7 +11,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { graypapersTable, messagesTable } from "../db/schema.js";
-import {env} from "../env.js";
+import { env } from "../env.js";
 
 const escapeRegExp = (str: string) =>
   str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

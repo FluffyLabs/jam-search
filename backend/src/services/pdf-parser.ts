@@ -1,6 +1,4 @@
-import type {
-  PDFPageProxy,
-} from "pdfjs-dist/legacy/build/pdf.mjs";
+import type { PDFPageProxy } from "pdfjs-dist/legacy/build/pdf.mjs";
 import type { TextItem } from "pdfjs-dist/types/src/display/api.js";
 
 export interface PDFSection {

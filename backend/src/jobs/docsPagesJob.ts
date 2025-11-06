@@ -1,16 +1,13 @@
 import FirecrawlApp from "firecrawl";
+import { env } from "../env.js";
 import { fetchAndStorePages } from "../scripts/fetchPages.js";
-import {env} from "../env.js";
 
 const FIRECRAWL_API_KEY = env.FIRECRAWL_API_KEY;
 
 await main();
 
 async function main() {
-  console.log(
-    "Running docs pages fetch job at",
-    new Date().toISOString()
-  );
+  console.log("Running docs pages fetch job at", new Date().toISOString());
 
   // Keep original sitemap approach for docs.jamcha.in
   await fetchAndStorePages(
@@ -27,9 +24,7 @@ async function main() {
 
   console.log("Mapping jam.web3.foundation to get all URLs...");
 
-  const jamMapResult = await firecrawl.mapUrl(
-    "https://jam.web3.foundation"
-  );
+  const jamMapResult = await firecrawl.mapUrl("https://jam.web3.foundation");
 
   if (jamMapResult.success && jamMapResult.links) {
     console.log(

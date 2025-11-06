@@ -26,7 +26,11 @@ function isValidDateFormat(dateStr: string): boolean {
   return isValid(parsedDate);
 }
 
-export async function fillArchivedMessages(rooms: Room[], fromDate: string, toDate: string) {
+export async function fillArchivedMessages(
+  rooms: Room[],
+  fromDate: string,
+  toDate: string
+) {
   // Validate date formats
   if (!isValidDateFormat(fromDate)) {
     throw new Error(

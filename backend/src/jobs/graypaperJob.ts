@@ -1,9 +1,9 @@
 import { sql } from "drizzle-orm";
 
-import { PDFParserService } from "../services/pdf-parser.js";
 import { db } from "../db/db.js";
 import { graypaperSectionsTable } from "../db/schema.js";
 import { updateGraypaperVersions } from "../scripts/updateGraypaperVersions.js";
+import { PDFParserService } from "../services/pdf-parser.js";
 
 const LATEST_GP_PDF = "https://graypaper.com/graypaper.pdf";
 

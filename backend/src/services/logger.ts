@@ -21,10 +21,7 @@ const toDbMessage = (newMessage: Message) => {
 };
 
 export class MessagesLogger {
-
-  constructor(
-    private readonly db: DbClient,
-  ) {}
+  constructor(private readonly db: DbClient) {}
 
   async onMessages(
     events: {
@@ -41,13 +38,17 @@ export class MessagesLogger {
 
     try {
       const messages: Message[] = events
-        .filter((event): event is {
-          roomId: string;
-          msg: string;
-          sender: string | undefined;
-          messageId: string;
-          date: Date;
-        } => Boolean(event.messageId && event.date))
+        .filter(
+          (
+            event
+          ): event is {
+            roomId: string;
+            msg: string;
+            sender: string | undefined;
+            messageId: string;
+            date: Date;
+          } => Boolean(event.messageId && event.date)
+        )
         .map((event) => ({
           messageId: event.messageId,
           roomId: event.roomId,

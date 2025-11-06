@@ -23,10 +23,7 @@ const ROOMS = [
 ];
 
 async function main() {
-  console.log(
-    "Running matrix message fetch job at",
-    new Date().toISOString()
-  );
+  console.log("Running matrix message fetch job at", new Date().toISOString());
   try {
     const today = new Date();
     const yesterday = subDays(today, 1);
