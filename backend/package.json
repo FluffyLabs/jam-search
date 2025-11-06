@@ -50,7 +50,7 @@
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.14.1",
     "@types/node-schedule": "^2.1.0",
-    "drizzle-kit": "^0.18.1",
+    "drizzle-kit": "^0.31.6",
     "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
