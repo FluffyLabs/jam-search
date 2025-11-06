@@ -24,6 +24,7 @@ async function main() {
   const hasNewVersion = await updateGraypaperVersions();
   if (!hasNewVersion) {
     console.log("Graypaper Versions: no new version");
+    await db.$client.end();
     return;
   }
 

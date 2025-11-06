@@ -1,6 +1,7 @@
 import FirecrawlApp from "firecrawl";
 import { env } from "../env.js";
 import { fetchAndStorePages } from "../scripts/fetchPages.js";
+import {db} from "../db/db.js";
 
 const FIRECRAWL_API_KEY = env.FIRECRAWL_API_KEY;
 
@@ -42,4 +43,5 @@ async function main() {
   }
 
   console.log("Docs pages fetch job completed successfully");
+  await db.$client.end();
 }

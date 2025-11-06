@@ -104,60 +104,47 @@ export async function fetchAndStorePages(
 
   console.log(`Found ${pageUrls.length} pages to process`);
 
-  await db.transaction(async (tx) => {
-    // Clear existing pages
-    // await tx.delete(pagesTable);
-    // console.log("Cleared existing pages");
+  // Fetch and store each page
+  for (const pageUrl of pageUrls) {
+    // Add delay between requests to avoid rate limiting
+    await delay(4000); // 4 second delay
 
-    // Fetch and store each page
-    for (const pageUrl of pageUrls) {
-      try {
-        console.log(`Fetching ${pageUrl.url}...`);
-        const pageContent = await fetchPageContent(pageUrl.url);
+    await db.transaction(async (tx) => {
+      console.log(`Fetching ${pageUrl.url}...`);
+      const pageContent = await fetchPageContent(pageUrl.url);
 
-        const cleanedContent = cleanContent(pageContent.content);
+      const cleanedContent = cleanContent(pageContent.content);
 
-        // Skip if content is empty after cleaning
-        if (!cleanedContent) {
-          console.log(`Skipping ${pageUrl.url} - no valid content`);
-          continue;
-        }
-
-        await tx
-          .insert(pagesTable)
-          .values({
-            url: pageUrl.url,
-            content: cleanedContent,
-            title: pageContent.title,
-            site,
-            lastModified: pageUrl.lastModified || new Date(),
-            created_at: new Date(),
-          })
-          .onConflictDoUpdate({
-            target: pagesTable.url,
-            set: {
-              content: cleanedContent,
-              title: pageContent.title,
-              site,
-              lastModified: pageUrl.lastModified || new Date(),
-            },
-          });
-
-        console.log(`Stored ${pageUrl.url}`);
-
-        // Add delay between requests to avoid rate limiting
-        await delay(4000); // 4 second delay
-      } catch (error) {
-        console.error(`Error processing ${pageUrl.url}:`, error);
-        // Add delay even after errors to maintain rate limiting
-        throw error;
+      // Skip if content is empty after cleaning
+      if (!cleanedContent) {
+        console.log(`Skipping ${pageUrl.url} - no valid content`);
+        return;
       }
-    }
 
-    console.log("Reindexing pages_search_idx");
-    await tx.execute(sql`REINDEX INDEX pages_search_idx;`);
-  });
+      await tx
+      .insert(pagesTable)
+      .values({
+        url: pageUrl.url,
+        content: cleanedContent,
+        title: pageContent.title,
+        site,
+        lastModified: pageUrl.lastModified || new Date(),
+        created_at: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: pagesTable.url,
+        set: {
+          content: cleanedContent,
+          title: pageContent.title,
+          site,
+          lastModified: pageUrl.lastModified || new Date(),
+        },
+      });
 
-  console.log("Done! Closing connection...");
-  await db.$client.end();
+      console.log(`Stored ${pageUrl.url}`);
+    });
+  }
+
+  console.log("Reindexing pages_search_idx");
+  await db.execute(sql`REINDEX INDEX pages_search_idx;`);
 }

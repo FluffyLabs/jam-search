@@ -2,8 +2,6 @@ import { format, subDays } from "date-fns";
 import { fillArchivedMessages } from "../scripts/fillArchivedMessages.js";
 import { processBatchEmbeddings } from "../scripts/generateEmbeddingsBatch.js";
 
-await main();
-
 const ROOMS = [
   {
     id: "!ddsEwXlCWnreEGuqXZ:polkadot.io",
@@ -21,6 +19,8 @@ const ROOMS = [
       "https://paritytech.github.io/matrix-archiver/archive/_21ksYpYHcVftKsUAsdMa_3Amatrix.org/index.html",
   },
 ];
+
+await main();
 
 async function main() {
   console.log("Running matrix message fetch job at", new Date().toISOString());
