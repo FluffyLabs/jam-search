@@ -5,7 +5,7 @@
 // Base URL for API requests
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "https://matrix-bot-jam-5e043e51602b.herokuapp.com";
+  "https://search-api.fluffylabs.dev";
 
 /**
  * Type definitions for API responses
