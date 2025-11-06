@@ -1,4 +1,4 @@
-name: Deploy backend to GitHub Container Registry
+name: "Deploy: BE docker"
 
 on:
   # Deploy on release

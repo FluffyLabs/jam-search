@@ -1,6 +1,5 @@
 import { format, subDays } from "date-fns";
 import { fillArchivedMessages } from "../scripts/fillArchivedMessages.js";
-import { processBatchEmbeddings } from "../scripts/generateEmbeddingsBatch.js";
 
 const ROOMS = [
   {
@@ -36,7 +35,6 @@ async function main() {
     const yesterdayStr = format(yesterday, "yyyy-MM-dd");
 
     await fillArchivedMessages(ROOMS, yesterdayStr, yesterdayStr);
-    await processBatchEmbeddings();
     console.log("Message fetch job completed successfully");
   } catch (error) {
     console.error("Error in message fetch job:", error);

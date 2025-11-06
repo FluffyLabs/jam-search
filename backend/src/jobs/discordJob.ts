@@ -5,7 +5,6 @@ import {
   fetchDiscordContent,
   storeContentInDatabase,
 } from "../scripts/fetchDiscordMessages.js";
-import { processBatchEmbeddings } from "../scripts/generateEmbeddingsBatch.js";
 
 const DISCORD_TOKEN = env.DISCORD_TOKEN;
 
@@ -62,8 +61,6 @@ async function main() {
     console.log(`Storing ${messages.length} Discord messages in database`);
     await storeContentInDatabase(messages);
 
-    // Generate embeddings for new messages
-    await processBatchEmbeddings();
     console.log("Discord fetch job completed successfully");
   } else {
     console.log("No new Discord messages found");

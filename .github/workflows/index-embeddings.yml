@@ -1,0 +1,38 @@
+name: "Index: Embeddings"
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run daily at 07:00 UTC (after all other indexing jobs)
+    - cron: '0 7 * * *'
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  run-embeddings-job:
+    name: Generate Embeddings
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: backend/.nvmrc
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run embeddings job
+        run: npx tsx ./src/jobs/embeddingsJob.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
