@@ -1,31 +1,75 @@
-# Backend
+# JAM Search Backend
 
-## Graypaper Update Feature
+API server and data indexing system for JAM Search.
 
-This project includes an automated job that checks for new releases of the graypaper repository and updates the database with new versions.
+## Tech Stack
 
-The graypaper release check is integrated directly into the main application and runs as a cron job at midnight every day.
+- Node.js 22
+- Hono (HTTP framework)
+- Drizzle ORM + PostgreSQL
+- OpenAI API (embeddings)
+- Discord.js, Matrix SDK
+- Firecrawl (web scraping)
 
-### How it works
+## Setup
 
-1. The application uses node-cron to schedule the job
-2. When triggered, it fetches latest releases from GitHub
-3. Any new versions are added to the graypapers table in the database
-
-### Manual update
-
-If you need to run the graypaper update manually:
-
-```
-npx tsx src/scripts/updateGraypapers.ts
+```bash
+npm install
 ```
 
-### Deployment
+Configure environment variables (see `src/env.ts` for required vars):
+- `DATABASE_URL` - PostgreSQL connection string
+- `OPENAI_API_KEY` - OpenAI API key
+- `DISCORD_TOKEN` - Discord bot token
+- `MATRIX_ACCESS_TOKEN` - Matrix access token
+- `GITHUB_TOKEN` - GitHub personal access token
+- `FIRECRAWL_API_KEY` - Firecrawl API key
 
-The application is ready for Heroku deployment with the npm start command:
+## Development
 
+```bash
+npm run dev          # Start development server with hot reload
+npm run typecheck    # Type check without building
+npm run lint         # Lint and format code
+npm run test         # Run tests
 ```
-npm start
+
+## Database
+
+```bash
+npm run db:generate  # Generate migration files
+npm run db:push      # Push schema changes to database
+npm run db:migrate   # Run migrations
 ```
 
-This will start the main application which includes the scheduled graypaper update check. 
+## Data Indexing Scripts
+
+```bash
+npm run fetch-discord                      # Fetch Discord messages
+npm run fetch-github                       # Fetch GitHub pages
+npm run fetch-pages                        # Fetch web pages
+npm run generate-embeddings                # Generate vector embeddings
+npm run graypaper:index-search            # Index graypaper sections
+npm run update-graypapers                  # Update graypaper versions
+npm run fill-archived-messages-for-n-days # Backfill archived messages
+```
+
+## Production
+
+```bash
+npm run build   # Compile TypeScript
+npm start       # Start production server
+```
+
+The application includes scheduled cron jobs that run daily to:
+- Fetch new Matrix messages
+- Check for new graypaper releases
+- Index GitHub pages
+- Index documentation pages
+
+## API Endpoints
+
+- `POST /api/search/messages` - Search Matrix messages
+- `POST /api/search/pages` - Search web pages
+- `POST /api/search/graypaper` - Search graypaper sections
+- `POST /api/search/discord` - Search Discord messages
