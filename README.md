@@ -77,4 +77,4 @@ Automated jobs run daily to keep content updated.
 
 ## License
 
-MIT
+MPL-2.0
