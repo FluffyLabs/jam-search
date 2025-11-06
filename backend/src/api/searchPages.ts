@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
+import {env} from "../env.js";
 
 export const searchPagesRequestSchema = z.object({
   q: z.string(),
@@ -61,7 +62,7 @@ export async function searchPages(
       // Get embeddings for the query
       try {
         const openai = new OpenAI({
-          apiKey: process.env.OPENAI_API_KEY,
+          apiKey: env.OPENAI_API_KEY,
         });
 
         const response = await openai.embeddings.create({

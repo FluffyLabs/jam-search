@@ -11,6 +11,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { graypapersTable, messagesTable } from "../db/schema.js";
+import {env} from "../env.js";
 
 const escapeRegExp = (str: string) =>
   str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -128,7 +129,7 @@ export async function searchMessages(
       // Get embeddings for the query
       try {
         const openai = new OpenAI({
-          apiKey: process.env.OPENAI_API_KEY,
+          apiKey: env.OPENAI_API_KEY,
         });
 
         const response = await openai.embeddings.create({

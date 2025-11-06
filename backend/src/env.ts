@@ -3,6 +3,7 @@ import "dotenv/config";
 import { z } from "zod";
 
 export const envSchema = z.object({
+  OPENAI_API_KEY: z.string(),
   GITHUB_TOKEN: z.string(),
   DISCORD_TOKEN: z.string(),
   FIRECRAWL_API_KEY: z.string(),
