@@ -20,7 +20,13 @@ const ROOMS = [
   },
 ];
 
-await main();
+try {
+  await main();
+  process.exit(0);
+} catch (error) {
+  console.error("Error in matrix job:", error);
+  process.exit(1);
+}
 
 async function main() {
   console.log("Running matrix message fetch job at", new Date().toISOString());
