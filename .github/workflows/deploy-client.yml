@@ -1,5 +1,4 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy search client to Github Pages
+name: "Deploy: FE github pages"
 
 on:
   # Deploy on release
