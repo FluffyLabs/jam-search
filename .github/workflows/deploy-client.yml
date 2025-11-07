@@ -25,9 +25,6 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    defaults:
-      run:
-        working-directory: ./client
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,13 +32,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
           cache: "npm"
-          cache-dependency-path: "./client/package-lock.json"
       - name: Install dependencies
         run: npm ci
       - name: Build
-        run: npm run build
+        run: npm run build -w client
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
