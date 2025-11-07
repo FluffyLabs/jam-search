@@ -1,10 +1,10 @@
+import { setTimeout } from "node:timers/promises";
 import { sql } from "drizzle-orm";
 import { XMLParser } from "fast-xml-parser";
-import FirecrawlApp, {FirecrawlError} from "firecrawl";
+import FirecrawlApp, { FirecrawlError } from "firecrawl";
 import fetch from "node-fetch";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
-import { setTimeout } from 'node:timers/promises';
 
 interface SitemapUrl {
   loc: string;
@@ -80,7 +80,6 @@ function cleanContent(content: string): string | null {
   return cleanedContent;
 }
 
-
 export async function fetchAndStorePages(
   input: string | string[] | { sitemapUrl: string },
   site: string
@@ -106,7 +105,6 @@ export async function fetchAndStorePages(
   }
 
   console.log(`Found ${pageUrls.length} pages to process`);
-  
 
   // Fetch and store each page
   for (;;) {
@@ -117,13 +115,10 @@ export async function fetchAndStorePages(
     }
 
     // Add delay between requests to avoid rate limiting
-    await delay(Math.max(
-      1000,
-      delayMultiplier * delayMultiplier * 500
-    ));
+    await delay(Math.max(1000, delayMultiplier * delayMultiplier * 500));
 
     console.log(`Fetching ${pageUrl.url}`);
-    let pageContent = { content: '', title: '' };
+    let pageContent = { content: "", title: "" };
     try {
       pageContent = await fetchPageContent(pageUrl.url);
     } catch (e) {
@@ -133,9 +128,9 @@ export async function fetchAndStorePages(
         delayMultiplier += 1;
         pageUrls.push(pageUrl);
         continue;
-      } else {
-        throw e;
       }
+
+      throw e;
     }
 
     const cleanedContent = cleanContent(pageContent.content);
@@ -147,24 +142,24 @@ export async function fetchAndStorePages(
     }
 
     await db
-    .insert(pagesTable)
-    .values({
-      url: pageUrl.url,
-      content: cleanedContent,
-      title: pageContent.title,
-      site,
-      lastModified: pageUrl.lastModified || new Date(),
-      created_at: new Date(),
-    })
-    .onConflictDoUpdate({
-      target: pagesTable.url,
-      set: {
+      .insert(pagesTable)
+      .values({
+        url: pageUrl.url,
         content: cleanedContent,
         title: pageContent.title,
         site,
         lastModified: pageUrl.lastModified || new Date(),
-      },
-    });
+        created_at: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: pagesTable.url,
+        set: {
+          content: cleanedContent,
+          title: pageContent.title,
+          site,
+          lastModified: pageUrl.lastModified || new Date(),
+        },
+      });
 
     console.log(`Stored ${pageUrl.url}`);
   }
