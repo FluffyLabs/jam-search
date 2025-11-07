@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "qa": "npm run lint",
-    "build": "tsc -b && vite build",
+    "build": "rm -rf ./node_modules && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
