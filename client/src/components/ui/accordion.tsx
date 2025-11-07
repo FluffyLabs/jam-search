@@ -1,6 +1,6 @@
-import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -10,20 +10,26 @@ const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item ref={ref} className={cn("border-b", className)} {...props} />
+  <AccordionPrimitive.Item
+    ref={ref}
+    className={cn("border-b", className)}
+    {...props}
+  />
 ));
 AccordionItem.displayName = "AccordionItem";
 
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & { isOpen: boolean }
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & {
+    isOpen: boolean;
+  }
 >(({ className, children, ...props }, ref) => {
   const { isOpen, ...restProps } = props;
   return (
     <AccordionPrimitive.Header
       className={cn(
         "flex flex-1 items-center justify-between py-1 font-medium transition-all [&[data-state=open]>svg]:rotate-180",
-        className,
+        className
       )}
     >
       {children}

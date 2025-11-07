@@ -1,11 +1,11 @@
-import { MATRIX_CHANNELS } from "@/consts";
-import { useResults } from "@/hooks/useResults";
-import { SearchMode } from "@/lib/utils";
-import { Section } from "./Section";
 import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
+import type { MATRIX_CHANNELS } from "@/consts";
+import type { useResults } from "@/hooks/useResults";
+import type { SearchMode } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import { MatrixResultCards } from "./MatrixResultCards";
 import { ShowAll } from "../ShowAll";
+import { MatrixResultCards } from "./MatrixResultCards";
+import { Section } from "./Section";
 
 export const MatrixResults = ({
   channel,

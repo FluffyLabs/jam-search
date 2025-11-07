@@ -1,6 +1,6 @@
 import { Check, Share } from "lucide-react";
-import { Button } from "./ui/button";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
 export const ShareUrl = () => {
   const handleCopyLink = () => {
@@ -21,7 +21,7 @@ export const ShareUrl = () => {
     >
       <Ico className="w-4 h-4" />
       <span className="hidden md:inline overflow-hidden ml-1.5">
-        { copied ? 'copied!' : 'share results' }
+        {copied ? "copied!" : "share results"}
       </span>
     </Button>
   );

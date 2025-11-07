@@ -3,10 +3,11 @@
  */
 
 // Base URL for API requests
-const API_URL = import.meta.env.VITE_API_URL || "https://search-api.fluffylabs.dev";
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://search-api.fluffylabs.dev";
 
 function getApiUrl() {
-  return window.localStorage.getItem('API_URL') || API_URL;
+  return window.localStorage.getItem("API_URL") || API_URL;
 }
 
 /**
@@ -91,9 +92,9 @@ export async function fetchSearchResults(
   queryParams.append("pageSize", pageSize.toString());
 
   // Add filter parameters if provided
-  filters.forEach((filter) => {
+  for (const filter of filters) {
     queryParams.append(`filter_${filter.key}`, filter.value);
-  });
+  }
 
   // Add channelId parameter if provided
   if (channelId) {
@@ -151,9 +152,9 @@ export async function fetchDiscordSearchResults(
   queryParams.append("pageSize", pageSize.toString());
 
   // Add filter parameters if provided
-  filters.forEach((filter) => {
+  for (const filter of filters) {
     queryParams.append(`filter_${filter.key}`, filter.value);
-  });
+  }
 
   // Add channelId parameter if provided
   if (channelId) {

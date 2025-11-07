@@ -1,11 +1,13 @@
-import * as React from "react";
 import * as SwitchPrimitives from "@radix-ui/react-switch";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
 const Switch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> & { variant?: string }
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> & {
+    variant?: string;
+  }
 >(({ className, variant, ...props }, ref) => (
   <SwitchPrimitives.Root
     className={cn(
@@ -13,7 +15,7 @@ const Switch = React.forwardRef<
       variant === "secondary"
         ? "bg-[#DFDFDF] dark:bg-[#4F4F4F] border-[#DFDFDF] dark:border-[#4F4F4F] text-secondary-foreground"
         : "bg-[#2D2D2D] ",
-      className,
+      className
     )}
     {...props}
     ref={ref}
@@ -21,7 +23,7 @@ const Switch = React.forwardRef<
     <SwitchPrimitives.Thumb
       className={cn(
         "pointer-events-none block h-3 w-3 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-[13px] data-[state=unchecked]:translate-x-[1px]",
-        variant === "secondary" ? "bg-foreground dark:bg-[#242424]" : "bg-white",
+        variant === "secondary" ? "bg-foreground dark:bg-[#242424]" : "bg-white"
       )}
     />
   </SwitchPrimitives.Root>

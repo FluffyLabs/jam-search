@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "@fluffylabs/jam-search-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -61,7 +61,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.0.0",
-    "typescript": "~5.8.2",
     "typescript-eslint": "^8.27.0",
     "vite": "^7.2.1",
     "vitest": "^4.0.7"

@@ -1,14 +1,14 @@
-import { useLocation, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Container } from "@/components/Container";
+import { Paging } from "@/components/Paging";
 import { MatrixResultList } from "@/components/results/MatrixResultList";
-import { useSearchMatrix } from "@/hooks/useSearchMatrix";
+import { ResultHeader } from "@/components/results/ResultHeader";
+import { Button } from "@/components/ui/button";
 import { MATRIX_CHANNELS } from "@/consts";
-import { parseSearchQuery, SearchMode } from "@/lib/utils";
+import { useSearchMatrix } from "@/hooks/useSearchMatrix";
+import { type SearchMode, parseSearchQuery } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
-import {ResultHeader} from "@/components/results/ResultHeader";
-import {Paging} from "@/components/Paging";
-import {useRef} from "react";
-import {Container} from "@/components/Container";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const MatrixResultsAll = () => {
   const location = useLocation();
@@ -36,14 +36,19 @@ const MatrixResultsAll = () => {
   const backParams = new URLSearchParams(location.search);
   backParams.delete("channelId");
 
-  const pages = (<Paging queryResult={queryResult} scrollTo={topRef} />);
+  const pages = <Paging queryResult={queryResult} scrollTo={topRef} />;
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl text-card-foreground">
-      <div ref={topRef}></div>
-      <ResultHeader 
+      <div ref={topRef} />
+      <ResultHeader
         left={
-          <Button variant="ghost" size="icon" className="mt-0 w-auto h-8" asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="mt-0 w-auto h-8"
+            asChild
+          >
             <Link to={`/results?${backParams.toString()}`}>
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline mx-2 text-xs">All sources</span>
@@ -55,14 +60,14 @@ const MatrixResultsAll = () => {
 
       <Container>
         <h1 className="text-md font-medium text-white mb-2">{query}</h1>
-    
+
         {/* Display active filters as tags */}
         {query && filters.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
-              {filters.map((filter, index) => (
+              {filters.map((filter) => (
                 <div
-                  key={index}
+                  key={`${filter.key}-${filter.value}`}
                   className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
                 >
                   <span className="font-semibold mr-1">{filter.key}:</span>
@@ -74,7 +79,8 @@ const MatrixResultsAll = () => {
         )}
 
         <span className="text-muted-foreground text-sm font-light">
-          Found {queryResult.totalResults.toLocaleString()} matches in <span className="text-white">{channel.name} @ Matrix</span>
+          Found {queryResult.totalResults.toLocaleString()} matches in{" "}
+          <span className="text-white">{channel.name} @ Matrix</span>
         </span>
 
         <div className="my-8">
@@ -84,9 +90,8 @@ const MatrixResultsAll = () => {
             searchQuery={query}
             searchMode={searchMode as SearchMode}
           />
-          
-          {pages}
 
+          {pages}
         </div>
       </Container>
     </div>

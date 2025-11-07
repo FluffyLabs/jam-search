@@ -1,25 +1,22 @@
-import { RefObject, useCallback } from 'react';
-import {Button} from "./ui/button";
-import {useSearchCommon} from "@/hooks/useSearchCommon";
+import type { useSearchCommon } from "@/hooks/useSearchCommon";
+import { type RefObject, useCallback } from "react";
+import { Button } from "./ui/button";
 
 type PagingProps = {
-  queryResult: Pick<ReturnType<typeof useSearchCommon>, 'pagination'>,
-  scrollTo: RefObject<HTMLElement | null>,
+  queryResult: Pick<ReturnType<typeof useSearchCommon>, "pagination">;
+  scrollTo: RefObject<HTMLElement | null>;
 };
 
-export const Paging = ({
-  queryResult,
-  scrollTo,
-}: PagingProps) => {
+export const Paging = ({ queryResult, scrollTo }: PagingProps) => {
   const { pagination } = queryResult;
 
   const handlePrev = useCallback(() => {
-    scrollTo.current?.scrollIntoView()
+    scrollTo.current?.scrollIntoView();
     pagination.previousPage();
-  }, [scrollTo, pagination])
+  }, [scrollTo, pagination]);
 
   const handleNext = useCallback(() => {
-    scrollTo.current?.scrollIntoView()
+    scrollTo.current?.scrollIntoView();
     pagination.nextPage();
   }, [scrollTo, pagination]);
 

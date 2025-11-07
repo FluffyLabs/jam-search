@@ -1,28 +1,28 @@
-import { useCallback, useState } from "react";
-import { useLocation, Link } from "react-router-dom";
-import { MultiSelect } from "@/components/ui/multi-select";
-import { GraypaperResults } from "@/components/results/GraypaperResults";
-import { MATRIX_CHANNELS } from "@/consts";
-import { SearchMode } from "@/lib/utils";
-import { Section } from "@/components/results/Section";
-import JamchainLogo from "@/assets/logos/jamchain.webp";
-import JamWeb3FoundationLogo from "@/assets/logos/jam-web3-foundation.png";
 import GithubLogo from "@/assets/logos/github.png";
-import { useResults } from "@/hooks/useResults";
-import {
-  getStoredSources,
-  setStoredSources,
-  Source,
-  SOURCE_OPTIONS,
-  stringToSource,
-} from "@/lib/sources";
-import { MatrixResults } from "@/components/results/MatrixResults";
+import JamWeb3FoundationLogo from "@/assets/logos/jam-web3-foundation.png";
+import JamchainLogo from "@/assets/logos/jamchain.webp";
+import { Container } from "@/components/Container";
+import { ShowAll } from "@/components/ShowAll";
 import { DiscordResults } from "@/components/results/DiscordResults";
-import { DISCORD_CHANNELS } from "@/consts";
+import { GraypaperResults } from "@/components/results/GraypaperResults";
+import { MatrixResults } from "@/components/results/MatrixResults";
 import { PageResultCards } from "@/components/results/PageResultCards";
 import { ResultHeader } from "@/components/results/ResultHeader";
-import { ShowAll } from "@/components/ShowAll";
-import { Container } from "@/components/Container";
+import { Section } from "@/components/results/Section";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { MATRIX_CHANNELS } from "@/consts";
+import { DISCORD_CHANNELS } from "@/consts";
+import { useResults } from "@/hooks/useResults";
+import {
+  SOURCE_OPTIONS,
+  Source,
+  getStoredSources,
+  setStoredSources,
+  stringToSource,
+} from "@/lib/sources";
+import type { SearchMode } from "@/lib/utils";
+import { useCallback, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const SearchResults = () => {
   const location = useLocation();
@@ -33,7 +33,9 @@ const SearchResults = () => {
     useState<Source[]>(getStoredSources);
 
   const handleSourceChange = useCallback((stringSources: string[]) => {
-    const sources = stringSources.map((x) => stringToSource(x)!);
+    const sources = stringSources
+      .map((x) => stringToSource(x))
+      .filter((x) => x !== undefined);
     setSelectedSources(sources);
     // Save the updated sources to localStorage
     setStoredSources(sources);
@@ -78,9 +80,9 @@ const SearchResults = () => {
         {query && filters.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
-              {filters.map((filter, index) => (
+              {filters.map((filter) => (
                 <div
-                  key={index}
+                  key={`${filter.key}-${filter.value}`}
                   className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
                 >
                   <span className="font-semibold mr-1">{filter.key}:</span>

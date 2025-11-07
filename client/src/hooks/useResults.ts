@@ -1,11 +1,11 @@
 import { MATRIX_CHANNELS } from "@/consts";
 
+import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { useSearchPages } from "@/hooks/useSearchPages";
+import { Source } from "@/lib/sources";
 import { parseSearchQuery } from "@/lib/utils";
 import { useSearchGraypaper } from "./useSearchGraypaper";
-import { Source } from "@/lib/sources";
-import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 
 export function useResults(
   richQuery: string,

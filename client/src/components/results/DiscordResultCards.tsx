@@ -1,8 +1,8 @@
-import { DiscordSearchResult } from "@/lib/api";
-import { getTextToDisplay, SearchMode } from "@/lib/utils";
+import type { useResults } from "@/hooks/useResults";
+import type { DiscordSearchResult } from "@/lib/api";
+import { type SearchMode, getTextToDisplay } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 import { NoResults } from "./NoResults";
-import { useResults } from "@/hooks/useResults";
 import { ResultCard } from "./ResultCard";
 
 interface DiscordResultCardsProps {

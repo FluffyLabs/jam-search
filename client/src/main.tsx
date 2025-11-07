@@ -1,6 +1,6 @@
-import { scan } from "react-scan"; // must be imported before React and React DOM
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { scan } from "react-scan"; // must be imported before React and React DOM
 import "@fluffylabs/shared-ui/style.css";
 import "./index.css";
 
@@ -8,13 +8,17 @@ scan({
   enabled: process.env.NODE_ENV !== "production",
 });
 
-import App from "./App.tsx";
 import { HashRouter } from "react-router-dom";
-import {EmbeddedViewerProvider} from "./providers/EmbeddedResultsContext.tsx";
+import App from "./App.tsx";
+import { EmbeddedViewerProvider } from "./providers/EmbeddedResultsContext.tsx";
 
 document.documentElement.classList.toggle("dark", true);
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root");
+if (root === null) {
+  throw new Error("Root not found!");
+}
+createRoot(root).render(
   <StrictMode>
     <HashRouter>
       <EmbeddedViewerProvider>

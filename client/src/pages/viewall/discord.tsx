@@ -1,14 +1,14 @@
-import { useLocation, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { DiscordResultList } from "@/components/results/DiscordResultList";
-import { useSearchDiscord } from "@/hooks/useSearchDiscord";
-import { DISCORD_CHANNELS } from "@/consts";
-import { parseSearchQuery, SearchMode } from "@/lib/utils";
-import { ArrowLeft } from "lucide-react";
-import { ResultHeader } from "@/components/results/ResultHeader";
-import { Paging } from "@/components/Paging";
-import { useRef } from "react";
 import { Container } from "@/components/Container";
+import { Paging } from "@/components/Paging";
+import { DiscordResultList } from "@/components/results/DiscordResultList";
+import { ResultHeader } from "@/components/results/ResultHeader";
+import { Button } from "@/components/ui/button";
+import { DISCORD_CHANNELS } from "@/consts";
+import { useSearchDiscord } from "@/hooks/useSearchDiscord";
+import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const DiscordResultsAll = () => {
   const location = useLocation();
@@ -40,7 +40,7 @@ const DiscordResultsAll = () => {
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl text-card-foreground">
-      <div ref={topRef}></div>
+      <div ref={topRef} />
       <ResultHeader
         left={
           <Button
@@ -65,9 +65,9 @@ const DiscordResultsAll = () => {
         {query && filters.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
-              {filters.map((filter, index) => (
+              {filters.map((filter) => (
                 <div
-                  key={index}
+                  key={`${filter.key}-${filter.value}`}
                   className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
                 >
                   <span className="font-semibold mr-1">{filter.key}:</span>

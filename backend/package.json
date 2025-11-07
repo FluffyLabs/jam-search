@@ -1,18 +1,11 @@
 {
-  "name": "jam-search-api",
+  "name": "@fluffylabs/jam-search-backend",
   "version": "1.0.0",
+  "private": true,
   "description": "API for JAM Search",
   "main": "dist/index.js",
-  "engines": {
-    "node": "22.x"
-  },
   "scripts": {
     "build": "tsc",
-    "qa": "npm run lint:ci",
-    "qa-fix": "npm run format; npm run lint",
-    "format": "biome format --write",
-    "lint": "biome check --write && biome lint --write",
-    "lint:ci": "biome ci",
     "start": "tsx ./src/index.ts",
     "dev": "tsx watch ./src/index.ts",
     "db:push": "drizzle-kit push --verbose --strict",
@@ -20,14 +13,7 @@
     "db:generate": "drizzle-kit generate",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "graypaper:index-search": "tsx ./src/scripts/updateGraypaperData.ts",
-    "update-graypapers": "tsx ./src/scripts/updateGraypapers.ts",
-    "fill-archived-messages-for-n-days": "tsx ./src/scripts/runFillArchivedMessages.ts",
-    "generate-embeddings": "tsx ./src/scripts/runGenerateEmbeddingsBatch.ts",
-    "fetch-pages": "tsx ./src/scripts/runFetchPages.ts",
-    "fetch-github": "tsx ./src/scripts/runFetchGithubPages.ts",
-    "fetch-discord": "tsx ./src/scripts/runFetchDiscordMessages.ts"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
@@ -49,10 +35,8 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.14.1",
     "drizzle-kit": "^0.31.6",
-    "typescript": "^5.8.3",
     "vitest": "^3.1.1"
   },
   "type": "module"

@@ -1,16 +1,18 @@
-import {UseQueryResult} from "@tanstack/react-query";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import type { UseQueryResult } from "@tanstack/react-query";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const useSearchCommon = <TData, TError>(
-  { initialPage, pageSize }: { initialPage: number, pageSize: number },
-  useGetPageQuery: (page: number) => UseQueryResult<{ results: TData[], total: number }, TError>
+  { initialPage, pageSize }: { initialPage: number; pageSize: number },
+  useGetPageQuery: (
+    page: number
+  ) => UseQueryResult<{ results: TData[]; total: number }, TError>
 ) => {
   const [page, setPage] = useState(initialPage);
   const [totalResults, setTotalResults] = useState(0);
   const [prefetchedPage, setPrefetchPage] = useState(page);
 
   const { data, isLoading, isError, error } = useGetPageQuery(page);
-  // prefetch next page 
+  // prefetch next page
   useGetPageQuery(prefetchedPage);
 
   useEffect(() => {
@@ -37,24 +39,38 @@ export const useSearchCommon = <TData, TError>(
   }, [page, totalPages]);
 
   const previousPage = useCallback(() => {
-    setPage(page => page > 1 ? page - 1 : page);
+    setPage((page) => (page > 1 ? page - 1 : page));
   }, []);
 
-  const goToPage = useCallback((newPage: number) => {
-    setPage(Math.max(1, Math.min(newPage, totalPages || 1)));
-  }, [totalPages]);
+  const goToPage = useCallback(
+    (newPage: number) => {
+      setPage(Math.max(1, Math.min(newPage, totalPages || 1)));
+    },
+    [totalPages]
+  );
 
-  const pagination = useMemo(() => ({
-    nextPage,
-    prefetchNextPage,
-    previousPage,
-    goToPage,
-    hasNextPage: page < totalPages,
-    hasPreviousPage: page > 1,
-    currentPage: page,
-    totalPages,
-    pageSize,
-  }), [nextPage, prefetchNextPage, previousPage, goToPage, page, totalPages, pageSize]);
+  const pagination = useMemo(
+    () => ({
+      nextPage,
+      prefetchNextPage,
+      previousPage,
+      goToPage,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+      currentPage: page,
+      totalPages,
+      pageSize,
+    }),
+    [
+      nextPage,
+      prefetchNextPage,
+      previousPage,
+      goToPage,
+      page,
+      totalPages,
+      pageSize,
+    ]
+  );
 
   return {
     results,
@@ -64,4 +80,4 @@ export const useSearchCommon = <TData, TError>(
     error,
     pagination,
   };
-}
+};
