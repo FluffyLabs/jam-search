@@ -21,7 +21,7 @@ export const ShareUrl = () => {
     >
       <Ico className="w-4 h-4" />
       <span className="hidden md:inline overflow-hidden ml-1.5">
-        { copied ? 'copied!' : 'share results' }
+        {copied ? "copied!" : "share results"}
       </span>
     </Button>
   );

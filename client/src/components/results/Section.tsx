@@ -20,13 +20,13 @@ export const Section = ({
         </div>
         <div className="flex gap-1 shrink-1 overflow-hidden text-ellipsis">
           <CardTitle className="text-xs sm:text-sm text-muted-foreground font-medium">
-            <a href={url} target="_blank">{title}</a>
+            <a href={url} target="_blank">
+              {title}
+            </a>
           </CardTitle>
         </div>
         <div className="flex-1"></div>
-        <div className="overflow-hidden shrink-0">
-          { endBlock }
-        </div>
+        <div className="overflow-hidden shrink-0">{endBlock}</div>
       </CardContent>
     </Card>
   );

@@ -173,7 +173,7 @@ const Content = ({
                 const isSelected = currentUrl === itemUrl;
                 const id = isPageResult
                   ? result.id
-                  : result.messageId ?? result.id;
+                  : (result.messageId ?? result.id);
 
                 return (
                   <a

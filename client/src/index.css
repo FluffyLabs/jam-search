@@ -116,7 +116,8 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
 }
 
-html,:root {
+html,
+:root {
   font-family: Poppins, sans-serif, system-ui;
 }
 

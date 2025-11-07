@@ -52,7 +52,7 @@ export const getTextToDisplay = (
   text: string,
   query: string,
   searchMode: SearchMode,
-  maxContext: number = 100,
+  maxContext: number = 100
 ) => {
   if (!text || !query) return `${text.slice(0, maxContext)}...`;
 
@@ -92,7 +92,7 @@ export const getTextToDisplay = (
   }
 
   // Calculate initial start and end indices for the context window
-  let startIndex = Math.max(0, matchedWordResult.index - maxContext/2);
+  let startIndex = Math.max(0, matchedWordResult.index - maxContext / 2);
   let endIndex = Math.min(
     text.length,
     matchedWordResult.index + matchedWordResult.word.length + maxContext / 2

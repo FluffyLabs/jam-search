@@ -1,9 +1,6 @@
 {
   "name": "@fluffylabs/jam-search",
-  "workspaces": [
-    "backend",
-    "client"
-  ],
+  "workspaces": ["backend", "client"],
   "engines": {
     "node": "22.x",
     "npm": ">=10"
