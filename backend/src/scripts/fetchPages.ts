@@ -1,6 +1,7 @@
+import { setTimeout } from "node:timers/promises";
 import { sql } from "drizzle-orm";
 import { XMLParser } from "fast-xml-parser";
-import FirecrawlApp from "firecrawl";
+import FirecrawlApp, { FirecrawlError } from "firecrawl";
 import fetch from "node-fetch";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
@@ -24,7 +25,7 @@ interface PageUrl {
 }
 
 function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return setTimeout(ms);
 }
 
 async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
@@ -83,6 +84,7 @@ export async function fetchAndStorePages(
   input: string | string[] | { sitemapUrl: string },
   site: string
 ) {
+  let delayMultiplier = 1;
   let pageUrls: PageUrl[] = [];
 
   // Handle different input types
@@ -105,44 +107,61 @@ export async function fetchAndStorePages(
   console.log(`Found ${pageUrls.length} pages to process`);
 
   // Fetch and store each page
-  for (const pageUrl of pageUrls) {
+  for (;;) {
+    const pageUrl = pageUrls.pop();
+    // all pages processed, finish up.
+    if (pageUrl === undefined) {
+      break;
+    }
+
     // Add delay between requests to avoid rate limiting
-    await delay(4000); // 4 second delay
+    await delay(Math.max(1000, delayMultiplier * delayMultiplier * 500));
 
-    await db.transaction(async (tx) => {
-      console.log(`Fetching ${pageUrl.url}...`);
-      const pageContent = await fetchPageContent(pageUrl.url);
-
-      const cleanedContent = cleanContent(pageContent.content);
-
-      // Skip if content is empty after cleaning
-      if (!cleanedContent) {
-        console.log(`Skipping ${pageUrl.url} - no valid content`);
-        return;
+    console.log(`Fetching ${pageUrl.url}`);
+    let pageContent = { content: "", title: "" };
+    try {
+      pageContent = await fetchPageContent(pageUrl.url);
+    } catch (e) {
+      // detect rate limiting and try again
+      if (e instanceof FirecrawlError && e.statusCode === 429) {
+        console.log(`Reached rate-limitting, will retry ${pageUrl.url}`);
+        delayMultiplier += 1;
+        pageUrls.push(pageUrl);
+        continue;
       }
 
-      await tx
-        .insert(pagesTable)
-        .values({
-          url: pageUrl.url,
+      throw e;
+    }
+
+    const cleanedContent = cleanContent(pageContent.content);
+
+    // Skip if content is empty after cleaning
+    if (!cleanedContent) {
+      console.log(`Skipping ${pageUrl.url} - no valid content`);
+      continue;
+    }
+
+    await db
+      .insert(pagesTable)
+      .values({
+        url: pageUrl.url,
+        content: cleanedContent,
+        title: pageContent.title,
+        site,
+        lastModified: pageUrl.lastModified || new Date(),
+        created_at: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: pagesTable.url,
+        set: {
           content: cleanedContent,
           title: pageContent.title,
           site,
           lastModified: pageUrl.lastModified || new Date(),
-          created_at: new Date(),
-        })
-        .onConflictDoUpdate({
-          target: pagesTable.url,
-          set: {
-            content: cleanedContent,
-            title: pageContent.title,
-            site,
-            lastModified: pageUrl.lastModified || new Date(),
-          },
-        });
+        },
+      });
 
-      console.log(`Stored ${pageUrl.url}`);
-    });
+    console.log(`Stored ${pageUrl.url}`);
   }
 
   console.log("Reindexing pages_search_idx");
