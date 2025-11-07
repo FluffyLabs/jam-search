@@ -1,18 +1,18 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { AppsSidebar } from "@fluffylabs/shared-ui";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { EmbeddedViewer } from "./components/EmbeddedViewer";
 import { Header } from "./components/Header";
+import { cn } from "./lib/utils";
 import { IndexPage } from "./pages";
 import SearchResults from "./pages/results";
+import DiscordResultsAll from "./pages/viewall/discord";
 import GraypaperResultsAll from "./pages/viewall/graypaper";
 import MatrixResultsAll from "./pages/viewall/matrix";
 import PagesResultsAll from "./pages/viewall/pages";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEmbeddedViewer } from "./providers/EmbeddedResultsContext";
-import { cn } from "./lib/utils";
-import { EmbeddedViewer } from "./components/EmbeddedViewer";
-import DiscordResultsAll from "./pages/viewall/discord";
 
 // Create a client
 const queryClient = new QueryClient({

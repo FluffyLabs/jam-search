@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -26,18 +26,21 @@ export const parseSearchQuery = (
   const filters: SearchFilter[] = [];
   const filterOptions = ["from", "since_gp", "before", "after"];
   const regex = new RegExp(`(${filterOptions.join("|")}):([^\\s]+)`, "g");
-  let match;
   let query = richQuery;
 
-  while ((match = regex.exec(richQuery)) !== null) {
+  for (;;) {
+    const match = regex.exec(richQuery);
+    if (match === null) {
+      break;
+    }
     filters.push({ key: match[1], value: match[2] });
   }
 
   // Filter out the filter patterns from the raw query
-  filterOptions.forEach((option) => {
+  for (const option of filterOptions) {
     const filterPattern = new RegExp(`${option}:[^\\s]+`, "g");
     query = query.replace(filterPattern, "");
-  });
+  }
 
   // Clean up extra spaces
   query = query.replace(/\s+/g, " ").trim();
@@ -52,7 +55,7 @@ export const getTextToDisplay = (
   text: string,
   query: string,
   searchMode: SearchMode,
-  maxContext: number = 100
+  maxContext = 100
 ) => {
   if (!text || !query) return `${text.slice(0, maxContext)}...`;
 
@@ -138,7 +141,7 @@ export const highlightText = (
     str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   // TODO: this is not secure solution as words comes from user input
-  let regex;
+  let regex: RegExp;
 
   if (mode === "strict") {
     // In strict mode, match words as substrings anywhere in text (like SQL ILIKE %query%)

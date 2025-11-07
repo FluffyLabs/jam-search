@@ -1,13 +1,13 @@
-import { useLocation, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { PageResultList } from "@/components/results/PageResultList";
-import { useSearchPages } from "@/hooks/useSearchPages";
-import { parseSearchQuery, SearchMode } from "@/lib/utils";
-import { ArrowLeft } from "lucide-react";
-import { ResultHeader } from "@/components/results/ResultHeader";
-import { Paging } from "@/components/Paging";
-import { useRef } from "react";
 import { Container } from "@/components/Container";
+import { Paging } from "@/components/Paging";
+import { PageResultList } from "@/components/results/PageResultList";
+import { ResultHeader } from "@/components/results/ResultHeader";
+import { Button } from "@/components/ui/button";
+import { useSearchPages } from "@/hooks/useSearchPages";
+import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const PagesResultsAll = () => {
   const location = useLocation();
@@ -33,7 +33,7 @@ const PagesResultsAll = () => {
 
   return (
     <div className="flex flex-col items-center w-full bg-card rounded-xl text-card-foreground">
-      <div ref={topRef}></div>
+      <div ref={topRef} />
       <ResultHeader
         left={
           <Button

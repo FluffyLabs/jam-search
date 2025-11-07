@@ -1,5 +1,5 @@
-import { Target, Sparkles, Star } from "lucide-react";
 import { SearchForm } from "@/components/SearchForm";
+import { Sparkles, Star, Target } from "lucide-react";
 
 const Header = () => {
   return (
@@ -69,7 +69,7 @@ export const IndexPage = () => {
         <Features />
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-transparent opacity-90"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-transparent opacity-90" />
     </div>
   );
 };

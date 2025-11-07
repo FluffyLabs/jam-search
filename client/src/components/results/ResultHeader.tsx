@@ -1,7 +1,7 @@
 import { ShareUrl } from "@/components/ShareUrl";
-import { ReactNode } from "react";
-import { SearchForm } from "../SearchForm";
+import type { ReactNode } from "react";
 import { Container } from "../Container";
+import { SearchForm } from "../SearchForm";
 
 interface ResultHeaderProps {
   left?: ReactNode;

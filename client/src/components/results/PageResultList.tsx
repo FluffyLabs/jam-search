@@ -1,9 +1,9 @@
-import { formatDate, SearchMode } from "@/lib/utils";
-import { ViewEmbedded } from "../ViewEmbedded";
+import type { useResults } from "@/hooks/useResults";
+import { type SearchMode, formatDate } from "@/lib/utils";
 import { PageResultHighlighter } from "../PageResultHighlighter";
-import { NoResults } from "./NoResults";
-import { useResults } from "@/hooks/useResults";
+import { ViewEmbedded } from "../ViewEmbedded";
 import { Skeleton } from "../ui/skeleton";
+import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
 
 interface PageResultListProps {

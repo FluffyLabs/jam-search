@@ -1,6 +1,6 @@
 import { Check, Share } from "lucide-react";
-import { Button } from "./ui/button";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
 export const ShareUrl = () => {
   const handleCopyLink = () => {

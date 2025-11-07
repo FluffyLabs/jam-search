@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { searchPages } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchCommon } from "./useSearchCommon";
 
 interface UseSearchPagesOptions {

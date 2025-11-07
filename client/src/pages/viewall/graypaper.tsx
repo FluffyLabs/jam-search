@@ -1,15 +1,15 @@
-import { useLocation, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
-import { SearchMode, highlightText } from "@/lib/utils";
-import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Container } from "@/components/Container";
+import { Paging } from "@/components/Paging";
 import { ViewEmbedded } from "@/components/ViewEmbedded";
 import { ResultHeader } from "@/components/results/ResultHeader";
-import { Paging } from "@/components/Paging";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
+import { type SearchMode, highlightText } from "@/lib/utils";
+import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
-import { Container } from "@/components/Container";
+import { Link, useLocation } from "react-router-dom";
 
 const GraypaperResultsAll = () => {
   const location = useLocation();
@@ -31,7 +31,7 @@ const GraypaperResultsAll = () => {
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
-      <div ref={topRef}></div>
+      <div ref={topRef} />
       <ResultHeader
         left={
           <Button

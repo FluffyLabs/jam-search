@@ -1,11 +1,11 @@
-import { DISCORD_CHANNELS } from "@/consts";
-import { useResults } from "@/hooks/useResults";
-import { SearchMode } from "@/lib/utils";
-import { Section } from "./Section";
-import { Link, useLocation } from "react-router-dom";
-import { DiscordResultCards } from "./DiscordResultCards";
-import { ShowAll } from "../ShowAll";
 import DiscordLogo from "@/assets/logos/discord.svg";
+import type { DISCORD_CHANNELS } from "@/consts";
+import type { useResults } from "@/hooks/useResults";
+import type { SearchMode } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
+import { ShowAll } from "../ShowAll";
+import { DiscordResultCards } from "./DiscordResultCards";
+import { Section } from "./Section";
 
 export const DiscordResults = ({
   channel,

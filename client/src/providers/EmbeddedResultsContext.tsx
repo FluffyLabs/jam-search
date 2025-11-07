@@ -1,4 +1,5 @@
-import React, {
+import type React from "react";
+import {
   createContext,
   useCallback,
   useContext,
@@ -55,22 +56,19 @@ export function EmbeddedViewerProvider({
     [close]
   );
 
-  const openCloseOnHistory = useCallback(
-    (e: PopStateEvent) => {
-      if (
-        e.state &&
-        VIEWER_STATE_ENTRY in e.state &&
-        e.state[VIEWER_STATE_ENTRY]
-      ) {
-        // in case we press "forward" we will display the dialog again.
-        setIsVisible(true);
-      } else {
-        // and this is just handling "back"
-        setIsVisible(false);
-      }
-    },
-    [setIsVisible]
-  );
+  const openCloseOnHistory = useCallback((e: PopStateEvent) => {
+    if (
+      e.state &&
+      VIEWER_STATE_ENTRY in e.state &&
+      e.state[VIEWER_STATE_ENTRY]
+    ) {
+      // in case we press "forward" we will display the dialog again.
+      setIsVisible(true);
+    } else {
+      // and this is just handling "back"
+      setIsVisible(false);
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener("keydown", closeUsingEsc);

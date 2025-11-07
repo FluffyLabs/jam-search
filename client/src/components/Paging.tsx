@@ -1,6 +1,6 @@
-import { RefObject, useCallback } from "react";
+import type { useSearchCommon } from "@/hooks/useSearchCommon";
+import { type RefObject, useCallback } from "react";
 import { Button } from "./ui/button";
-import { useSearchCommon } from "@/hooks/useSearchCommon";
 
 type PagingProps = {
   queryResult: Pick<ReturnType<typeof useSearchCommon>, "pagination">;

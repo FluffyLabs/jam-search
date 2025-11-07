@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import type { MATRIX_CHANNELS } from "@/consts";
 import { fetchSearchResults } from "@/lib/api";
-import { MATRIX_CHANNELS } from "@/consts";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchCommon } from "./useSearchCommon";
 
 interface UseSearchMatrixOptions {

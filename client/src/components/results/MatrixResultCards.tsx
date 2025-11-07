@@ -1,10 +1,10 @@
-import { SearchResult } from "@/lib/api";
-import { getTextToDisplay, SearchMode } from "@/lib/utils";
-import { MATRIX_CHANNELS } from "@/consts";
+import type { MATRIX_CHANNELS } from "@/consts";
+import type { useResults } from "@/hooks/useResults";
+import type { SearchResult } from "@/lib/api";
+import { type SearchMode, getTextToDisplay } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
-import { useResults } from "@/hooks/useResults";
 import { ResultCard } from "./ResultCard";
 
 interface MatrixResultCardsProps {
@@ -83,6 +83,8 @@ export const MatrixResultCards = ({
 
 const MessageIco = () => (
   <svg
+    role="img"
+    aria-label="message-icon"
     width="16"
     height="16"
     viewBox="0 0 16 16"

@@ -1,11 +1,17 @@
-import { PageResult, SearchResult } from "@/lib/api";
-import { cn, formatDate, highlightText, SearchMode } from "@/lib/utils";
 import { MATRIX_CHANNELS } from "@/consts";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import type { PageResult, SearchResult } from "@/lib/api";
+import { type SearchMode, cn, formatDate, highlightText } from "@/lib/utils";
 import { useEmbeddedViewer } from "@/providers/EmbeddedResultsContext";
-import { Button } from "./ui/button";
-import { PageResultHighlighter } from "./PageResultHighlighter";
 import { SquareX } from "lucide-react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { PageResultHighlighter } from "./PageResultHighlighter";
+import { Button } from "./ui/button";
 
 interface ViewEmbeddedProps {
   label?: ReactNode;
@@ -37,7 +43,7 @@ export const ViewEmbedded = ({
         searchQuery={searchQuery}
         searchMode={searchMode}
         close={() => embeddedViewer.close()}
-      ></Content>
+      />
     ),
     [url, loadMore, results, searchQuery, searchMode, embeddedViewer]
   );

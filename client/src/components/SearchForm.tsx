@@ -1,20 +1,20 @@
-import { ArrowRight, Search, Sparkles, ScanSearch, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useDebouncedCallback } from "use-debounce";
+import { Textarea } from "@/components/ui/textarea";
 import { useResults } from "@/hooks/useResults";
 import { getStoredSources } from "@/lib/sources";
 import { cn } from "@/lib/utils";
+import { ArrowRight, ScanSearch, Search, Sparkles, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDebouncedCallback } from "use-debounce";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -334,6 +334,7 @@ export const SearchForm = ({
             {displayedValue ? (
               <div
                 className="w-full whitespace-pre-wrap break-words py-2"
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: trust me bro
                 dangerouslySetInnerHTML={{ __html: displayedValue }}
               />
             ) : (
@@ -391,6 +392,7 @@ export const SearchForm = ({
                 key={option.label}
                 className="flex items-center justify-between p-2 hover:bg-zinc-800 rounded cursor-pointer"
                 onClick={() => addSearchOption(option.label)}
+                onKeyUp={() => addSearchOption(option.label)}
               >
                 <div className="flex flex-col">
                   <span className="text-zinc-200 font-normal">

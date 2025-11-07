@@ -1,13 +1,13 @@
+import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
+import type { useResults } from "@/hooks/useResults";
+import { type SearchMode, getTextToDisplay } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import { Section } from "./Section";
-import { getTextToDisplay, SearchMode } from "@/lib/utils";
-import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
-import { useResults } from "@/hooks/useResults";
+import { ShowAll } from "../ShowAll";
+import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
-import { ViewEmbedded } from "../ViewEmbedded";
-import { ShowAll } from "../ShowAll";
+import { Section } from "./Section";
 
 interface GraypaperResultsProps {
   queryResult: ReturnType<typeof useResults>["graypaper"];

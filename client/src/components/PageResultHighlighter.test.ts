@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { findBestMatch } from "./PageResultHighlighter";
 
 describe("findBestMatch", () => {
@@ -180,8 +180,7 @@ describe("findBestMatch", () => {
     });
 
     it("handles very long content efficiently", () => {
-      const longContent =
-        "word ".repeat(1000) + "target match here " + "word ".repeat(347);
+      const longContent = `${"word ".repeat(1000)}target match here ${"word ".repeat(347)}`;
       const result = findBestMatch(longContent, "target match", "fuzzy");
       expect(result).not.toBeNull();
       expect(result?.length).toBe(12); // "target match"

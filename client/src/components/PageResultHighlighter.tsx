@@ -1,8 +1,8 @@
+import type { PageResult } from "@/lib/api";
+import { type SearchMode, cn, highlightText } from "@/lib/utils";
+import type { ClassValue } from "clsx";
 import ReactMarkdown from "react-markdown";
-import { Components } from "react-markdown";
-import { cn, highlightText, SearchMode } from "@/lib/utils";
-import { ClassValue } from "clsx";
-import { PageResult } from "@/lib/api";
+import type { Components } from "react-markdown";
 
 interface PageResultHighlighterProps {
   result: PageResult;
@@ -192,7 +192,7 @@ const truncateContent = (
   if (!match) {
     // If no match found, return first MAX_LENGTH characters
     return normalizedContent.length > options.maxLength
-      ? normalizedContent.slice(0, options.maxLength) + "..."
+      ? `${normalizedContent.slice(0, options.maxLength)}...`
       : normalizedContent;
   }
 
@@ -205,8 +205,8 @@ const truncateContent = (
   let truncated = normalizedContent.slice(start, end);
 
   // Add ellipsis if we're not at the start/end of the content
-  if (start > 0) truncated = "..." + truncated;
-  if (end < normalizedContent.length) truncated = truncated + "...";
+  if (start > 0) truncated = `...${truncated}`;
+  if (end < normalizedContent.length) truncated = `${truncated}...`;
 
   return truncated;
 };

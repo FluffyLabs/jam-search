@@ -1,14 +1,14 @@
-import { useLocation, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { MatrixResultList } from "@/components/results/MatrixResultList";
-import { useSearchMatrix } from "@/hooks/useSearchMatrix";
-import { MATRIX_CHANNELS } from "@/consts";
-import { parseSearchQuery, SearchMode } from "@/lib/utils";
-import { ArrowLeft } from "lucide-react";
-import { ResultHeader } from "@/components/results/ResultHeader";
-import { Paging } from "@/components/Paging";
-import { useRef } from "react";
 import { Container } from "@/components/Container";
+import { Paging } from "@/components/Paging";
+import { MatrixResultList } from "@/components/results/MatrixResultList";
+import { ResultHeader } from "@/components/results/ResultHeader";
+import { Button } from "@/components/ui/button";
+import { MATRIX_CHANNELS } from "@/consts";
+import { useSearchMatrix } from "@/hooks/useSearchMatrix";
+import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const MatrixResultsAll = () => {
   const location = useLocation();
@@ -40,7 +40,7 @@ const MatrixResultsAll = () => {
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl text-card-foreground">
-      <div ref={topRef}></div>
+      <div ref={topRef} />
       <ResultHeader
         left={
           <Button
@@ -67,7 +67,7 @@ const MatrixResultsAll = () => {
             <div className="flex flex-wrap gap-2 mt-2">
               {filters.map((filter, index) => (
                 <div
-                  key={index}
+                  key={`${filter.key}-${filter.value}`}
                   className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
                 >
                   <span className="font-semibold mr-1">{filter.key}:</span>

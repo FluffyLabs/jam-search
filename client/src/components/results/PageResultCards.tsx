@@ -1,8 +1,8 @@
-import { cn, formatDate, SearchMode } from "@/lib/utils";
-import { ViewEmbedded } from "../ViewEmbedded";
+import type { useResults } from "@/hooks/useResults";
+import { type SearchMode, cn, formatDate } from "@/lib/utils";
 import { PageResultHighlighter } from "../PageResultHighlighter";
+import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
-import { useResults } from "@/hooks/useResults";
 import { ResultCard } from "./ResultCard";
 
 interface PageResultCardsProps {

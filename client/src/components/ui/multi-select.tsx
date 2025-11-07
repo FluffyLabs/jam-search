@@ -1,22 +1,15 @@
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import {
   CheckIcon,
-  XCircle,
   ChevronDown,
-  XIcon,
   WandSparkles,
+  XCircle,
+  XIcon,
 } from "lucide-react";
+import * as React from "react";
 
-import { cn } from "@/lib/utils";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -26,6 +19,13 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { isArray } from "lodash";
 
 /**
@@ -456,7 +456,9 @@ export const MultiSelect = React.forwardRef<
                   <CommandGroup>
                     {isArray(children) ? (
                       children.map((child, id) => (
-                        <CommandItem key={id}>{child}</CommandItem>
+                        <CommandItem key={`${id}-${child}`}>
+                          {child}
+                        </CommandItem>
                       ))
                     ) : (
                       <CommandItem>{children}</CommandItem>
