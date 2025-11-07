@@ -65,7 +65,7 @@ const MatrixResultsAll = () => {
         {query && filters.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
-              {filters.map((filter, index) => (
+              {filters.map((filter) => (
                 <div
                   key={`${filter.key}-${filter.value}`}
                   className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-sm font-medium text-primary"
