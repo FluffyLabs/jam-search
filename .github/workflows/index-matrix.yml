@@ -6,10 +6,6 @@ on:
     # Run daily at 06:00 UTC
     - cron: '0 6 * * *'
 
-defaults:
-  run:
-    working-directory: backend
-
 jobs:
   run-matrix-job:
     name: Update Matrix Messages

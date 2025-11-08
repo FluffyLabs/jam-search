@@ -6,10 +6,6 @@ on:
     # Run daily at 05:00 UTC
     - cron: '0 5 * * *'
 
-defaults:
-  run:
-    working-directory: backend
-
 jobs:
   run-graypaper-job:
     name: Update Graypaper

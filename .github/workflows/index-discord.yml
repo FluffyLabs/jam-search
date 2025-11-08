@@ -6,10 +6,6 @@ on:
     # Run daily at 02:00 UTC
     - cron: '0 2 * * *'
 
-defaults:
-  run:
-    working-directory: backend
-
 jobs:
   run-discord-job:
     name: Update Discord Messages

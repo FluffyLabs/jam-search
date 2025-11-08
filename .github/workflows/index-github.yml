@@ -6,10 +6,6 @@ on:
     # Run daily at 04:00 UTC
     - cron: '0 4 * * *'
 
-defaults:
-  run:
-    working-directory: backend
-
 jobs:
   run-github-pages-job:
     name: Update GitHub repos
