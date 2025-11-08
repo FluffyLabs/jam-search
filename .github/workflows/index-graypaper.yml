@@ -21,15 +21,14 @@ jobs:
       - name: Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version-file: backend/.nvmrc
+          node-version-file: .nvmrc
           cache: "npm"
-          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run graypaper job
-        run: npx tsx ./src/jobs/graypaperJob.ts
+        run: npm exec tsx -w backend -- ./src/jobs/graypaperJob.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
