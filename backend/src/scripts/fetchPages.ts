@@ -128,18 +128,23 @@ export async function fetchAndStorePages(
       if (!(e instanceof FirecrawlError)) {
         throw e;
       }
+
       // detect rate limiting and try again
       if (e.statusCode === 429) {
         console.log(`Reached rate-limitting, will retry ${pageUrl.url}`);
         delayMultiplier += 1;
         pageUrls.push(pageUrl);
+        continue;
       }
+
       // detect timeout and try again
       if (e.statusCode === 408) {
         console.log(`Timeout when fetching, will retry ${pageUrl.url}`);
         delayMultiplier += 1;
         pageUrls.push(pageUrl);
+        continue;
       }
+
       // all other errors should just be stored for the very end
       errors.push([pageUrl.url, e]);
       continue;
