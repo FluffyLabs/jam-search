@@ -1,7 +1,8 @@
 import { setTimeout } from "node:timers/promises";
 import { sql } from "drizzle-orm";
 import { XMLParser } from "fast-xml-parser";
-import FirecrawlApp, { FirecrawlError } from "firecrawl";
+import type FirecrawlApp from "firecrawl";
+import { FirecrawlError } from "firecrawl";
 import fetch from "node-fetch";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
@@ -44,11 +45,9 @@ async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
 }
 
 async function fetchPageContent(
+  firecrawl: FirecrawlApp,
   url: string
 ): Promise<{ content: string; title: string }> {
-  const firecrawl = new FirecrawlApp({
-    apiKey: process.env.FIRECRAWL_API_KEY,
-  });
   const result = await firecrawl.scrapeUrl(url, {
     formats: ["markdown"],
   });
@@ -81,6 +80,7 @@ function cleanContent(content: string): string | null {
 }
 
 export async function fetchAndStorePages(
+  firecrawl: FirecrawlApp,
   input: string | string[] | { sitemapUrl: string },
   site: string
 ) {
@@ -106,6 +106,8 @@ export async function fetchAndStorePages(
 
   console.log(`Found ${pageUrls.length} pages to process`);
 
+  const errors: [string, FirecrawlError][] = [];
+
   // Fetch and store each page
   for (;;) {
     const pageUrl = pageUrls.pop();
@@ -120,17 +122,27 @@ export async function fetchAndStorePages(
     console.log(`Fetching ${pageUrl.url}`);
     let pageContent = { content: "", title: "" };
     try {
-      pageContent = await fetchPageContent(pageUrl.url);
+      pageContent = await fetchPageContent(firecrawl, pageUrl.url);
     } catch (e) {
+      // non-firecrawl errors should be propagated immediately
+      if (!(e instanceof FirecrawlError)) {
+        throw e;
+      }
       // detect rate limiting and try again
-      if (e instanceof FirecrawlError && e.statusCode === 429) {
+      if (e.statusCode === 429) {
         console.log(`Reached rate-limitting, will retry ${pageUrl.url}`);
         delayMultiplier += 1;
         pageUrls.push(pageUrl);
-        continue;
       }
-
-      throw e;
+      // detect timeout and try again
+      if (e.statusCode === 408) {
+        console.log(`Timeout when fetching, will retry ${pageUrl.url}`);
+        delayMultiplier += 1;
+        pageUrls.push(pageUrl);
+      }
+      // all other errors should just be stored for the very end
+      errors.push([pageUrl.url, e]);
+      continue;
     }
 
     const cleanedContent = cleanContent(pageContent.content);
@@ -166,4 +178,6 @@ export async function fetchAndStorePages(
 
   console.log("Reindexing pages_search_idx");
   await db.execute(sql`REINDEX INDEX pages_search_idx;`);
+
+  return errors;
 }
