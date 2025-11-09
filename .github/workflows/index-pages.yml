@@ -6,10 +6,6 @@ on:
     # Run daily at 03:00 UTC
     - cron: '0 3 * * *'
 
-defaults:
-  run:
-    working-directory: backend
-
 jobs:
   run-pages-job:
     name: Update Pages
@@ -21,15 +17,14 @@ jobs:
       - name: Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version-file: backend/.nvmrc
+          node-version-file: .nvmrc
           cache: "npm"
-          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run docs pages job
-        run: npx tsx ./src/jobs/docsPagesJob.ts
+        run: npm exec tsx -w backend -- ./src/jobs/docsPagesJob.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
