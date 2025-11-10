@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { isArray } from "lodash";
 
 /**
  * Variants for the multi-select component to handle different styles.
@@ -454,7 +453,7 @@ export const MultiSelect = React.forwardRef<
                 <>
                   <CommandSeparator className="bg-secondary-foreground mt-2" />
                   <CommandGroup>
-                    {isArray(children) ? (
+                    {Array.isArray(children) ? (
                       children.map((child, id) => (
                         <CommandItem key={`${id}-${child}`}>
                           {child}
