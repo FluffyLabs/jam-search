@@ -30,7 +30,9 @@ async function main() {
       console.log(
         `Found ${content.length} items from ${config.owner}/${config.repo} (${
           content.filter((c) => c.type === "pull_request").length
-        } PRs, ${content.filter((c) => c.type === "issue").length} issues)`
+        } PRs, ${content.filter((c) => c.type === "issue").length} issues, ${
+          content.filter((c) => c.type === "discussion").length
+        } discussions)`
       );
 
       await storeContentInDatabase(
