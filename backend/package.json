@@ -28,7 +28,7 @@
     "hono": "^4.7.7",
     "matrix-js-sdk": "^39.1.2",
     "node-fetch": "^2.7.0",
-    "openai": "^4.97.0",
+    "openai": "^6.8.1",
     "pdfjs-dist": "^5.2.133",
     "postgres": "^3.4.5",
     "zod": "^3.24.3"
