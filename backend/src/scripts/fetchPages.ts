@@ -84,7 +84,6 @@ export async function fetchAndStorePages(
   input: string | string[] | { sitemapUrl: string },
   site: string
 ) {
-  let delayMultiplier = 1;
   let pageUrls: PageUrl[] = [];
 
   // Handle different input types
@@ -103,9 +102,10 @@ export async function fetchAndStorePages(
       "Invalid input format. Expected string, string[], or { sitemapUrl: string }"
     );
   }
-
   console.log(`Found ${pageUrls.length} pages to process`);
 
+  let temporaryErrors = 0;
+  let delayMultiplier = 10;
   const errors: [string, FirecrawlError][] = [];
 
   // Fetch and store each page
@@ -117,7 +117,7 @@ export async function fetchAndStorePages(
     }
 
     // Add delay between requests to avoid rate limiting
-    await delay(Math.max(1000, delayMultiplier * delayMultiplier * 500));
+    await delay(Math.max(1000, delayMultiplier * delayMultiplier * 5));
 
     console.log(`Fetching ${pageUrl.url}`);
     let pageContent = { content: "", title: "" };
@@ -132,23 +132,30 @@ export async function fetchAndStorePages(
       // detect rate limiting and try again
       if (e.statusCode === 429) {
         console.log(`Reached rate-limitting, will retry ${pageUrl.url}`);
-        delayMultiplier += 1;
+        delayMultiplier += 10;
         pageUrls.push(pageUrl);
         continue;
       }
 
-      // detect timeout and try again
-      if (e.statusCode === 408) {
-        console.log(`Timeout when fetching, will retry ${pageUrl.url}`);
-        delayMultiplier += 1;
+      // detect timeout and gateway errors and try again
+      const isTemporaryError = e.statusCode === 408 || e.statusCode === 502;
+      if (isTemporaryError && temporaryErrors < 5) {
+        console.log(`${e.statusCode} when fetching, will retry ${pageUrl.url}`);
         pageUrls.push(pageUrl);
+        temporaryErrors += 1;
+        delayMultiplier += 5;
         continue;
       }
 
       // all other errors should just be stored for the very end
       errors.push([pageUrl.url, e]);
+      temporaryErrors = 0;
       continue;
     }
+
+    // each successful run lowers the delay multiplier a bit
+    delayMultiplier = Math.max(10, delayMultiplier - 1);
+    temporaryErrors = 0;
 
     const cleanedContent = cleanContent(pageContent.content);
 
