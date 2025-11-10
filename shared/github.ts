@@ -13,6 +13,18 @@ export const REPOSITORIES: Repository[] = [
     owner: "w3f",
     repo: "jam-milestone-delivery",
   },
+  {
+    source: Source.GithubDavxyJamConformance,
+    dbId: "github.com/davxy/jam-conformance",
+    owner: "davxy",
+    repo: "jam-conformance",
+  },
+  {
+    source: Source.GithubDavxyJamTestVectors,
+    dbId: "github.com/davxy/jam-test-vectors",
+    owner: "davxy",
+    repo: "jam-test-vectors",
+  },
 ];
 
 type Repository = {

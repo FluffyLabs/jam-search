@@ -1,13 +1,14 @@
+/** When adding here, make sure to check SOURCE_OPTIONS in client. */
 export enum Source {
-  Matrix = "matrix",
-  Graypaper = "graypaper",
-  Jamchain = "jamchain",
-  GithubW3fJamtestvectors = "githubW3fJamtestvectors",
+  GithubDavxyJamConformance = "GithubDavxyJamConformance",
+  GithubDavxyJamTestVectors = "GithubDavxyJamTestVectors",
   GithubW3fJamMilestoneDelivery = "githubW3fJamMilestoneDelivery",
-  W3f = "w3f",
-  Github = "github",
+  GithubW3fJamtestvectors = "githubW3fJamtestvectors",
+  Graypaper = "graypaper",
   JamDaoDiscord = "jamDaoDiscord",
   JamWeb3Foundation = "jamWeb3Foundation",
+  Jamchain = "jamchain",
+  Matrix = "matrix",
 }
 
 export function stringToSource(x: string): Source | undefined {

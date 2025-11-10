@@ -8,10 +8,18 @@ export const SOURCE_OPTIONS = [
     label: "github.com/w3f/jamtestvectors",
     value: Source.GithubW3fJamtestvectors,
   },
-  { label: "JAM DAO", value: Source.JamDaoDiscord },
+  { label: "JAM DAO Discord", value: Source.JamDaoDiscord },
   {
     label: "github.com/w3f/jam-milestone-delivery",
     value: Source.GithubW3fJamMilestoneDelivery,
+  },
+  {
+    label: "github.com/davxy/jam-conformance",
+    value: Source.GithubDavxyJamConformance,
+  },
+  {
+    label: "github.com/davxy/jam-test-vectors",
+    value: Source.GithubDavxyJamTestVectors,
   },
   {
     label: "jam.web3.foundation",
@@ -23,10 +31,12 @@ export const initialSources = [
   Source.Matrix,
   Source.Graypaper,
   Source.Jamchain,
+  Source.GithubDavxyJamConformance,
+  Source.GithubDavxyJamTestVectors,
   Source.GithubW3fJamtestvectors,
-  // Source.GithubW3fJamMilestoneDelivery,
-  // Source.JamWeb3Foundation,
   Source.JamDaoDiscord,
+  Source.GithubW3fJamMilestoneDelivery,
+  Source.JamWeb3Foundation,
 ];
 
 // localStorage key for user's selected sources
