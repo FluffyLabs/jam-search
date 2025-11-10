@@ -25,7 +25,46 @@ export interface GitHubContent {
     };
     created_at: string;
   }>;
-  type: "issue" | "pull_request";
+  type: "issue" | "pull_request" | "discussion";
+}
+
+interface GraphQLDiscussionsResponse {
+  repository: {
+    discussions: {
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor: string | null;
+      };
+      nodes: Array<{
+        number: number;
+        title: string;
+        body: string;
+        url: string;
+        author: {
+          login: string;
+        } | null;
+        createdAt: string;
+        comments: {
+          nodes: Array<{
+            body: string;
+            author: {
+              login: string;
+            } | null;
+            createdAt: string;
+            replies: {
+              nodes: Array<{
+                body: string;
+                author: {
+                  login: string;
+                } | null;
+                createdAt: string;
+              }>;
+            };
+          }>;
+        };
+      }>;
+    };
+  };
 }
 
 function shouldSkipContent(body: string): boolean {
@@ -37,6 +76,121 @@ function shouldSkipContent(body: string): boolean {
   return skipPatterns.some((pattern) => pattern.test(body.trim()));
 }
 
+async function fetchDiscussions(
+  octokit: Octokit,
+  config: GitHubConfig
+): Promise<GitHubContent[]> {
+  const discussions: GitHubContent[] = [];
+  let hasNextPage = true;
+  let cursor: string | null = null;
+
+  while (hasNextPage) {
+    const query = `
+      query($owner: String!, $repo: String!, $cursor: String) {
+        repository(owner: $owner, name: $repo) {
+          discussions(first: 5, after: $cursor) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            nodes {
+              number
+              title
+              body
+              url
+              author {
+                login
+              }
+              createdAt
+              comments(first: 100) {
+                nodes {
+                  body
+                  author {
+                    login
+                  }
+                  createdAt
+                  replies(first: 100) {
+                    nodes {
+                      body
+                      author {
+                        login
+                      }
+                      createdAt
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response: GraphQLDiscussionsResponse = await octokit.graphql(query, {
+      owner: config.owner,
+      repo: config.repo,
+      cursor,
+    });
+
+    const discussionNodes = response.repository.discussions.nodes;
+
+    for (const discussion of discussionNodes) {
+      // Skip discussions with no body or no author
+      if (
+        !discussion.body ||
+        !discussion.author ||
+        shouldSkipContent(discussion.body)
+      ) {
+        continue;
+      }
+
+      // Collect all comments including replies
+      const allComments: Array<{
+        body: string;
+        user: { login: string };
+        created_at: string;
+      }> = [];
+
+      for (const comment of discussion.comments.nodes) {
+        if (comment.body && comment.author) {
+          allComments.push({
+            body: comment.body,
+            user: { login: comment.author.login },
+            created_at: comment.createdAt,
+          });
+
+          // Add replies
+          for (const reply of comment.replies.nodes) {
+            if (reply.body && reply.author) {
+              allComments.push({
+                body: reply.body,
+                user: { login: reply.author.login },
+                created_at: reply.createdAt,
+              });
+            }
+          }
+        }
+      }
+
+      discussions.push({
+        number: discussion.number,
+        title: discussion.title,
+        body: discussion.body,
+        html_url: discussion.url,
+        user: { login: discussion.author.login },
+        created_at: discussion.createdAt,
+        comments: allComments,
+        type: "discussion",
+      });
+    }
+
+    hasNextPage = response.repository.discussions.pageInfo.hasNextPage;
+    cursor = response.repository.discussions.pageInfo.endCursor;
+  }
+
+  return discussions;
+}
+
 export async function fetchGitHubContent(
   config: GitHubConfig
 ): Promise<GitHubContent[]> {
@@ -45,7 +199,6 @@ export async function fetchGitHubContent(
   });
 
   const content: GitHubContent[] = [];
-
   // Fetch all issues (including pull requests)
   const issues = await octokit.paginate(octokit.rest.issues.listForRepo, {
     owner: config.owner,
@@ -125,6 +278,10 @@ export async function fetchGitHubContent(
     });
   }
 
+  // Fetch discussions
+  const discussions = await fetchDiscussions(octokit, config);
+  content.push(...discussions);
+
   return content;
 }
 
@@ -135,13 +292,18 @@ export async function storeContentInDatabase(
   await db.transaction(async (tx) => {
     for (const item of content) {
       // Create content with body and comments using markdown formatting
+      const typeLabel =
+        item.type === "pull_request"
+          ? "Pull Request"
+          : item.type === "discussion"
+            ? "Discussion"
+            : "Issue";
+
       const content = [
         "",
         `# ${item.title}`,
         "",
-        `## ${item.type === "pull_request" ? "Pull Request" : "Issue"} by @${
-          item.user.login
-        }`,
+        `## ${typeLabel} by @${item.user.login}`,
         "",
         item.body,
         "",
