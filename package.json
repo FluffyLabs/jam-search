@@ -12,7 +12,7 @@
     "biome-fix": "biome format --write && biome check --write && biome lint --write",
     "build": "npm run --workspaces build",
     "qa": "npm run --workspaces --if-present qa && npm run biome",
-    "qa-fix": "npm run --workspaces --if-present qa-fix && npm run biome-fix",
+    "qa-fix": "npm run --workspaces --if-present qa-fix && npm run biome-fix && npm run qa",
     "test": "npm run --workspaces test",
     "typecheck": "npm run --workspaces typecheck"
   },

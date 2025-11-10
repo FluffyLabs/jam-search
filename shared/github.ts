@@ -2,7 +2,7 @@ import { Source } from "./sources.js";
 
 export const REPOSITORIES: Repository[] = [
   {
-    source: Source.GithubW3fJamtestvectors,
+    source: Source.GithubW3fJamTestVectors,
     dbId: "github.com/w3f/jamtestvectors",
     owner: "w3f",
     repo: "jamtestvectors",
@@ -27,7 +27,7 @@ export const REPOSITORIES: Repository[] = [
   },
 ];
 
-type Repository = {
+export type Repository = {
   source: Source;
   dbId: string;
   owner: string;

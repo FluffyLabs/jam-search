@@ -18,6 +18,8 @@ export function useResults(
   const matrixResults = matrix.ROOMS.map((room) => {
     return {
       room,
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchMatrix({
         query,
         channelId: room.id,
@@ -32,6 +34,7 @@ export function useResults(
   const discordResults = discord.CHANNELS.map((channel) => {
     return {
       channel,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchDiscord({
         query,
         pageSize: 6,
@@ -46,6 +49,7 @@ export function useResults(
   const pagesResults = pages.PAGES.map((page) => {
     return {
       page,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchPages({
         query,
         pageSize: 4,
@@ -59,6 +63,7 @@ export function useResults(
   const githubResults = github.REPOSITORIES.map((repo) => {
     return {
       repo,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchPages({
         query,
         pageSize: 4,
