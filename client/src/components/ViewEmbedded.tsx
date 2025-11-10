@@ -1,7 +1,7 @@
-import { MATRIX_CHANNELS } from "@/consts";
 import type { PageResult, SearchResult } from "@/lib/api";
 import { type SearchMode, cn, formatDate, highlightText } from "@/lib/utils";
 import { useEmbeddedViewer } from "@/providers/EmbeddedResultsContext";
+import * as matrix from "@shared/matrix";
 import { SquareX } from "lucide-react";
 import {
   type ReactNode,
@@ -105,7 +105,7 @@ const Content = ({
   const hasSidebar = results && results.length > 0 && window.innerWidth > 500;
 
   const getUrl = (result: SearchResult) => {
-    const channelUrl = MATRIX_CHANNELS.find(
+    const channelUrl = matrix.ROOMS.find(
       (channel) => channel.id === result.roomId
     )?.archiveUrl;
     return `${channelUrl}#${result.messageId}`;

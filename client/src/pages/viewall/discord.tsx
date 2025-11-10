@@ -3,9 +3,9 @@ import { Paging } from "@/components/Paging";
 import { DiscordResultList } from "@/components/results/DiscordResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
-import { DISCORD_CHANNELS } from "@/consts";
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import * as discord from "@shared/discord";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -14,11 +14,13 @@ const DiscordResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
-  const channelId = searchParams.get("channelId") || DISCORD_CHANNELS[0].id;
+  const channelId =
+    searchParams.get("channelId") || discord.CHANNELS[0].channelId;
   const searchMode = searchParams.get("searchMode") || "strict";
   // Find the channel name based on the channelId
   const channel =
-    DISCORD_CHANNELS.find((ch) => ch.id === channelId) || DISCORD_CHANNELS[0];
+    discord.CHANNELS.find((ch) => ch.channelId === channelId) ||
+    discord.CHANNELS[0];
 
   const topRef = useRef(null);
   // Parse the query to extract filters

@@ -10,7 +10,7 @@ import { ResultCard } from "./ResultCard";
 import { Section } from "./Section";
 
 interface GraypaperResultsProps {
-  queryResult: ReturnType<typeof useResults>["graypaper"];
+  queryResult: ReturnType<typeof useResults>["graypaperResults"];
   query: string;
   searchMode?: SearchMode;
 }

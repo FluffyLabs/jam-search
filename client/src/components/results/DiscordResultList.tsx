@@ -6,7 +6,7 @@ import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
 
 interface DiscordResultListProps {
-  queryResult: ReturnType<typeof useResults>["implementersDiscord"];
+  queryResult: ReturnType<typeof useResults>["discordResults"][0]["results"];
   searchQuery: string;
   searchMode: SearchMode;
 }

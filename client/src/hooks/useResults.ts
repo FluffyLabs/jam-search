@@ -1,10 +1,10 @@
-import { MATRIX_CHANNELS } from "@/consts";
+import { discord, github, matrix, pages } from "@shared/index";
 
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { useSearchPages } from "@/hooks/useSearchPages";
-import { Source } from "@/lib/sources";
 import { parseSearchQuery } from "@/lib/utils";
+import { Source } from "@shared/sources";
 import { useSearchGraypaper } from "./useSearchGraypaper";
 
 export function useResults(
@@ -15,82 +15,67 @@ export function useResults(
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
 
-  // Search for graypaper channel
-  const graypaperChat = useSearchMatrix({
-    query,
-    channelId: MATRIX_CHANNELS[0].id,
-    pageSize: 6,
-    filters,
-    searchMode: searchMode,
-    enabled: selectedSources.includes(Source.Matrix),
+  const matrixResults = matrix.ROOMS.map((room) => {
+    return {
+      room,
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      results: useSearchMatrix({
+        query,
+        channelId: room.id,
+        pageSize: 6,
+        filters,
+        searchMode: searchMode,
+        enabled: selectedSources.includes(room.source),
+      }),
+    };
   });
 
-  // Search for jam channel
-  const jamChat = useSearchMatrix({
-    query,
-    channelId: MATRIX_CHANNELS[1].id,
-    pageSize: 6,
-    filters,
-    searchMode: searchMode,
-    enabled: selectedSources.includes(Source.Matrix),
+  const discordResults = discord.CHANNELS.map((channel) => {
+    return {
+      channel,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      results: useSearchDiscord({
+        query,
+        pageSize: 6,
+        filters,
+        channelId: channel.channelId,
+        searchMode: searchMode,
+        enabled: selectedSources.includes(channel.source),
+      }),
+    };
   });
 
-  // Search for jam-conformance channel
-  const jamConformanceChat = useSearchMatrix({
-    query,
-    channelId: MATRIX_CHANNELS[2].id,
-    pageSize: 6,
-    filters,
-    searchMode: searchMode,
-    enabled: selectedSources.includes(Source.Matrix),
+  const pagesResults = pages.PAGES.map((page) => {
+    return {
+      page,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      results: useSearchPages({
+        query,
+        pageSize: 4,
+        searchMode: searchMode,
+        site: page.dbId,
+        enabled: selectedSources.includes(page.source),
+      }),
+    };
   });
 
-  // Search for Discord #implementers channel messages
-  const implementersDiscord = useSearchDiscord({
-    query,
-    pageSize: 6,
-    filters,
-    channelId: "1357838246276497590",
-    searchMode: searchMode,
-    enabled: selectedSources.includes(Source.JamDaoDiscord),
-  });
-
-  // Search for JamCha.in docs
-  const jamchain = useSearchPages({
-    query,
-    pageSize: 4,
-    searchMode: searchMode,
-    site: "docs.jamcha.in",
-    enabled: selectedSources.includes(Source.Jamchain),
-  });
-
-  // Search for  github.com/w3f/jamtestvectors pages
-  const w3fJamtestvectors = useSearchPages({
-    query,
-    pageSize: 4,
-    searchMode: searchMode,
-    site: "github.com/w3f/jamtestvectors",
-    enabled: selectedSources.includes(Source.GithubW3fJamtestvectors),
-  });
-
-  const w3fMilestoneDelivery = useSearchPages({
-    query,
-    pageSize: 4,
-    searchMode: searchMode,
-    site: "github.com/w3f/jam-milestone-delivery",
-    enabled: selectedSources.includes(Source.GithubW3fJamMilestoneDelivery),
-  });
-
-  const jamWeb3Foundation = useSearchPages({
-    query,
-    pageSize: 4,
-    searchMode: searchMode,
-    site: "jam.web3.foundation",
-    enabled: selectedSources.includes(Source.JamWeb3Foundation),
+  const githubResults = github.REPOSITORIES.map((repo) => {
+    return {
+      repo,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      results: useSearchPages({
+        query,
+        pageSize: 4,
+        searchMode: searchMode,
+        site: repo.dbId,
+        enabled: selectedSources.includes(repo.source),
+      }),
+    };
   });
 
   // Use our graypaper search hook with 6 results per page (for compact view)
-  const graypaper = useSearchGraypaper({
+  const graypaperResults = useSearchGraypaper({
     query,
     pageSize: 6,
     searchMode,
@@ -100,14 +85,10 @@ export function useResults(
   return {
     query,
     filters,
-    graypaper,
-    graypaperChat,
-    jamChat,
-    jamConformanceChat,
-    implementersDiscord,
-    jamchain,
-    w3fJamtestvectors,
-    w3fMilestoneDelivery,
-    jamWeb3Foundation,
+    graypaperResults,
+    githubResults,
+    pagesResults,
+    discordResults,
+    matrixResults,
   };
 }

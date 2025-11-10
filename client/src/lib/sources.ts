@@ -1,23 +1,4 @@
-export enum Source {
-  Matrix = "matrix",
-  Graypaper = "graypaper",
-  Jamchain = "jamchain",
-  GithubW3fJamtestvectors = "githubW3fJamtestvectors",
-  GithubW3fJamMilestoneDelivery = "githubW3fJamMilestoneDelivery",
-  W3f = "w3f",
-  Github = "github",
-  JamDaoDiscord = "jamDaoDiscord",
-  JamWeb3Foundation = "jamWeb3Foundation",
-}
-
-export function stringToSource(x: string): Source | undefined {
-  for (const val of Object.values(Source)) {
-    if (val === x) {
-      return val as Source;
-    }
-  }
-  return undefined;
-}
+import { Source, stringToSource } from "@shared/sources";
 
 export const SOURCE_OPTIONS = [
   { label: "Matrix channels", value: Source.Matrix },
@@ -25,12 +6,20 @@ export const SOURCE_OPTIONS = [
   { label: "docs.jamcha.in", value: Source.Jamchain },
   {
     label: "github.com/w3f/jamtestvectors",
-    value: Source.GithubW3fJamtestvectors,
+    value: Source.GithubW3fJamTestVectors,
   },
-  { label: "JAM DAO", value: Source.JamDaoDiscord },
+  { label: "JAM DAO Discord", value: Source.JamDaoDiscord },
   {
     label: "github.com/w3f/jam-milestone-delivery",
     value: Source.GithubW3fJamMilestoneDelivery,
+  },
+  {
+    label: "github.com/davxy/jam-conformance",
+    value: Source.GithubDavxyJamConformance,
+  },
+  {
+    label: "github.com/davxy/jam-test-vectors",
+    value: Source.GithubDavxyJamTestVectors,
   },
   {
     label: "jam.web3.foundation",
@@ -42,10 +31,12 @@ export const initialSources = [
   Source.Matrix,
   Source.Graypaper,
   Source.Jamchain,
-  Source.GithubW3fJamtestvectors,
-  // Source.GithubW3fJamMilestoneDelivery,
-  // Source.JamWeb3Foundation,
+  Source.GithubDavxyJamConformance,
+  Source.GithubDavxyJamTestVectors,
+  Source.GithubW3fJamTestVectors,
   Source.JamDaoDiscord,
+  Source.GithubW3fJamMilestoneDelivery,
+  Source.JamWeb3Foundation,
 ];
 
 // localStorage key for user's selected sources

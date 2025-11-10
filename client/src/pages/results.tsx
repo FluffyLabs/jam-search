@@ -10,19 +10,24 @@ import { PageResultCards } from "@/components/results/PageResultCards";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Section } from "@/components/results/Section";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { MATRIX_CHANNELS } from "@/consts";
-import { DISCORD_CHANNELS } from "@/consts";
 import { useResults } from "@/hooks/useResults";
 import {
   SOURCE_OPTIONS,
-  Source,
   getStoredSources,
   setStoredSources,
-  stringToSource,
 } from "@/lib/sources";
 import type { SearchMode } from "@/lib/utils";
+import { Source, stringToSource } from "@shared/sources";
 import { useCallback, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+
+const pageLogos: Record<string, string> = {
+  "docs.jamcha.in": JamchainLogo,
+  "jam.web3.foundation": JamWeb3FoundationLogo,
+};
+function getLogo(logo: string) {
+  return pageLogos[logo] ?? GithubLogo;
+}
 
 const SearchResults = () => {
   const location = useLocation();
@@ -44,15 +49,11 @@ const SearchResults = () => {
   const {
     query,
     filters,
-    graypaperChat,
-    jamChat,
-    jamConformanceChat,
-    jamchain,
-    w3fJamtestvectors,
-    w3fMilestoneDelivery,
-    graypaper,
-    implementersDiscord,
-    jamWeb3Foundation,
+    pagesResults,
+    discordResults,
+    matrixResults,
+    graypaperResults,
+    githubResults,
   } = useResults(richQuery, searchModeParam, selectedSources);
 
   return (
@@ -96,196 +97,132 @@ const SearchResults = () => {
         <div className="mb-8">
           {selectedSources.includes(Source.Graypaper) && (
             <GraypaperResults
-              queryResult={graypaper}
+              queryResult={graypaperResults}
               query={query}
               searchMode={searchModeParam as SearchMode}
             />
           )}
 
-          {selectedSources.includes(Source.Matrix) && (
-            <>
+          {matrixResults.map((data) => {
+            if (!selectedSources.includes(data.room.source)) {
+              return null;
+            }
+
+            return (
               <MatrixResults
-                channel={MATRIX_CHANNELS[0]}
-                queryResult={graypaperChat}
+                key={data.room.id}
+                channel={data.room}
+                queryResult={data.results}
                 query={query}
                 searchMode={searchModeParam as SearchMode}
               />
-              <MatrixResults
-                channel={MATRIX_CHANNELS[1]}
-                queryResult={jamChat}
+            );
+          })}
+
+          {discordResults.map((data) => {
+            if (!selectedSources.includes(data.channel.source)) {
+              return null;
+            }
+
+            return (
+              <DiscordResults
+                key={data.channel.channelId}
+                channel={data.channel}
+                queryResult={data.results}
                 query={query}
                 searchMode={searchModeParam as SearchMode}
               />
-              <MatrixResults
-                channel={MATRIX_CHANNELS[2]}
-                queryResult={jamConformanceChat}
-                query={query}
-                searchMode={searchModeParam as SearchMode}
-              />
-            </>
-          )}
+            );
+          })}
 
-          {selectedSources.includes(Source.JamDaoDiscord) && (
-            <DiscordResults
-              channel={DISCORD_CHANNELS[0]}
-              queryResult={implementersDiscord}
-              query={query}
-              searchMode={searchModeParam as SearchMode}
-            />
-          )}
+          {pagesResults.map((data) => {
+            if (!selectedSources.includes(data.page.source)) {
+              return null;
+            }
 
-          {selectedSources.includes(Source.Jamchain) && (
-            <div className="mt-6">
-              <div className="mb-4">
-                <Section
-                  logo={
-                    <img
-                      src={JamchainLogo}
-                      className="size-4"
-                      alt="JamChain Logo"
-                    />
-                  }
-                  url="https://docs.jamcha.in"
-                  title="docs.jamcha.in"
-                  endBlock={
-                    <Link
-                      to={(() => {
-                        const params = new URLSearchParams(location.search);
-                        params.set("site", "docs.jamcha.in");
-                        return `/results/pages?${params.toString()}`;
-                      })()}
-                    >
-                      <ShowAll
-                        hasNextPage={jamchain.pagination.hasNextPage}
-                        totalResults={jamchain.totalResults}
+            return (
+              <div className="mt-6" key={data.page.dbId}>
+                <div className="mb-4">
+                  <Section
+                    logo={
+                      <img
+                        src={getLogo(data.page.dbId)}
+                        className="size-4"
+                        alt={`${data.page.dbId} logo`}
                       />
-                    </Link>
-                  }
+                    }
+                    url={data.page.link}
+                    title={data.page.dbId}
+                    endBlock={
+                      <Link
+                        to={(() => {
+                          const params = new URLSearchParams(location.search);
+                          params.set("site", data.page.dbId);
+                          return `/results/pages?${params.toString()}`;
+                        })()}
+                      >
+                        <ShowAll
+                          hasNextPage={data.results.pagination.hasNextPage}
+                          totalResults={data.results.totalResults}
+                        />
+                      </Link>
+                    }
+                  />
+                </div>
+                <PageResultCards
+                  queryResult={data.results}
+                  searchQuery={query}
+                  searchMode={searchModeParam as SearchMode}
                 />
               </div>
-              <PageResultCards
-                queryResult={jamchain}
-                searchQuery={query}
-                searchMode={searchModeParam as SearchMode}
-              />
-            </div>
-          )}
+            );
+          })}
 
-          {selectedSources.includes(Source.GithubW3fJamtestvectors) && (
-            <div className="mt-6">
-              <div className="mb-4">
-                <Section
-                  logo={
-                    <img
-                      src={GithubLogo}
-                      className="size-4"
-                      alt="Github Logo"
-                    />
-                  }
-                  url="https://github.com/w3f/jamtestvectors"
-                  title="w3f/jamtestvectors"
-                  endBlock={
-                    <Link
-                      to={(() => {
-                        const params = new URLSearchParams(location.search);
-                        params.set("site", "github.com/w3f/jamtestvectors");
-                        return `/results/pages?${params.toString()}`;
-                      })()}
-                    >
-                      <ShowAll
-                        hasNextPage={w3fJamtestvectors.pagination.hasNextPage}
-                        totalResults={w3fJamtestvectors.totalResults}
+          {githubResults.map((data) => {
+            if (!selectedSources.includes(data.repo.source)) {
+              return null;
+            }
+
+            return (
+              <div className="mt-6" key={data.repo.dbId}>
+                <div className="mb-4">
+                  <Section
+                    logo={
+                      <img
+                        src={GithubLogo}
+                        className="size-4"
+                        alt="Github Logo"
                       />
-                    </Link>
-                  }
+                    }
+                    url={`https://github.com/${data.repo.owner}/${data.repo.repo}`}
+                    title={`${data.repo.owner}/${data.repo.repo}`}
+                    endBlock={
+                      <Link
+                        to={(() => {
+                          const params = new URLSearchParams(location.search);
+                          params.set(
+                            "site",
+                            `github.com/${data.repo.owner}/${data.repo.repo}`
+                          );
+                          return `/results/pages?${params.toString()}`;
+                        })()}
+                      >
+                        <ShowAll
+                          hasNextPage={data.results.pagination.hasNextPage}
+                          totalResults={data.results.totalResults}
+                        />
+                      </Link>
+                    }
+                  />
+                </div>
+                <PageResultCards
+                  queryResult={data.results}
+                  searchQuery={query}
+                  searchMode={searchModeParam as SearchMode}
                 />
               </div>
-              <PageResultCards
-                queryResult={w3fJamtestvectors}
-                searchQuery={query}
-                searchMode={searchModeParam as SearchMode}
-              />
-            </div>
-          )}
-
-          {selectedSources.includes(Source.GithubW3fJamMilestoneDelivery) && (
-            <div className="mt-6">
-              <div className="mb-4">
-                <Section
-                  logo={
-                    <img
-                      src={GithubLogo}
-                      className="size-4"
-                      alt="Github Logo"
-                    />
-                  }
-                  url="https://github.com/w3f/jam-milestone-delivery"
-                  title="w3f/jam-milestone-delivery"
-                  endBlock={
-                    <Link
-                      to={(() => {
-                        const params = new URLSearchParams(location.search);
-                        params.set(
-                          "site",
-                          "github.com/w3f/jam-milestone-delivery"
-                        );
-                        return `/results/pages?${params.toString()}`;
-                      })()}
-                    >
-                      <ShowAll
-                        hasNextPage={
-                          w3fMilestoneDelivery.pagination.hasNextPage
-                        }
-                        totalResults={w3fMilestoneDelivery.totalResults}
-                      />
-                    </Link>
-                  }
-                />
-              </div>
-              <PageResultCards
-                queryResult={w3fMilestoneDelivery}
-                searchQuery={query}
-                searchMode={searchModeParam as SearchMode}
-              />
-            </div>
-          )}
-
-          {selectedSources.includes(Source.JamWeb3Foundation) && (
-            <div className="mt-6">
-              <div className="mb-4">
-                <Section
-                  logo={
-                    <img
-                      src={JamWeb3FoundationLogo}
-                      className="size-4"
-                      alt="Jam Web3 Foundation Logo"
-                    />
-                  }
-                  url="https://jam.web3.foundation"
-                  title="jam.web3.foundation"
-                  endBlock={
-                    <Link
-                      to={(() => {
-                        const params = new URLSearchParams(location.search);
-                        params.set("site", "jam.web3.foundation");
-                        return `/results/pages?${params.toString()}`;
-                      })()}
-                    >
-                      <ShowAll
-                        hasNextPage={jamWeb3Foundation.pagination.hasNextPage}
-                        totalResults={jamWeb3Foundation.totalResults}
-                      />
-                    </Link>
-                  }
-                />
-              </div>
-              <PageResultCards
-                queryResult={jamWeb3Foundation}
-                searchQuery={query}
-                searchMode={searchModeParam as SearchMode}
-              />
-            </div>
-          )}
+            );
+          })}
         </div>
       </Container>
     </div>

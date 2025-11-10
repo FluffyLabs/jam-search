@@ -1,15 +1,15 @@
-import type { MATRIX_CHANNELS } from "@/consts";
 import type { useResults } from "@/hooks/useResults";
 import type { SearchResult } from "@/lib/api";
 import { type SearchMode, getTextToDisplay } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
+import type * as matrix from "@shared/matrix";
 import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
 
 interface MatrixResultListProps {
-  channel: (typeof MATRIX_CHANNELS)[0];
-  queryResult: ReturnType<typeof useResults>["jamChat"];
+  channel: (typeof matrix.ROOMS)[0];
+  queryResult: ReturnType<typeof useResults>["matrixResults"][0]["results"];
   searchQuery: string;
   searchMode: SearchMode;
 }
