@@ -16,7 +16,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@hono/node-server": "^1.14.1",
+    "@hono/node-server": "^1.19.6",
     "@octokit/rest": "^20.0.2",
     "cheerio": "^1.0.0",
     "date-fns": "^4.1.0",
