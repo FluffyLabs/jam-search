@@ -14,7 +14,7 @@ export const DiscordResults = ({
   searchMode,
 }: {
   channel: (typeof discord.CHANNELS)[0];
-  queryResult: ReturnType<typeof useResults>["implementersDiscord"];
+  queryResult: ReturnType<typeof useResults>["discordResults"][0]["results"];
   query: string;
   searchMode: SearchMode;
 }) => {

@@ -24,32 +24,32 @@ async function main() {
 
   for (const page of PAGES) {
     if (page.kind === "sitemap") {
-      console.log(`Fetching sitemap of ${page.name} ...`);
+      console.log(`Fetching sitemap of ${page.dbId} ...`);
       errors.push(
         ...(await fetchAndStorePages(
           firecrawl,
           {
             sitemapUrl: page.sitemapUrl,
           },
-          page.name
+          page.dbId
         ))
       );
       continue;
     }
 
     if (page.kind === "url") {
-      console.log(`Mapping ${page.name} to get all URLs...`);
+      console.log(`Mapping ${page.dbId} to get all URLs...`);
       const map = await firecrawl.mapUrl(page.url);
 
       if (map.success && map.links) {
         console.log(`Found ${map.links.length} URLs for ${page.url}`);
         errors.push(
-          ...(await fetchAndStorePages(firecrawl, map.links, page.name))
+          ...(await fetchAndStorePages(firecrawl, map.links, page.dbId))
         );
         continue;
       }
 
-      throw new Error(`Failed to map: ${page.name}: ${map.error}`);
+      throw new Error(`Failed to map: ${page.dbId}: ${map.error}`);
     }
 
     assertNever(page);

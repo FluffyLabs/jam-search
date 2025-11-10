@@ -9,7 +9,7 @@ import { ResultCard } from "./ResultCard";
 
 interface MatrixResultCardsProps {
   channel: (typeof matrix.ROOMS)[0];
-  queryResult: ReturnType<typeof useResults>["jamChat"];
+  queryResult: ReturnType<typeof useResults>["matrixResults"][0]["results"];
   searchQuery: string;
   searchMode: SearchMode;
 }

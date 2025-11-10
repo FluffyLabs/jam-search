@@ -14,7 +14,7 @@ export const MatrixResults = ({
   searchMode,
 }: {
   channel: (typeof matrix.ROOMS)[0];
-  queryResult: ReturnType<typeof useResults>["graypaperChat"];
+  queryResult: ReturnType<typeof useResults>["matrixResults"][0]["results"];
   query: string;
   searchMode: SearchMode;
 }) => {

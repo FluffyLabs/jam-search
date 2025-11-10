@@ -6,7 +6,7 @@ import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
 
 interface PageResultCardsProps {
-  queryResult: ReturnType<typeof useResults>["jamchain"];
+  queryResult: ReturnType<typeof useResults>["pagesResults"][0]["results"];
   searchQuery: string;
   searchMode?: SearchMode;
 }

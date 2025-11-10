@@ -1,6 +1,9 @@
+import { Source } from "./sources.js";
+
 export const CHANNELS = [
   /** JAM DAO / #implementers */
   {
+    source: Source.JamDaoDiscord,
     name: "#implementers",
     serverName: "JAM DAO",
     discordUrl:
