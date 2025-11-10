@@ -1,22 +1,10 @@
 import FirecrawlApp, { type FirecrawlError } from "firecrawl";
+import { PAGES } from "../../../shared/pages.js";
 import { db } from "../db/db.js";
 import { env } from "../env.js";
 import { fetchAndStorePages } from "../scripts/fetchPages.js";
 
 const FIRECRAWL_API_KEY = env.FIRECRAWL_API_KEY;
-
-const PAGES: Page[] = [
-  {
-    kind: "sitemap",
-    name: "docs.jamcha.in",
-    sitemapUrl: "https://docs.jamcha.in/sitemap.xml",
-  },
-  {
-    kind: "url",
-    name: "jam.web3.foundation",
-    url: "https://jam.web3.foundation",
-  },
-];
 
 try {
   await main();
@@ -78,17 +66,5 @@ async function main() {
   console.log("Docs pages fetch job completed successfully");
   await db.$client.end();
 }
-
-type Page =
-  | {
-      kind: "sitemap";
-      name: string;
-      sitemapUrl: string;
-    }
-  | {
-      kind: "url";
-      name: string;
-      url: string;
-    };
 
 function assertNever(_page: never) {}

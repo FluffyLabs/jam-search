@@ -1,4 +1,5 @@
 import { format, subDays } from "date-fns";
+import { discord } from "../../../shared/index.js";
 import { env } from "../env.js";
 import {
   type DiscordConfig,
@@ -7,14 +8,6 @@ import {
 } from "../scripts/fetchDiscordMessages.js";
 
 const DISCORD_TOKEN = env.DISCORD_TOKEN;
-
-const DISCORD_CHANNELS = [
-  /** JAM DAO / #implementers */
-  {
-    serverId: "1354783684867264604",
-    channelId: "1357838246276497590",
-  },
-];
 
 try {
   await main();
@@ -34,7 +27,7 @@ async function main() {
     return;
   }
 
-  if (DISCORD_CHANNELS.length === 0) {
+  if (discord.CHANNELS.length === 0) {
     console.log("No Discord channels configured, skipping Discord job");
     return;
   }
@@ -46,14 +39,14 @@ async function main() {
 
   const config: DiscordConfig = {
     token: discordToken,
-    channels: DISCORD_CHANNELS,
+    channels: discord.CHANNELS,
     startDate: startDate,
     maxMessages: 1000,
     includeThreads: true,
   };
 
   console.log(
-    `Fetching Discord messages from ${DISCORD_CHANNELS.length} channels since ${startDate}`
+    `Fetching Discord messages from ${discord.CHANNELS.length} channels since ${startDate}`
   );
   const messages = await fetchDiscordContent(config);
 

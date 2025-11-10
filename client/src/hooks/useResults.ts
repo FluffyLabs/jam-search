@@ -1,4 +1,4 @@
-import { MATRIX_CHANNELS } from "@/consts";
+import { discord, matrix } from "@shared/index";
 
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
@@ -18,7 +18,7 @@ export function useResults(
   // Search for graypaper channel
   const graypaperChat = useSearchMatrix({
     query,
-    channelId: MATRIX_CHANNELS[0].id,
+    channelId: matrix.ROOMS[0].id,
     pageSize: 6,
     filters,
     searchMode: searchMode,
@@ -28,7 +28,7 @@ export function useResults(
   // Search for jam channel
   const jamChat = useSearchMatrix({
     query,
-    channelId: MATRIX_CHANNELS[1].id,
+    channelId: matrix.ROOMS[1].id,
     pageSize: 6,
     filters,
     searchMode: searchMode,
@@ -38,7 +38,7 @@ export function useResults(
   // Search for jam-conformance channel
   const jamConformanceChat = useSearchMatrix({
     query,
-    channelId: MATRIX_CHANNELS[2].id,
+    channelId: matrix.ROOMS[2].id,
     pageSize: 6,
     filters,
     searchMode: searchMode,
@@ -50,7 +50,7 @@ export function useResults(
     query,
     pageSize: 6,
     filters,
-    channelId: "1357838246276497590",
+    channelId: discord.CHANNELS[0].channelId,
     searchMode: searchMode,
     enabled: selectedSources.includes(Source.JamDaoDiscord),
   });

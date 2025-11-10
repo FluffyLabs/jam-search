@@ -1,7 +1,7 @@
 import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
-import type { MATRIX_CHANNELS } from "@/consts";
 import type { useResults } from "@/hooks/useResults";
 import type { SearchMode } from "@/lib/utils";
+import type * as matrix from "@shared/matrix";
 import { Link, useLocation } from "react-router-dom";
 import { ShowAll } from "../ShowAll";
 import { MatrixResultCards } from "./MatrixResultCards";
@@ -13,7 +13,7 @@ export const MatrixResults = ({
   query,
   searchMode,
 }: {
-  channel: (typeof MATRIX_CHANNELS)[0];
+  channel: (typeof matrix.ROOMS)[0];
   queryResult: ReturnType<typeof useResults>["graypaperChat"];
   query: string;
   searchMode: SearchMode;

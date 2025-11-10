@@ -1,4 +1,4 @@
-export const MATRIX_CHANNELS = [
+export const ROOMS = [
   {
     id: "!ddsEwXlCWnreEGuqXZ:polkadot.io",
     name: "#graypaper:polkadot.io",
@@ -16,15 +16,5 @@ export const MATRIX_CHANNELS = [
     name: "#jam-conformance:matrix.org",
     archiveUrl:
       "https://paritytech.github.io/matrix-archiver/archive/_21ksYpYHcVftKsUAsdMa_3Amatrix.org/index.html",
-  },
-];
-
-export const DISCORD_CHANNELS = [
-  {
-    id: "1357838246276497590",
-    name: "#implementers",
-    serverName: "JAM DAO",
-    discordUrl:
-      "https://discord.com/channels/1354783684867264604/1357838246276497590",
   },
 ];

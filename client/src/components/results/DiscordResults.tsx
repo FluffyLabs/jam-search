@@ -1,7 +1,7 @@
 import DiscordLogo from "@/assets/logos/discord.svg";
-import type { DISCORD_CHANNELS } from "@/consts";
 import type { useResults } from "@/hooks/useResults";
 import type { SearchMode } from "@/lib/utils";
+import type * as discord from "@shared/discord";
 import { Link, useLocation } from "react-router-dom";
 import { ShowAll } from "../ShowAll";
 import { DiscordResultCards } from "./DiscordResultCards";
@@ -13,7 +13,7 @@ export const DiscordResults = ({
   query,
   searchMode,
 }: {
-  channel: (typeof DISCORD_CHANNELS)[0];
+  channel: (typeof discord.CHANNELS)[0];
   queryResult: ReturnType<typeof useResults>["implementersDiscord"];
   query: string;
   searchMode: SearchMode;
@@ -37,7 +37,7 @@ export const DiscordResults = ({
             <Link
               to={(() => {
                 const params = new URLSearchParams(location.search);
-                params.set("channelId", channel.id);
+                params.set("channelId", channel.channelId);
                 return `/results/discord?${params.toString()}`;
               })()}
             >

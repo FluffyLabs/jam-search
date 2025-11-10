@@ -1,5 +1,5 @@
-import type { MATRIX_CHANNELS } from "@/consts";
 import { fetchSearchResults } from "@/lib/api";
+import type * as matrix from "@shared/matrix";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchCommon } from "./useSearchCommon";
 
@@ -7,7 +7,7 @@ interface UseSearchMatrixOptions {
   query: string;
   initialPage?: number;
   pageSize?: number;
-  channelId?: (typeof MATRIX_CHANNELS)[number]["id"];
+  channelId?: (typeof matrix.ROOMS)[number]["id"];
   filters?: SearchFilter[];
   searchMode?: string;
   enabled?: boolean;

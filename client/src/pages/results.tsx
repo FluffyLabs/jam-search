@@ -10,8 +10,6 @@ import { PageResultCards } from "@/components/results/PageResultCards";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Section } from "@/components/results/Section";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { MATRIX_CHANNELS } from "@/consts";
-import { DISCORD_CHANNELS } from "@/consts";
 import { useResults } from "@/hooks/useResults";
 import {
   SOURCE_OPTIONS,
@@ -21,6 +19,8 @@ import {
   stringToSource,
 } from "@/lib/sources";
 import type { SearchMode } from "@/lib/utils";
+import * as discord from "@shared/discord";
+import * as matrix from "@shared/matrix";
 import { useCallback, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -105,19 +105,19 @@ const SearchResults = () => {
           {selectedSources.includes(Source.Matrix) && (
             <>
               <MatrixResults
-                channel={MATRIX_CHANNELS[0]}
+                channel={matrix.ROOMS[0]}
                 queryResult={graypaperChat}
                 query={query}
                 searchMode={searchModeParam as SearchMode}
               />
               <MatrixResults
-                channel={MATRIX_CHANNELS[1]}
+                channel={matrix.ROOMS[1]}
                 queryResult={jamChat}
                 query={query}
                 searchMode={searchModeParam as SearchMode}
               />
               <MatrixResults
-                channel={MATRIX_CHANNELS[2]}
+                channel={matrix.ROOMS[2]}
                 queryResult={jamConformanceChat}
                 query={query}
                 searchMode={searchModeParam as SearchMode}
@@ -127,7 +127,7 @@ const SearchResults = () => {
 
           {selectedSources.includes(Source.JamDaoDiscord) && (
             <DiscordResults
-              channel={DISCORD_CHANNELS[0]}
+              channel={discord.CHANNELS[0]}
               queryResult={implementersDiscord}
               query={query}
               searchMode={searchModeParam as SearchMode}

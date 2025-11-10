@@ -3,9 +3,9 @@ import { Paging } from "@/components/Paging";
 import { MatrixResultList } from "@/components/results/MatrixResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
-import { MATRIX_CHANNELS } from "@/consts";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import * as matrix from "@shared/matrix";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -14,11 +14,11 @@ const MatrixResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
-  const channelId = searchParams.get("channelId") || MATRIX_CHANNELS[0].id;
+  const channelId = searchParams.get("channelId") || matrix.ROOMS[0].id;
   const searchMode = searchParams.get("searchMode") || "strict";
   // Find the channel name based on the channelId
   const channel =
-    MATRIX_CHANNELS.find((ch) => ch.id === channelId) || MATRIX_CHANNELS[0];
+    matrix.ROOMS.find((ch) => ch.id === channelId) || matrix.ROOMS[0];
 
   const topRef = useRef(null);
   // Parse the query to extract filters
