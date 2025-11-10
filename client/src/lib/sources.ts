@@ -6,7 +6,7 @@ export const SOURCE_OPTIONS = [
   { label: "docs.jamcha.in", value: Source.Jamchain },
   {
     label: "github.com/w3f/jamtestvectors",
-    value: Source.GithubW3fJamtestvectors,
+    value: Source.GithubW3fJamTestVectors,
   },
   { label: "JAM DAO Discord", value: Source.JamDaoDiscord },
   {
@@ -33,7 +33,7 @@ export const initialSources = [
   Source.Jamchain,
   Source.GithubDavxyJamConformance,
   Source.GithubDavxyJamTestVectors,
-  Source.GithubW3fJamtestvectors,
+  Source.GithubW3fJamTestVectors,
   Source.JamDaoDiscord,
   Source.GithubW3fJamMilestoneDelivery,
   Source.JamWeb3Foundation,
