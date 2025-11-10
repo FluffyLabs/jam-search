@@ -1,5 +1,5 @@
 import type { useSearchCommon } from "@/hooks/useSearchCommon";
-import { type RefObject, useCallback } from "react";
+import type { RefObject } from "react";
 import { Button } from "./ui/button";
 
 type PagingProps = {
@@ -10,15 +10,15 @@ type PagingProps = {
 export const Paging = ({ queryResult, scrollTo }: PagingProps) => {
   const { pagination } = queryResult;
 
-  const handlePrev = useCallback(() => {
+  const handlePrev = () => {
     scrollTo.current?.scrollIntoView();
     pagination.previousPage();
-  }, [scrollTo, pagination]);
+  };
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     scrollTo.current?.scrollIntoView();
     pagination.nextPage();
-  }, [scrollTo, pagination]);
+  };
 
   return (
     <div className="flex justify-center items-center mt-6 mb-8 space-x-2 font-light">
