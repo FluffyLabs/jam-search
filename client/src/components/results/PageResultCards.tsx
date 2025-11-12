@@ -1,5 +1,5 @@
 import type { useResults } from "@/hooks/useResults";
-import { type SearchMode, cn, formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { PageResultHighlighter } from "../PageResultHighlighter";
 import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
@@ -8,13 +8,11 @@ import { ResultCard } from "./ResultCard";
 interface PageResultCardsProps {
   queryResult: ReturnType<typeof useResults>["pagesResults"][0]["results"];
   searchQuery: string;
-  searchMode?: SearchMode;
 }
 
 export const PageResultCards = ({
   queryResult,
   searchQuery,
-  searchMode = "strict",
 }: PageResultCardsProps) => {
   const { isLoading, isError, results } = queryResult;
 
@@ -82,14 +80,12 @@ export const PageResultCards = ({
                 url={result.url}
                 results={results}
                 searchQuery={searchQuery}
-                searchMode={searchMode}
               />
             }
             content={
               <PageResultHighlighter
                 result={result}
                 searchQuery={searchQuery}
-                searchMode={searchMode}
                 options={{ maxLength: 250, contextLength: 75 }}
               />
             }

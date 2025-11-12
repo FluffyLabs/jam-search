@@ -1,6 +1,5 @@
 import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
 import type { useResults } from "@/hooks/useResults";
-import type { SearchMode } from "@/lib/utils";
 import type * as matrix from "@shared/matrix";
 import { Link, useLocation } from "react-router-dom";
 import { ShowAll } from "../ShowAll";
@@ -11,12 +10,10 @@ export const MatrixResults = ({
   channel,
   queryResult,
   query,
-  searchMode,
 }: {
   channel: (typeof matrix.ROOMS)[0];
   queryResult: ReturnType<typeof useResults>["matrixResults"][0]["results"];
   query: string;
-  searchMode: SearchMode;
 }) => {
   const location = useLocation();
 
@@ -53,7 +50,6 @@ export const MatrixResults = ({
         channel={channel}
         queryResult={queryResult}
         searchQuery={query}
-        searchMode={searchMode}
       />
     </div>
   );

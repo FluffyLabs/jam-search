@@ -1,6 +1,6 @@
 import type { useResults } from "@/hooks/useResults";
 import type { SearchResult } from "@/lib/api";
-import { type SearchMode, getTextToDisplay } from "@/lib/utils";
+import { getTextToDisplay } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 import type * as matrix from "@shared/matrix";
 import { ViewEmbedded } from "../ViewEmbedded";
@@ -11,14 +11,12 @@ interface MatrixResultListProps {
   channel: (typeof matrix.ROOMS)[0];
   queryResult: ReturnType<typeof useResults>["matrixResults"][0]["results"];
   searchQuery: string;
-  searchMode: SearchMode;
 }
 
 export const MatrixResultList = ({
   channel,
   queryResult,
   searchQuery,
-  searchMode,
 }: MatrixResultListProps) => {
   const { isLoading, isError, results } = queryResult;
 
@@ -57,7 +55,6 @@ export const MatrixResultList = ({
                 {getTextToDisplay(
                   result.content || "",
                   searchQuery,
-                  searchMode,
                   400
                 )}
               </p>
@@ -67,7 +64,6 @@ export const MatrixResultList = ({
                 label="View message"
                 url={getUrl(result)}
                 searchQuery={searchQuery}
-                searchMode={searchMode}
                 results={results}
               />
             }

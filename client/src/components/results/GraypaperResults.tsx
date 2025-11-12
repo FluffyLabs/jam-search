@@ -1,6 +1,6 @@
 import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
 import type { useResults } from "@/hooks/useResults";
-import { type SearchMode, getTextToDisplay } from "@/lib/utils";
+import { getTextToDisplay } from "@/lib/utils";
 import { BookOpenText } from "lucide-react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { ShowAll } from "../ShowAll";
@@ -12,13 +12,11 @@ import { Section } from "./Section";
 interface GraypaperResultsProps {
   queryResult: ReturnType<typeof useResults>["graypaperResults"];
   query: string;
-  searchMode?: SearchMode;
 }
 
 export const GraypaperResults = ({
   queryResult,
   query,
-  searchMode = "strict",
 }: GraypaperResultsProps) => {
   const location = useLocation();
   const { isLoading, isError, results } = queryResult;
@@ -78,12 +76,11 @@ export const GraypaperResults = ({
                 url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
                 results={[]}
                 searchQuery={query}
-                searchMode={searchMode}
               />
             }
             content={
               <div className="text-xs font-light">
-                {getTextToDisplay(section.text, query, searchMode)}
+                {getTextToDisplay(section.text, query)}
               </div>
             }
           />

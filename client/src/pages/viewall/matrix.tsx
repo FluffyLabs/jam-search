@@ -4,7 +4,7 @@ import { MatrixResultList } from "@/components/results/MatrixResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
-import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import { parseSearchQuery } from "@/lib/utils";
 import * as matrix from "@shared/matrix";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
@@ -15,7 +15,6 @@ const MatrixResultsAll = () => {
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
   const channelId = searchParams.get("channelId") || matrix.ROOMS[0].id;
-  const searchMode = searchParams.get("searchMode") || "strict";
   // Find the channel name based on the channelId
   const channel =
     matrix.ROOMS.find((ch) => ch.id === channelId) || matrix.ROOMS[0];
@@ -30,7 +29,6 @@ const MatrixResultsAll = () => {
     channelId,
     pageSize: 20,
     filters,
-    searchMode,
   });
 
   const backParams = new URLSearchParams(location.search);
@@ -88,7 +86,6 @@ const MatrixResultsAll = () => {
             channel={channel}
             queryResult={queryResult}
             searchQuery={query}
-            searchMode={searchMode as SearchMode}
           />
 
           {pages}

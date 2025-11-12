@@ -1,97 +1,31 @@
-import { type SQL, and, cosineDistance, ilike, or, sql } from "drizzle-orm";
-import OpenAI from "openai";
+import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { graypaperSectionsTable } from "../db/schema.js";
-import { env } from "../env.js";
+import {paradeMatch, SIMILARITY_THRESHOLD, similarityMatch} from "./common.js";
 
 export const searchGraypaperRequestSchema = z.object({
   q: z.string(),
+  e: z.array(z.number()).default([]),
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
-  searchMode: z.enum(["fuzzy", "semantic", "strict"]).default("strict"),
 });
 
 export async function searchGraypaper(
   data: z.infer<typeof searchGraypaperRequestSchema>
 ) {
   // Base search condition
-  const whereConditions = [];
-
-  let orderBy: SQL = sql`paradedb.score(id) DESC, id`;
-  let similarity = sql<number>`1`;
-
-  const searchTerms = data.q.toLowerCase().split(/\s+/);
-  switch (data.searchMode) {
-    case "strict": {
-      whereConditions.push(
-        or(
-          ilike(graypaperSectionsTable.title, `%${data.q}%`),
-          ilike(graypaperSectionsTable.text, `%${data.q}%`)
-        )
-      );
-      orderBy = sql`id`;
-      break;
-    }
-    case "fuzzy":
-      whereConditions.push(sql`id @@@ paradedb.boolean(should => ARRAY[
-        ${
-          searchTerms.length > 1
-            ? sql`
-          paradedb.boost(20, paradedb.phrase('title', ARRAY[${sql.join(
-            searchTerms.map((term) => sql`${term}`),
-            sql.raw(", ")
-          )}])),
-          paradedb.boost(10, paradedb.phrase('text', ARRAY[${sql.join(
-            searchTerms.map((term) => sql`${term}`),
-            sql.raw(", ")
-          )}])),`
-            : sql``
-        }
-        paradedb.boost(2, paradedb.match('title', ${data.q})),
-        paradedb.match('text', ${data.q})
-      ])`);
-      break;
-    case "semantic":
-      // Get embeddings for the query
-      try {
-        const openai = new OpenAI({
-          apiKey: env.OPENAI_API_KEY,
-        });
-
-        const response = await openai.embeddings.create({
-          model: "text-embedding-3-small",
-          input: data.q,
-          dimensions: 1536,
-        });
-
-        const embedding = response.data[0].embedding;
-        similarity = sql<number>`1 - (${cosineDistance(
-          graypaperSectionsTable.embedding,
-          embedding
-        )}) AS similarity`;
-
-        orderBy = sql`similarity DESC, id DESC`;
-        whereConditions.push(
-          sql`${cosineDistance(
-            graypaperSectionsTable.embedding,
-            embedding
-          )} < 0.8`
-        );
-      } catch (error) {
-        console.error("Error generating embedding for search query:", error);
-        // Fallback to standard search if embedding fails
-        whereConditions.push(
-          sql`id @@@ paradedb.boolean(should => ARRAY[
-            paradedb.match('title', ${data.q}),
-            paradedb.match('text', ${data.q})
-          ])`
-        );
-      }
-      break;
-    default:
-      throw new Error(`Unhandled search mode: ${data.searchMode}`);
-  }
+  const whereConditions = [
+    or(
+      // standard search using paradedb
+      sql<boolean>`id @@@ paradedb.boolean(should => ARRAY[
+        ${paradeMatch('title', data.q, 2.0)},
+        ${paradeMatch('text', data.q)}
+      ])`,
+      // embedding search if embedding is provided (otherwise always false)
+      sql<boolean>`similarity > ${SIMILARITY_THRESHOLD}`
+    )
+  ];
 
   // Get total count of matching rows
   const countResult = await db
@@ -108,12 +42,12 @@ export async function searchGraypaper(
       id: graypaperSectionsTable.id,
       title: graypaperSectionsTable.title,
       text: graypaperSectionsTable.text,
-      similarity,
+      similarity: similarityMatch(graypaperSectionsTable.embedding, data.e),
       score: sql<number>`paradedb.score(id)`,
     })
     .from(graypaperSectionsTable)
     .where(and(...whereConditions))
-    .orderBy(orderBy)
+    .orderBy(sql`similarity DESC, score DESC, id`)
     .offset((data.page - 1) * data.pageSize)
     .limit(data.pageSize);
 

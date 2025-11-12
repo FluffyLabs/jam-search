@@ -14,6 +14,7 @@ import {
   searchMessagesRequestSchema,
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
+import {getEmbedding, getEmbeddingSchema} from "./api/getEmbedding.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -32,6 +33,13 @@ export function createApp() {
   // Health check endpoint
   app.get("/health", (c) => {
     return c.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Embeddings
+  // TODO [ToDr] this should be rate-limitted and encrypted.
+  app.get("/embeddings", async (c) => {
+    const data = getEmbeddingSchema.parse(c.req.query());
+    return c.json(await getEmbedding(data));
   });
 
   // Search endpoints

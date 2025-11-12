@@ -48,22 +48,17 @@ export const parseSearchQuery = (
   return { query, filters };
 };
 
-export type SearchMode = "strict" | "fuzzy" | "semantic";
-
 /** Truncate and display just the relevant text. */
 export const getTextToDisplay = (
   text: string,
   query: string,
-  searchMode: SearchMode,
   maxContext = 100
 ) => {
-  if (!text || !query) return `${text.slice(0, maxContext)}...`;
-
   // Get the first word from the query
   const queryWords = query
     .toLowerCase()
     .split(/\s+/)
-    .filter((word) => word.length > 2);
+    .filter((word) => word.length > 1);
 
   if (queryWords.length === 0)
     return text.length > maxContext ? `${text.slice(0, maxContext)}...` : text;
@@ -125,7 +120,7 @@ export const getTextToDisplay = (
 
   const result = [
     startIndex > 0 ? "..." : "",
-    ...highlightText(text.slice(startIndex, endIndex), queryWords, searchMode),
+    ...highlightText(text.slice(startIndex, endIndex), queryWords),
     endIndex < text.length ? "..." : "",
   ];
 
@@ -135,24 +130,15 @@ export const getTextToDisplay = (
 export const highlightText = (
   text: string,
   words: string[],
-  mode: "strict" | "fuzzy" | "semantic"
 ) => {
   const escapeRegExp = (str: string) =>
     str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  // TODO: this is not secure solution as words comes from user input
-  let regex: RegExp;
-
-  if (mode === "strict") {
-    // In strict mode, match words as substrings anywhere in text (like SQL ILIKE %query%)
-    regex = new RegExp(
-      `(${words.map((word) => escapeRegExp(word)).join(" ")})`,
-      "gi"
-    );
-  } else {
-    // Default behavior - match whole words
-    regex = new RegExp(`\\b(${words.map(escapeRegExp).join("|")})\\b`, "gi");
-  }
+  // In strict mode, match words as substrings anywhere in text (like SQL ILIKE %query%)
+  const regex = new RegExp(
+    `(${words.map((word) => escapeRegExp(word)).join(" ")})`,
+    "gi"
+  );
 
   const result = [];
 

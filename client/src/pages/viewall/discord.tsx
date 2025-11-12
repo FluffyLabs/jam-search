@@ -4,7 +4,7 @@ import { DiscordResultList } from "@/components/results/DiscordResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
-import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import {  parseSearchQuery } from "@/lib/utils";
 import * as discord from "@shared/discord";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
@@ -16,7 +16,6 @@ const DiscordResultsAll = () => {
   const richQuery = searchParams.get("q") || "";
   const channelId =
     searchParams.get("channelId") || discord.CHANNELS[0].channelId;
-  const searchMode = searchParams.get("searchMode") || "strict";
   // Find the channel name based on the channelId
   const channel =
     discord.CHANNELS.find((ch) => ch.channelId === channelId) ||
@@ -32,7 +31,6 @@ const DiscordResultsAll = () => {
     channelId,
     pageSize: 20,
     filters,
-    searchMode,
   });
 
   const backParams = new URLSearchParams(location.search);
@@ -91,7 +89,6 @@ const DiscordResultsAll = () => {
           <DiscordResultList
             queryResult={queryResult}
             searchQuery={query}
-            searchMode={searchMode as SearchMode}
           />
           {pages}
         </div>

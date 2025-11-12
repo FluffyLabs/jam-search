@@ -16,7 +16,6 @@ import {
   getStoredSources,
   setStoredSources,
 } from "@/lib/sources";
-import type { SearchMode } from "@/lib/utils";
 import { Source, stringToSource } from "@shared/sources";
 import { useCallback, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -32,8 +31,6 @@ function getLogo(logo: string) {
 const SearchResults = () => {
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
-  const searchModeParam =
-    new URLSearchParams(location.search).get("searchMode") || "strict";
   const [selectedSources, setSelectedSources] =
     useState<Source[]>(getStoredSources);
 
@@ -54,7 +51,7 @@ const SearchResults = () => {
     matrixResults,
     graypaperResults,
     githubResults,
-  } = useResults(richQuery, searchModeParam, selectedSources);
+  } = useResults(richQuery, selectedSources);
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
@@ -99,7 +96,6 @@ const SearchResults = () => {
             <GraypaperResults
               queryResult={graypaperResults}
               query={query}
-              searchMode={searchModeParam as SearchMode}
             />
           )}
 
@@ -114,7 +110,6 @@ const SearchResults = () => {
                 channel={data.room}
                 queryResult={data.results}
                 query={query}
-                searchMode={searchModeParam as SearchMode}
               />
             );
           })}
@@ -130,7 +125,6 @@ const SearchResults = () => {
                 channel={data.channel}
                 queryResult={data.results}
                 query={query}
-                searchMode={searchModeParam as SearchMode}
               />
             );
           })}
@@ -172,7 +166,6 @@ const SearchResults = () => {
                 <PageResultCards
                   queryResult={data.results}
                   searchQuery={query}
-                  searchMode={searchModeParam as SearchMode}
                 />
               </div>
             );
@@ -218,7 +211,6 @@ const SearchResults = () => {
                 <PageResultCards
                   queryResult={data.results}
                   searchQuery={query}
-                  searchMode={searchModeParam as SearchMode}
                 />
               </div>
             );

@@ -9,7 +9,6 @@ import { useSearchGraypaper } from "./useSearchGraypaper";
 
 export function useResults(
   richQuery: string,
-  searchMode: string,
   selectedSources: string[]
 ) {
   // Parse the query to extract filters
@@ -25,7 +24,6 @@ export function useResults(
         channelId: room.id,
         pageSize: 6,
         filters,
-        searchMode: searchMode,
         enabled: selectedSources.includes(room.source),
       }),
     };
@@ -40,7 +38,6 @@ export function useResults(
         pageSize: 6,
         filters,
         channelId: channel.channelId,
-        searchMode: searchMode,
         enabled: selectedSources.includes(channel.source),
       }),
     };
@@ -53,7 +50,6 @@ export function useResults(
       results: useSearchPages({
         query,
         pageSize: 4,
-        searchMode: searchMode,
         site: page.dbId,
         enabled: selectedSources.includes(page.source),
       }),
@@ -67,7 +63,6 @@ export function useResults(
       results: useSearchPages({
         query,
         pageSize: 4,
-        searchMode: searchMode,
         site: repo.dbId,
         enabled: selectedSources.includes(repo.source),
       }),
@@ -78,7 +73,6 @@ export function useResults(
   const graypaperResults = useSearchGraypaper({
     query,
     pageSize: 6,
-    searchMode,
     enabled: selectedSources.includes(Source.Graypaper),
   });
 

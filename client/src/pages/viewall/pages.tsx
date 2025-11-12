@@ -4,7 +4,7 @@ import { PageResultList } from "@/components/results/PageResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
 import { useSearchPages } from "@/hooks/useSearchPages";
-import { type SearchMode, parseSearchQuery } from "@/lib/utils";
+import { parseSearchQuery } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -13,7 +13,6 @@ const PagesResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
-  const searchMode = searchParams.get("searchMode") || "strict";
   const site = searchParams.get("site") || undefined;
 
   const topRef = useRef(null);
@@ -24,7 +23,6 @@ const PagesResultsAll = () => {
   const queryResult = useSearchPages({
     query,
     pageSize: 20,
-    searchMode,
     site,
   });
 
@@ -61,7 +59,6 @@ const PagesResultsAll = () => {
           <PageResultList
             queryResult={queryResult}
             searchQuery={query}
-            searchMode={searchMode as SearchMode}
           />
 
           <Paging queryResult={queryResult} scrollTo={topRef} />

@@ -73,7 +73,7 @@ const highlightFilters = (query: string) => {
 };
 
 const isInstantSearch = (searchMode: string, enabled: boolean) => {
-  return (searchMode === "strict" || searchMode === "fuzzy") && enabled;
+  return (searchMode === "strict") && enabled;
 };
 
 /**
@@ -129,7 +129,7 @@ export const SearchForm = ({
   }, []);
 
   // prefetch the results
-  useResults(prefetchingQuery, searchModeParam, getStoredSources());
+  useResults(prefetchingQuery, getStoredSources());
 
   const getQueryParams = () => {
     // Get current URL parameters and update only the search-related ones

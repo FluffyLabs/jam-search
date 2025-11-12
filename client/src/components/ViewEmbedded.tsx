@@ -1,5 +1,5 @@
 import type { PageResult, SearchResult } from "@/lib/api";
-import { type SearchMode, cn, formatDate, highlightText } from "@/lib/utils";
+import { cn, formatDate, highlightText } from "@/lib/utils";
 import { useEmbeddedViewer } from "@/providers/EmbeddedResultsContext";
 import * as matrix from "@shared/matrix";
 import { SquareX } from "lucide-react";
@@ -19,7 +19,6 @@ interface ViewEmbeddedProps {
   url: string;
   className?: string;
   searchQuery: string;
-  searchMode: SearchMode;
   loadMore?: () => Promise<SearchResult[] | PageResult[]>;
   results?: SearchResult[] | PageResult[];
 }
@@ -30,7 +29,6 @@ export const ViewEmbedded = ({
   loadMore,
   results,
   searchQuery,
-  searchMode,
   noEmbed = false,
 }: ViewEmbeddedProps) => {
   const embeddedViewer = useEmbeddedViewer();
@@ -41,11 +39,10 @@ export const ViewEmbedded = ({
         loadMore={loadMore}
         results={results}
         searchQuery={searchQuery}
-        searchMode={searchMode}
         close={() => embeddedViewer.close()}
       />
     ),
-    [url, loadMore, results, searchQuery, searchMode, embeddedViewer]
+    [url, loadMore, results, searchQuery, embeddedViewer]
   );
 
   return (
@@ -79,7 +76,6 @@ const Content = ({
   loadMore,
   close,
   searchQuery,
-  searchMode,
 }: ViewEmbeddedProps & { close: () => void }) => {
   const [results, setResults] = useState(initialResults);
   const [currentUrl, setCurrentUrl] = useState(url);
@@ -220,7 +216,6 @@ const Content = ({
                         <PageResultHighlighter
                           result={result}
                           searchQuery={searchQuery}
-                          searchMode={searchMode}
                           options={{ maxLength: 150, contextLength: 50 }}
                         />
                       ) : (
@@ -228,7 +223,6 @@ const Content = ({
                           {highlightText(
                             result.content || "",
                             searchQuery.split(/\s+/),
-                            searchMode
                           )}
                         </p>
                       )}

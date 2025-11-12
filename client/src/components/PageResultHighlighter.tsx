@@ -1,5 +1,5 @@
 import type { PageResult } from "@/lib/api";
-import { type SearchMode, cn, highlightText } from "@/lib/utils";
+import { cn, highlightText } from "@/lib/utils";
 import type { ClassValue } from "clsx";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
@@ -7,7 +7,6 @@ import type { Components } from "react-markdown";
 interface PageResultHighlighterProps {
   result: PageResult;
   searchQuery: string;
-  searchMode: SearchMode;
   options: {
     maxLength: number;
     contextLength: number;
@@ -17,71 +16,59 @@ interface PageResultHighlighterProps {
 export const PageResultHighlighter = ({
   result,
   searchQuery,
-  searchMode,
   options,
 }: PageResultHighlighterProps) => {
   const markdownComponents: Components = {
     p: createHighlightedComponent(
       "p",
       searchQuery,
-      searchMode
     ) as Components["p"],
     em: createHighlightedComponent(
       "em",
       searchQuery,
-      searchMode
     ) as Components["em"],
     h1: createHighlightedComponent(
       "h1",
       searchQuery,
-      searchMode
     ) as Components["h1"],
     h2: createHighlightedComponent(
       "h2",
       searchQuery,
-      searchMode
     ) as Components["h2"],
     h3: createHighlightedComponent(
       "h3",
       searchQuery,
-      searchMode
     ) as Components["h3"],
     h4: createHighlightedComponent(
       "h4",
       searchQuery,
-      searchMode
     ) as Components["h4"],
     h5: createHighlightedComponent(
       "h5",
       searchQuery,
-      searchMode
     ) as Components["h5"],
     h6: createHighlightedComponent(
       "h6",
       searchQuery,
-      searchMode
     ) as Components["h6"],
     li: createHighlightedComponent(
       "li",
       searchQuery,
-      searchMode
     ) as Components["li"],
     code: createHighlightedComponent(
       "code",
       searchQuery,
-      searchMode
     ) as Components["code"],
     pre: createHighlightedComponent(
       "pre",
       searchQuery,
-      searchMode
     ) as Components["pre"],
   };
 
   return (
     <div className="text-muted-foreground font-light prose prose-sm dark:prose-invert max-w-none overflow-hidden [&_pre]:overflow-x-auto [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:break-words [&_p]:break-words [&_table]:w-full [&_table]:overflow-x-auto [&_img]:max-w-full [&_img]:h-auto">
       <ReactMarkdown components={markdownComponents}>
-        {truncateContent(result.content, searchQuery, searchMode, options)}
+        {truncateContent(result.content, searchQuery, options)}
       </ReactMarkdown>
     </div>
   );
@@ -90,7 +77,6 @@ export const PageResultHighlighter = ({
 const createHighlightedComponent = (
   Component: React.ElementType,
   searchQuery: string,
-  searchMode: SearchMode
 ) => {
   return ({
     children,
@@ -108,7 +94,7 @@ const createHighlightedComponent = (
       >
         {childArray.map((child) =>
           typeof child === "string"
-            ? highlightText(child, [searchQuery], searchMode)
+            ? highlightText(child, [searchQuery])
             : child
         )}
       </Component>
@@ -121,17 +107,11 @@ const createHighlightedComponent = (
 export const findBestMatch = (
   content: string,
   searchQuery: string,
-  searchMode: SearchMode
-) => {
+): {index: number, length: number } | null => {
   if (searchQuery.length === 0) return null;
 
   const contentLower = content.toLowerCase();
   const searchQueryLower = searchQuery.toLowerCase();
-
-  if (searchMode === "strict") {
-    const index = contentLower.indexOf(searchQueryLower);
-    return index !== -1 ? { index, length: searchQueryLower.length } : null;
-  }
 
   const queryWords = searchQueryLower
     .split(/\s+/)
@@ -142,7 +122,7 @@ export const findBestMatch = (
   // Invariant: If a subsequence of length k exists, then subsequences of all lengths ≤ k also exist
   let left = 1;
   let right = queryWords.length;
-  let bestMatch = null;
+  let bestMatch: { index: number, length: number } | null = null;
 
   // Helper function to check if any subsequence of given length exists
   const hasMatchOfLength = (targetLength: number) => {
@@ -176,7 +156,6 @@ export const findBestMatch = (
 const truncateContent = (
   content: string,
   searchQuery: string,
-  searchMode: SearchMode,
   options: {
     maxLength: number;
     contextLength: number;
@@ -187,7 +166,7 @@ const truncateContent = (
   const normalizedQuery = searchQuery.replace(/\s+/g, " ");
 
   // Find the best match of the search query
-  const match = findBestMatch(normalizedContent, normalizedQuery, searchMode);
+  const match = findBestMatch(normalizedContent, normalizedQuery);
 
   if (!match) {
     // If no match found, return first MAX_LENGTH characters
