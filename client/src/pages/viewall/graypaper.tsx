@@ -5,7 +5,9 @@ import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
+import { SearchMode } from "@/lib/mode";
 import { getTextToDisplay } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
@@ -13,11 +15,15 @@ import { Link, useLocation } from "react-router-dom";
 
 const GraypaperResultsAll = () => {
   const location = useLocation();
-  const query = new URLSearchParams(location.search).get("q") || "";
+  const searchParams = new URLSearchParams(location.search);
+  const query = searchParams.get("q") || "";
+  const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const topRef = useRef(null);
 
+  const embedding = useEmbedding(query, searchMode !== SearchMode.Regular).data;
   const queryResult = useSearchGraypaper({
     query,
+    embedding,
     pageSize: 20,
   });
 

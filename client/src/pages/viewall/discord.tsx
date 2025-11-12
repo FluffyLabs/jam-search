@@ -3,8 +3,10 @@ import { Paging } from "@/components/Paging";
 import { DiscordResultList } from "@/components/results/DiscordResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
+import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
-import {  parseSearchQuery } from "@/lib/utils";
+import { SearchMode } from "@/lib/mode";
+import { parseSearchQuery } from "@/lib/utils";
 import * as discord from "@shared/discord";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
@@ -14,6 +16,7 @@ const DiscordResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
+  const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const channelId =
     searchParams.get("channelId") || discord.CHANNELS[0].channelId;
   // Find the channel name based on the channelId
@@ -24,10 +27,12 @@ const DiscordResultsAll = () => {
   const topRef = useRef(null);
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
+  const embedding = useEmbedding(query, searchMode !== SearchMode.Regular).data;
 
   // Use our search hook with the extracted query and filters
   const queryResult = useSearchDiscord({
     query,
+    embedding,
     channelId,
     pageSize: 20,
     filters,
@@ -86,10 +91,7 @@ const DiscordResultsAll = () => {
         </span>
 
         <div className="my-8">
-          <DiscordResultList
-            queryResult={queryResult}
-            searchQuery={query}
-          />
+          <DiscordResultList queryResult={queryResult} searchQuery={query} />
           {pages}
         </div>
       </Container>

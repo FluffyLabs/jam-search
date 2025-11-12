@@ -2,11 +2,16 @@ import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { graypaperSectionsTable } from "../db/schema.js";
-import {paradeMatch, SIMILARITY_THRESHOLD, similarityMatch} from "./common.js";
+import {
+  embeddingSchema,
+  paradeMatch,
+  similarityMatch,
+  similarityWhere,
+} from "./common.js";
 
 export const searchGraypaperRequestSchema = z.object({
   q: z.string(),
-  e: z.array(z.number()).default([]),
+  e: embeddingSchema,
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
 });
@@ -14,17 +19,30 @@ export const searchGraypaperRequestSchema = z.object({
 export async function searchGraypaper(
   data: z.infer<typeof searchGraypaperRequestSchema>
 ) {
+  if (data.q.trim().length === 0) {
+    return {
+      results: [],
+      total: 0,
+      page: data.page,
+      pageSize: data.pageSize,
+      error: "No query provided.",
+    };
+  }
+
   // Base search condition
   const whereConditions = [
     or(
       // standard search using paradedb
-      sql<boolean>`id @@@ paradedb.boolean(should => ARRAY[
-        ${paradeMatch('title', data.q, 2.0)},
-        ${paradeMatch('text', data.q)}
-      ])`,
-      // embedding search if embedding is provided (otherwise always false)
-      sql<boolean>`similarity > ${SIMILARITY_THRESHOLD}`
-    )
+      paradeMatch(
+        [
+          ["title", 2.0],
+          ["text", 1.0],
+        ],
+        data.q
+      ),
+      // embedding search if embedding is provided
+      similarityWhere(graypaperSectionsTable.embedding, data.e)
+    ),
   ];
 
   // Get total count of matching rows
@@ -43,7 +61,7 @@ export async function searchGraypaper(
       title: graypaperSectionsTable.title,
       text: graypaperSectionsTable.text,
       similarity: similarityMatch(graypaperSectionsTable.embedding, data.e),
-      score: sql<number>`paradedb.score(id)`,
+      score: sql<number>`paradedb.score(id) AS score`,
     })
     .from(graypaperSectionsTable)
     .where(and(...whereConditions))

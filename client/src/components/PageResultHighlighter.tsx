@@ -19,50 +19,17 @@ export const PageResultHighlighter = ({
   options,
 }: PageResultHighlighterProps) => {
   const markdownComponents: Components = {
-    p: createHighlightedComponent(
-      "p",
-      searchQuery,
-    ) as Components["p"],
-    em: createHighlightedComponent(
-      "em",
-      searchQuery,
-    ) as Components["em"],
-    h1: createHighlightedComponent(
-      "h1",
-      searchQuery,
-    ) as Components["h1"],
-    h2: createHighlightedComponent(
-      "h2",
-      searchQuery,
-    ) as Components["h2"],
-    h3: createHighlightedComponent(
-      "h3",
-      searchQuery,
-    ) as Components["h3"],
-    h4: createHighlightedComponent(
-      "h4",
-      searchQuery,
-    ) as Components["h4"],
-    h5: createHighlightedComponent(
-      "h5",
-      searchQuery,
-    ) as Components["h5"],
-    h6: createHighlightedComponent(
-      "h6",
-      searchQuery,
-    ) as Components["h6"],
-    li: createHighlightedComponent(
-      "li",
-      searchQuery,
-    ) as Components["li"],
-    code: createHighlightedComponent(
-      "code",
-      searchQuery,
-    ) as Components["code"],
-    pre: createHighlightedComponent(
-      "pre",
-      searchQuery,
-    ) as Components["pre"],
+    p: createHighlightedComponent("p", searchQuery) as Components["p"],
+    em: createHighlightedComponent("em", searchQuery) as Components["em"],
+    h1: createHighlightedComponent("h1", searchQuery) as Components["h1"],
+    h2: createHighlightedComponent("h2", searchQuery) as Components["h2"],
+    h3: createHighlightedComponent("h3", searchQuery) as Components["h3"],
+    h4: createHighlightedComponent("h4", searchQuery) as Components["h4"],
+    h5: createHighlightedComponent("h5", searchQuery) as Components["h5"],
+    h6: createHighlightedComponent("h6", searchQuery) as Components["h6"],
+    li: createHighlightedComponent("li", searchQuery) as Components["li"],
+    code: createHighlightedComponent("code", searchQuery) as Components["code"],
+    pre: createHighlightedComponent("pre", searchQuery) as Components["pre"],
   };
 
   return (
@@ -76,7 +43,7 @@ export const PageResultHighlighter = ({
 
 const createHighlightedComponent = (
   Component: React.ElementType,
-  searchQuery: string,
+  searchQuery: string
 ) => {
   return ({
     children,
@@ -106,8 +73,8 @@ const createHighlightedComponent = (
 // eslint-disable-next-line react-refresh/only-export-components
 export const findBestMatch = (
   content: string,
-  searchQuery: string,
-): {index: number, length: number } | null => {
+  searchQuery: string
+): { index: number; length: number } | null => {
   if (searchQuery.length === 0) return null;
 
   const contentLower = content.toLowerCase();
@@ -122,7 +89,7 @@ export const findBestMatch = (
   // Invariant: If a subsequence of length k exists, then subsequences of all lengths ≤ k also exist
   let left = 1;
   let right = queryWords.length;
-  let bestMatch: { index: number, length: number } | null = null;
+  let bestMatch: { index: number; length: number } | null = null;
 
   // Helper function to check if any subsequence of given length exists
   const hasMatchOfLength = (targetLength: number) => {

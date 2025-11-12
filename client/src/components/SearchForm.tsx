@@ -9,9 +9,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import { useResults } from "@/hooks/useResults";
+import { SearchMode } from "@/lib/mode";
 import { getStoredSources } from "@/lib/sources";
 import { cn } from "@/lib/utils";
-import { ArrowRight, ScanSearch, Search, Sparkles, X } from "lucide-react";
+import { ArrowRight, Search, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
@@ -29,22 +30,16 @@ const searchOptions = [
 // Search modes available in the dropdown
 const searchModes = [
   {
-    id: "strict",
-    label: "Strict Search",
+    id: SearchMode.Regular,
+    label: "Regular Search",
     icon: Search,
-    description: "Exact matching for phrases",
+    description: "Look for phrase in content.",
   },
   {
-    id: "fuzzy",
-    label: "Fuzzy Search",
-    icon: ScanSearch,
-    description: "Matching for words with OR logic",
-  },
-  {
-    id: "semantic",
-    label: "Semantic Search",
+    id: SearchMode.Extended,
+    label: "Extended Search",
     icon: Sparkles,
-    description: "Find similar concepts using AI",
+    description: "Find semantically similar text.",
   },
 ];
 
@@ -73,7 +68,7 @@ const highlightFilters = (query: string) => {
 };
 
 const isInstantSearch = (searchMode: string, enabled: boolean) => {
-  return (searchMode === "strict") && enabled;
+  return searchMode === SearchMode.Regular && enabled;
 };
 
 /**
@@ -98,7 +93,8 @@ export const SearchForm = ({
   const location = useLocation();
   const richQuery = new URLSearchParams(location.search).get("q") || "";
   const searchModeParam =
-    new URLSearchParams(location.search).get("searchMode") || "strict";
+    new URLSearchParams(location.search).get("searchMode") ||
+    SearchMode.Regular;
 
   const [searchQuery, setSearchQuery] = useState(richQuery);
   const [prefetchingQuery, setPrefetchingQuery] = useState(richQuery);
@@ -129,7 +125,11 @@ export const SearchForm = ({
   }, []);
 
   // prefetch the results
-  useResults(prefetchingQuery, getStoredSources());
+  useResults(
+    prefetchingQuery,
+    getStoredSources(),
+    searchMode !== SearchMode.Regular
+  );
 
   const getQueryParams = () => {
     // Get current URL parameters and update only the search-related ones
@@ -137,7 +137,7 @@ export const SearchForm = ({
     queryParams.set("q", searchQuery);
 
     // Add search mode parameter (only if not strict, which is the default)
-    if (searchMode !== "strict") {
+    if (searchMode !== SearchMode.Regular) {
       queryParams.set("searchMode", searchMode);
     } else {
       queryParams.delete("searchMode");
@@ -271,7 +271,7 @@ export const SearchForm = ({
                       queryParams.set("q", searchQuery);
 
                       // Add search mode parameter (only if not strict, which is the default)
-                      if (searchMode !== "strict") {
+                      if (searchMode !== SearchMode.Regular) {
                         queryParams.set("searchMode", searchMode);
                       } else {
                         queryParams.delete("searchMode");

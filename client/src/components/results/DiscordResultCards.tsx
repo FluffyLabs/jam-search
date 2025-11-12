@@ -58,10 +58,7 @@ export const DiscordResultCards = ({
             }
             content={
               <p className="text-muted-foreground font-light">
-                {getTextToDisplay(
-                  result.content || "",
-                  searchQuery,
-                )}
+                {getTextToDisplay(result.content || "", searchQuery)}
               </p>
             }
             footer={

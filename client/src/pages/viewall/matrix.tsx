@@ -3,7 +3,9 @@ import { Paging } from "@/components/Paging";
 import { MatrixResultList } from "@/components/results/MatrixResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
+import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
+import { SearchMode } from "@/lib/mode";
 import { parseSearchQuery } from "@/lib/utils";
 import * as matrix from "@shared/matrix";
 import { ArrowLeft } from "lucide-react";
@@ -14,6 +16,7 @@ const MatrixResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
+  const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const channelId = searchParams.get("channelId") || matrix.ROOMS[0].id;
   // Find the channel name based on the channelId
   const channel =
@@ -22,10 +25,12 @@ const MatrixResultsAll = () => {
   const topRef = useRef(null);
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
+  const embedding = useEmbedding(query, searchMode !== SearchMode.Regular).data;
 
   // Use our search hook with the extracted query and filters
   const queryResult = useSearchMatrix({
     query,
+    embedding,
     channelId,
     pageSize: 20,
     filters,

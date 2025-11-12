@@ -55,11 +55,7 @@ export const DiscordResultList = ({
             }
             content={
               <p className="text-muted-foreground font-light mb-2">
-                {getTextToDisplay(
-                  result.content || "",
-                  searchQuery,
-                  400
-                )}
+                {getTextToDisplay(result.content || "", searchQuery, 400)}
               </p>
             }
             footer={

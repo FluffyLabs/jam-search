@@ -127,10 +127,7 @@ export const getTextToDisplay = (
   return result;
 };
 
-export const highlightText = (
-  text: string,
-  words: string[],
-) => {
+export const highlightText = (text: string, words: string[]) => {
   const escapeRegExp = (str: string) =>
     str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 

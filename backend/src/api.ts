@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { getEmbedding, getEmbeddingSchema } from "./api/getEmbedding.js";
 import {
   searchDiscords,
   searchDiscordsRequestSchema,
@@ -14,7 +15,6 @@ import {
   searchMessagesRequestSchema,
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
-import {getEmbedding, getEmbeddingSchema} from "./api/getEmbedding.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 

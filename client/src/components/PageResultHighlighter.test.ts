@@ -4,41 +4,29 @@ import { findBestMatch } from "./PageResultHighlighter";
 describe("findBestMatch", () => {
   describe("strict mode", () => {
     it("finds exact match at beginning", () => {
-      const result = findBestMatch(
-        "Hello world this is a test",
-        "Hello world",
-      );
+      const result = findBestMatch("Hello world this is a test", "Hello world");
       expect(result).toEqual({ index: 0, length: 11 });
     });
 
     it("finds exact match in middle", () => {
-      const result = findBestMatch(
-        "Hello world this is a test",
-        "this is",
-      );
+      const result = findBestMatch("Hello world this is a test", "this is");
       expect(result).toEqual({ index: 12, length: 7 });
     });
 
     it("finds exact match at end", () => {
-      const result = findBestMatch(
-        "Hello world this is a test",
-        "a test",
-      );
+      const result = findBestMatch("Hello world this is a test", "a test");
       expect(result).toEqual({ index: 20, length: 6 });
     });
 
     it("is case insensitive", () => {
-      const result = findBestMatch(
-        "Hello World This Is A Test",
-        "hello world",
-      );
+      const result = findBestMatch("Hello World This Is A Test", "hello world");
       expect(result).toEqual({ index: 0, length: 11 });
     });
 
     it("returns null when no exact match found", () => {
       const result = findBestMatch(
         "Hello world this is a test",
-        "nonexistent phrase",
+        "nonexistent phrase"
       );
       expect(result).toBeNull();
     });
@@ -58,7 +46,7 @@ describe("findBestMatch", () => {
     it("finds full query match", () => {
       const result = findBestMatch(
         "The quick brown fox jumps over",
-        "quick brown fox",
+        "quick brown fox"
       );
       expect(result).toEqual({ index: 4, length: 15 }); // "quick brown fox"
     });
@@ -66,7 +54,7 @@ describe("findBestMatch", () => {
     it("finds longest consecutive subsequence - beginning", () => {
       const result = findBestMatch(
         "apple banana cherry grape orange",
-        "apple banana cherry dragon fruit",
+        "apple banana cherry dragon fruit"
       );
       expect(result).toEqual({ index: 0, length: 19 }); // "apple banana cherry"
     });
@@ -74,7 +62,7 @@ describe("findBestMatch", () => {
     it("finds longest consecutive subsequence - middle", () => {
       const result = findBestMatch(
         "hello world test case example smart",
-        "random test case example end",
+        "random test case example end"
       );
       expect(result).toEqual({ index: 12, length: 17 }); // "test case example"
     });
@@ -82,7 +70,7 @@ describe("findBestMatch", () => {
     it("finds longest consecutive subsequence - end", () => {
       const result = findBestMatch(
         "start middle final step done",
-        "begin final step done",
+        "begin final step done"
       );
       expect(result).toEqual({ index: 13, length: 15 }); // "final step done"
     });
@@ -90,7 +78,7 @@ describe("findBestMatch", () => {
     it("finds single word match when no consecutive match exists", () => {
       const result = findBestMatch(
         "apple orange banana grape",
-        "apple grape banana",
+        "apple grape banana"
       );
       expect(result).not.toBeNull();
       expect(result?.length).toBeGreaterThan(0);
@@ -99,7 +87,7 @@ describe("findBestMatch", () => {
     it("finds first occurrence of longest match", () => {
       const result = findBestMatch(
         "one two three four five six seven",
-        "two three four unused five six seven",
+        "two three four unused five six seven"
       );
       // Both "two three four" and "five six seven" have length 3, finds first one
       expect(result).toEqual({ index: 4, length: 14 }); // "two three four"
@@ -111,26 +99,20 @@ describe("findBestMatch", () => {
     });
 
     it("is case insensitive", () => {
-      const result = findBestMatch(
-        "Hello World Test Case",
-        "HELLO WORLD test",
-      );
+      const result = findBestMatch("Hello World Test Case", "HELLO WORLD test");
       expect(result).toEqual({ index: 0, length: 16 }); // "Hello World Test" = 16 chars
     });
 
     it("handles multiple spaces in query", () => {
       const result = findBestMatch(
         "hello world test case",
-        "hello   world   test",
+        "hello   world   test"
       );
       expect(result).toEqual({ index: 0, length: 16 }); // "hello world test"
     });
 
     it("returns null when no words match", () => {
-      const result = findBestMatch(
-        "apple banana cherry",
-        "dragon fruit mango",
-      );
+      const result = findBestMatch("apple banana cherry", "dragon fruit mango");
       expect(result).toBeNull();
     });
 
@@ -157,10 +139,7 @@ describe("findBestMatch", () => {
     });
 
     it("handles unicode characters", () => {
-      const result = findBestMatch(
-        "café résumé naïve",
-        "café résumé",
-      );
+      const result = findBestMatch("café résumé naïve", "café résumé");
       expect(result).toEqual({ index: 0, length: 11 });
     });
 

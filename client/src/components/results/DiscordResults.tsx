@@ -46,10 +46,7 @@ export const DiscordResults = ({
           }
         />
       </div>
-      <DiscordResultCards
-        queryResult={queryResult}
-        searchQuery={query}
-      />
+      <DiscordResultCards queryResult={queryResult} searchQuery={query} />
     </div>
   );
 };

@@ -222,7 +222,7 @@ const Content = ({
                         <p className="text-muted-foreground leading-relaxed line-clamp-3">
                           {highlightText(
                             result.content || "",
-                            searchQuery.split(/\s+/),
+                            searchQuery.split(/\s+/)
                           )}
                         </p>
                       )}

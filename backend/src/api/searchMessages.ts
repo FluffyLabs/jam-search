@@ -1,16 +1,19 @@
-import {
-  and,
-  or,
-  sql,
-} from "drizzle-orm";
+import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { messagesTable } from "../db/schema.js";
-import {paradeMatch, SIMILARITY_THRESHOLD, similarityMatch, timeConditions} from "./common.js";
+import {
+  embeddingSchema,
+  paradeMatch,
+  similarityMatch,
+  similarityWhere,
+  simpleParadeMatch,
+  timeConditions,
+} from "./common.js";
 
 export const searchMessagesRequestSchema = z.object({
   q: z.string(),
-  e: z.array(z.number()).default([]),
+  e: embeddingSchema,
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
   filter_from: z.string().optional(),
@@ -23,40 +26,62 @@ export const searchMessagesRequestSchema = z.object({
 export async function searchMessages(
   data: z.infer<typeof searchMessagesRequestSchema>
 ) {
+  if (data.q.trim().length === 0) {
+    return {
+      results: [],
+      total: 0,
+      page: data.page,
+      pageSize: data.pageSize,
+      error: "No query provided.",
+    };
+  }
+
   // Add filter condition for date range
-  const time = await timeConditions('timestamp', data.filter_since_gp, data.filter_before, data.filter_after);
+  const time = await timeConditions(
+    "timestamp",
+    data.filter_since_gp,
+    data.filter_before,
+    data.filter_after
+  );
   if (time.ok === false) {
     return {
       results: [],
       total: 0,
       page: data.page,
       pageSize: data.pageSize,
-      error: time.error ?? 'No data.'
+      error: time.error ?? "No data.",
     };
   }
 
   // Initialize additional filter conditions
   const whereConditions = [
     // Add filter conditions based on parameters
-    data.filter_from ? sql`id @@@ ${paradeMatch('sender', data.filter_from)}` : undefined,
+    data.filter_from
+      ? sql`id @@@ ${simpleParadeMatch("sender", data.filter_from)}`
+      : undefined,
     // channelid
-    data.channelId ? sql`id @@@ ${paradeMatch('roomid', data.channelId)}` : undefined,
+    data.channelId
+      ? sql`id @@@ ${simpleParadeMatch("roomid", data.channelId)}`
+      : undefined,
     // time-based
     ...time.where,
     // matches
     or(
       // standard search using paradedb
-      sql<boolean>`id @@@ paradedb.boolean(should => ARRAY[
-        ${paradeMatch('sender', data.q, 2.0)},
-        ${paradeMatch('content', data.q)}
-      ])`,
-      // embedding search if embedding is provided (otherwise always false)
-      sql<boolean>`similarity > ${SIMILARITY_THRESHOLD}`
-    )
+      paradeMatch(
+        [
+          ["sender", 2.0],
+          ["content", 1.0],
+        ],
+        data.q
+      ),
+      // embedding search if embedding is provided
+      similarityWhere(messagesTable.embedding, data.e)
+    ),
   ];
 
   const countResult = await db
-    .select({count: sql`count(*)` })
+    .select({ count: sql`count(*)` })
     .from(messagesTable)
     .where(and(...whereConditions));
 
@@ -71,7 +96,7 @@ export async function searchMessages(
       timestamp: messagesTable.timestamp,
       roomId: messagesTable.roomId,
       similarity: similarityMatch(messagesTable.embedding, data.e),
-      score: sql<number>`paradedb.score(id)`,
+      score: sql<number>`paradedb.score(id) AS score`,
     })
     .from(messagesTable)
     .where(and(...whereConditions))
@@ -88,4 +113,3 @@ export async function searchMessages(
     pageSize: data.pageSize,
   };
 }
-

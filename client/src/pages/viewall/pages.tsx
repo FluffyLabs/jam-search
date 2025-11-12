@@ -3,7 +3,9 @@ import { Paging } from "@/components/Paging";
 import { PageResultList } from "@/components/results/PageResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
+import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchPages } from "@/hooks/useSearchPages";
+import { SearchMode } from "@/lib/mode";
 import { parseSearchQuery } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
@@ -13,15 +15,18 @@ const PagesResultsAll = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
+  const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const site = searchParams.get("site") || undefined;
 
   const topRef = useRef(null);
 
   // Parse the query to extract filters
   const { query } = parseSearchQuery(richQuery);
+  const embedding = useEmbedding(query, searchMode !== SearchMode.Regular).data;
 
   const queryResult = useSearchPages({
     query,
+    embedding,
     pageSize: 20,
     site,
   });
@@ -56,10 +61,7 @@ const PagesResultsAll = () => {
         </span>
 
         <div className="my-8">
-          <PageResultList
-            queryResult={queryResult}
-            searchQuery={query}
-          />
+          <PageResultList queryResult={queryResult} searchQuery={query} />
 
           <Paging queryResult={queryResult} scrollTo={topRef} />
         </div>

@@ -5,11 +5,11 @@ import { useSearchCommon } from "./useSearchCommon";
 
 interface UseSearchMatrixOptions {
   query: string;
+  embedding?: string;
   initialPage?: number;
   pageSize?: number;
   channelId?: (typeof matrix.ROOMS)[number]["id"];
   filters?: SearchFilter[];
-  searchMode?: string;
   enabled?: boolean;
 }
 
@@ -20,11 +20,11 @@ interface SearchFilter {
 
 export function useSearchMatrix({
   query,
+  embedding,
   initialPage = 1,
   pageSize = 10,
   channelId,
   filters = [],
-  searchMode = "strict",
   enabled = true,
 }: UseSearchMatrixOptions) {
   // Use React Query to fetch search results
@@ -33,21 +33,20 @@ export function useSearchMatrix({
       queryKey: [
         "search",
         query,
+        embedding,
         page,
         pageSize,
         channelId,
         filters,
-        searchMode,
       ],
       queryFn: () =>
-        fetchSearchResults(query, {
+        fetchSearchResults(query, embedding, {
           page,
           pageSize,
           filters,
           channelId,
-          searchMode,
         }),
-      enabled: enabled && !!query.trim(), // Only fetch if we have a non-empty query
+      enabled,
     });
 
   const res = useSearchCommon({ initialPage, pageSize }, useGetPageQuery);

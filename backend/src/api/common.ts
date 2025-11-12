@@ -1,23 +1,65 @@
-import {AnyColumn, cosineDistance, desc, ilike, sql} from "drizzle-orm";
-import {graypapersTable} from "../db/schema.js";
-import {db} from "../db/db.js";
+import { type AnyColumn, cosineDistance, desc, ilike, sql } from "drizzle-orm";
+import z from "zod";
+import { db } from "../db/db.js";
+import { graypapersTable } from "../db/schema.js";
+import { decodeFloatVector } from "./getEmbedding.js";
 
-export function paradeMatch(field: string, query: string, boost: number = 1.0) {
-  return sql`paradedb.boost(${boost}, paradedb.match(
+export const embeddingSchema = z
+  .string()
+  .default("")
+  .transform((arg) => {
+    return decodeFloatVector(arg);
+  });
+
+export function simpleParadeMatch(
+  field: string,
+  query: string,
+  options: {
+    boost?: number;
+    distance?: number;
+  } = {}
+) {
+  const boost = options.boost ?? 1.0;
+  const distance = options.distance ?? 2;
+  return sql<boolean>`paradedb.boost(${boost}, paradedb.match(
     ${field}, ${query},
-    distance => 2,
+    distance => ${distance},
     conjunction_mode => true,
     transposition_cost_one => true
   ))`;
 }
 
-export const SIMILARITY_THRESHOLD = 0.2;
+export function paradeMatch(fields: [string, number][], query: string) {
+  const distance = query.length > 4 ? 2 : 0;
+
+  return sql<boolean>`id @@@ paradedb.boolean(should => ARRAY[
+    ${sql.join(
+      fields.map(([field, boost]) =>
+        simpleParadeMatch(field, query, { boost: 10 * boost, distance: 0 })
+      ),
+      sql`, `
+    )},
+    ${sql.join(
+      fields.map(([field, boost]) =>
+        simpleParadeMatch(field, query, { boost: 2 * boost, distance })
+      ),
+      sql`, `
+    )}
+  ])`;
+}
+
+const SIMILARITY_THRESHOLD = 0.3;
+
+export function similarityWhere(field: AnyColumn, embedding: number[]) {
+  return embedding.length > 0
+    ? sql<boolean>`1 - (${cosineDistance(field, embedding)}) > ${SIMILARITY_THRESHOLD}`
+    : undefined;
+}
 
 export function similarityMatch(field: AnyColumn, embedding: number[]) {
-  return embedding.length > 0 ? sql<number>`1 - (${cosineDistance(
-    field,
-    embedding
-  )}) AS similarity` : sql`0 AS similarity`;
+  return embedding.length > 0
+    ? sql<number>`1 - (${cosineDistance(field, embedding)}) AS similarity`
+    : sql`0 AS similarity`;
 }
 
 export async function timeConditions(
@@ -40,11 +82,11 @@ export async function timeConditions(
   if (filter_since_gp) {
     // Look up the timestamp for the specified graypaper version
     const gpVersionResult = await db
-    .select({ timestamp: graypapersTable.timestamp })
-    .from(graypapersTable)
-    .where(ilike(graypapersTable.version, filter_since_gp))
-    .orderBy(desc(graypapersTable.timestamp))
-    .limit(1);
+      .select({ timestamp: graypapersTable.timestamp })
+      .from(graypapersTable)
+      .where(ilike(graypapersTable.version, filter_since_gp))
+      .orderBy(desc(graypapersTable.timestamp))
+      .limit(1);
 
     if (gpVersionResult.length > 0) {
       // Use the timestamp from graypaper to filter messages
@@ -65,7 +107,7 @@ export async function timeConditions(
     where: [
       sql.raw(
         `${timestampField} @@@ '[${startDate.toISOString()} TO ${endDate.toISOString()}]'`
-      )
-    ]
+      ),
+    ],
   };
 }
