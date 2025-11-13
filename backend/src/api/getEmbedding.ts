@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import z from "zod";
 import { env } from "../env.js";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 
 export const getEmbeddingSchema = z.object({
   q: z.string(),
@@ -28,13 +29,21 @@ export function decodeFloatVector(encoded: string): number[] {
   return Array.from(float32Array);
 }
 
-const cache = new Map<string, string>();
-export async function getEmbedding(data: z.infer<typeof getEmbeddingSchema>) {
-  const fromCache = cache.get(data.q);
+// In-memory cache for OpenAI API results (keyed by query string)
+const queryCache = new Map<string, string>();
+
+export async function getEmbedding(
+  data: z.infer<typeof getEmbeddingSchema>,
+  embeddingCache: EmbeddingCache
+) {
+  // Check if we already fetched this query
+  const fromCache = queryCache.get(data.q);
   if (fromCache !== undefined) {
-    return fromCache;
+    // Return the cache entry ID for this embedding
+    const cacheId = embeddingCache.store(fromCache, data.q);
+    return { id: cacheId };
   }
-  // TODO [ToDr] introduce cache
+
   const openai = new OpenAI({
     apiKey: env.OPENAI_API_KEY,
   });
@@ -45,7 +54,10 @@ export async function getEmbedding(data: z.infer<typeof getEmbeddingSchema>) {
     dimensions: 1536,
   });
 
-  const res = encodeFloatVector(response.data[0].embedding);
-  cache.set(data.q, res);
-  return res;
+  const embedding = encodeFloatVector(response.data[0].embedding);
+  queryCache.set(data.q, embedding);
+
+  // Store in embedding cache and return the ID
+  const cacheId = embeddingCache.store(embedding, data.q);
+  return { id: cacheId };
 }

@@ -2,9 +2,11 @@ import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db/db.js";
 import { graypaperSectionsTable } from "../db/schema.js";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import {
   embeddingSchema,
   paradeMatch,
+  resolveEmbedding,
   similarityMatch,
   similarityWhere,
 } from "./common.js";
@@ -17,8 +19,12 @@ export const searchGraypaperRequestSchema = z.object({
 });
 
 export async function searchGraypaper(
-  data: z.infer<typeof searchGraypaperRequestSchema>
+  data: z.infer<typeof searchGraypaperRequestSchema>,
+  cache: EmbeddingCache
 ) {
+  // Resolve embedding from cache ID or base64
+  const embedding = resolveEmbedding(data.e, cache);
+
   if (data.q.trim().length === 0) {
     return {
       results: [],
@@ -41,7 +47,7 @@ export async function searchGraypaper(
         data.q
       ),
       // embedding search if embedding is provided
-      similarityWhere(graypaperSectionsTable.embedding, data.e)
+      similarityWhere(graypaperSectionsTable.embedding, embedding)
     ),
   ];
 
@@ -60,7 +66,7 @@ export async function searchGraypaper(
       id: graypaperSectionsTable.id,
       title: graypaperSectionsTable.title,
       text: graypaperSectionsTable.text,
-      similarity: similarityMatch(graypaperSectionsTable.embedding, data.e),
+      similarity: similarityMatch(graypaperSectionsTable.embedding, embedding),
       score: sql<number>`paradedb.score(id) AS score`,
     })
     .from(graypaperSectionsTable)

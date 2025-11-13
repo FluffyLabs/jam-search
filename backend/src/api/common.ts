@@ -3,13 +3,31 @@ import z from "zod";
 import { db } from "../db/db.js";
 import { graypapersTable } from "../db/schema.js";
 import { decodeFloatVector } from "./getEmbedding.js";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 
-export const embeddingSchema = z
-  .string()
-  .default("")
-  .transform((arg) => {
-    return decodeFloatVector(arg);
-  });
+// Accept embedding as a cache ID string
+export const embeddingSchema = z.string().default("");
+
+/**
+ * Resolve an embedding from cache ID
+ * Cache IDs are 16 hex characters
+ */
+export function resolveEmbedding(
+  embeddingParam: string,
+  cache: EmbeddingCache
+): number[] {
+  if (!embeddingParam) {
+    return [];
+  }
+
+  const cached = cache.retrieve(embeddingParam);
+  if (cached) {
+    return decodeFloatVector(cached);
+  }
+
+  // If not found in cache, ignore it (as per requirements)
+  return [];
+}
 
 export function simpleParadeMatch(
   field: string,
