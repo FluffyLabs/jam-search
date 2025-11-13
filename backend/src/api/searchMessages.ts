@@ -1,8 +1,8 @@
 import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import { db } from "../db/db.js";
 import { messagesTable } from "../db/schema.js";
-import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import {
   embeddingSchema,
   paradeMatch,

@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { createHash } from "node:crypto";
 
 export interface EmbeddingCache {
   store(embedding: number[], query?: string): string;

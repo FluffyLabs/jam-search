@@ -1,8 +1,8 @@
 import { type AnyColumn, cosineDistance, desc, ilike, sql } from "drizzle-orm";
 import z from "zod";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import { db } from "../db/db.js";
 import { graypapersTable } from "../db/schema.js";
-import type { EmbeddingCache } from "../cache/embeddingCache.js";
 
 // Accept embedding as a cache ID string
 export const embeddingSchema = z.string().default("");

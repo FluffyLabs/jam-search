@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import z from "zod";
-import { env } from "../env.js";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
+import { env } from "../env.js";
 
 export const getEmbeddingSchema = z.object({
   q: z.string(),

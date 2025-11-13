@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { embeddingCache } from "./cache/embeddingCache.js";
 import { getEmbedding, getEmbeddingSchema } from "./api/getEmbedding.js";
 import {
   searchDiscords,
@@ -17,6 +16,7 @@ import {
   searchMessagesRequestSchema,
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
+import { embeddingCache } from "./cache/embeddingCache.js";
 import type { AppVariables } from "./types/context.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
