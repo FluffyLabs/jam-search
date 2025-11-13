@@ -26,6 +26,7 @@
     "fast-xml-parser": "^5.2.3",
     "firecrawl": "^1.25.0",
     "hono": "^4.7.7",
+    "hono-rate-limiter": "^0.4.2",
     "matrix-js-sdk": "^39.1.2",
     "node-fetch": "^2.7.0",
     "openai": "^6.8.1",

@@ -5,15 +5,17 @@ import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { useSearchPages } from "@/hooks/useSearchPages";
 import { parseSearchQuery } from "@/lib/utils";
 import { Source } from "@shared/sources";
+import { useEmbedding } from "./useEmbedding";
 import { useSearchGraypaper } from "./useSearchGraypaper";
 
 export function useResults(
   richQuery: string,
-  searchMode: string,
-  selectedSources: string[]
+  selectedSources: string[],
+  isExtendedSearch: boolean
 ) {
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
+  const embedding = useEmbedding(query, isExtendedSearch).data;
 
   const matrixResults = matrix.ROOMS.map((room) => {
     return {
@@ -22,10 +24,10 @@ export function useResults(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchMatrix({
         query,
+        embedding,
         channelId: room.id,
         pageSize: 6,
         filters,
-        searchMode: searchMode,
         enabled: selectedSources.includes(room.source),
       }),
     };
@@ -37,10 +39,10 @@ export function useResults(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchDiscord({
         query,
+        embedding,
         pageSize: 6,
         filters,
         channelId: channel.channelId,
-        searchMode: searchMode,
         enabled: selectedSources.includes(channel.source),
       }),
     };
@@ -52,8 +54,8 @@ export function useResults(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchPages({
         query,
+        embedding,
         pageSize: 4,
-        searchMode: searchMode,
         site: page.dbId,
         enabled: selectedSources.includes(page.source),
       }),
@@ -66,8 +68,8 @@ export function useResults(
       // eslint-disable-next-line react-hooks/rules-of-hooks
       results: useSearchPages({
         query,
+        embedding,
         pageSize: 4,
-        searchMode: searchMode,
         site: repo.dbId,
         enabled: selectedSources.includes(repo.source),
       }),
@@ -77,8 +79,8 @@ export function useResults(
   // Use our graypaper search hook with 6 results per page (for compact view)
   const graypaperResults = useSearchGraypaper({
     query,
+    embedding,
     pageSize: 6,
-    searchMode,
     enabled: selectedSources.includes(Source.Graypaper),
   });
 

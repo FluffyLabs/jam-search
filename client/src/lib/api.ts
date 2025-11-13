@@ -69,25 +69,22 @@ export async function fetchApi<T>(
 // Fetch search results
 export async function fetchSearchResults(
   query: string,
+  embedding?: string,
   options: {
     page?: number;
     pageSize?: number;
     filters?: Array<{ key: string; value: string }>;
     channelId?: string;
-    searchMode?: string;
   } = {}
 ): Promise<SearchResponse> {
-  const {
-    page = 1,
-    pageSize = 10,
-    filters = [],
-    channelId,
-    searchMode = "strict",
-  } = options;
+  const { page = 1, pageSize = 10, filters = [], channelId } = options;
 
   // Build the query parameters
   const queryParams = new URLSearchParams();
   queryParams.append("q", query);
+  if (embedding) {
+    queryParams.append("e", embedding);
+  }
   queryParams.append("page", page.toString());
   queryParams.append("pageSize", pageSize.toString());
 
@@ -99,11 +96,6 @@ export async function fetchSearchResults(
   // Add channelId parameter if provided
   if (channelId) {
     queryParams.append("channelId", channelId);
-  }
-
-  // Add searchMode parameter if not strict (default)
-  if (searchMode !== "strict") {
-    queryParams.append("searchMode", searchMode);
   }
 
   return fetchApi<SearchResponse>(`/search/messages?${queryParams.toString()}`);
@@ -129,25 +121,22 @@ export interface DiscordSearchResponse {
 // Fetch Discord search results
 export async function fetchDiscordSearchResults(
   query: string,
+  embedding?: string,
   options: {
     page?: number;
     pageSize?: number;
     filters?: Array<{ key: string; value: string }>;
     channelId?: string;
-    searchMode?: string;
   } = {}
 ): Promise<DiscordSearchResponse> {
-  const {
-    page = 1,
-    pageSize = 10,
-    filters = [],
-    channelId,
-    searchMode = "strict",
-  } = options;
+  const { page = 1, pageSize = 10, filters = [], channelId } = options;
 
   // Build the query parameters
   const queryParams = new URLSearchParams();
   queryParams.append("q", query);
+  if (embedding) {
+    queryParams.append("e", embedding);
+  }
   queryParams.append("page", page.toString());
   queryParams.append("pageSize", pageSize.toString());
 
@@ -159,11 +148,6 @@ export async function fetchDiscordSearchResults(
   // Add channelId parameter if provided
   if (channelId) {
     queryParams.append("channelId", channelId);
-  }
-
-  // Add searchMode parameter if not strict (default)
-  if (searchMode !== "strict") {
-    queryParams.append("searchMode", searchMode);
   }
 
   return fetchApi<DiscordSearchResponse>(
@@ -184,23 +168,21 @@ export interface GraypaperSearchResponse {
 
 export async function searchGraypaper(
   query: string,
+  embedding?: string,
   options: {
     page?: number;
     pageSize?: number;
-    searchMode?: string;
   } = {}
 ): Promise<GraypaperSearchResponse> {
-  const { page = 1, pageSize = 10, searchMode = "strict" } = options;
+  const { page = 1, pageSize = 10 } = options;
 
   const queryParams = new URLSearchParams();
   queryParams.append("q", query);
+  if (embedding) {
+    queryParams.append("e", embedding);
+  }
   queryParams.append("page", page.toString());
   queryParams.append("pageSize", pageSize.toString());
-
-  // Add searchMode parameter if not strict (default)
-  if (searchMode !== "strict") {
-    queryParams.append("searchMode", searchMode);
-  }
 
   return fetchApi(`/search/graypaper?${queryParams.toString()}`);
 }
@@ -214,34 +196,33 @@ export interface PageSearchResponse {
     content: string;
     lastModified: string;
     createdAt: string;
-    similarity?: number;
-    score?: number;
+    similarity: number;
+    score: number;
   }>;
   total: number;
   page: number;
   pageSize: number;
+  error?: string;
 }
 
 export async function searchPages(
   query: string,
+  embedding?: string,
   options: {
     page?: number;
     pageSize?: number;
-    searchMode?: string;
     site?: string;
   } = {}
 ): Promise<PageSearchResponse> {
-  const { page = 1, pageSize = 10, searchMode = "strict", site } = options;
+  const { page = 1, pageSize = 10, site } = options;
 
   const queryParams = new URLSearchParams();
   queryParams.append("q", query);
+  if (embedding) {
+    queryParams.append("e", embedding);
+  }
   queryParams.append("page", page.toString());
   queryParams.append("pageSize", pageSize.toString());
-
-  // Add searchMode parameter if not strict (default)
-  if (searchMode !== "strict") {
-    queryParams.append("searchMode", searchMode);
-  }
 
   // Add site parameter if provided
   if (site) {

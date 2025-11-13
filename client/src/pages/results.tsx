@@ -11,14 +11,14 @@ import { ResultHeader } from "@/components/results/ResultHeader";
 import { Section } from "@/components/results/Section";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useResults } from "@/hooks/useResults";
+import { SearchMode } from "@/lib/mode";
 import {
   SOURCE_OPTIONS,
   getStoredSources,
   setStoredSources,
 } from "@/lib/sources";
-import type { SearchMode } from "@/lib/utils";
 import { Source, stringToSource } from "@shared/sources";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const pageLogos: Record<string, string> = {
@@ -31,20 +31,21 @@ function getLogo(logo: string) {
 
 const SearchResults = () => {
   const location = useLocation();
-  const richQuery = new URLSearchParams(location.search).get("q") || "";
-  const searchModeParam =
-    new URLSearchParams(location.search).get("searchMode") || "strict";
+  const searchParams = new URLSearchParams(location.search);
+  const richQuery = searchParams.get("q") || "";
+  const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
+
   const [selectedSources, setSelectedSources] =
     useState<Source[]>(getStoredSources);
 
-  const handleSourceChange = useCallback((stringSources: string[]) => {
+  const handleSourceChange = (stringSources: string[]) => {
     const sources = stringSources
       .map((x) => stringToSource(x))
       .filter((x) => x !== undefined);
     setSelectedSources(sources);
     // Save the updated sources to localStorage
     setStoredSources(sources);
-  }, []);
+  };
 
   const {
     query,
@@ -54,7 +55,7 @@ const SearchResults = () => {
     matrixResults,
     graypaperResults,
     githubResults,
-  } = useResults(richQuery, searchModeParam, selectedSources);
+  } = useResults(richQuery, selectedSources, searchMode !== SearchMode.Regular);
 
   return (
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
@@ -78,7 +79,7 @@ const SearchResults = () => {
 
       <Container>
         {/* Display active filters as tags */}
-        {query && filters.length > 0 && (
+        {filters.length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mt-2">
               {filters.map((filter) => (
@@ -96,11 +97,7 @@ const SearchResults = () => {
 
         <div className="mb-8">
           {selectedSources.includes(Source.Graypaper) && (
-            <GraypaperResults
-              queryResult={graypaperResults}
-              query={query}
-              searchMode={searchModeParam as SearchMode}
-            />
+            <GraypaperResults queryResult={graypaperResults} query={query} />
           )}
 
           {matrixResults.map((data) => {
@@ -114,7 +111,6 @@ const SearchResults = () => {
                 channel={data.room}
                 queryResult={data.results}
                 query={query}
-                searchMode={searchModeParam as SearchMode}
               />
             );
           })}
@@ -130,7 +126,6 @@ const SearchResults = () => {
                 channel={data.channel}
                 queryResult={data.results}
                 query={query}
-                searchMode={searchModeParam as SearchMode}
               />
             );
           })}
@@ -172,7 +167,6 @@ const SearchResults = () => {
                 <PageResultCards
                   queryResult={data.results}
                   searchQuery={query}
-                  searchMode={searchModeParam as SearchMode}
                 />
               </div>
             );
@@ -218,7 +212,6 @@ const SearchResults = () => {
                 <PageResultCards
                   queryResult={data.results}
                   searchQuery={query}
-                  searchMode={searchModeParam as SearchMode}
                 />
               </div>
             );

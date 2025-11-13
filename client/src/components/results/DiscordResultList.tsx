@@ -1,6 +1,6 @@
 import type { useResults } from "@/hooks/useResults";
 import type { DiscordSearchResult } from "@/lib/api";
-import { type SearchMode, getTextToDisplay } from "@/lib/utils";
+import { getTextToDisplay } from "@/lib/utils";
 import { formatDate } from "@/lib/utils";
 import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
@@ -8,13 +8,11 @@ import { ResultCard } from "./ResultCard";
 interface DiscordResultListProps {
   queryResult: ReturnType<typeof useResults>["discordResults"][0]["results"];
   searchQuery: string;
-  searchMode: SearchMode;
 }
 
 export const DiscordResultList = ({
   queryResult,
   searchQuery,
-  searchMode,
 }: DiscordResultListProps) => {
   const { isLoading, isError, results } = queryResult;
 
@@ -57,12 +55,7 @@ export const DiscordResultList = ({
             }
             content={
               <p className="text-muted-foreground font-light mb-2">
-                {getTextToDisplay(
-                  result.content || "",
-                  searchQuery,
-                  searchMode,
-                  400
-                )}
+                {getTextToDisplay(result.content || "", searchQuery, 400)}
               </p>
             }
             footer={

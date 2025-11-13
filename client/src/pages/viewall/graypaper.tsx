@@ -5,24 +5,26 @@ import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
-import { type SearchMode, highlightText } from "@/lib/utils";
+import { SearchMode } from "@/lib/mode";
+import { getTextToDisplay } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const GraypaperResultsAll = () => {
   const location = useLocation();
-  const query = new URLSearchParams(location.search).get("q") || "";
-  const searchModeParam =
-    (new URLSearchParams(location.search).get("searchMode") as SearchMode) ||
-    "strict";
+  const searchParams = new URLSearchParams(location.search);
+  const query = searchParams.get("q") || "";
+  const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const topRef = useRef(null);
 
+  const embedding = useEmbedding(query, searchMode !== SearchMode.Regular).data;
   const queryResult = useSearchGraypaper({
     query,
+    embedding,
     pageSize: 20,
-    searchMode: searchModeParam,
   });
 
   const { results, totalResults, isLoading, isError } = queryResult;
@@ -83,7 +85,6 @@ const GraypaperResultsAll = () => {
                       text={section.text}
                       query={query}
                       url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
-                      searchMode={searchModeParam}
                     />
                   ))}
                 </div>
@@ -103,13 +104,11 @@ const SectionResult = ({
   title,
   query,
   url,
-  searchMode,
 }: {
   text: string;
   title: string;
   query: string;
   url: string;
-  searchMode: SearchMode;
 }) => {
   return (
     <Card className="relative bg-card border-border border-0 border-b rounded-none hover:bg-accent">
@@ -120,7 +119,7 @@ const SectionResult = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-3 pt-0">
         <div className="text-sm font-light">
-          {getTextToDisplay(text, query, searchMode)}
+          {getTextToDisplay(text, query, 700)}
         </div>
         <div className="flex justify-end">
           <ViewEmbedded
@@ -128,93 +127,11 @@ const SectionResult = ({
             url={url}
             results={[]}
             searchQuery={query}
-            searchMode={searchMode}
           />
         </div>
       </CardContent>
     </Card>
   );
-};
-
-const limit = 700;
-const getTextToDisplay = (
-  text: string,
-  query: string,
-  searchMode: SearchMode
-) => {
-  if (!text || !query) return text;
-
-  // Get the first word from the query
-  const queryWords = query
-    .toLowerCase()
-    .split(/\s+/)
-    .filter((word) => word.length > 2);
-
-  if (queryWords.length === 0)
-    return text.length > limit ? `${text.slice(0, limit)}...` : text;
-
-  const normalizedText = text.toLowerCase();
-
-  // Find the first occurrence of any query word
-  const matchedWordResult = queryWords.reduce(
-    (result, word) => {
-      if (result.index !== -1) return result;
-
-      const index = normalizedText.indexOf(word);
-      if (index !== -1) {
-        return {
-          index,
-          word,
-        };
-      }
-      return result;
-    },
-    {
-      index: -1,
-      word: "",
-    }
-  );
-
-  if (matchedWordResult.index === -1) {
-    return text.length > limit ? `${text.slice(0, limit)}...` : text;
-  }
-
-  // Calculate initial start and end indices for the context window
-  let startIndex = Math.max(0, matchedWordResult.index - limit / 2);
-  let endIndex = Math.min(
-    text.length,
-    matchedWordResult.index + matchedWordResult.word.length + limit / 2
-  );
-
-  // Adjust startIndex to include full words
-  if (startIndex > 0) {
-    // Find the beginning of the first word
-    const beforeText = text.slice(0, startIndex);
-    const lastSpaceBeforeStart = beforeText.lastIndexOf(" ");
-    if (lastSpaceBeforeStart !== -1) {
-      startIndex = lastSpaceBeforeStart + 1;
-    }
-  }
-
-  // Adjust endIndex to include full words
-  if (endIndex < text.length) {
-    // Find the end of the last word
-    const nextSpaceAfterEnd = text.indexOf(" ", endIndex);
-    if (nextSpaceAfterEnd !== -1) {
-      endIndex = nextSpaceAfterEnd;
-    } else {
-      // If no more spaces, include the rest of the text
-      endIndex = text.length;
-    }
-  }
-
-  const result = [
-    startIndex > 0 ? "..." : "",
-    ...highlightText(text.slice(startIndex, endIndex), queryWords, searchMode),
-    endIndex < text.length ? "..." : "",
-  ];
-
-  return result;
 };
 
 export default GraypaperResultsAll;

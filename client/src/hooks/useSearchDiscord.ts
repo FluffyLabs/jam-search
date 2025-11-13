@@ -4,11 +4,11 @@ import { useSearchCommon } from "./useSearchCommon";
 
 interface UseSearchDiscordOptions {
   query: string;
+  embedding?: string;
   initialPage?: number;
   pageSize?: number;
   channelId?: string;
   filters?: SearchFilter[];
-  searchMode?: string;
   enabled?: boolean;
 }
 
@@ -19,11 +19,11 @@ interface SearchFilter {
 
 export function useSearchDiscord({
   query,
+  embedding,
   initialPage = 1,
   pageSize = 10,
   channelId,
   filters = [],
-  searchMode = "strict",
   enabled = true,
 }: UseSearchDiscordOptions) {
   // Use React Query to fetch search results
@@ -32,21 +32,20 @@ export function useSearchDiscord({
       queryKey: [
         "-discord-search",
         query,
+        embedding,
         page,
         pageSize,
         channelId,
         filters,
-        searchMode,
       ],
       queryFn: () =>
-        fetchDiscordSearchResults(query, {
+        fetchDiscordSearchResults(query, embedding, {
           page,
           pageSize,
           filters,
           channelId,
-          searchMode,
         }),
-      enabled: enabled && !!query.trim(), // Only fetch if we have a non-empty query
+      enabled,
     });
 
   const res = useSearchCommon({ initialPage, pageSize }, useGetPageQuery);
