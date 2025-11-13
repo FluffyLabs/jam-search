@@ -1,10 +1,12 @@
 import { and, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import { db } from "../db/db.js";
 import { pagesTable } from "../db/schema.js";
 import {
   embeddingSchema,
   paradeMatch,
+  resolveEmbedding,
   similarityMatch,
   similarityWhere,
 } from "./common.js";
@@ -18,8 +20,12 @@ export const searchPagesRequestSchema = z.object({
 });
 
 export async function searchPages(
-  data: z.infer<typeof searchPagesRequestSchema>
+  data: z.infer<typeof searchPagesRequestSchema>,
+  cache: EmbeddingCache
 ) {
+  // Resolve embedding from cache ID or base64
+  const embedding = resolveEmbedding(data.e, cache);
+
   if (data.q.trim().length === 0) {
     return {
       results: [],
@@ -45,7 +51,7 @@ export async function searchPages(
         data.q
       ),
       // embedding search if embedding is provided
-      similarityWhere(pagesTable.embedding, data.e)
+      similarityWhere(pagesTable.embedding, embedding)
     ),
   ];
 
@@ -68,7 +74,7 @@ export async function searchPages(
       site: pagesTable.site,
       lastModified: pagesTable.lastModified,
       createdAt: pagesTable.created_at,
-      similarity: similarityMatch(pagesTable.embedding, data.e),
+      similarity: similarityMatch(pagesTable.embedding, embedding),
       score: sql<number>`paradedb.score(id) AS score`,
     })
     .from(pagesTable)

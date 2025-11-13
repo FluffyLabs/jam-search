@@ -1,10 +1,12 @@
 import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import { db } from "../db/db.js";
 import { discordsTable } from "../db/schema.js";
 import {
   embeddingSchema,
   paradeMatch,
+  resolveEmbedding,
   similarityMatch,
   similarityWhere,
   simpleParadeMatch,
@@ -25,8 +27,12 @@ export const searchDiscordsRequestSchema = z.object({
 });
 
 export async function searchDiscords(
-  data: z.infer<typeof searchDiscordsRequestSchema>
+  data: z.infer<typeof searchDiscordsRequestSchema>,
+  cache: EmbeddingCache
 ) {
+  // Resolve embedding from cache ID or base64
+  const embedding = resolveEmbedding(data.e, cache);
+
   if (data.q.trim().length === 0) {
     return {
       results: [],
@@ -79,7 +85,7 @@ export async function searchDiscords(
         data.q
       ),
       // embedding search if embedding is provided
-      similarityWhere(discordsTable.embedding, data.e)
+      similarityWhere(discordsTable.embedding, embedding)
     ),
   ];
 
@@ -102,7 +108,7 @@ export async function searchDiscords(
       authorId: discordsTable.authorId,
       content: discordsTable.content,
       timestamp: discordsTable.timestamp,
-      similarity: similarityMatch(discordsTable.embedding, data.e),
+      similarity: similarityMatch(discordsTable.embedding, embedding),
       score: sql<number>`paradedb.score(id) AS score`,
     })
     .from(discordsTable)

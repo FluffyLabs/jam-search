@@ -8,7 +8,11 @@ export function useEmbedding(query: string, isExtendedSearch: boolean) {
       const queryParams = new URLSearchParams();
       queryParams.append("q", query);
 
-      return fetchApi<string>(`/embeddings?${queryParams.toString()}`);
+      // Backend now returns { id: string } instead of the full embedding
+      const response = await fetchApi<{ id: string }>(
+        `/embeddings?${queryParams.toString()}`
+      );
+      return response.id;
     },
     enabled: isExtendedSearch,
   });

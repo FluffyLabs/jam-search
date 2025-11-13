@@ -1,10 +1,12 @@
 import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
+import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import { db } from "../db/db.js";
 import { messagesTable } from "../db/schema.js";
 import {
   embeddingSchema,
   paradeMatch,
+  resolveEmbedding,
   similarityMatch,
   similarityWhere,
   simpleParadeMatch,
@@ -24,8 +26,11 @@ export const searchMessagesRequestSchema = z.object({
 });
 
 export async function searchMessages(
-  data: z.infer<typeof searchMessagesRequestSchema>
+  data: z.infer<typeof searchMessagesRequestSchema>,
+  cache: EmbeddingCache
 ) {
+  // Resolve embedding from cache ID or base64
+  const embedding = resolveEmbedding(data.e, cache);
   if (data.q.trim().length === 0) {
     return {
       results: [],
@@ -76,7 +81,7 @@ export async function searchMessages(
         data.q
       ),
       // embedding search if embedding is provided
-      similarityWhere(messagesTable.embedding, data.e)
+      similarityWhere(messagesTable.embedding, embedding)
     ),
   ];
 
@@ -96,7 +101,7 @@ export async function searchMessages(
       content: messagesTable.content,
       timestamp: messagesTable.timestamp,
       roomId: messagesTable.roomId,
-      similarity: similarityMatch(messagesTable.embedding, data.e),
+      similarity: similarityMatch(messagesTable.embedding, embedding),
       score: sql<number>`paradedb.score(id) AS score`,
     })
     .from(messagesTable)
