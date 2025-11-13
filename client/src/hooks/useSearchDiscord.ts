@@ -9,7 +9,6 @@ interface UseSearchDiscordOptions {
   pageSize?: number;
   channelId?: string;
   filters?: SearchFilter[];
-  searchMode?: string;
   enabled?: boolean;
 }
 
