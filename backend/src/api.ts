@@ -17,12 +17,11 @@ import {
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
-import type { AppVariables } from "./types/context.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
 export function createApp() {
-  const app = new Hono<{ Variables: AppVariables }>();
+  const app = new Hono();
 
   // Middleware
   app.use(logger());
