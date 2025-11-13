@@ -2,7 +2,6 @@ import { type AnyColumn, cosineDistance, desc, ilike, sql } from "drizzle-orm";
 import z from "zod";
 import { db } from "../db/db.js";
 import { graypapersTable } from "../db/schema.js";
-import { decodeFloatVector } from "./getEmbedding.js";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
 
 // Accept embedding as a cache ID string
@@ -22,7 +21,7 @@ export function resolveEmbedding(
 
   const cached = cache.retrieve(embeddingParam);
   if (cached) {
-    return decodeFloatVector(cached);
+    return cached;
   }
 
   // If not found in cache, ignore it (as per requirements)

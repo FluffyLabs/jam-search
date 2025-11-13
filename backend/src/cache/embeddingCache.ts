@@ -1,8 +1,8 @@
 import { createHash } from "crypto";
 
 export interface EmbeddingCache {
-  store(embedding: string, query?: string): string;
-  retrieve(id: string): string | undefined;
+  store(embedding: number[], query?: string): string;
+  retrieve(id: string): number[] | undefined;
   clear(): void;
 }
 
@@ -10,20 +10,27 @@ const MAX_CACHE_ENTRIES = 100_000;
 const EVICTION_BATCH_SIZE = 1_000;
 
 class InMemoryEmbeddingCache implements EmbeddingCache {
-  private cache = new Map<string, string>();
+  private cache = new Map<string, number[]>();
   private lastAccess = new Map<string, number>();
 
   /**
    * Generate a hash ID from an embedding
    */
-  private hashEmbedding(embedding: string): string {
-    return createHash("sha256").update(embedding).digest("hex").slice(0, 16);
+  private hashEmbedding(embedding: number[]): string {
+    // Convert to Float32Array for consistent 32-bit precision
+    const float32Array = new Float32Array(embedding);
+    const buffer = Buffer.from(
+      float32Array.buffer,
+      float32Array.byteOffset,
+      float32Array.byteLength
+    );
+    return createHash("sha256").update(buffer).digest("hex").slice(0, 16);
   }
 
   /**
    * Store an embedding and return a cache entry ID
    */
-  store(embedding: string, query?: string): string {
+  store(embedding: number[], query?: string): string {
     // Generate a deterministic ID from the embedding hash
     const id = this.hashEmbedding(embedding);
 
@@ -48,7 +55,7 @@ class InMemoryEmbeddingCache implements EmbeddingCache {
   /**
    * Retrieve an embedding by cache entry ID
    */
-  retrieve(id: string): string | undefined {
+  retrieve(id: string): number[] | undefined {
     const embedding = this.cache.get(id);
     if (embedding !== undefined) {
       // Update access time for LRU tracking
