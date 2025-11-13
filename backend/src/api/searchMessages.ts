@@ -90,6 +90,7 @@ export async function searchMessages(
 
   const query = db
     .select({
+      id: messagesTable.id,
       messageId: messagesTable.messageId,
       sender: messagesTable.sender,
       content: messagesTable.content,

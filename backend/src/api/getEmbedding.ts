@@ -9,27 +9,22 @@ export const getEmbeddingSchema = z.object({
 function encodeFloatVector(vector: number[]): string {
   // Convert to Float32Array for consistent 32-bit precision
   const float32Array = new Float32Array(vector);
-
-  // Get the underlying bytes
-  const bytes = new Uint8Array(float32Array.buffer);
-
-  // Convert to base64
-  return btoa(String.fromCharCode(...bytes));
+  const buffer = Buffer.from(
+    float32Array.buffer,
+    float32Array.byteOffset,
+    float32Array.byteLength
+  );
+  return buffer.toString("base64");
 }
 
 export function decodeFloatVector(encoded: string): number[] {
-  // Decode from base64
-  const binaryString = atob(encoded);
-  const bytes = new Uint8Array(binaryString.length);
-
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-
-  // Convert back to Float32Array
-  const float32Array = new Float32Array(bytes.buffer);
-
-  // Return as regular number array
+  if (!encoded) return [];
+  const buffer = Buffer.from(encoded, "base64");
+  const float32Array = new Float32Array(
+    buffer.buffer,
+    buffer.byteOffset,
+    buffer.byteLength / Float32Array.BYTES_PER_ELEMENT
+  );
   return Array.from(float32Array);
 }
 

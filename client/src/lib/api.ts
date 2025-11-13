@@ -196,12 +196,13 @@ export interface PageSearchResponse {
     content: string;
     lastModified: string;
     createdAt: string;
-    similarity?: number;
-    score?: number;
+    similarity: number;
+    score: number;
   }>;
   total: number;
   page: number;
   pageSize: number;
+  error?: string;
 }
 
 export async function searchPages(

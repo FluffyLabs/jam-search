@@ -131,9 +131,8 @@ export const highlightText = (text: string, words: string[]) => {
   const escapeRegExp = (str: string) =>
     str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-  // In strict mode, match words as substrings anywhere in text (like SQL ILIKE %query%)
   const regex = new RegExp(
-    `(${words.map((word) => escapeRegExp(word)).join(" ")})`,
+    `(${words.map((word) => escapeRegExp(word)).join("|")})`,
     "gi"
   );
 

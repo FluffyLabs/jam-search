@@ -93,6 +93,7 @@ export async function searchDiscords(
 
   const query = db
     .select({
+      id: discordsTable.id,
       messageId: discordsTable.messageId,
       channelId: discordsTable.channelId,
       threadId: discordsTable.threadId,

@@ -71,11 +71,11 @@ export async function timeConditions(
   let startDate = new Date("1970-01-01");
   let endDate = new Date();
 
-  if (filter_before && !Number.isNaN(new Date(filter_before))) {
+  if (filter_before && !Number.isNaN(new Date(filter_before).getTime())) {
     endDate = new Date(filter_before);
   }
 
-  if (filter_after && !Number.isNaN(new Date(filter_after))) {
+  if (filter_after && !Number.isNaN(new Date(filter_after).getTime())) {
     startDate = new Date(filter_after);
   }
 
