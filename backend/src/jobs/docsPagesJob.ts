@@ -14,6 +14,13 @@ try {
   process.exit(1);
 }
 
+/**
+ * Execute the docs pages fetch job by mapping or downloading pages listed in PAGES and storing their results.
+ *
+ * For each entry in PAGES this function either fetches a sitemap or maps a URL to discover links, then delegates storage to fetchAndStorePages. It collects any per-page failures, logs them, and if any failures occurred throws an Error summarizing the number of errors; when no failures occur it closes the database client.
+ *
+ * @throws Error - If one or more page fetches or mappings failed; the thrown error's message contains the number of failures.
+ */
 async function main() {
   console.log("Running docs pages fetch job at", new Date().toISOString());
 
