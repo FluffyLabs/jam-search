@@ -1,4 +1,4 @@
-import FirecrawlApp, { type FirecrawlError } from "firecrawl";
+import FirecrawlApp, { FirecrawlError } from "firecrawl";
 import { PAGES } from "../../../shared/pages.js";
 import { db } from "../db/db.js";
 import { env } from "../env.js";
@@ -46,10 +46,14 @@ async function main() {
         errors.push(
           ...(await fetchAndStorePages(firecrawl, map.links, page.dbId))
         );
-        continue;
+      } else {
+        errors.push([
+          page.url,
+          new FirecrawlError(map.error ?? "", 0, "Unable to index page."),
+        ]);
       }
 
-      throw new Error(`Failed to map: ${page.dbId}: ${map.error}`);
+      continue;
     }
 
     assertNever(page);
