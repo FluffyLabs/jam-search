@@ -30,6 +30,13 @@ async function main() {
   const errors: [string, FirecrawlError][] = [];
 
   for (const page of PAGES) {
+    if (page.skipIndexing) {
+      console.warn(
+        `⚠️  Skipping ${page.dbId} - site is configured to skip indexing updates`
+      );
+      continue;
+    }
+
     if (page.kind === "sitemap") {
       console.log(`Fetching sitemap of ${page.dbId} ...`);
       errors.push(

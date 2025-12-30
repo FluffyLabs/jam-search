@@ -14,6 +14,7 @@ export const PAGES: Page[] = [
     dbId: "jam.web3.foundation",
     link: "https://jam.web3.foundation",
     url: "https://jam.web3.foundation",
+    skipIndexing: true,
   },
 ];
 
@@ -22,6 +23,8 @@ type Common = {
   dbId: string;
   source: Source;
   link: string;
+  /** Skip this page during indexing (but keep it displayed if already indexed) */
+  skipIndexing?: boolean;
 };
 export type Page = Common &
   (
