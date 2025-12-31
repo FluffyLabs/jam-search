@@ -3,8 +3,8 @@ name: "Index: Pages"
 on:
   workflow_dispatch:
   schedule:
-    # Run daily at 03:00 UTC
-    - cron: '0 3 * * *'
+    # Run twice weekly at 03:00 UTC on Tuesdays and Fridays
+    - cron: '0 3 * * 2,5'
 
 jobs:
   run-pages-job:
