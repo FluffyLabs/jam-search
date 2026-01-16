@@ -68,7 +68,43 @@ The application includes scheduled cron jobs that run daily to:
 
 ## API Endpoints
 
-- `POST /api/search/messages` - Search Matrix messages
-- `POST /api/search/pages` - Search web pages
-- `POST /api/search/graypaper` - Search graypaper sections
-- `POST /api/search/discord` - Search Discord messages
+- `GET /search/messages` - Search Matrix messages
+- `GET /search/pages` - Search web pages
+- `GET /search/graypaper` - Search graypaper sections
+- `GET /search/discords` - Search Discord messages
+- `GET /embeddings` - Get embeddings for a query
+
+## MCP (Model Context Protocol) Endpoint
+
+The backend exposes an MCP server at `/mcp` for AI tool integration. This allows LLMs to search the JAM ecosystem knowledge base.
+
+### Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `search_pages` | Search indexed web pages and documentation |
+| `search_discord` | Search Discord messages from JAM servers |
+| `search_matrix` | Search Matrix chat messages |
+| `search_graypaper` | Search JAM Graypaper sections |
+| `search_all` | Search across all sources simultaneously |
+
+### Usage with Claude Desktop
+
+Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "jam-search": {
+      "url": "https://search-api.fluffylabs.dev/mcp"
+    }
+  }
+}
+```
+
+### Protocol
+
+The MCP endpoint uses the Streamable HTTP transport (protocol version 2025-06-18):
+- `POST /mcp` - Send JSON-RPC requests (tool calls, initialization)
+- `GET /mcp` - Establish SSE stream for server notifications
+- `DELETE /mcp` - Terminate session
