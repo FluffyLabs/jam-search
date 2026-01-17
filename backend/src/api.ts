@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { rateLimiter } from "hono-rate-limiter";
 import { getEmbedding, getEmbeddingSchema } from "./api/getEmbedding.js";
 import {
   searchDiscords,
@@ -17,6 +17,7 @@ import {
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
+import { handleMcpDelete, handleMcpGet, handleMcpPost } from "./mcp/handler.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -72,6 +73,10 @@ export function createApp() {
     const data = searchGraypaperRequestSchema.parse(c.req.query());
     return c.json(await searchGraypaper(data, embeddingCache));
   });
+
+  app.post("/mcp", handleMcpPost);
+  app.get("/mcp", handleMcpGet);
+  app.delete("/mcp", handleMcpDelete);
 
   return app;
 }

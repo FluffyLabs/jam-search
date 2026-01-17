@@ -1,5 +1,5 @@
-import ToolName from "@/assets/tool-name.svg";
 import { Header as FluffyHeader } from "@fluffylabs/shared-ui";
+import ToolName from "@/assets/tool-name.svg";
 
 export const Header = () => {
   return (

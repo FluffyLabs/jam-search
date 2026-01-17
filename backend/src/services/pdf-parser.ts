@@ -62,12 +62,12 @@ export class PDFParserService {
       .replace(/ , /gu, ", ")
       .replace(/ \)/gu, ")")
       .replace(/\( /gu, "(")
-      .replace(/(?<= )Snark s(?=[ ,\.])/gu, "Snarks")
-      .replace(/(?<= )snark s(?=[ ,\.])/gu, "snarks")
-      .replace(/(?<= )Zk-snark s(?=[ ,\.])/gu, "Zk-snarks")
+      .replace(/(?<= )Snark s(?=[ ,.])/gu, "Snarks")
+      .replace(/(?<= )snark s(?=[ ,.])/gu, "snarks")
+      .replace(/(?<= )Zk-snark s(?=[ ,.])/gu, "Zk-snarks")
       .replace(/snark - based/gu, "snarkbased")
-      .replace(/(?<= )Polka vm(?=[ ,\.])/gu, "Polkavm")
-      .replace(/(?<= )J am(?=[ ,\.])/gu, "Jam");
+      .replace(/(?<= )Polka vm(?=[ ,.])/gu, "Polkavm")
+      .replace(/(?<= )J am(?=[ ,.])/gu, "Jam");
 
     // Helper: flatten outline to get all titles in order (for splitting)
     function flattenOutline(

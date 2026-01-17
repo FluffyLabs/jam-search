@@ -1,3 +1,7 @@
+import { ArrowRight, Search, Sparkles, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDebouncedCallback } from "use-debounce";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,10 +16,6 @@ import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/mode";
 import { getStoredSources } from "@/lib/sources";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Search, Sparkles, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDebouncedCallback } from "use-debounce";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },
@@ -388,11 +388,11 @@ export const SearchForm = ({
           </div>
           <div className="p-2 max-h-[300px] overflow-y-auto text-xs font-light">
             {searchOptions.map((option) => (
-              <div
+              <button
+                type="button"
                 key={option.label}
-                className="flex items-center justify-between p-2 hover:bg-zinc-800 rounded cursor-pointer"
+                className="flex items-center justify-between p-2 hover:bg-zinc-800 rounded cursor-pointer w-full text-left"
                 onClick={() => addSearchOption(option.label)}
-                onKeyUp={() => addSearchOption(option.label)}
               >
                 <div className="flex flex-col">
                   <span className="text-zinc-200 font-normal">
@@ -400,7 +400,7 @@ export const SearchForm = ({
                   </span>
                   <span className="text-zinc-400">{option.description}</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

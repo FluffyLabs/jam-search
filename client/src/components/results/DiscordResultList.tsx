@@ -1,7 +1,6 @@
 import type { useResults } from "@/hooks/useResults";
 import type { DiscordSearchResult } from "@/lib/api";
-import { getTextToDisplay } from "@/lib/utils";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getTextToDisplay } from "@/lib/utils";
 import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
 

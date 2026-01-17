@@ -1,7 +1,7 @@
-import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
-import type { useResults } from "@/hooks/useResults";
 import type * as matrix from "@shared/matrix";
 import { Link, useLocation } from "react-router-dom";
+import MatrixArchiverLogo from "@/assets/logos/matrix.svg";
+import type { useResults } from "@/hooks/useResults";
 import { ShowAll } from "../ShowAll";
 import { MatrixResultCards } from "./MatrixResultCards";
 import { Section } from "./Section";

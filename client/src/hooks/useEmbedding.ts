@@ -1,5 +1,5 @@
-import { fetchApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { fetchApi } from "@/lib/api";
 
 export function useEmbedding(query: string, isExtendedSearch: boolean) {
   return useQuery({

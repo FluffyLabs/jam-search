@@ -1,6 +1,6 @@
-import { fetchSearchResults } from "@/lib/api";
 import type * as matrix from "@shared/matrix";
 import { useQuery } from "@tanstack/react-query";
+import { fetchSearchResults } from "@/lib/api";
 import { useSearchCommon } from "./useSearchCommon";
 
 interface UseSearchMatrixOptions {

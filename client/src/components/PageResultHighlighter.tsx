@@ -1,8 +1,8 @@
+import type { ClassValue } from "clsx";
+import type { Components } from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import type { PageResult } from "@/lib/api";
 import { cn, highlightText } from "@/lib/utils";
-import type { ClassValue } from "clsx";
-import ReactMarkdown from "react-markdown";
-import type { Components } from "react-markdown";
 
 interface PageResultHighlighterProps {
   result: PageResult;

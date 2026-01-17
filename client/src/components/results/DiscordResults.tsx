@@ -1,7 +1,7 @@
-import DiscordLogo from "@/assets/logos/discord.svg";
-import type { useResults } from "@/hooks/useResults";
 import type * as discord from "@shared/discord";
 import { Link, useLocation } from "react-router-dom";
+import DiscordLogo from "@/assets/logos/discord.svg";
+import type { useResults } from "@/hooks/useResults";
 import { ShowAll } from "../ShowAll";
 import { DiscordResultCards } from "./DiscordResultCards";
 import { Section } from "./Section";

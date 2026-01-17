@@ -1,5 +1,5 @@
-import type { useSearchCommon } from "@/hooks/useSearchCommon";
 import type { RefObject } from "react";
+import type { useSearchCommon } from "@/hooks/useSearchCommon";
 import { Button } from "./ui/button";
 
 type PagingProps = {

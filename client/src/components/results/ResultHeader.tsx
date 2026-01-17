@@ -1,5 +1,5 @@
-import { ShareUrl } from "@/components/ShareUrl";
 import type { ReactNode } from "react";
+import { ShareUrl } from "@/components/ShareUrl";
 import { Container } from "../Container";
 import { SearchForm } from "../SearchForm";
 

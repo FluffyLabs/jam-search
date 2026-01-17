@@ -1,5 +1,5 @@
-import { SearchForm } from "@/components/SearchForm";
 import { Sparkles, Star, Target } from "lucide-react";
+import { SearchForm } from "@/components/SearchForm";
 
 const Header = () => {
   return (

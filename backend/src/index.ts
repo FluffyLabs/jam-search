@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./api.js";
 import { env } from "./env.js";
+import { cleanupMcpTransports } from "./mcp/handler.js";
 
 async function main() {
   const app = createApp();
@@ -13,9 +14,9 @@ async function main() {
 
   console.log(`🚀 Server running on http://localhost:${env.PORT}`);
 
-  // Handle graceful shutdown
   const shutdown = async () => {
     console.log("🛑 Shutting down...");
+    cleanupMcpTransports();
     server.close();
     process.exit(0);
   };

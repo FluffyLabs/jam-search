@@ -1,3 +1,7 @@
+import * as discord from "@shared/discord";
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Container } from "@/components/Container";
 import { Paging } from "@/components/Paging";
 import { DiscordResultList } from "@/components/results/DiscordResultList";
@@ -7,10 +11,6 @@ import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { SearchMode } from "@/lib/mode";
 import { parseSearchQuery } from "@/lib/utils";
-import * as discord from "@shared/discord";
-import { ArrowLeft } from "lucide-react";
-import { useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
 
 const DiscordResultsAll = () => {
   const location = useLocation();

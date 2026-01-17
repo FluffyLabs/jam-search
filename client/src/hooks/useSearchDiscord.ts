@@ -1,5 +1,5 @@
-import { fetchDiscordSearchResults } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { fetchDiscordSearchResults } from "@/lib/api";
 import { useSearchCommon } from "./useSearchCommon";
 
 interface UseSearchDiscordOptions {

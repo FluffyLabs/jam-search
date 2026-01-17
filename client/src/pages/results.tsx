@@ -1,25 +1,25 @@
+import { Source, stringToSource } from "@shared/sources";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import GithubLogo from "@/assets/logos/github.png";
 import JamWeb3FoundationLogo from "@/assets/logos/jam-web3-foundation.png";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
 import { Container } from "@/components/Container";
-import { ShowAll } from "@/components/ShowAll";
 import { DiscordResults } from "@/components/results/DiscordResults";
 import { GraypaperResults } from "@/components/results/GraypaperResults";
 import { MatrixResults } from "@/components/results/MatrixResults";
 import { PageResultCards } from "@/components/results/PageResultCards";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Section } from "@/components/results/Section";
+import { ShowAll } from "@/components/ShowAll";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/mode";
 import {
-  SOURCE_OPTIONS,
   getStoredSources,
+  SOURCE_OPTIONS,
   setStoredSources,
 } from "@/lib/sources";
-import { Source, stringToSource } from "@shared/sources";
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 
 const pageLogos: Record<string, string> = {
   "docs.jamcha.in": JamchainLogo,
