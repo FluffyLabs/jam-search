@@ -1,5 +1,5 @@
-import { searchGraypaper } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { searchGraypaper } from "@/lib/api";
 import { useSearchCommon } from "./useSearchCommon";
 
 interface UseSearchGraypaperOptions {

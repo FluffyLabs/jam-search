@@ -1,6 +1,9 @@
 {
   "name": "@fluffylabs/jam-search",
-  "workspaces": ["backend", "client"],
+  "workspaces": [
+    "backend",
+    "client"
+  ],
   "engines": {
     "node": "22.x",
     "npm": ">=10"
@@ -17,7 +20,7 @@
     "typecheck": "npm run --workspaces typecheck"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.3.11",
     "typescript": "^5.8.3"
   }
 }

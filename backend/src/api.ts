@@ -1,7 +1,7 @@
 import { Hono } from "hono";
-import { rateLimiter } from "hono-rate-limiter";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { rateLimiter } from "hono-rate-limiter";
 import { getEmbedding, getEmbeddingSchema } from "./api/getEmbedding.js";
 import {
   searchDiscords,

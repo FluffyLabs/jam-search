@@ -1,10 +1,9 @@
 import { discord, github, matrix, pages } from "@shared/index";
-
+import { Source } from "@shared/sources";
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { useSearchPages } from "@/hooks/useSearchPages";
 import { parseSearchQuery } from "@/lib/utils";
-import { Source } from "@shared/sources";
 import { useEmbedding } from "./useEmbedding";
 import { useSearchGraypaper } from "./useSearchGraypaper";
 

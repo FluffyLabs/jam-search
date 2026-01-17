@@ -1,3 +1,7 @@
+import { ArrowRight, Search, Sparkles, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useDebouncedCallback } from "use-debounce";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,10 +16,6 @@ import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/mode";
 import { getStoredSources } from "@/lib/sources";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Search, Sparkles, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useDebouncedCallback } from "use-debounce";
 
 const searchOptions = [
   { label: "from", description: "Messages from a specific user" },

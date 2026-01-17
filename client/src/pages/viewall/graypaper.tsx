@@ -1,17 +1,17 @@
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Container } from "@/components/Container";
 import { Paging } from "@/components/Paging";
-import { ViewEmbedded } from "@/components/ViewEmbedded";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ViewEmbedded } from "@/components/ViewEmbedded";
 import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { SearchMode } from "@/lib/mode";
 import { getTextToDisplay } from "@/lib/utils";
-import { ArrowLeft } from "lucide-react";
-import { useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
 
 const GraypaperResultsAll = () => {
   const location = useLocation();

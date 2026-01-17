@@ -25,7 +25,9 @@ const VIEWER_STATE_ENTRY = "embeddedViewerOpen";
 
 export function EmbeddedViewerProvider({
   children,
-}: { children: React.ReactElement }) {
+}: {
+  children: React.ReactElement;
+}) {
   const [portalContent, setPortalContent] = useState<React.ReactElement | null>(
     null
   );

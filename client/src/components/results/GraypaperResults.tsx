@@ -1,8 +1,8 @@
+import { BookOpenText } from "lucide-react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
 import type { useResults } from "@/hooks/useResults";
 import { getTextToDisplay } from "@/lib/utils";
-import { BookOpenText } from "lucide-react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
 import { ShowAll } from "../ShowAll";
 import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";

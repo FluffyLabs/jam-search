@@ -1,5 +1,5 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import type { ReactNode } from "react";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 
 export const Section = ({
   title,

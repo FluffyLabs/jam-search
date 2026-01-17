@@ -1,8 +1,7 @@
+import type * as matrix from "@shared/matrix";
 import type { useResults } from "@/hooks/useResults";
 import type { SearchResult } from "@/lib/api";
-import { getTextToDisplay } from "@/lib/utils";
-import { formatDate } from "@/lib/utils";
-import type * as matrix from "@shared/matrix";
+import { formatDate, getTextToDisplay } from "@/lib/utils";
 import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";

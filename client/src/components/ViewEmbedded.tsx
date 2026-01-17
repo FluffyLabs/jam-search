@@ -1,6 +1,3 @@
-import type { PageResult, SearchResult } from "@/lib/api";
-import { cn, formatDate, highlightText } from "@/lib/utils";
-import { useEmbeddedViewer } from "@/providers/EmbeddedResultsContext";
 import * as matrix from "@shared/matrix";
 import { SquareX } from "lucide-react";
 import {
@@ -10,6 +7,9 @@ import {
   useMemo,
   useState,
 } from "react";
+import type { PageResult, SearchResult } from "@/lib/api";
+import { cn, formatDate, highlightText } from "@/lib/utils";
+import { useEmbeddedViewer } from "@/providers/EmbeddedResultsContext";
 import { PageResultHighlighter } from "./PageResultHighlighter";
 import { Button } from "./ui/button";
 

@@ -1,3 +1,7 @@
+import * as matrix from "@shared/matrix";
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Container } from "@/components/Container";
 import { Paging } from "@/components/Paging";
 import { MatrixResultList } from "@/components/results/MatrixResultList";
@@ -7,10 +11,6 @@ import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { SearchMode } from "@/lib/mode";
 import { parseSearchQuery } from "@/lib/utils";
-import * as matrix from "@shared/matrix";
-import { ArrowLeft } from "lucide-react";
-import { useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
 
 const MatrixResultsAll = () => {
   const location = useLocation();

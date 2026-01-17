@@ -7,12 +7,12 @@ import OpenAI from "openai";
 import { db } from "../db/db.js";
 import {
   type Discord,
-  type GraypaperSection,
-  type Message,
-  type Page,
   discordsTable,
+  type GraypaperSection,
   graypaperSectionsTable,
+  type Message,
   messagesTable,
+  type Page,
   pagesTable,
 } from "../db/schema.js";
 

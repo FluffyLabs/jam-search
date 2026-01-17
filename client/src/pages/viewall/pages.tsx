@@ -1,3 +1,6 @@
+import { ArrowLeft } from "lucide-react";
+import { useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Container } from "@/components/Container";
 import { Paging } from "@/components/Paging";
 import { PageResultList } from "@/components/results/PageResultList";
@@ -7,9 +10,6 @@ import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchPages } from "@/hooks/useSearchPages";
 import { SearchMode } from "@/lib/mode";
 import { parseSearchQuery } from "@/lib/utils";
-import { ArrowLeft } from "lucide-react";
-import { useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
 
 const PagesResultsAll = () => {
   const location = useLocation();

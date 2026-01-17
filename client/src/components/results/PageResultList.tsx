@@ -1,8 +1,8 @@
 import type { useResults } from "@/hooks/useResults";
 import { formatDate } from "@/lib/utils";
 import { PageResultHighlighter } from "../PageResultHighlighter";
-import { ViewEmbedded } from "../ViewEmbedded";
 import { Skeleton } from "../ui/skeleton";
+import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
 import { ResultCard } from "./ResultCard";
 
