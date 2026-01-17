@@ -30,7 +30,7 @@ class InMemoryEmbeddingCache implements EmbeddingCache {
   /**
    * Store an embedding and return a cache entry ID
    */
-  store(embedding: number[], query?: string): string {
+  store(embedding: number[], _query?: string): string {
     // Generate a deterministic ID from the embedding hash
     const id = this.hashEmbedding(embedding);
 

@@ -60,9 +60,7 @@ export const PageResultCards = ({
                           {githubId}
                           {" - "}
                         </>
-                      ) : (
-                        <></>
-                      )}
+                      ) : null}
                       {formatDate(result.createdAt)}
                     </>
                   ) : (

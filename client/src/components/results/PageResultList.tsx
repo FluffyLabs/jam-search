@@ -67,9 +67,7 @@ export const PageResultList = ({
                             {githubId}
                             {" - "}
                           </>
-                        ) : (
-                          <></>
-                        )}
+                        ) : null}
                         {formatDate(result.createdAt)}
                       </>
                     ) : (

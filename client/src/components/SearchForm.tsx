@@ -388,11 +388,11 @@ export const SearchForm = ({
           </div>
           <div className="p-2 max-h-[300px] overflow-y-auto text-xs font-light">
             {searchOptions.map((option) => (
-              <div
+              <button
+                type="button"
                 key={option.label}
-                className="flex items-center justify-between p-2 hover:bg-zinc-800 rounded cursor-pointer"
+                className="flex items-center justify-between p-2 hover:bg-zinc-800 rounded cursor-pointer w-full text-left"
                 onClick={() => addSearchOption(option.label)}
-                onKeyUp={() => addSearchOption(option.label)}
               >
                 <div className="flex flex-col">
                   <span className="text-zinc-200 font-normal">
@@ -400,7 +400,7 @@ export const SearchForm = ({
                   </span>
                   <span className="text-zinc-400">{option.description}</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
