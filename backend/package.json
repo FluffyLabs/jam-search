@@ -25,7 +25,7 @@
     "drizzle-orm": "^0.44.7",
     "fast-xml-parser": "^5.3.2",
     "firecrawl": "^1.25.0",
-    "hono": "^4.11.3",
+    "hono": "^4.11.4",
     "hono-rate-limiter": "^0.4.2",
     "matrix-js-sdk": "^39.2.0",
     "node-fetch": "^2.7.0",
