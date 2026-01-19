@@ -32,7 +32,7 @@
     "node-fetch": "^2.7.0",
     "openai": "^6.8.1",
     "pdfjs-dist": "^5.2.133",
-    "postgres": "^3.4.5",
+    "postgres": "^3.4.8",
     "zod": "^3.24.3",
     "zod-to-json-schema": "^3.25.1"
   },
