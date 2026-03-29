@@ -1,0 +1,6 @@
+---
+type: graypaper_section
+title: 6.6. The Markers
+index: 55
+---
+The epoch and winning-tickets markers are information placed in the header in order to minimize data transfer necessary to determine the validator keys associated with any given epoch. They are particularly useful to nodes which do not synchronize the entire state for any given block since they facilitate the secure tracking of changes to the validator key sets using only the chain of headers. As mentioned earlier, the header’s epoch marker H e is either empty or, if the block is the first in a new epoch, then a tuple of the next and current epoch randomness, along with a sequence of tuples containing both Bandersnatch keys and Ed25519 keys for each validator defining the validator keys beginning in the next epoch. Formally: H e ≡ ⎧ ⎪ ⎪ ⎨ ⎪ ⎪ ⎩ (η 0, η 1, [ ⎧ ⎩ k b, k e ⎫ ⎭ S k < − γ ′ k ]) if e ′ > e ∅ otherwise (6.27) The winning-tickets marker H w is either empty or, if the block is the first after the end of the submission period for tickets and if the ticket accumulator is saturated, then the final sequence of ticket identifiers. Formally: H w ≡ ⎧ ⎪ ⎪ ⎨ ⎪ ⎪ ⎩ Z (γ a) if e ′ = e ∧ m < Y ≤ m ′ ∧ S γ a S = E ∅ otherwise (6.28) JAM: JOIN-ACCUMULATE MACHINE DRAFT 0.6.6 - May 5, 2025 15

@@ -6,6 +6,9 @@ on:
     # Run daily at 05:00 UTC
     - cron: '0 5 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   run-graypaper-job:
     name: Update Graypaper
@@ -13,6 +16,8 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_INDEX_TOKEN }}
 
       - name: Setup Node.js with cache
         uses: actions/setup-node@v4
@@ -29,5 +34,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DATA_DIR: ./data
+
+      - uses: ./.github/actions/commit-data
+        with:
+          commit-message: "index: update graypaper"

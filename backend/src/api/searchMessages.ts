@@ -1,17 +1,8 @@
-import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
-import { db } from "../db/db.js";
-import { messagesTable } from "../db/schema.js";
-import {
-  embeddingSchema,
-  paradeMatch,
-  resolveEmbedding,
-  similarityMatch,
-  similarityWhere,
-  simpleParadeMatch,
-  timeConditions,
-} from "./common.js";
+import type { SearchDB } from "../data/searchIndex.js";
+import { searchDocs } from "../data/searchIndex.js";
+import { embeddingSchema, resolveEmbedding, timeConditions } from "./common.js";
 
 export const searchMessagesRequestSchema = z.object({
   q: z.string(),
@@ -27,10 +18,12 @@ export const searchMessagesRequestSchema = z.object({
 
 export async function searchMessages(
   data: z.infer<typeof searchMessagesRequestSchema>,
-  cache: EmbeddingCache
+  cache: EmbeddingCache,
+  db: SearchDB,
+  dataDir: string
 ) {
-  // Resolve embedding from cache ID or base64
   const embedding = resolveEmbedding(data.e, cache);
+
   if (data.q.trim().length === 0) {
     return {
       results: [],
@@ -41,9 +34,9 @@ export async function searchMessages(
     };
   }
 
-  // Add filter condition for date range
+  // Time range filter
   const time = await timeConditions(
-    "timestamp",
+    dataDir,
     data.filter_since_gp,
     data.filter_before,
     data.filter_after
@@ -58,63 +51,39 @@ export async function searchMessages(
     };
   }
 
-  // Initialize additional filter conditions
-  const whereConditions = [
-    // Add filter conditions based on parameters
-    data.filter_from
-      ? sql`id @@@ ${simpleParadeMatch("sender", data.filter_from)}`
-      : undefined,
-    // channelid
-    data.channelId
-      ? sql`id @@@ ${simpleParadeMatch("roomid", data.channelId)}`
-      : undefined,
-    // time-based
-    ...time.where,
-    // matches
-    or(
-      // standard search using paradedb
-      paradeMatch(
-        [
-          ["sender", 2.0],
-          ["content", 1.0],
-        ],
-        data.q
-      ),
-      // embedding search if embedding is provided
-      similarityWhere(messagesTable.embedding, embedding)
-    ),
-  ];
+  // Build where filters
+  const where: Record<string, unknown> = { ...time.where };
+  if (data.channelId) {
+    where.roomId = { eq: data.channelId };
+  }
 
-  const countResult = await db
-    .select({ count: sql`count(*)` })
-    .from(messagesTable)
-    .where(and(...whereConditions));
+  const results = searchDocs(db, {
+    term: data.filter_from ? `${data.q} ${data.filter_from}` : data.q,
+    embedding: embedding.length > 0 ? embedding : undefined,
+    type: "matrix",
+    limit: data.pageSize,
+    offset: (data.page - 1) * data.pageSize,
+    where,
+    properties: ["content", "sender"] as const,
+    boost: { sender: 2, content: 1 },
+  });
 
-  const total = Number(countResult[0].count);
-  console.log(`Message search query found ${total} results`);
-
-  const query = db
-    .select({
-      id: messagesTable.id,
-      messageId: messagesTable.messageId,
-      sender: messagesTable.sender,
-      content: messagesTable.content,
-      timestamp: messagesTable.timestamp,
-      roomId: messagesTable.roomId,
-      similarity: similarityMatch(messagesTable.embedding, embedding),
-      score: sql<number>`paradedb.score(id) AS score`,
-    })
-    .from(messagesTable)
-    .where(and(...whereConditions))
-    // order by similarity first, then paradedb score
-    .orderBy(sql`similarity DESC, score DESC, timestamp DESC, id`)
-    .offset((data.page - 1) * data.pageSize)
-    .limit(data.pageSize);
-  const results = await query;
+  console.log(`Message search query found ${results.count} results`);
 
   return {
-    results,
-    total,
+    results: results.hits.map((hit) => ({
+      id: hit.id,
+      messageId: hit.document.messageId,
+      sender: hit.document.sender,
+      content: hit.document.content,
+      timestamp: hit.document.timestamp
+        ? new Date(hit.document.timestamp)
+        : null,
+      roomId: hit.document.roomId,
+      similarity: hit.score,
+      score: hit.score,
+    })),
+    total: results.count,
     page: data.page,
     pageSize: data.pageSize,
   };

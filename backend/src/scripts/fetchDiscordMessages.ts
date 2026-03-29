@@ -4,9 +4,7 @@ import {
   TextChannel,
   ThreadChannel,
 } from "discord.js";
-import { sql } from "drizzle-orm";
-import { db } from "../db/db.js";
-import { discordsTable } from "../db/schema.js";
+import { type ChatMessage, writeDiscordDayFile } from "../data/writer.js";
 
 export interface DiscordConfig {
   token: string;
@@ -251,39 +249,46 @@ export async function fetchDiscordContent(
   }
 }
 
-export async function storeContentInDatabase(messages: DiscordMessage[]) {
-  await db.transaction(async (tx) => {
-    for (const message of messages) {
-      // Skip empty messages
-      if (!message.content.trim()) continue;
+export function storeContentInMarkdown(
+  dataDir: string,
+  channelName: string,
+  messages: DiscordMessage[]
+) {
+  // Group messages by date and thread
+  const groups = new Map<string, { msgs: ChatMessage[]; threadId?: string }>();
 
-      await tx
-        .insert(discordsTable)
-        .values({
-          messageId: message.id,
-          channelId: message.channelId,
-          threadId: message.threadId,
-          serverId: message.serverId,
-          sender: message.author.username,
-          authorId: message.author.id,
-          content: message.content,
-          timestamp: message.timestamp,
-        })
-        .onConflictDoUpdate({
-          target: discordsTable.messageId,
-          set: {
-            content: message.content,
-            sender: message.author.username,
-            authorId: message.author.id,
-            channelId: message.channelId,
-            threadId: message.threadId,
-            serverId: message.serverId,
-            timestamp: message.timestamp,
-          },
-        });
+  for (const message of messages) {
+    if (!message.content.trim()) continue;
+
+    const date = message.timestamp.toISOString().split("T")[0];
+    const key = message.threadId ? `${date}|${message.threadId}` : `${date}|`;
+
+    if (!groups.has(key)) {
+      groups.set(key, { msgs: [], threadId: message.threadId });
     }
+    groups.get(key)?.msgs.push({
+      sender: message.author.username,
+      timestamp: message.timestamp,
+      messageId: message.id,
+      content: message.content,
+    });
+  }
 
-    console.log("Reindexing discords_search_idx");
-    await tx.execute(sql`REINDEX INDEX discords_search_idx;`);
-  });
+  for (const [key, { msgs, threadId }] of groups) {
+    const [date] = key.split("|");
+    const channelId = messages[0]?.channelId || "";
+    const serverId = messages[0]?.serverId || "";
+
+    writeDiscordDayFile(
+      dataDir,
+      channelName,
+      channelId,
+      serverId,
+      date,
+      msgs,
+      threadId
+    );
+  }
+
+  console.log(`Wrote ${messages.length} Discord messages to markdown`);
 }

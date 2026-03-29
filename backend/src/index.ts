@@ -1,10 +1,26 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./api.js";
+import { loadAllData } from "./data/loader.js";
+import { createSearchDB } from "./data/searchIndex.js";
 import { env } from "./env.js";
-import { cleanupMcpTransports } from "./mcp/handler.js";
+import { cleanupMcpTransports, initMcpHandler } from "./mcp/handler.js";
 
 async function main() {
-  const app = createApp();
+  const {
+    DATA_DIR: dataDir,
+    CACHE_DIR: cacheDir,
+    OPENAI_API_KEY: openaiApiKey,
+  } = env;
+
+  // Create and populate the in-memory search index
+  console.log("Initializing search index...");
+  const db = createSearchDB();
+  await loadAllData(db, dataDir, cacheDir, openaiApiKey);
+
+  // Initialize MCP handler with db reference
+  initMcpHandler(db, dataDir);
+
+  const app = createApp(db, dataDir);
 
   // Start HTTP server
   const server = serve({
@@ -12,12 +28,17 @@ async function main() {
     port: env.PORT,
   });
 
-  console.log(`🚀 Server running on http://localhost:${env.PORT}`);
+  console.log(`Server running on http://localhost:${env.PORT}`);
 
+  let isShuttingDown = false;
   const shutdown = async () => {
-    console.log("🛑 Shutting down...");
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+    console.log("Shutting down...");
     cleanupMcpTransports();
-    server.close();
+    await new Promise<void>((resolve, reject) => {
+      server.close((err?: Error) => (err ? reject(err) : resolve()));
+    });
     process.exit(0);
   };
 
@@ -26,6 +47,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error("❌ Error:", err);
+  console.error("Error:", err);
   process.exit(1);
 });

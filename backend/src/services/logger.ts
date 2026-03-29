@@ -1,6 +1,5 @@
 import "dotenv/config";
-import type { DbClient } from "../db/db.js";
-import { messagesTable } from "../db/schema.js";
+import { type ChatMessage, writeMatrixDayFile } from "../data/writer.js";
 
 export interface Message {
   messageId: string;
@@ -10,18 +9,11 @@ export interface Message {
   timestamp: Date;
 }
 
-const toDbMessage = (newMessage: Message) => {
-  return {
-    messageId: newMessage.messageId,
-    roomId: newMessage.roomId,
-    sender: newMessage.sender,
-    content: newMessage.content,
-    timestamp: newMessage.timestamp,
-  };
-};
-
 export class MessagesLogger {
-  constructor(private readonly db: DbClient) {}
+  constructor(
+    private readonly dataDir: string,
+    private readonly roomName: string
+  ) {}
 
   async onMessages(
     events: {
@@ -57,17 +49,29 @@ export class MessagesLogger {
           timestamp: event.date,
         }));
 
-      console.log(
-        "Inserting messages",
-        messages.length,
-        JSON.stringify(messages, null, 2)
-      );
-      await this.db
-        .insert(messagesTable)
-        .values(messages.map(toDbMessage))
-        .onConflictDoNothing();
+      console.log("Writing messages", messages.length);
+
+      // Group by date
+      const byDate = new Map<string, ChatMessage[]>();
+      for (const msg of messages) {
+        const date = msg.timestamp.toISOString().split("T")[0];
+        if (!byDate.has(date)) {
+          byDate.set(date, []);
+        }
+        byDate.get(date)?.push({
+          sender: msg.sender,
+          timestamp: msg.timestamp,
+          messageId: msg.messageId,
+          content: msg.content,
+        });
+      }
+
+      const roomId = messages[0]?.roomId;
+      for (const [date, msgs] of byDate) {
+        writeMatrixDayFile(this.dataDir, this.roomName, roomId, date, msgs);
+      }
     } catch (error) {
-      console.error("error indexing multiple messages", error);
+      console.error("error writing messages to markdown", error);
     }
   }
 }

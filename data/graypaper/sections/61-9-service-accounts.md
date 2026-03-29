@@ -1,0 +1,6 @@
+---
+type: graypaper_section
+title: 9. Service Accounts
+index: 61
+---
+As we already noted, a service in Jam is somewhat analogous to a smart contract in Ethereum in that it includes amongst other items, a code component, a storage component and a balance. Unlike Ethereum, the code is split over two isolated entry-points each with their own environmental conditions; one, refinement, is essentially stateless and happens in-core, and the other, accumulation, which is stateful and happens on-chain. It is the latter which we will concern ourselves with now. Service accounts are held in state under δ, a partial mapping from a service identifier N S into a tuple of named elements which specify the attributes of the service relevant to the Jam protocol. Formally: N S ≡ N 2 32 (9.1) δ ∈ D ⟨ N S → A ⟩ (9.2) The service account is defined as the tuple of storage dictionary s, preimage lookup dictionaries p and l, code hash c, and balance b as well as the two code gas limits g & m. Formally: A ≡ ⎧ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎩ s ∈ D ⟨ H → Y ⟩, p ∈ D ⟨ H → Y ⟩, l ∈ D ⟨ ⎧ ⎩ H, N L ⎫ ⎭ → ⟦ N T ⟧ ∶ 3 ⟩, c ∈ H, b ∈ N B, g ∈ N G, m ∈ N G ⎫ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎭ (9.3) Thus, the balance of the service of index s would be denoted δ [ s ] b and the storage item of key k ∈ H for that service is written δ [ s ] s [ k ].

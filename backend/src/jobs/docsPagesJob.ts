@@ -1,10 +1,10 @@
 import FirecrawlApp, { FirecrawlError } from "firecrawl";
 import { PAGES } from "../../../shared/pages.js";
-import { db } from "../db/db.js";
 import { env } from "../env.js";
 import { fetchAndStorePages } from "../scripts/fetchPages.js";
 
 const FIRECRAWL_API_KEY = env.FIRECRAWL_API_KEY;
+const DATA_DIR = process.env.DATA_DIR || "./data";
 
 try {
   await main();
@@ -14,13 +14,6 @@ try {
   process.exit(1);
 }
 
-/**
- * Execute the docs pages fetch job by mapping or downloading pages listed in PAGES and storing their results.
- *
- * For each entry in PAGES this function either fetches a sitemap or maps a URL to discover links, then delegates storage to fetchAndStorePages. It collects any per-page failures, logs them, and if any failures occurred throws an Error summarizing the number of errors; when no failures occur it closes the database client.
- *
- * @throws Error - If one or more page fetches or mappings failed; the thrown error's message contains the number of failures.
- */
 async function main() {
   console.log("Running docs pages fetch job at", new Date().toISOString());
 
@@ -45,7 +38,8 @@ async function main() {
           {
             sitemapUrl: page.sitemapUrl,
           },
-          page.dbId
+          page.dbId,
+          DATA_DIR
         ))
       );
       continue;
@@ -58,7 +52,12 @@ async function main() {
       if (map.success && map.links) {
         console.log(`Found ${map.links.length} URLs for ${page.url}`);
         errors.push(
-          ...(await fetchAndStorePages(firecrawl, map.links, page.dbId))
+          ...(await fetchAndStorePages(
+            firecrawl,
+            map.links,
+            page.dbId,
+            DATA_DIR
+          ))
         );
       } else {
         errors.push([
@@ -82,7 +81,6 @@ async function main() {
   }
 
   console.log("Docs pages fetch job completed successfully");
-  await db.$client.end();
 }
 
 function assertNever(_page: never) {}

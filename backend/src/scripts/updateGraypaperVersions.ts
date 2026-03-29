@@ -1,5 +1,7 @@
-import { db } from "../db/db.js";
-import { graypapersTable } from "../db/schema.js";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import matter from "gray-matter";
+import { writeGraypaperVersions } from "../data/writer.js";
 
 interface GitHubRelease {
   tag_name: string;
@@ -26,33 +28,52 @@ async function fetchLatestReleases(): Promise<GitHubRelease[]> {
   }
 }
 
-async function getExistingVersions(): Promise<string[]> {
-  const existingRecords = await db.select().from(graypapersTable);
-  return existingRecords.map((record: { version: string }) => record.version);
-}
-
-async function addNewRelease(release: GitHubRelease): Promise<void> {
-  try {
-    await db.insert(graypapersTable).values({
-      version: release.tag_name,
-      timestamp: new Date(release.published_at),
-    });
-    console.log(`Added new graypaper version: ${release.tag_name}`);
-  } catch (error) {
-    console.error(`Error adding version ${release.tag_name}:`, error);
+function getExistingVersions(
+  dataDir: string
+): Array<{ version: string; timestamp: string }> {
+  const versionsPath = path.join(dataDir, "graypaper", "versions.md");
+  if (!fs.existsSync(versionsPath)) {
+    return [];
   }
+
+  const raw = fs.readFileSync(versionsPath, "utf-8");
+  const { data: frontmatter } = matter(raw);
+  return (
+    (frontmatter.versions as Array<{ version: string; timestamp: string }>) ||
+    []
+  );
 }
 
-export async function updateGraypaperVersions(): Promise<boolean> {
+export async function updateGraypaperVersions(
+  dataDir: string
+): Promise<boolean> {
   const releases = await fetchLatestReleases();
-  const existingVersions = await getExistingVersions();
+  const existingVersions = getExistingVersions(dataDir);
+  const existingSet = new Set(existingVersions.map((v) => v.version));
+
+  let hasNew = false;
+  const allVersions = [...existingVersions];
 
   for (const release of releases) {
-    if (!existingVersions.includes(release.tag_name)) {
-      await addNewRelease(release);
-      return true;
+    if (!existingSet.has(release.tag_name)) {
+      allVersions.push({
+        version: release.tag_name,
+        timestamp: release.published_at,
+      });
+      hasNew = true;
+      console.log(`Added new graypaper version: ${release.tag_name}`);
     }
   }
 
-  return false;
+  if (hasNew) {
+    writeGraypaperVersions(
+      dataDir,
+      allVersions.map((v) => ({
+        version: v.version,
+        timestamp: new Date(v.timestamp),
+      }))
+    );
+  }
+
+  return hasNew;
 }

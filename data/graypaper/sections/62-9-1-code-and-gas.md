@@ -1,0 +1,6 @@
+---
+type: graypaper_section
+title: 9.1. Code and Gas
+index: 62
+---
+The code and associated metadata of a service account is identified by a hash which, if the service is to be functional, must be present within its preimage lookup (see section 9.2). We thus define the actual code c and metadata m : ∀ a ∈ A ∶ E (↕ a m, a c) ≡ ⎧ ⎪ ⎪ ⎨ ⎪ ⎪ ⎩ a p [ a c ] if a c ∈ a p ∅ otherwise (9.4) There are three entry-points in the code: 0 refine : Refinement, executed in-core and stateless. 10 1 accumulate : Accumulation, executed on-chain and stateful. 2 on_transfer : Transfer handler, executed onchain and stateful. Whereas the first, executing in-core, is described in more detail in section 14.3, the latter two are defined in the present section. As stated in appendix A, execution time in the Jam virtual machine is measured deterministically in units of gas, represented as a natural number less than 2 64 and formally denoted N G. We may also use Z G to denote the set Z − 2 63 ... 2 63 if the quantity may be negative. There are two limits specified in the account, g, the minimum gas required in order to execute the Accumulate entry-point of the service’s code, and m, the minimum required for the On Transfer entry-point.
