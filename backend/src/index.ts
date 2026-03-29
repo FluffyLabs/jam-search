@@ -30,10 +30,15 @@ async function main() {
 
   console.log(`Server running on http://localhost:${env.PORT}`);
 
+  let isShuttingDown = false;
   const shutdown = async () => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
     console.log("Shutting down...");
     cleanupMcpTransports();
-    server.close();
+    await new Promise<void>((resolve, reject) => {
+      server.close((err?: Error) => (err ? reject(err) : resolve()));
+    });
     process.exit(0);
   };
 

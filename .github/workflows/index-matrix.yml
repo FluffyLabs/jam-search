@@ -16,6 +16,8 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_INDEX_TOKEN }}
 
       - name: Setup Node.js with cache
         uses: actions/setup-node@v4
@@ -40,5 +42,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/
-          git diff --staged --quiet || git commit -m "index: update matrix messages"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "index: update matrix messages"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

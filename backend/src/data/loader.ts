@@ -194,7 +194,7 @@ export async function loadAllData(
   for (const file of files) {
     try {
       const docs = loadMarkdownFile(dataDir, file);
-      allDocs.push(...docs);
+      allDocs.push(...docs.filter((d) => d.content.trim()));
     } catch (error) {
       console.error(`Error loading ${file}:`, error);
     }

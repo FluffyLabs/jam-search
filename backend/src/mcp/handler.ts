@@ -7,8 +7,8 @@ import { createMcpServer } from "./server.js";
 
 const transports = new Map<string, WebStandardStreamableHTTPServerTransport>();
 
-let _db: SearchDB;
-let _dataDir: string;
+let _db: SearchDB | undefined;
+let _dataDir: string | undefined;
 
 export function initMcpHandler(db: SearchDB, dataDir: string): void {
   _db = db;
@@ -23,6 +23,9 @@ async function createTransportForSession(): Promise<{
   transport: WebStandardStreamableHTTPServerTransport;
   server: ReturnType<typeof createMcpServer>;
 }> {
+  if (!_db || !_dataDir) {
+    throw new Error("MCP handler not initialized — call initMcpHandler first");
+  }
   const server = createMcpServer(_db, _dataDir);
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: () => randomUUID(),

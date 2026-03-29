@@ -69,8 +69,6 @@ export async function fillArchivedMessages(
         console.log(
           `Successfully wrote ${messages.length} messages for room ${room.id}`
         );
-        console.log("First message:", messages[0]);
-        console.log("Last message:", messages[messages.length - 1]);
       } else {
         console.log(
           `No messages found for room ${room.id} in the specified date range`
