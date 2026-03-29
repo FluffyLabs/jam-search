@@ -6,29 +6,23 @@
  * Requires POSTGRES_URL environment variable to be set.
  */
 import "dotenv/config";
+import { pgTable, serial, text, timestamp, vector } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/postgres-js";
-import {
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  vector,
-} from "drizzle-orm/pg-core";
 import postgres from "postgres";
+import { CHANNELS } from "../../../shared/discord.js";
+import { ROOMS } from "../../../shared/matrix.js";
 import {
-  writeMatrixDayFile,
-  writeDiscordDayFile,
-  writeGithubPage,
-  writeDocsPage,
-  writeGraypaperSection,
-  writeGraypaperVersions,
-  writeEmbeddings,
   type ChatMessage,
   type PageData,
   slugify,
+  writeDiscordDayFile,
+  writeDocsPage,
+  writeEmbeddings,
+  writeGithubPage,
+  writeGraypaperSection,
+  writeGraypaperVersions,
+  writeMatrixDayFile,
 } from "../data/writer.js";
-import { ROOMS } from "../../../shared/matrix.js";
-import { CHANNELS } from "../../../shared/discord.js";
 
 // --- Inline schema definitions (since db/schema.ts was removed) ---
 
@@ -61,7 +55,10 @@ const pagesTable = pgTable("pages", {
   title: text("title").notNull(),
   site: text("site"),
   created_at: timestamp("created_at", { mode: "date", precision: 3 }).notNull(),
-  lastModified: timestamp("last_modified", { mode: "date", precision: 3 }).notNull(),
+  lastModified: timestamp("last_modified", {
+    mode: "date",
+    precision: 3,
+  }).notNull(),
   embedding: vector("embedding", { dimensions: 1536 }),
 });
 

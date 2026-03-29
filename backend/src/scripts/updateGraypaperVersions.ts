@@ -38,7 +38,10 @@ function getExistingVersions(
 
   const raw = fs.readFileSync(versionsPath, "utf-8");
   const { data: frontmatter } = matter(raw);
-  return (frontmatter.versions as Array<{ version: string; timestamp: string }>) || [];
+  return (
+    (frontmatter.versions as Array<{ version: string; timestamp: string }>) ||
+    []
+  );
 }
 
 export async function updateGraypaperVersions(

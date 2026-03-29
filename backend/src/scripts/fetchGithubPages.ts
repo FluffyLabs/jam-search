@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { writeGithubPage, type PageData } from "../data/writer.js";
+import { type PageData, writeGithubPage } from "../data/writer.js";
 
 export interface GitHubConfig {
   owner: string;
@@ -308,13 +308,9 @@ export function storeContentInMarkdown(
       item.body,
       "",
       ...item.comments.map((comment) =>
-        [
-          "",
-          `## Comment by @${comment.user.login}`,
-          "",
-          comment.body,
-          "",
-        ].join("\n")
+        ["", `## Comment by @${comment.user.login}`, "", comment.body, ""].join(
+          "\n"
+        )
       ),
     ].join("\n");
 

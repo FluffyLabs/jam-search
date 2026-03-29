@@ -1,12 +1,16 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./api.js";
-import { createSearchDB } from "./data/searchIndex.js";
 import { loadAllData } from "./data/loader.js";
+import { createSearchDB } from "./data/searchIndex.js";
 import { env } from "./env.js";
 import { cleanupMcpTransports, initMcpHandler } from "./mcp/handler.js";
 
 async function main() {
-  const { DATA_DIR: dataDir, CACHE_DIR: cacheDir, OPENAI_API_KEY: openaiApiKey } = env;
+  const {
+    DATA_DIR: dataDir,
+    CACHE_DIR: cacheDir,
+    OPENAI_API_KEY: openaiApiKey,
+  } = env;
 
   // Create and populate the in-memory search index
   console.log("Initializing search index...");

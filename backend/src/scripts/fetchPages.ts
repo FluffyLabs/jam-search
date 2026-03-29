@@ -3,7 +3,7 @@ import { XMLParser } from "fast-xml-parser";
 import type FirecrawlApp from "firecrawl";
 import { FirecrawlError } from "firecrawl";
 import fetch from "node-fetch";
-import { writeDocsPage, type PageData } from "../data/writer.js";
+import { type PageData, writeDocsPage } from "../data/writer.js";
 
 interface SitemapUrl {
   loc: string;

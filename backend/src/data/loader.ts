@@ -1,13 +1,13 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import matter from "gray-matter";
+import { generateEmbeddings } from "./embeddings.js";
 import {
+  countDocs,
+  insertDocs,
   type SearchDB,
   type SearchDoc,
-  insertDocs,
-  countDocs,
 } from "./searchIndex.js";
-import { generateEmbeddings } from "./embeddings.js";
 
 // Regex to parse individual chat messages from a daily markdown file
 // Format: **sender** (2025-04-20T10:23:00.000Z) [msgid:$abc123]:
@@ -34,7 +34,9 @@ function parseMessages(body: string): ParsedMessage[] {
     // Content starts after the match and goes until the next message or end
     const contentStart = (match.index ?? 0) + match[0].length;
     const contentEnd =
-      i + 1 < matches.length ? (matches[i + 1].index ?? body.length) : body.length;
+      i + 1 < matches.length
+        ? (matches[i + 1].index ?? body.length)
+        : body.length;
     const content = body.slice(contentStart, contentEnd).trim();
 
     if (content) {
@@ -136,10 +138,7 @@ function loadGraypaperVersionsFile(
   }));
 }
 
-function loadMarkdownFile(
-  dataDir: string,
-  filePath: string
-): SearchDoc[] {
+function loadMarkdownFile(dataDir: string, filePath: string): SearchDoc[] {
   const fullPath = path.join(dataDir, filePath);
   const raw = fs.readFileSync(fullPath, "utf-8");
   const { data: frontmatter, content: body } = matter(raw);

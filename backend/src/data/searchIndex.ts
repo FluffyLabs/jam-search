@@ -1,5 +1,5 @@
-import { create, insert, insertMultiple, search, count } from "@orama/orama";
-import type { Orama, Results, Result } from "@orama/orama";
+import type { Orama, Result, Results } from "@orama/orama";
+import { count, create, insert, insertMultiple, search } from "@orama/orama";
 
 export const SCHEMA = {
   // Document type for filtering

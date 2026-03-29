@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { writeMatrixDayFile, type ChatMessage } from "../data/writer.js";
+import { type ChatMessage, writeMatrixDayFile } from "../data/writer.js";
 
 export interface Message {
   messageId: string;
@@ -68,13 +68,7 @@ export class MessagesLogger {
 
       const roomId = messages[0]?.roomId;
       for (const [date, msgs] of byDate) {
-        writeMatrixDayFile(
-          this.dataDir,
-          this.roomName,
-          roomId,
-          date,
-          msgs
-        );
+        writeMatrixDayFile(this.dataDir, this.roomName, roomId, date, msgs);
       }
     } catch (error) {
       console.error("error writing messages to markdown", error);

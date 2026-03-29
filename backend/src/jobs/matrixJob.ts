@@ -19,7 +19,12 @@ async function main() {
     const yesterday = subDays(today, 1);
     const yesterdayStr = format(yesterday, "yyyy-MM-dd");
 
-    await fillArchivedMessages(DATA_DIR, matrix.ROOMS, yesterdayStr, yesterdayStr);
+    await fillArchivedMessages(
+      DATA_DIR,
+      matrix.ROOMS,
+      yesterdayStr,
+      yesterdayStr
+    );
     console.log("Message fetch job completed successfully");
   } catch (error) {
     console.error("Error in message fetch job:", error);

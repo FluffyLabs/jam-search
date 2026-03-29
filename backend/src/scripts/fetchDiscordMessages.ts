@@ -4,7 +4,7 @@ import {
   TextChannel,
   ThreadChannel,
 } from "discord.js";
-import { writeDiscordDayFile, type ChatMessage } from "../data/writer.js";
+import { type ChatMessage, writeDiscordDayFile } from "../data/writer.js";
 
 export interface DiscordConfig {
   token: string;
@@ -255,18 +255,13 @@ export function storeContentInMarkdown(
   messages: DiscordMessage[]
 ) {
   // Group messages by date and thread
-  const groups = new Map<
-    string,
-    { msgs: ChatMessage[]; threadId?: string }
-  >();
+  const groups = new Map<string, { msgs: ChatMessage[]; threadId?: string }>();
 
   for (const message of messages) {
     if (!message.content.trim()) continue;
 
     const date = message.timestamp.toISOString().split("T")[0];
-    const key = message.threadId
-      ? `${date}|${message.threadId}`
-      : `${date}|`;
+    const key = message.threadId ? `${date}|${message.threadId}` : `${date}|`;
 
     if (!groups.has(key)) {
       groups.set(key, { msgs: [], threadId: message.threadId });

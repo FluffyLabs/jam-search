@@ -147,7 +147,9 @@ function parseExistingMessages(body: string): ChatMessage[] {
     const match = matches[i];
     const contentStart = (match.index ?? 0) + match[0].length;
     const contentEnd =
-      i + 1 < matches.length ? (matches[i + 1].index ?? body.length) : body.length;
+      i + 1 < matches.length
+        ? (matches[i + 1].index ?? body.length)
+        : body.length;
     const content = body.slice(contentStart, contentEnd).trim();
 
     messages.push({

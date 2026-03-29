@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import z from "zod";
 import matter from "gray-matter";
+import z from "zod";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
 
 // Accept embedding as a cache ID string
@@ -63,8 +63,7 @@ export async function timeConditions(
   filter_before: string | undefined,
   filter_after: string | undefined
 ): Promise<
-  | { ok: true; where: Record<string, unknown> }
-  | { ok: false; error: string }
+  { ok: true; where: Record<string, unknown> } | { ok: false; error: string }
 > {
   let startDate = new Date("1970-01-01");
   let endDate = new Date();

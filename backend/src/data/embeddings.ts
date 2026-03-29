@@ -115,7 +115,10 @@ export async function generateEmbeddings(
         cache[key] = embedding;
       }
     } catch (error) {
-      console.error(`Failed to generate embeddings for batch ${batchNum}:`, error);
+      console.error(
+        `Failed to generate embeddings for batch ${batchNum}:`,
+        error
+      );
       // Continue without embeddings for this batch — fulltext search still works
     }
   }

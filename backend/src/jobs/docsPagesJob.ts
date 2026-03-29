@@ -52,7 +52,12 @@ async function main() {
       if (map.success && map.links) {
         console.log(`Found ${map.links.length} URLs for ${page.url}`);
         errors.push(
-          ...(await fetchAndStorePages(firecrawl, map.links, page.dbId, DATA_DIR))
+          ...(await fetchAndStorePages(
+            firecrawl,
+            map.links,
+            page.dbId,
+            DATA_DIR
+          ))
         );
       } else {
         errors.push([
