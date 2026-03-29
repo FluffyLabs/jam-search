@@ -1,7 +1,7 @@
 import { setTimeout } from "node:timers/promises";
 import { XMLParser } from "fast-xml-parser";
-import type FirecrawlApp from "firecrawl";
-import { FirecrawlError } from "firecrawl";
+import type Firecrawl from "firecrawl";
+import { SdkError } from "firecrawl";
 import fetch from "node-fetch";
 import { type PageData, writeDocsPage } from "../data/writer.js";
 
@@ -43,16 +43,12 @@ async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
 }
 
 async function fetchPageContent(
-  firecrawl: FirecrawlApp,
+  firecrawl: Firecrawl,
   url: string
 ): Promise<{ content: string; title: string }> {
-  const result = await firecrawl.scrapeUrl(url, {
+  const result = await firecrawl.scrape(url, {
     formats: ["markdown"],
   });
-
-  if (!result.success) {
-    throw new Error(`Failed to scrape ${url}: ${result.error}`);
-  }
 
   return {
     content: result.markdown || "",
@@ -78,7 +74,7 @@ function cleanContent(content: string): string | null {
 }
 
 export async function fetchAndStorePages(
-  firecrawl: FirecrawlApp,
+  firecrawl: Firecrawl,
   input: string | string[] | { sitemapUrl: string },
   site: string,
   dataDir: string
@@ -103,9 +99,11 @@ export async function fetchAndStorePages(
   }
   console.log(`Found ${pageUrls.length} pages to process`);
 
+  const MAX_429_RETRIES = 10;
+  const retryCounts = new Map<string, number>();
   let temporaryErrors = 0;
   let delayMultiplier = 10;
-  const errors: [string, FirecrawlError][] = [];
+  const errors: [string, SdkError][] = [];
 
   // Fetch and store each page
   for (;;) {
@@ -124,22 +122,31 @@ export async function fetchAndStorePages(
       pageContent = await fetchPageContent(firecrawl, pageUrl.url);
     } catch (e) {
       // non-firecrawl errors should be propagated immediately
-      if (!(e instanceof FirecrawlError)) {
+      if (!(e instanceof SdkError)) {
         throw e;
       }
 
-      // detect rate limiting and try again
-      if (e.statusCode === 429) {
-        console.log(`Reached rate-limitting, will retry ${pageUrl.url}`);
+      // detect rate limiting and try again (with a per-URL ceiling)
+      if (e.status === 429) {
+        const retries = (retryCounts.get(pageUrl.url) ?? 0) + 1;
+        retryCounts.set(pageUrl.url, retries);
+        if (retries > MAX_429_RETRIES) {
+          console.log(
+            `Giving up on ${pageUrl.url} after ${MAX_429_RETRIES} rate-limit retries`
+          );
+          errors.push([pageUrl.url, e]);
+          continue;
+        }
+        console.log(`Reached rate-limiting, will retry ${pageUrl.url}`);
         delayMultiplier += 10;
         pageUrls.push(pageUrl);
         continue;
       }
 
       // detect timeout and gateway errors and try again
-      const isTemporaryError = e.statusCode === 408 || e.statusCode === 502;
+      const isTemporaryError = e.status === 408 || e.status === 502;
       if (isTemporaryError && temporaryErrors < 5) {
-        console.log(`${e.statusCode} when fetching, will retry ${pageUrl.url}`);
+        console.log(`${e.status} when fetching, will retry ${pageUrl.url}`);
         pageUrls.push(pageUrl);
         temporaryErrors += 1;
         delayMultiplier += 5;
