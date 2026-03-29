@@ -99,6 +99,8 @@ export async function fetchAndStorePages(
   }
   console.log(`Found ${pageUrls.length} pages to process`);
 
+  const MAX_429_RETRIES = 10;
+  const retryCounts = new Map<string, number>();
   let temporaryErrors = 0;
   let delayMultiplier = 10;
   const errors: [string, SdkError][] = [];
@@ -124,9 +126,18 @@ export async function fetchAndStorePages(
         throw e;
       }
 
-      // detect rate limiting and try again
+      // detect rate limiting and try again (with a per-URL ceiling)
       if (e.status === 429) {
-        console.log(`Reached rate-limitting, will retry ${pageUrl.url}`);
+        const retries = (retryCounts.get(pageUrl.url) ?? 0) + 1;
+        retryCounts.set(pageUrl.url, retries);
+        if (retries > MAX_429_RETRIES) {
+          console.log(
+            `Giving up on ${pageUrl.url} after ${MAX_429_RETRIES} rate-limit retries`
+          );
+          errors.push([pageUrl.url, e]);
+          continue;
+        }
+        console.log(`Reached rate-limiting, will retry ${pageUrl.url}`);
         delayMultiplier += 10;
         pageUrls.push(pageUrl);
         continue;

@@ -47,21 +47,24 @@ async function main() {
 
     if (page.kind === "url") {
       console.log(`Mapping ${page.dbId} to get all URLs...`);
+      let links: string[];
       try {
         const map = await firecrawl.map(page.url);
-        const links = map.links.map((link) => link.url);
-        console.log(`Found ${links.length} URLs for ${page.url}`);
-        errors.push(
-          ...(await fetchAndStorePages(firecrawl, links, page.dbId, DATA_DIR))
-        );
+        links = map.links.map((link) => link.url);
       } catch (e) {
         errors.push([
           page.url,
           e instanceof SdkError
             ? e
-            : new SdkError(String(e), 0, "Unable to index page."),
+            : new SdkError(String(e), 0, "Unable to map page."),
         ]);
+        continue;
       }
+
+      console.log(`Found ${links.length} URLs for ${page.url}`);
+      errors.push(
+        ...(await fetchAndStorePages(firecrawl, links, page.dbId, DATA_DIR))
+      );
 
       continue;
     }
