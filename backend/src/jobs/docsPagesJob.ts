@@ -1,4 +1,4 @@
-import FirecrawlApp, { FirecrawlError } from "firecrawl";
+import Firecrawl, { SdkError } from "firecrawl";
 import { PAGES } from "../../../shared/pages.js";
 import { env } from "../env.js";
 import { fetchAndStorePages } from "../scripts/fetchPages.js";
@@ -17,10 +17,10 @@ try {
 async function main() {
   console.log("Running docs pages fetch job at", new Date().toISOString());
 
-  const firecrawl = new FirecrawlApp({
+  const firecrawl = new Firecrawl({
     apiKey: FIRECRAWL_API_KEY,
   });
-  const errors: [string, FirecrawlError][] = [];
+  const errors: [string, SdkError][] = [];
 
   for (const page of PAGES) {
     if (page.skipIndexing) {
@@ -47,22 +47,19 @@ async function main() {
 
     if (page.kind === "url") {
       console.log(`Mapping ${page.dbId} to get all URLs...`);
-      const map = await firecrawl.mapUrl(page.url);
-
-      if (map.success && map.links) {
-        console.log(`Found ${map.links.length} URLs for ${page.url}`);
+      try {
+        const map = await firecrawl.map(page.url);
+        const links = map.links.map((link) => link.url);
+        console.log(`Found ${links.length} URLs for ${page.url}`);
         errors.push(
-          ...(await fetchAndStorePages(
-            firecrawl,
-            map.links,
-            page.dbId,
-            DATA_DIR
-          ))
+          ...(await fetchAndStorePages(firecrawl, links, page.dbId, DATA_DIR))
         );
-      } else {
+      } catch (e) {
         errors.push([
           page.url,
-          new FirecrawlError(map.error ?? "", 0, "Unable to index page."),
+          e instanceof SdkError
+            ? e
+            : new SdkError(String(e), 0, "Unable to index page."),
         ]);
       }
 
