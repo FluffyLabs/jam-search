@@ -6,6 +6,9 @@ on:
     # Run twice weekly at 03:00 UTC on Tuesdays and Fridays
     - cron: '0 3 * * 2,5'
 
+permissions:
+  contents: write
+
 jobs:
   run-pages-job:
     name: Update Pages

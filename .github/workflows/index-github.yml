@@ -6,6 +6,9 @@ on:
     # Run daily at 04:00 UTC
     - cron: '0 4 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   run-github-pages-job:
     name: Update GitHub repos

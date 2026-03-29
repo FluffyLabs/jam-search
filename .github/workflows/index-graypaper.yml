@@ -6,6 +6,9 @@ on:
     # Run daily at 05:00 UTC
     - cron: '0 5 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   run-graypaper-job:
     name: Update Graypaper

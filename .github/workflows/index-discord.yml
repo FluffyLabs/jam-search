@@ -6,6 +6,9 @@ on:
     # Run daily at 02:00 UTC
     - cron: '0 2 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   run-discord-job:
     name: Update Discord Messages
