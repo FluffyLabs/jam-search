@@ -112,7 +112,7 @@ async function exportMatrixMessages() {
     if (!groups.has(key)) {
       groups.set(key, []);
     }
-    groups.get(key)!.push({
+    groups.get(key)?.push({
       sender: msg.sender || "unknown",
       timestamp: msg.timestamp,
       messageId: msg.messageId,
@@ -159,7 +159,7 @@ async function exportDiscordMessages() {
     if (!groups.has(key)) {
       groups.set(key, { msgs: [], threadId: msg.threadId || undefined });
     }
-    groups.get(key)!.msgs.push({
+    groups.get(key)?.msgs.push({
       sender: msg.sender || "unknown",
       timestamp: msg.timestamp,
       messageId: msg.messageId,

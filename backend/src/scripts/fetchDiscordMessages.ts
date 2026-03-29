@@ -271,7 +271,7 @@ export function storeContentInMarkdown(
     if (!groups.has(key)) {
       groups.set(key, { msgs: [], threadId: message.threadId });
     }
-    groups.get(key)!.msgs.push({
+    groups.get(key)?.msgs.push({
       sender: message.author.username,
       timestamp: message.timestamp,
       messageId: message.id,

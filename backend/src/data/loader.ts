@@ -32,9 +32,9 @@ function parseMessages(body: string): ParsedMessage[] {
     const messageId = match[3];
 
     // Content starts after the match and goes until the next message or end
-    const contentStart = match.index! + match[0].length;
+    const contentStart = (match.index ?? 0) + match[0].length;
     const contentEnd =
-      i + 1 < matches.length ? matches[i + 1].index! : body.length;
+      i + 1 < matches.length ? (matches[i + 1].index ?? body.length) : body.length;
     const content = body.slice(contentStart, contentEnd).trim();
 
     if (content) {
