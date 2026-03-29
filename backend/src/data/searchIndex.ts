@@ -96,12 +96,12 @@ export function searchDocs(db: SearchDB, opts: SearchOptions): SearchResults {
 
   const hasVector = opts.embedding && opts.embedding.length > 0;
 
-  if (hasVector) {
+  if (hasVector && opts.embedding) {
     return search(db, {
       mode: "hybrid",
       term: opts.term,
       vector: {
-        value: opts.embedding!,
+        value: opts.embedding,
         property: "embedding",
       },
       where,

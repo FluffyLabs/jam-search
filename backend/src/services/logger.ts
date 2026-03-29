@@ -58,7 +58,7 @@ export class MessagesLogger {
         if (!byDate.has(date)) {
           byDate.set(date, []);
         }
-        byDate.get(date)!.push({
+        byDate.get(date)?.push({
           sender: msg.sender,
           timestamp: msg.timestamp,
           messageId: msg.messageId,
