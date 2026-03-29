@@ -37,13 +37,6 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           DATA_DIR: ./data
 
-      - name: Commit and push data changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/
-          if ! git diff --staged --quiet; then
-            git commit -m "index: update github pages"
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi
+      - uses: ./.github/actions/commit-data
+        with:
+          commit-message: "index: update github pages"
