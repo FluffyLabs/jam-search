@@ -1,11 +1,9 @@
 import { setTimeout } from "node:timers/promises";
-import { sql } from "drizzle-orm";
 import { XMLParser } from "fast-xml-parser";
 import type FirecrawlApp from "firecrawl";
 import { FirecrawlError } from "firecrawl";
 import fetch from "node-fetch";
-import { db } from "../db/db.js";
-import { pagesTable } from "../db/schema.js";
+import { writeDocsPage, type PageData } from "../data/writer.js";
 
 interface SitemapUrl {
   loc: string;
@@ -82,7 +80,8 @@ function cleanContent(content: string): string | null {
 export async function fetchAndStorePages(
   firecrawl: FirecrawlApp,
   input: string | string[] | { sitemapUrl: string },
-  site: string
+  site: string,
+  dataDir: string
 ) {
   let pageUrls: PageUrl[] = [];
 
@@ -165,31 +164,18 @@ export async function fetchAndStorePages(
       continue;
     }
 
-    await db
-      .insert(pagesTable)
-      .values({
-        url: pageUrl.url,
-        content: cleanedContent,
-        title: pageContent.title,
-        site,
-        lastModified: pageUrl.lastModified || new Date(),
-        created_at: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: pagesTable.url,
-        set: {
-          content: cleanedContent,
-          title: pageContent.title,
-          site,
-          lastModified: pageUrl.lastModified || new Date(),
-        },
-      });
+    const pageData: PageData = {
+      url: pageUrl.url,
+      content: cleanedContent,
+      title: pageContent.title,
+      site,
+      lastModified: pageUrl.lastModified || new Date(),
+      createdAt: new Date(),
+    };
 
+    writeDocsPage(dataDir, pageData);
     console.log(`Stored ${pageUrl.url}`);
   }
-
-  console.log("Reindexing pages_search_idx");
-  await db.execute(sql`REINDEX INDEX pages_search_idx;`);
 
   return errors;
 }

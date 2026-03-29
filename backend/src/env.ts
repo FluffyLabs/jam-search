@@ -7,7 +7,8 @@ export const envSchema = z.object({
   GITHUB_TOKEN: z.string(),
   DISCORD_TOKEN: z.string(),
   FIRECRAWL_API_KEY: z.string(),
-  POSTGRES_URL: z.string().url(),
+  DATA_DIR: z.string().default("./data"),
+  CACHE_DIR: z.string().default("./cache"),
   PORT: z.coerce.number().default(3000),
 });
 
@@ -17,7 +18,7 @@ const parseEnv = (): Env => {
   try {
     return envSchema.parse(process.env);
   } catch (error) {
-    console.error(`❌ Invalid environment variables: ${error}`);
+    console.error(`Invalid environment variables: ${error}`);
     process.exit(1);
   }
 };

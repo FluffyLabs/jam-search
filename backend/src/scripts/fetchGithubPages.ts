@@ -1,7 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { sql } from "drizzle-orm";
-import { db } from "../db/db.js";
-import { pagesTable } from "../db/schema.js";
+import { writeGithubPage, type PageData } from "../data/writer.js";
 
 export interface GitHubConfig {
   owner: string;
@@ -285,70 +283,60 @@ export async function fetchGitHubContent(
   return content;
 }
 
-export async function storeContentInDatabase(
+export function storeContentInMarkdown(
   content: GitHubContent[],
-  site: string
+  site: string,
+  owner: string,
+  repo: string,
+  dataDir: string
 ) {
-  await db.transaction(async (tx) => {
-    for (const item of content) {
-      // Create content with body and comments using markdown formatting
-      const typeLabel =
-        item.type === "pull_request"
-          ? "Pull Request"
-          : item.type === "discussion"
-            ? "Discussion"
-            : "Issue";
+  for (const item of content) {
+    // Create content with body and comments using markdown formatting
+    const typeLabel =
+      item.type === "pull_request"
+        ? "Pull Request"
+        : item.type === "discussion"
+          ? "Discussion"
+          : "Issue";
 
-      const content = [
-        "",
-        `# ${item.title}`,
-        "",
-        `## ${typeLabel} by @${item.user.login}`,
-        "",
-        item.body,
-        "",
-        ...item.comments.map((comment) =>
-          [
-            "",
-            `## Comment by @${comment.user.login}`,
-            "",
-            comment.body,
-            "",
-          ].join("\n")
-        ),
-      ].join("\n");
+    const markdownContent = [
+      "",
+      `# ${item.title}`,
+      "",
+      `## ${typeLabel} by @${item.user.login}`,
+      "",
+      item.body,
+      "",
+      ...item.comments.map((comment) =>
+        [
+          "",
+          `## Comment by @${comment.user.login}`,
+          "",
+          comment.body,
+          "",
+        ].join("\n")
+      ),
+    ].join("\n");
 
-      // Find the latest date between the issue/PR and its comments
-      //   Use original issue/PR date as last modified date
-      //   const dates = [
-      //     new Date(item.created_at),
-      //     ...item.comments.map((comment) => new Date(comment.created_at)),
-      //   ];
-      const lastModified = new Date(item.created_at);
+    const lastModified = new Date(item.created_at);
+    const type =
+      item.type === "pull_request"
+        ? "pr"
+        : item.type === "discussion"
+          ? "discussion"
+          : "issue";
 
-      await tx
-        .insert(pagesTable)
-        .values({
-          url: item.html_url,
-          content: content,
-          title: item.title,
-          site,
-          created_at: new Date(item.created_at),
-          lastModified,
-        })
-        .onConflictDoUpdate({
-          target: pagesTable.url,
-          set: {
-            content: content,
-            title: item.title,
-            site,
-            created_at: new Date(item.created_at),
-            lastModified,
-          },
-        });
-    }
+    const pageData: PageData = {
+      url: item.html_url,
+      content: markdownContent,
+      title: item.title,
+      site,
+      createdAt: new Date(item.created_at),
+      lastModified,
+    };
 
-    console.log("Reindexing pages_search_idx");
-    await tx.execute(sql`REINDEX INDEX pages_search_idx;`);
-  });
+    writeGithubPage(dataDir, owner, repo, type, item.number, pageData);
+  }
+
+  console.log(`Wrote ${content.length} GitHub pages to markdown`);
 }

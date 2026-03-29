@@ -2,6 +2,8 @@ import { format, subDays } from "date-fns";
 import * as matrix from "../../../shared/matrix.js";
 import { fillArchivedMessages } from "../scripts/fillArchivedMessages.js";
 
+const DATA_DIR = process.env.DATA_DIR || "./data";
+
 try {
   await main();
   process.exit(0);
@@ -17,7 +19,7 @@ async function main() {
     const yesterday = subDays(today, 1);
     const yesterdayStr = format(yesterday, "yyyy-MM-dd");
 
-    await fillArchivedMessages(matrix.ROOMS, yesterdayStr, yesterdayStr);
+    await fillArchivedMessages(DATA_DIR, matrix.ROOMS, yesterdayStr, yesterdayStr);
     console.log("Message fetch job completed successfully");
   } catch (error) {
     console.error("Error in message fetch job:", error);

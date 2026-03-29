@@ -1,10 +1,10 @@
 import { isValid, parse } from "date-fns";
-import { db } from "../db/db.js";
 import { fetchArchivedMessages } from "../services/archive.js";
 import { MessagesLogger } from "../services/logger.js";
 
 type Room = {
   id: string;
+  name: string;
   archiveUrl: string;
 };
 
@@ -27,6 +27,7 @@ function isValidDateFormat(dateStr: string): boolean {
 }
 
 export async function fillArchivedMessages(
+  dataDir: string,
   rooms: Room[],
   fromDate: string,
   toDate: string
@@ -44,9 +45,6 @@ export async function fillArchivedMessages(
     );
   }
 
-  // Extract just the room IDs for the MessagesLogger
-  const logger = new MessagesLogger(db);
-
   console.log(`Fetching messages from ${fromDate} to ${toDate}`);
 
   const errors = [];
@@ -54,6 +52,8 @@ export async function fillArchivedMessages(
     try {
       console.log(`Fetching archived messages for room ${room.id}`);
       console.log(`Using archive URL: ${room.archiveUrl}`);
+
+      const logger = new MessagesLogger(dataDir, room.name);
 
       // Fetch messages for the date range using string dates
       const messages = await fetchArchivedMessages(
@@ -67,7 +67,7 @@ export async function fillArchivedMessages(
         console.log(`Found ${messages.length} messages for room ${room.id}`);
         await logger.onMessages(messages);
         console.log(
-          `Successfully inserted ${messages.length} messages for room ${room.id}`
+          `Successfully wrote ${messages.length} messages for room ${room.id}`
         );
         console.log("First message:", messages[0]);
         console.log("Last message:", messages[messages.length - 1]);
@@ -77,7 +77,7 @@ export async function fillArchivedMessages(
         );
       }
     } catch (error) {
-      console.error("Error fetching and inserting historical messages:", error);
+      console.error("Error fetching and writing messages:", error);
       errors.push(error);
     }
   }

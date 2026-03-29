@@ -1,0 +1,6 @@
+---
+type: graypaper_section
+title: 8.1. Authorizers and Authorizations
+index: 59
+---
+The authorization system involves three key concepts: Authorizers, Tokens and Traces. A Token is simply a piece of opaque data to be included with a work-package to help make an argument that the work-package should be authorized. Similarly, a Trace is a piece of opaque data which helps characterize or describe some successful authorization. An Authorizer meanwhile, is a piece of logic which executes within some pre-specified and well-known computational JAM: JOIN-ACCUMULATE MACHINE DRAFT 0.6.6 - May 5, 2025 16 limits and determines whether a work-package—including its Token—is authorized for execution on some particular core and yields a Trace on success. Authorizers are identified as the hash of their pvm code concatenated with their Configuration blob, the latter being, like Tokens and Traces, opaque data meaningful to the pvm code. The process by which work-packages are determined to be authorized (or not) is not the competence of on-chain logic and happens entirely in-core and as such is discussed in section 14.3. However, on-chain logic must identify each set of authorizers assigned to each core in order to verify that a work-package is legitimately able to utilize that resource. It is this subsystem we will now define.

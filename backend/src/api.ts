@@ -17,11 +17,12 @@ import {
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
+import type { SearchDB } from "./data/searchIndex.js";
 import { handleMcpDelete, handleMcpGet, handleMcpPost } from "./mcp/handler.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-export function createApp() {
+export function createApp(db: SearchDB, dataDir: string) {
   const app = new Hono();
 
   // Middleware
@@ -56,22 +57,22 @@ export function createApp() {
   // Search endpoints
   app.get("/search/messages", async (c) => {
     const data = searchMessagesRequestSchema.parse(c.req.query());
-    return c.json(await searchMessages(data, embeddingCache));
+    return c.json(await searchMessages(data, embeddingCache, db, dataDir));
   });
 
   app.get("/search/discords", async (c) => {
     const data = searchDiscordsRequestSchema.parse(c.req.query());
-    return c.json(await searchDiscords(data, embeddingCache));
+    return c.json(await searchDiscords(data, embeddingCache, db, dataDir));
   });
 
   app.get("/search/pages", async (c) => {
     const data = searchPagesRequestSchema.parse(c.req.query());
-    return c.json(await searchPages(data, embeddingCache));
+    return c.json(await searchPages(data, embeddingCache, db, dataDir));
   });
 
   app.get("/search/graypaper", async (c) => {
     const data = searchGraypaperRequestSchema.parse(c.req.query());
-    return c.json(await searchGraypaper(data, embeddingCache));
+    return c.json(await searchGraypaper(data, embeddingCache, db, dataDir));
   });
 
   app.post("/mcp", handleMcpPost);

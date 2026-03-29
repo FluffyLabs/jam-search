@@ -1,15 +1,8 @@
-import { and, ilike, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
-import { db } from "../db/db.js";
-import { pagesTable } from "../db/schema.js";
-import {
-  embeddingSchema,
-  paradeMatch,
-  resolveEmbedding,
-  similarityMatch,
-  similarityWhere,
-} from "./common.js";
+import type { SearchDB } from "../data/searchIndex.js";
+import { searchDocs } from "../data/searchIndex.js";
+import { embeddingSchema, resolveEmbedding } from "./common.js";
 
 export const searchPagesRequestSchema = z.object({
   q: z.string(),
@@ -21,9 +14,10 @@ export const searchPagesRequestSchema = z.object({
 
 export async function searchPages(
   data: z.infer<typeof searchPagesRequestSchema>,
-  cache: EmbeddingCache
+  cache: EmbeddingCache,
+  db: SearchDB,
+  _dataDir: string
 ) {
-  // Resolve embedding from cache ID or base64
   const embedding = resolveEmbedding(data.e, cache);
 
   if (data.q.trim().length === 0) {
@@ -36,56 +30,41 @@ export async function searchPages(
     };
   }
 
-  // Base search condition
-  const whereConditions = [
-    // Add site filter if provided
-    data.site ? ilike(pagesTable.site, `%${data.site}%`) : undefined,
-    // matches
-    or(
-      // standard search using paradedb
-      paradeMatch(
-        [
-          ["title", 2.0],
-          ["content", 1.0],
-        ],
-        data.q
-      ),
-      // embedding search if embedding is provided
-      similarityWhere(pagesTable.embedding, embedding)
-    ),
-  ];
+  const where: Record<string, unknown> = {};
+  if (data.site) {
+    where.site = { eq: data.site };
+  }
 
-  // Get total count of matching rows
-  const countResult = await db
-    .select({ count: sql`count(*)` })
-    .from(pagesTable)
-    .where(and(...whereConditions));
+  const results = searchDocs(db, {
+    term: data.q,
+    embedding: embedding.length > 0 ? embedding : undefined,
+    type: "page",
+    limit: data.pageSize,
+    offset: (data.page - 1) * data.pageSize,
+    where,
+    properties: ["content", "title"] as const,
+    boost: { title: 2, content: 1 },
+  });
 
-  const total = Number(countResult[0].count);
-  console.log(`Pages search query found ${total} results`);
-
-  // Get paginated results
-  const results = await db
-    .select({
-      id: pagesTable.id,
-      url: pagesTable.url,
-      title: pagesTable.title,
-      content: pagesTable.content,
-      site: pagesTable.site,
-      lastModified: pagesTable.lastModified,
-      createdAt: pagesTable.created_at,
-      similarity: similarityMatch(pagesTable.embedding, embedding),
-      score: sql<number>`paradedb.score(id) AS score`,
-    })
-    .from(pagesTable)
-    .where(and(...whereConditions))
-    .orderBy(sql`similarity DESC, score DESC, id`)
-    .offset((data.page - 1) * data.pageSize)
-    .limit(data.pageSize);
+  console.log(`Pages search query found ${results.count} results`);
 
   return {
-    results,
-    total,
+    results: results.hits.map((hit) => ({
+      id: hit.id,
+      url: hit.document.url,
+      title: hit.document.title,
+      content: hit.document.content,
+      site: hit.document.site,
+      lastModified: hit.document.timestamp
+        ? new Date(hit.document.timestamp)
+        : null,
+      createdAt: hit.document.timestamp
+        ? new Date(hit.document.timestamp)
+        : null,
+      similarity: hit.score,
+      score: hit.score,
+    })),
+    total: results.count,
     page: data.page,
     pageSize: data.pageSize,
   };

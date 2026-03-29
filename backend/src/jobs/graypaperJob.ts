@@ -1,11 +1,12 @@
-import { sql } from "drizzle-orm";
-
-import { db } from "../db/db.js";
-import { graypaperSectionsTable } from "../db/schema.js";
+import {
+  clearGraypaperSections,
+  writeGraypaperSection,
+} from "../data/writer.js";
 import { updateGraypaperVersions } from "../scripts/updateGraypaperVersions.js";
 import { PDFParserService } from "../services/pdf-parser.js";
 
 const LATEST_GP_PDF = "https://graypaper.com/graypaper.pdf";
+const DATA_DIR = process.env.DATA_DIR || "./data";
 
 try {
   await main();
@@ -21,10 +22,9 @@ async function main() {
     new Date().toISOString()
   );
 
-  const hasNewVersion = await updateGraypaperVersions();
+  const hasNewVersion = await updateGraypaperVersions(DATA_DIR);
   if (!hasNewVersion) {
     console.log("Graypaper Versions: no new version");
-    await db.$client.end();
     return;
   }
 
@@ -37,18 +37,16 @@ async function main() {
 
   console.log(`Updating Graypaper sections from PDF: ${result.filename}`);
 
-  await db.transaction(async (tx) => {
-    await tx.delete(graypaperSectionsTable);
-    await tx.insert(graypaperSectionsTable).values(
-      flattenedSections.map((section) => ({
-        title: section.title,
-        text: section.text,
-      }))
-    );
-    console.log("Reindexing graypaper_search_idx");
-    await tx.execute(sql`REINDEX INDEX graypaper_search_idx;`);
-  });
-  console.log("Done! Closing connection...");
+  // Clear existing sections and write new ones
+  clearGraypaperSections(DATA_DIR);
+  for (let i = 0; i < flattenedSections.length; i++) {
+    const section = flattenedSections[i];
+    writeGraypaperSection(DATA_DIR, {
+      title: section.title,
+      text: section.text,
+      index: i + 1,
+    });
+  }
 
-  await db.$client.end();
+  console.log(`Wrote ${flattenedSections.length} graypaper sections`);
 }

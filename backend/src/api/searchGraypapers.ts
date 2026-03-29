@@ -1,15 +1,8 @@
-import { and, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
-import { db } from "../db/db.js";
-import { graypaperSectionsTable } from "../db/schema.js";
-import {
-  embeddingSchema,
-  paradeMatch,
-  resolveEmbedding,
-  similarityMatch,
-  similarityWhere,
-} from "./common.js";
+import type { SearchDB } from "../data/searchIndex.js";
+import { searchDocs } from "../data/searchIndex.js";
+import { embeddingSchema, resolveEmbedding } from "./common.js";
 
 export const searchGraypaperRequestSchema = z.object({
   q: z.string(),
@@ -20,9 +13,10 @@ export const searchGraypaperRequestSchema = z.object({
 
 export async function searchGraypaper(
   data: z.infer<typeof searchGraypaperRequestSchema>,
-  cache: EmbeddingCache
+  cache: EmbeddingCache,
+  db: SearchDB,
+  _dataDir: string
 ) {
-  // Resolve embedding from cache ID or base64
   const embedding = resolveEmbedding(data.e, cache);
 
   if (data.q.trim().length === 0) {
@@ -35,49 +29,27 @@ export async function searchGraypaper(
     };
   }
 
-  // Base search condition
-  const whereConditions = [
-    or(
-      // standard search using paradedb
-      paradeMatch(
-        [
-          ["title", 2.0],
-          ["text", 1.0],
-        ],
-        data.q
-      ),
-      // embedding search if embedding is provided
-      similarityWhere(graypaperSectionsTable.embedding, embedding)
-    ),
-  ];
+  const results = searchDocs(db, {
+    term: data.q,
+    embedding: embedding.length > 0 ? embedding : undefined,
+    type: "graypaper_section",
+    limit: data.pageSize,
+    offset: (data.page - 1) * data.pageSize,
+    properties: ["content", "title"] as const,
+    boost: { title: 2, content: 1 },
+  });
 
-  // Get total count of matching rows
-  const countResult = await db
-    .select({ count: sql`count(*)` })
-    .from(graypaperSectionsTable)
-    .where(and(...whereConditions));
-
-  const total = Number(countResult[0].count);
-  console.log(`Graypapers search query found ${total} results`);
-
-  // Get paginated results
-  const results = await db
-    .select({
-      id: graypaperSectionsTable.id,
-      title: graypaperSectionsTable.title,
-      text: graypaperSectionsTable.text,
-      similarity: similarityMatch(graypaperSectionsTable.embedding, embedding),
-      score: sql<number>`paradedb.score(id) AS score`,
-    })
-    .from(graypaperSectionsTable)
-    .where(and(...whereConditions))
-    .orderBy(sql`similarity DESC, score DESC, id`)
-    .offset((data.page - 1) * data.pageSize)
-    .limit(data.pageSize);
+  console.log(`Graypapers search query found ${results.count} results`);
 
   return {
-    results,
-    total,
+    results: results.hits.map((hit) => ({
+      id: hit.id,
+      title: hit.document.title,
+      text: hit.document.content,
+      similarity: hit.score,
+      score: hit.score,
+    })),
+    total: results.count,
     page: data.page,
     pageSize: data.pageSize,
   };

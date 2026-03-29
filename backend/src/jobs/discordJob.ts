@@ -4,10 +4,11 @@ import { env } from "../env.js";
 import {
   type DiscordConfig,
   fetchDiscordContent,
-  storeContentInDatabase,
+  storeContentInMarkdown,
 } from "../scripts/fetchDiscordMessages.js";
 
 const DISCORD_TOKEN = env.DISCORD_TOKEN;
+const DATA_DIR = process.env.DATA_DIR || "./data";
 
 try {
   await main();
@@ -51,9 +52,10 @@ async function main() {
   const messages = await fetchDiscordContent(config);
 
   if (messages.length > 0) {
-    console.log(`Storing ${messages.length} Discord messages in database`);
-    await storeContentInDatabase(messages);
-
+    console.log(`Writing ${messages.length} Discord messages to markdown`);
+    // Use the first channel's name for the directory
+    const channelName = discord.CHANNELS[0]?.name || "unknown";
+    storeContentInMarkdown(DATA_DIR, channelName, messages);
     console.log("Discord fetch job completed successfully");
   } else {
     console.log("No new Discord messages found");

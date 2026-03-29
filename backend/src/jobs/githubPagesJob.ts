@@ -2,10 +2,11 @@ import { github } from "../../../shared/index.js";
 import { env } from "../env.js";
 import {
   fetchGitHubContent,
-  storeContentInDatabase,
+  storeContentInMarkdown,
 } from "../scripts/fetchGithubPages.js";
 
 const GITHUB_TOKEN = env.GITHUB_TOKEN;
+const DATA_DIR = process.env.DATA_DIR || "./data";
 
 try {
   await main();
@@ -35,9 +36,12 @@ async function main() {
         } discussions)`
       );
 
-      await storeContentInDatabase(
+      storeContentInMarkdown(
         content,
-        `github.com/${config.owner}/${config.repo}`
+        `github.com/${config.owner}/${config.repo}`,
+        config.owner,
+        config.repo,
+        DATA_DIR
       );
       console.log(`Successfully processed ${config.owner}/${config.repo}`);
     } catch (error) {

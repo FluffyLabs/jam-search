@@ -1,0 +1,6 @@
+---
+type: graypaper_section
+title: B.5. On-Transfer Invocation
+index: 112
+---
+We define the On-Transfer service-account invocation function as Ψ T ; it is somewhat similar to the Accumulation Invocation except that the only state alteration it facilitates are basic alteration to the storage of the subject account. No further transfers may be made, no privileged operations are possible, no new accounts may be created nor other operations done on the subject account itself. The function is defined as: Ψ T ∶ ⎧ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎨ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎩ (D ⟨ N S → A ⟩, N T, N S, ⟦ T ⟧) → ⎧ ⎩ A, N G ⎫ ⎭ (d, t, s, t) ↦ ⎧ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎨ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎩ ⎧ ⎩ s, 0 ⎫ ⎭ if s c = ∅ ∨ S s c S > W C ∨ t = [] ⎧ ⎩ s ′, u ⎫ ⎭ otherwise where (u, r, s ′) = Ψ M (s c, 10, ∑ r ∈ t (r g), E (t, s, S t S), F, s) and s = d [ s ] except s b = d [ s ] b + ∑ r ∈ t r a (B.15) JAM: JOIN-ACCUMULATE MACHINE DRAFT 0.6.6 - May 5, 2025 49 and F ∈ Ω ⟨ A ⟩ ∶ (n, ϱ, ω, μ, s) ≡ ⎧ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎨ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎪ ⎩ Ω G (ϱ, ω, μ) if n = gas Ω Y (ϱ, ω, μ, ∅, η ′ 0, ∅, ∅, ∅, ∅, ∅, t) if n = fetch Ω L (ϱ, ω, μ, s, s, d) if n = lookup Ω R (ϱ, ω, μ, s, s, d) if n = read Ω W (ϱ, ω, μ, s, s) if n = write Ω I (ϱ, ω, μ, s, d) if n = info (▸, ϱ − 10, [ ω 0 ,. .., ω 6, WHAT, ω 8 ,. .. ], μ, s) otherwise (B.16)

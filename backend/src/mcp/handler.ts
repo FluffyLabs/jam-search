@@ -2,9 +2,18 @@ import { randomUUID } from "node:crypto";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import type { Context } from "hono";
+import type { SearchDB } from "../data/searchIndex.js";
 import { createMcpServer } from "./server.js";
 
 const transports = new Map<string, WebStandardStreamableHTTPServerTransport>();
+
+let _db: SearchDB;
+let _dataDir: string;
+
+export function initMcpHandler(db: SearchDB, dataDir: string): void {
+  _db = db;
+  _dataDir = dataDir;
+}
 
 function getSessionId(c: Context): string | undefined {
   return c.req.header("mcp-session-id");
@@ -14,7 +23,7 @@ async function createTransportForSession(): Promise<{
   transport: WebStandardStreamableHTTPServerTransport;
   server: ReturnType<typeof createMcpServer>;
 }> {
-  const server = createMcpServer();
+  const server = createMcpServer(_db, _dataDir);
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: () => randomUUID(),
     onsessioninitialized: (sessionId: string) => {

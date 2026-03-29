@@ -11,6 +11,7 @@ import { searchGraypaper } from "../api/searchGraypapers.js";
 import { searchMessages } from "../api/searchMessages.js";
 import { searchPages } from "../api/searchPages.js";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
+import type { SearchDB } from "../data/searchIndex.js";
 
 const SearchPagesInputSchema = z.object({
   query: z.string().describe("Search query for web pages and documentation"),
@@ -196,104 +197,120 @@ function formatGraypaperResults(
     .join("\n\n---\n\n");
 }
 
-async function handleSearchPages(
-  args: z.infer<typeof SearchPagesInputSchema>
-): Promise<string> {
-  const results = await searchPages(
-    {
-      q: args.query,
-      e: "",
-      page: 1,
-      pageSize: args.limit,
-      site: args.site,
-    },
-    noOpEmbeddingCache
-  );
-  return formatPageResults(results);
-}
+export function createMcpServer(db: SearchDB, dataDir: string): Server {
+  async function handleSearchPages(
+    args: z.infer<typeof SearchPagesInputSchema>
+  ): Promise<string> {
+    const results = await searchPages(
+      {
+        q: args.query,
+        e: "",
+        page: 1,
+        pageSize: args.limit,
+        site: args.site,
+      },
+      noOpEmbeddingCache,
+      db,
+      dataDir
+    );
+    return formatPageResults(results);
+  }
 
-async function handleSearchDiscord(
-  args: z.infer<typeof SearchDiscordInputSchema>
-): Promise<string> {
-  const results = await searchDiscords(
-    {
-      q: args.query,
-      e: "",
-      page: 1,
-      pageSize: args.limit,
-      filter_from: args.from,
-      channelId: args.channelId,
-    },
-    noOpEmbeddingCache
-  );
-  return formatDiscordResults(results);
-}
+  async function handleSearchDiscord(
+    args: z.infer<typeof SearchDiscordInputSchema>
+  ): Promise<string> {
+    const results = await searchDiscords(
+      {
+        q: args.query,
+        e: "",
+        page: 1,
+        pageSize: args.limit,
+        filter_from: args.from,
+        channelId: args.channelId,
+      },
+      noOpEmbeddingCache,
+      db,
+      dataDir
+    );
+    return formatDiscordResults(results);
+  }
 
-async function handleSearchMatrix(
-  args: z.infer<typeof SearchMatrixInputSchema>
-): Promise<string> {
-  const results = await searchMessages(
-    {
-      q: args.query,
-      e: "",
-      page: 1,
-      pageSize: args.limit,
-      filter_from: args.from,
-      channelId: args.channelId,
-    },
-    noOpEmbeddingCache
-  );
-  return formatMatrixResults(results);
-}
+  async function handleSearchMatrix(
+    args: z.infer<typeof SearchMatrixInputSchema>
+  ): Promise<string> {
+    const results = await searchMessages(
+      {
+        q: args.query,
+        e: "",
+        page: 1,
+        pageSize: args.limit,
+        filter_from: args.from,
+        channelId: args.channelId,
+      },
+      noOpEmbeddingCache,
+      db,
+      dataDir
+    );
+    return formatMatrixResults(results);
+  }
 
-async function handleSearchGraypaper(
-  args: z.infer<typeof SearchGraypaperInputSchema>
-): Promise<string> {
-  const results = await searchGraypaper(
-    {
-      q: args.query,
-      e: "",
-      page: 1,
-      pageSize: args.limit,
-    },
-    noOpEmbeddingCache
-  );
-  return formatGraypaperResults(results);
-}
+  async function handleSearchGraypaper(
+    args: z.infer<typeof SearchGraypaperInputSchema>
+  ): Promise<string> {
+    const results = await searchGraypaper(
+      {
+        q: args.query,
+        e: "",
+        page: 1,
+        pageSize: args.limit,
+      },
+      noOpEmbeddingCache,
+      db,
+      dataDir
+    );
+    return formatGraypaperResults(results);
+  }
 
-async function handleSearchAll(
-  args: z.infer<typeof SearchAllInputSchema>
-): Promise<string> {
-  const [pages, discord, matrix, graypaper] = await Promise.all([
-    searchPages(
-      { q: args.query, e: "", page: 1, pageSize: args.limit },
-      noOpEmbeddingCache
-    ),
-    searchDiscords(
-      { q: args.query, e: "", page: 1, pageSize: args.limit },
-      noOpEmbeddingCache
-    ),
-    searchMessages(
-      { q: args.query, e: "", page: 1, pageSize: args.limit },
-      noOpEmbeddingCache
-    ),
-    searchGraypaper(
-      { q: args.query, e: "", page: 1, pageSize: args.limit },
-      noOpEmbeddingCache
-    ),
-  ]);
+  async function handleSearchAll(
+    args: z.infer<typeof SearchAllInputSchema>
+  ): Promise<string> {
+    const [pages, discord, matrix, graypaper] = await Promise.all([
+      searchPages(
+        { q: args.query, e: "", page: 1, pageSize: args.limit },
+        noOpEmbeddingCache,
+        db,
+        dataDir
+      ),
+      searchDiscords(
+        { q: args.query, e: "", page: 1, pageSize: args.limit },
+        noOpEmbeddingCache,
+        db,
+        dataDir
+      ),
+      searchMessages(
+        { q: args.query, e: "", page: 1, pageSize: args.limit },
+        noOpEmbeddingCache,
+        db,
+        dataDir
+      ),
+      searchGraypaper(
+        { q: args.query, e: "", page: 1, pageSize: args.limit },
+        noOpEmbeddingCache,
+        db,
+        dataDir
+      ),
+    ]);
 
-  const sections = [
-    `## Web Pages (${pages.total} total)\n${formatPageResults(pages)}`,
-    `## Discord Messages (${discord.total} total)\n${formatDiscordResults(discord)}`,
-    `## Matrix Messages (${matrix.total} total)\n${formatMatrixResults(matrix)}`,
-    `## Graypaper Sections (${graypaper.total} total)\n${formatGraypaperResults(graypaper)}`,
-  ];
+    const sections = [
+      `## Web Pages (${pages.total} total)\n${formatPageResults(pages)}`,
+      `## Discord Messages (${discord.total} total)\n${formatDiscordResults(discord)}`,
+      `## Matrix Messages (${matrix.total} total)\n${formatMatrixResults(matrix)}`,
+      `## Graypaper Sections (${graypaper.total} total)\n${formatGraypaperResults(graypaper)}`,
+    ];
 
-  return sections.join("\n\n========================================\n\n");
-}
+    return sections.join("\n\n========================================\n\n");
+  }
 
-export function createMcpServer(): Server {
   const server = new Server(
     {
       name: "jam-search",
