@@ -32,7 +32,6 @@ jobs:
         run: npm exec tsx -w backend -- ./src/jobs/graypaperJob.ts
         env:
           GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
-          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           DATA_DIR: ./data
