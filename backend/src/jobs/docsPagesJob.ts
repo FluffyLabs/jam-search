@@ -1,7 +1,7 @@
 import { PAGES } from "../../../shared/pages.js";
 import {
-  FetchError,
   discoverLinks,
+  FetchError,
   fetchAndStorePages,
 } from "../scripts/fetchPages.js";
 
@@ -50,17 +50,13 @@ async function main() {
       } catch (e) {
         errors.push([
           page.url,
-          e instanceof FetchError
-            ? e
-            : new FetchError(String(e), 0),
+          e instanceof FetchError ? e : new FetchError(String(e), 0),
         ]);
         continue;
       }
 
       console.log(`Found ${links.length} URLs for ${page.url}`);
-      errors.push(
-        ...(await fetchAndStorePages(links, page.dbId, DATA_DIR))
-      );
+      errors.push(...(await fetchAndStorePages(links, page.dbId, DATA_DIR)));
 
       continue;
     }

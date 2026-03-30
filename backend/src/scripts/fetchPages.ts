@@ -1,7 +1,7 @@
 import { setTimeout } from "node:timers/promises";
+import * as cheerio from "cheerio";
 import { XMLParser } from "fast-xml-parser";
 import TurndownService from "turndown";
-import * as cheerio from "cheerio";
 import { type PageData, writeDocsPage } from "../data/writer.js";
 
 interface SitemapUrl {
@@ -81,9 +81,7 @@ export class FetchError extends Error {
   }
 }
 
-export async function discoverLinks(
-  rootUrl: string
-): Promise<string[]> {
+export async function discoverLinks(rootUrl: string): Promise<string[]> {
   const response = await fetch(rootUrl);
   const html = await response.text();
   const $ = cheerio.load(html);
@@ -100,7 +98,22 @@ export async function discoverLinks(
       if (resolved.origin === base.origin) {
         // Skip non-HTML resources
         const ext = resolved.pathname.split(".").pop()?.toLowerCase();
-        if (ext && ["pdf", "png", "jpg", "jpeg", "gif", "svg", "zip", "tar", "gz", "mp4", "webm"].includes(ext)) {
+        if (
+          ext &&
+          [
+            "pdf",
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "svg",
+            "zip",
+            "tar",
+            "gz",
+            "mp4",
+            "webm",
+          ].includes(ext)
+        ) {
           return;
         }
         resolved.hash = "";
@@ -184,7 +197,10 @@ export async function fetchAndStorePages(
 
       // Retry on rate-limit or temporary errors
       const isRetryable =
-        e.status === 429 || e.status === 408 || e.status === 502 || e.status === 503;
+        e.status === 429 ||
+        e.status === 408 ||
+        e.status === 502 ||
+        e.status === 503;
       if (isRetryable) {
         const retries = (retryCounts.get(pageUrl.url) ?? 0) + 1;
         retryCounts.set(pageUrl.url, retries);
