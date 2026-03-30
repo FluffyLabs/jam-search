@@ -192,10 +192,14 @@ async function fetchDiscussions(
 export async function fetchGitHubContent(
   config: GitHubConfig
 ): Promise<GitHubContent[]> {
-  const octokit = new Octokit({
-    auth: config.token || process.env.GITHUB_TOKEN,
-  });
+  const auth = config.token || process.env.GITHUB_TOKEN;
+  return await fetchGitHubContentWithOctokit(new Octokit({ auth }), config);
+}
 
+async function fetchGitHubContentWithOctokit(
+  octokit: Octokit,
+  config: GitHubConfig
+): Promise<GitHubContent[]> {
   const content: GitHubContent[] = [];
   // Fetch all issues (including pull requests)
   const issues = await octokit.paginate(octokit.rest.issues.listForRepo, {
@@ -276,7 +280,7 @@ export async function fetchGitHubContent(
     });
   }
 
-  // Fetch discussions
+  // Fetch discussions (requires authentication via GraphQL)
   const discussions = await fetchDiscussions(octokit, config);
   content.push(...discussions);
 

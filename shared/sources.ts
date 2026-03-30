@@ -2,6 +2,7 @@
 export enum Source {
   GithubDavxyJamConformance = "GithubDavxyJamConformance",
   GithubDavxyJamTestVectors = "GithubDavxyJamTestVectors",
+  GithubFluffyLabsJamTesting = "GithubFluffyLabsJamTesting",
   GithubW3fJamMilestoneDelivery = "githubW3fJamMilestoneDelivery",
   GithubW3fJamTestVectors = "githubW3fJamTestVectors",
   Graypaper = "graypaper",

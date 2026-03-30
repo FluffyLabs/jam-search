@@ -25,6 +25,12 @@ export const REPOSITORIES: Repository[] = [
     owner: "davxy",
     repo: "jam-test-vectors",
   },
+  {
+    source: Source.GithubFluffyLabsJamTesting,
+    dbId: "github.com/FluffyLabs/jam-testing",
+    owner: "FluffyLabs",
+    repo: "jam-testing",
+  },
 ];
 
 export type Repository = {
