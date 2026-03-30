@@ -3,6 +3,7 @@
 
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@fluffylabs/shared-ui/theme.css";
 
 :root {
   --title-foreground: hsl(0 0% 56%);
