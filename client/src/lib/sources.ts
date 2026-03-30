@@ -22,6 +22,10 @@ export const SOURCE_OPTIONS = [
     value: Source.GithubDavxyJamTestVectors,
   },
   {
+    label: "github.com/FluffyLabs/jam-testing",
+    value: Source.GithubFluffyLabsJamTesting,
+  },
+  {
     label: "jam.web3.foundation",
     value: Source.JamWeb3Foundation,
   },
@@ -37,6 +41,7 @@ export const initialSources = [
   Source.JamDaoDiscord,
   Source.GithubW3fJamMilestoneDelivery,
   Source.JamWeb3Foundation,
+  Source.GithubFluffyLabsJamTesting,
 ];
 
 // localStorage key for user's selected sources
