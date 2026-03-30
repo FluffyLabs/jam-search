@@ -26,7 +26,7 @@ export const MatrixResults = ({
           logo={
             <img
               src={MatrixArchiverLogo}
-              className="size-4 p-0.5"
+              className="size-4 p-0.5 brightness-0 dark:brightness-100"
               alt="Matrix Archiver Logo"
             />
           }

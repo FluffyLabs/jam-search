@@ -25,7 +25,7 @@ export const ResultCard = ({
       )}
     >
       <CardHeader className="p-3 pb-1">
-        <CardTitle className="text-xs text-white font-normal truncate flex justify-between">
+        <CardTitle className="text-xs text-foreground font-normal truncate flex justify-between">
           {header}
         </CardTitle>
       </CardHeader>

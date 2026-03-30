@@ -51,10 +51,10 @@ const GraypaperResultsAll = () => {
       />
 
       <Container>
-        <h1 className="text-md font-medium text-white mb-2">{query}</h1>
+        <h1 className="text-md font-medium text-foreground mb-2">{query}</h1>
         <span className="text-muted-foreground text-sm font-light">
           Found {totalResults.toLocaleString()} matches in{" "}
-          <span className="text-white">Gray Paper</span>
+          <span className="text-foreground">Gray Paper</span>
         </span>
 
         <div className="mt-8">
@@ -113,7 +113,7 @@ const SectionResult = ({
   return (
     <Card className="relative bg-card border-border border-0 border-b rounded-none hover:bg-accent">
       <CardHeader className="p-3 pb-1">
-        <CardTitle className="text-sm text-white font-normal truncate">
+        <CardTitle className="text-sm text-foreground font-normal truncate">
           {title}
         </CardTitle>
       </CardHeader>

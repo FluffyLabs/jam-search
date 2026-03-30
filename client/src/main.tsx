@@ -7,7 +7,9 @@ import { HashRouter } from "react-router-dom";
 import App from "./App.tsx";
 import { EmbeddedViewerProvider } from "./providers/EmbeddedResultsContext.tsx";
 
-document.documentElement.classList.toggle("dark", true);
+// Initialize dark mode from system preference (toggled via sidebar)
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+document.documentElement.classList.toggle("dark", prefersDark);
 
 const root = document.getElementById("root");
 if (root === null) {

@@ -144,7 +144,11 @@ export const highlightText = (text: string, words: string[]) => {
   while (match) {
     const before = text.slice(lastIndex, match.index);
     result.push(before);
-    result.push(<span className="text-brand font-bold">{match[0]}</span>);
+    result.push(
+      <span className="bg-brand-light dark:bg-transparent text-brand-dark dark:text-brand font-bold rounded-sm">
+        {match[0]}
+      </span>
+    );
     lastIndex = match.index + match[0].length;
     match = regex.exec(text);
   }
