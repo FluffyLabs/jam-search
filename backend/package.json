@@ -14,7 +14,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.6",
+    "@hono/node-server": "^1.19.12",
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@octokit/rest": "^22.0.1",
     "@orama/orama": "^3.1.18",
