@@ -55,6 +55,10 @@ async function main() {
         continue;
       }
 
+      // Include the seed URL itself, deduplicated
+      if (!links.includes(page.url)) {
+        links.unshift(page.url);
+      }
       console.log(`Found ${links.length} URLs for ${page.url}`);
       errors.push(...(await fetchAndStorePages(links, page.dbId, DATA_DIR)));
 

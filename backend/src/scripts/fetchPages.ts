@@ -83,6 +83,12 @@ export class FetchError extends Error {
 
 export async function discoverLinks(rootUrl: string): Promise<string[]> {
   const response = await fetch(rootUrl);
+  if (!response.ok) {
+    throw new FetchError(
+      `HTTP ${response.status} ${response.statusText}`,
+      response.status
+    );
+  }
   const html = await response.text();
   const $ = cheerio.load(html);
 
@@ -177,7 +183,7 @@ export async function fetchAndStorePages(
 
   // Fetch and store each page
   for (;;) {
-    const pageUrl = pageUrls.pop();
+    const pageUrl = pageUrls.shift();
     // all pages processed, finish up.
     if (pageUrl === undefined) {
       break;
@@ -191,16 +197,15 @@ export async function fetchAndStorePages(
     try {
       pageContent = await fetchPageContent(pageUrl.url);
     } catch (e) {
-      if (!(e instanceof FetchError)) {
-        throw e;
-      }
+      const fetchError =
+        e instanceof FetchError ? e : new FetchError(String(e), 0);
 
       // Retry on rate-limit or temporary errors
       const isRetryable =
-        e.status === 429 ||
-        e.status === 408 ||
-        e.status === 502 ||
-        e.status === 503;
+        fetchError.status === 429 ||
+        fetchError.status === 408 ||
+        fetchError.status === 502 ||
+        fetchError.status === 503;
       if (isRetryable) {
         const retries = (retryCounts.get(pageUrl.url) ?? 0) + 1;
         retryCounts.set(pageUrl.url, retries);
@@ -208,18 +213,20 @@ export async function fetchAndStorePages(
           console.log(
             `Giving up on ${pageUrl.url} after ${MAX_RETRIES} retries`
           );
-          errors.push([pageUrl.url, e]);
+          errors.push([pageUrl.url, fetchError]);
           continue;
         }
         console.log(
-          `HTTP ${e.status} when fetching, will retry ${pageUrl.url}`
+          `HTTP ${fetchError.status} when fetching, will retry ${pageUrl.url}`
         );
+        // Backoff: requeue at front (shift pops from front) with increasing delay
+        await delay(1000 * 2 ** retries);
         pageUrls.push(pageUrl);
         continue;
       }
 
       // all other errors should just be stored for the very end
-      errors.push([pageUrl.url, e]);
+      errors.push([pageUrl.url, fetchError]);
       continue;
     }
 
