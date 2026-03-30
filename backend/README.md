@@ -9,7 +9,7 @@ API server and data indexing system for JAM Search.
 - Drizzle ORM + PostgreSQL
 - OpenAI API (embeddings)
 - Discord.js, Matrix SDK
-- Firecrawl (web scraping)
+- Turndown (HTML to markdown)
 
 ## Setup
 
@@ -22,7 +22,6 @@ Configure environment variables (see `src/env.ts` for required vars):
 - `OPENAI_API_KEY` - OpenAI API key
 - `DISCORD_TOKEN` - Discord bot token
 - `GITHUB_TOKEN` - GitHub personal access token
-- `FIRECRAWL_API_KEY` - Firecrawl API key
 
 ## Development
 
