@@ -193,30 +193,12 @@ export async function fetchGitHubContent(
   config: GitHubConfig
 ): Promise<GitHubContent[]> {
   const auth = config.token || process.env.GITHUB_TOKEN;
-  try {
-    return await fetchGitHubContentWithOctokit(new Octokit({ auth }), config);
-  } catch (error: unknown) {
-    // If the org rejects our token (e.g. lifetime policy), retry without auth for public repos
-    if (
-      error instanceof Error &&
-      "status" in error &&
-      (error as { status: number }).status === 403
-    ) {
-      console.log(
-        `Auth rejected for ${config.owner}/${config.repo}, retrying without token (public repo fallback, skipping discussions)...`
-      );
-      return await fetchGitHubContentWithOctokit(new Octokit(), config, {
-        skipDiscussions: true,
-      });
-    }
-    throw error;
-  }
+  return await fetchGitHubContentWithOctokit(new Octokit({ auth }), config);
 }
 
 async function fetchGitHubContentWithOctokit(
   octokit: Octokit,
-  config: GitHubConfig,
-  options?: { skipDiscussions?: boolean }
+  config: GitHubConfig
 ): Promise<GitHubContent[]> {
   const content: GitHubContent[] = [];
   // Fetch all issues (including pull requests)
@@ -299,10 +281,8 @@ async function fetchGitHubContentWithOctokit(
   }
 
   // Fetch discussions (requires authentication via GraphQL)
-  if (!options?.skipDiscussions) {
-    const discussions = await fetchDiscussions(octokit, config);
-    content.push(...discussions);
-  }
+  const discussions = await fetchDiscussions(octokit, config);
+  content.push(...discussions);
 
   return content;
 }
