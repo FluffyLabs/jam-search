@@ -42,7 +42,7 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.12",
     "tw-animate-css": "^1.3.7",
-    "use-debounce": "^10.0.4",
+    "use-debounce": "^10.1.1",
     "vaul": "^1.1.2"
   },
   "devDependencies": {
