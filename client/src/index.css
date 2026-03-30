@@ -3,6 +3,7 @@
 
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@fluffylabs/shared-ui/theme.css";
 
 :root {
   --title-foreground: hsl(0 0% 56%);
@@ -16,23 +17,21 @@
   --background: hsl(0 0% 100%);
   --foreground: hsl(218 22% 10%);
   --card: var(--secondary);
-  --card-foreground: var(--title-foreground);
+  --card-foreground: hsl(0 0% 30%);
   --popover: var(--background);
-  --popover-foreground: var(--title-foreground);
+  --popover-foreground: hsl(0 0% 30%);
   /* Buttons */
   --secondary-foreground: hsl(0 0% 36%);
   --secondary: var(--title);
   --primary-foreground: hsl(220 20% 97.25%);
   --primary: hsl(0 0% 14.12%);
-  /*  */
   --muted: hsl(220 20% 97%);
-  --muted-foreground: hsl(0 0% 72%);
+  --muted-foreground: hsl(0 0% 45%);
   --accent: var(--background);
   --accent-foreground: var(--foreground);
   /* Defaults */
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(1 61% 56%);
-  /*  */
   --border: hsl(0 0% 94%);
   --input: var(--border);
   --ring: var(--title-secondary-foreground);

@@ -26,7 +26,7 @@ export const DiscordResults = ({
           logo={
             <img
               src={DiscordLogo}
-              className="size-6 p-0.5"
+              className="size-6 p-0.5 brightness-0 dark:brightness-100"
               alt="Discord Logo"
             />
           }
