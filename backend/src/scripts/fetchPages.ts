@@ -1,8 +1,7 @@
 import { setTimeout } from "node:timers/promises";
 import { XMLParser } from "fast-xml-parser";
-import type Firecrawl from "firecrawl";
-import { SdkError } from "firecrawl";
-import fetch from "node-fetch";
+import TurndownService from "turndown";
+import * as cheerio from "cheerio";
 import { type PageData, writeDocsPage } from "../data/writer.js";
 
 interface SitemapUrl {
@@ -42,18 +41,78 @@ async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
   }));
 }
 
+const turndown = new TurndownService({
+  headingStyle: "atx",
+  codeBlockStyle: "fenced",
+});
+
 async function fetchPageContent(
-  firecrawl: Firecrawl,
   url: string
 ): Promise<{ content: string; title: string }> {
-  const result = await firecrawl.scrape(url, {
-    formats: ["markdown"],
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new FetchError(
+      `HTTP ${response.status} ${response.statusText}`,
+      response.status
+    );
+  }
+  const html = await response.text();
+  const $ = cheerio.load(html);
+
+  const title = $("title").first().text().trim();
+
+  // Remove nav, header, footer, and script/style elements for cleaner markdown
+  $("nav, header, footer, script, style, noscript").remove();
+
+  // Prefer main/article content if available
+  const main = $("main, article").first();
+  const bodyHtml = main.length ? main.html() : $("body").html();
+
+  const markdown = turndown.turndown(bodyHtml || "");
+  return { content: markdown, title };
+}
+
+export class FetchError extends Error {
+  constructor(
+    message: string,
+    public status: number
+  ) {
+    super(message);
+  }
+}
+
+export async function discoverLinks(
+  rootUrl: string
+): Promise<string[]> {
+  const response = await fetch(rootUrl);
+  const html = await response.text();
+  const $ = cheerio.load(html);
+
+  const base = new URL(rootUrl);
+  const links = new Set<string>();
+
+  $("a[href]").each((_, el) => {
+    try {
+      const href = $(el).attr("href");
+      if (!href) return;
+      const resolved = new URL(href, base);
+      // Only keep same-origin HTML links, strip hash/query
+      if (resolved.origin === base.origin) {
+        // Skip non-HTML resources
+        const ext = resolved.pathname.split(".").pop()?.toLowerCase();
+        if (ext && ["pdf", "png", "jpg", "jpeg", "gif", "svg", "zip", "tar", "gz", "mp4", "webm"].includes(ext)) {
+          return;
+        }
+        resolved.hash = "";
+        resolved.search = "";
+        links.add(resolved.toString());
+      }
+    } catch {
+      // skip invalid URLs
+    }
   });
 
-  return {
-    content: result.markdown || "",
-    title: result.metadata?.title || "",
-  };
+  return [...links];
 }
 
 function cleanContent(content: string): string | null {
@@ -63,6 +122,7 @@ function cleanContent(content: string): string | null {
   const cleanedContent = content
     .replace(/\[Skip to main content\]\([^)]+\)\s*On this page/g, "")
     .replace(/\[Skip to main content\]\([^)]+\)/g, "")
+    .replace(/^On this page\n*/m, "")
     .trim();
 
   // If content is empty or only contains whitespace after cleaning, return null
@@ -74,7 +134,6 @@ function cleanContent(content: string): string | null {
 }
 
 export async function fetchAndStorePages(
-  firecrawl: Firecrawl,
   input: string | string[] | { sitemapUrl: string },
   site: string,
   dataDir: string
@@ -99,11 +158,9 @@ export async function fetchAndStorePages(
   }
   console.log(`Found ${pageUrls.length} pages to process`);
 
-  const MAX_429_RETRIES = 10;
+  const MAX_RETRIES = 5;
   const retryCounts = new Map<string, number>();
-  let temporaryErrors = 0;
-  let delayMultiplier = 10;
-  const errors: [string, SdkError][] = [];
+  const errors: [string, Error][] = [];
 
   // Fetch and store each page
   for (;;) {
@@ -113,55 +170,42 @@ export async function fetchAndStorePages(
       break;
     }
 
-    // Add delay between requests to avoid rate limiting
-    await delay(Math.max(1000, delayMultiplier * delayMultiplier * 5));
+    // Small delay between requests to be polite
+    await delay(500);
 
     console.log(`Fetching ${pageUrl.url}`);
     let pageContent = { content: "", title: "" };
     try {
-      pageContent = await fetchPageContent(firecrawl, pageUrl.url);
+      pageContent = await fetchPageContent(pageUrl.url);
     } catch (e) {
-      // non-firecrawl errors should be propagated immediately
-      if (!(e instanceof SdkError)) {
+      if (!(e instanceof FetchError)) {
         throw e;
       }
 
-      // detect rate limiting and try again (with a per-URL ceiling)
-      if (e.status === 429) {
+      // Retry on rate-limit or temporary errors
+      const isRetryable =
+        e.status === 429 || e.status === 408 || e.status === 502 || e.status === 503;
+      if (isRetryable) {
         const retries = (retryCounts.get(pageUrl.url) ?? 0) + 1;
         retryCounts.set(pageUrl.url, retries);
-        if (retries > MAX_429_RETRIES) {
+        if (retries > MAX_RETRIES) {
           console.log(
-            `Giving up on ${pageUrl.url} after ${MAX_429_RETRIES} rate-limit retries`
+            `Giving up on ${pageUrl.url} after ${MAX_RETRIES} retries`
           );
           errors.push([pageUrl.url, e]);
           continue;
         }
-        console.log(`Reached rate-limiting, will retry ${pageUrl.url}`);
-        delayMultiplier += 10;
+        console.log(
+          `HTTP ${e.status} when fetching, will retry ${pageUrl.url}`
+        );
         pageUrls.push(pageUrl);
-        continue;
-      }
-
-      // detect timeout and gateway errors and try again
-      const isTemporaryError = e.status === 408 || e.status === 502;
-      if (isTemporaryError && temporaryErrors < 5) {
-        console.log(`${e.status} when fetching, will retry ${pageUrl.url}`);
-        pageUrls.push(pageUrl);
-        temporaryErrors += 1;
-        delayMultiplier += 5;
         continue;
       }
 
       // all other errors should just be stored for the very end
       errors.push([pageUrl.url, e]);
-      temporaryErrors = 0;
       continue;
     }
-
-    // each successful run lowers the delay multiplier a bit
-    delayMultiplier = Math.max(10, delayMultiplier - 1);
-    temporaryErrors = 0;
 
     const cleanedContent = cleanContent(pageContent.content);
 

@@ -30,7 +30,7 @@ A search engine aggregating content from multiple sources including Discord serv
 - Hono
 - Drizzle ORM + PostgreSQL
 - OpenAI (embeddings & vector search)
-- Discord.js, Matrix SDK, Firecrawl
+- Discord.js, Matrix SDK, Turndown
 
 ## Project Structure
 
