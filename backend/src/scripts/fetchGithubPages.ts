@@ -194,15 +194,20 @@ export async function fetchGitHubContent(
 ): Promise<GitHubContent[]> {
   const auth = config.token || process.env.GITHUB_TOKEN;
   try {
-    return await fetchGitHubContentWithOctokit(
-      new Octokit({ auth }),
-      config
-    );
+    return await fetchGitHubContentWithOctokit(new Octokit({ auth }), config);
   } catch (error: unknown) {
     // If the org rejects our token (e.g. lifetime policy), retry without auth for public repos
-    if (error instanceof Error && "status" in error && (error as { status: number }).status === 403) {
-      console.log(`Auth rejected for ${config.owner}/${config.repo}, retrying without token (public repo fallback, skipping discussions)...`);
-      return await fetchGitHubContentWithOctokit(new Octokit(), config, { skipDiscussions: true });
+    if (
+      error instanceof Error &&
+      "status" in error &&
+      (error as { status: number }).status === 403
+    ) {
+      console.log(
+        `Auth rejected for ${config.owner}/${config.repo}, retrying without token (public repo fallback, skipping discussions)...`
+      );
+      return await fetchGitHubContentWithOctokit(new Octokit(), config, {
+        skipDiscussions: true,
+      });
     }
     throw error;
   }
