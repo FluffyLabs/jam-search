@@ -204,7 +204,8 @@ export function writeDocsPage(dataDir: string, page: PageData): string {
   const slug = slugify(
     new URL(page.url).pathname.replace(/^\/|\/$/g, "") || page.title
   );
-  return writePageFile(dataDir, "docs", slug, page);
+  const subDir = slugify(page.site);
+  return writePageFile(dataDir, subDir, slug, page);
 }
 
 export function writeGithubPage(

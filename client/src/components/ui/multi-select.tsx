@@ -38,7 +38,7 @@ const multiSelectVariants = cva(
       variant: {
         default:
           "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        primary: "border-primary bg-[#242424] text-primary-foreground",
+        primary: "border-primary bg-card text-foreground",
         secondary:
           "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
@@ -258,13 +258,16 @@ export const MultiSelect = React.forwardRef<
                       selectedValues.slice(0, maxCount).map((value) => {
                         const option = options.find((o) => o.value === value);
                         return (
-                          <span key={value} className="text-[#858585] px-2">
+                          <span
+                            key={value}
+                            className="text-muted-foreground px-2"
+                          >
                             {option?.label}
                           </span>
                         );
                       })}
                     {!showOptionsAsTags && selectedValues.length > maxCount && (
-                      <span className="text-[#858585] px-2">
+                      <span className="text-muted-foreground px-2">
                         <span className="hidden md:inline">Sources</span>{" "}
                         <span className="bg-secondary ml-1 p-1 rounded-xl w-[15px] h-[15px]">
                           {selectedValues.length}
@@ -344,7 +347,7 @@ export const MultiSelect = React.forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-2 bg-[#242424] border-[#444444] rounded-lg"
+          className="w-auto p-2 bg-card border-border rounded-lg"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
@@ -355,9 +358,7 @@ export const MultiSelect = React.forwardRef<
                 onKeyDown={handleInputKeyDown}
               />
             )}
-            <CommandList
-              className={cn("bg-gray-900", multiSelectVariants({ variant }))}
-            >
+            <CommandList className={cn(multiSelectVariants({ variant }))}>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
                 {showSelectAll && (
@@ -370,7 +371,7 @@ export const MultiSelect = React.forwardRef<
                       className={cn(
                         "mr-2 flex h-4 w-4 items-center justify-center rounded-sm",
                         selectedValues.length === options.length
-                          ? "bg-[#242424] text-primary-foreground"
+                          ? "bg-card text-foreground"
                           : "opacity-50 [&_svg]:invisible"
                       )}
                     >
@@ -387,14 +388,16 @@ export const MultiSelect = React.forwardRef<
                       onSelect={() => toggleOption(option.value)}
                       className={cn(
                         "cursor-pointer",
-                        isSelected ? "text-white" : "text-[rgb(204,204,204)]",
+                        isSelected
+                          ? "text-foreground"
+                          : "text-muted-foreground",
                         option.disabled &&
                           "opacity-50 cursor-not-allowed pointer-events-none"
                       )}
                     >
                       <div
                         className={cn(
-                          "mr-2 flex h-4 w-4 p-0.5 items-center justify-center rounded-sm border border-[#3B4040] bg-[#323232]",
+                          "mr-2 flex h-4 w-4 p-0.5 items-center justify-center rounded-sm border border-border bg-secondary",
                           isSelected
                             ? "bg-brand text-[#1C1B1F] border-brand"
                             : "opacity-50 [&_svg]:invisible"

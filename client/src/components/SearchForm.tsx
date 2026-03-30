@@ -383,22 +383,26 @@ export const SearchForm = ({
 
       {isFocused && showSearchOptions && searchQuery.trim() === "" && (
         <div className="absolute top-full left-0 right-0 mt-2 border border-input bg-card rounded-md shadow-lg z-10">
-          <div className="p-4 border-b border-zinc-700">
-            <p className="text-sm font-normal text-zinc-200">Search Options</p>
+          <div className="p-4 border-b border-border">
+            <p className="text-sm font-normal text-foreground">
+              Search Options
+            </p>
           </div>
           <div className="p-2 max-h-[300px] overflow-y-auto text-xs font-light">
             {searchOptions.map((option) => (
               <button
                 type="button"
                 key={option.label}
-                className="flex items-center justify-between p-2 hover:bg-zinc-800 rounded cursor-pointer w-full text-left"
+                className="flex items-center justify-between p-2 hover:bg-accent rounded cursor-pointer w-full text-left"
                 onClick={() => addSearchOption(option.label)}
               >
                 <div className="flex flex-col">
-                  <span className="text-zinc-200 font-normal">
+                  <span className="text-foreground font-normal">
                     {option.label}:
                   </span>
-                  <span className="text-zinc-400">{option.description}</span>
+                  <span className="text-muted-foreground">
+                    {option.description}
+                  </span>
                 </div>
               </button>
             ))}

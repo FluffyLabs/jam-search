@@ -40,7 +40,7 @@ function App() {
             <AppsSidebar
               activeLink="search"
               className="h-full"
-              enableDarkModeToggle={false}
+              enableDarkModeToggle
             />
           </div>
 

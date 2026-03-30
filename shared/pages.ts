@@ -9,12 +9,18 @@ export const PAGES: Page[] = [
     sitemapUrl: "https://docs.jamcha.in/sitemap.xml",
   },
   {
+    source: Source.Graypaper,
+    kind: "url",
+    dbId: "graypaper.com",
+    link: "https://graypaper.com",
+    url: "https://graypaper.com",
+  },
+  {
     source: Source.JamWeb3Foundation,
     kind: "url",
     dbId: "jam.web3.foundation",
     link: "https://jam.web3.foundation",
     url: "https://jam.web3.foundation",
-    skipIndexing: true,
   },
 ];
 

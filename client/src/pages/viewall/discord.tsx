@@ -64,7 +64,7 @@ const DiscordResultsAll = () => {
       />
 
       <Container>
-        <h1 className="text-md font-medium text-white mb-2">{query}</h1>
+        <h1 className="text-md font-medium text-foreground mb-2">{query}</h1>
 
         {/* Display active filters as tags */}
         {query && filters.length > 0 && (
@@ -85,7 +85,7 @@ const DiscordResultsAll = () => {
 
         <span className="text-muted-foreground text-sm font-light">
           Found {queryResult.totalResults.toLocaleString()} matches in{" "}
-          <span className="text-white">
+          <span className="text-foreground">
             {channel.name} @ {channel.serverName}
           </span>
         </span>

@@ -1,9 +1,10 @@
-import Firecrawl, { SdkError } from "firecrawl";
 import { PAGES } from "../../../shared/pages.js";
-import { env } from "../env.js";
-import { fetchAndStorePages } from "../scripts/fetchPages.js";
+import {
+  discoverLinks,
+  FetchError,
+  fetchAndStorePages,
+} from "../scripts/fetchPages.js";
 
-const FIRECRAWL_API_KEY = env.FIRECRAWL_API_KEY;
 const DATA_DIR = process.env.DATA_DIR || "./data";
 
 try {
@@ -17,10 +18,7 @@ try {
 async function main() {
   console.log("Running docs pages fetch job at", new Date().toISOString());
 
-  const firecrawl = new Firecrawl({
-    apiKey: FIRECRAWL_API_KEY,
-  });
-  const errors: [string, SdkError][] = [];
+  const errors: [string, Error][] = [];
 
   for (const page of PAGES) {
     if (page.skipIndexing) {
@@ -34,7 +32,6 @@ async function main() {
       console.log(`Fetching sitemap of ${page.dbId} ...`);
       errors.push(
         ...(await fetchAndStorePages(
-          firecrawl,
           {
             sitemapUrl: page.sitemapUrl,
           },
@@ -46,25 +43,24 @@ async function main() {
     }
 
     if (page.kind === "url") {
-      console.log(`Mapping ${page.dbId} to get all URLs...`);
+      console.log(`Discovering links for ${page.dbId} ...`);
       let links: string[];
       try {
-        const map = await firecrawl.map(page.url);
-        links = map.links.map((link) => link.url);
+        links = await discoverLinks(page.url);
       } catch (e) {
         errors.push([
           page.url,
-          e instanceof SdkError
-            ? e
-            : new SdkError(String(e), 0, "Unable to map page."),
+          e instanceof FetchError ? e : new FetchError(String(e), 0),
         ]);
         continue;
       }
 
+      // Include the seed URL itself, deduplicated
+      if (!links.includes(page.url)) {
+        links.unshift(page.url);
+      }
       console.log(`Found ${links.length} URLs for ${page.url}`);
-      errors.push(
-        ...(await fetchAndStorePages(firecrawl, links, page.dbId, DATA_DIR))
-      );
+      errors.push(...(await fetchAndStorePages(links, page.dbId, DATA_DIR)));
 
       continue;
     }

@@ -54,10 +54,10 @@ const PagesResultsAll = () => {
       />
 
       <Container>
-        <h1 className="text-md font-medium text-white mb-2">{query}</h1>
+        <h1 className="text-md font-medium text-foreground mb-2">{query}</h1>
         <span className="text-muted-foreground text-sm font-light">
           Found {queryResult.totalResults.toLocaleString()} matches at{" "}
-          <span className="text-white">{site}</span>
+          <span className="text-foreground">{site}</span>
         </span>
 
         <div className="my-8">

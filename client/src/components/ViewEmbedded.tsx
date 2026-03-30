@@ -144,7 +144,7 @@ const Content = ({
       >
         <Button
           variant="ghost"
-          className="text-brand absolute top-0 right-0"
+          className="text-brand-dark dark:text-brand absolute top-0 right-0"
           onClick={close}
         >
           <SquareX />
@@ -156,7 +156,7 @@ const Content = ({
           style={{
             width: "100%",
             height: "100%",
-            colorScheme: "dark",
+            colorScheme: "light dark",
             opacity: isLoaded ? 100 : 0,
           }}
           className="animate-in fade-in-0"
@@ -199,8 +199,8 @@ const Content = ({
                         <span
                           className={`font-medium truncate pr-2 ${
                             isSelected
-                              ? "text-brand"
-                              : "text-white light:text-neutral-800"
+                              ? "text-brand-dark dark:text-brand"
+                              : "text-foreground"
                           }`}
                         >
                           {isPageResult ? result.title : result.sender}
