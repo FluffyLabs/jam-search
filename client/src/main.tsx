@@ -8,8 +8,11 @@ import App from "./App.tsx";
 import { EmbeddedViewerProvider } from "./providers/EmbeddedResultsContext.tsx";
 
 // Initialize dark mode from system preference (toggled via sidebar)
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-document.documentElement.classList.toggle("dark", prefersDark);
+const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+document.documentElement.classList.toggle("dark", darkModeQuery.matches);
+darkModeQuery.addEventListener("change", (e) => {
+  document.documentElement.classList.toggle("dark", e.matches);
+});
 
 const root = document.getElementById("root");
 if (root === null) {

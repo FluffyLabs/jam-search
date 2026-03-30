@@ -38,7 +38,7 @@ const multiSelectVariants = cva(
       variant: {
         default:
           "border-foreground/10 text-foreground bg-card hover:bg-card/80",
-        primary: "border-primary bg-card text-primary-foreground",
+        primary: "border-primary bg-card text-foreground",
         secondary:
           "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
@@ -371,7 +371,7 @@ export const MultiSelect = React.forwardRef<
                       className={cn(
                         "mr-2 flex h-4 w-4 items-center justify-center rounded-sm",
                         selectedValues.length === options.length
-                          ? "bg-card text-primary-foreground"
+                          ? "bg-card text-foreground"
                           : "opacity-50 [&_svg]:invisible"
                       )}
                     >

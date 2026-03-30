@@ -140,15 +140,20 @@ export const highlightText = (text: string, words: string[]) => {
 
   let match = regex.exec(text);
   let lastIndex = 0;
+  let matchIndex = 0;
 
   while (match) {
     const before = text.slice(lastIndex, match.index);
     result.push(before);
     result.push(
-      <span className="bg-brand-light dark:bg-transparent text-brand-dark dark:text-brand font-bold rounded-sm">
+      <span
+        key={`${matchIndex}-${match.index}`}
+        className="bg-brand-light dark:bg-transparent text-brand-dark dark:text-brand font-bold rounded-sm"
+      >
         {match[0]}
       </span>
     );
+    matchIndex++;
     lastIndex = match.index + match[0].length;
     match = regex.exec(text);
   }

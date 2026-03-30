@@ -25,7 +25,6 @@
   --secondary: var(--title);
   --primary-foreground: hsl(220 20% 97.25%);
   --primary: hsl(0 0% 14.12%);
-  /*  */
   --muted: hsl(220 20% 97%);
   --muted-foreground: hsl(0 0% 45%);
   --accent: var(--background);
@@ -33,7 +32,6 @@
   /* Defaults */
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(1 61% 56%);
-  /*  */
   --border: hsl(0 0% 94%);
   --input: var(--border);
   --ring: var(--title-secondary-foreground);
