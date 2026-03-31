@@ -13,15 +13,11 @@ function MathSpan({
   latex: string;
   display: boolean;
 }) {
-  try {
-    const html = katex.renderToString(latex, {
-      throwOnError: false,
-      displayMode: display,
-    });
-    return <span dangerouslySetInnerHTML={{ __html: html }} />;
-  } catch {
-    return <span>{display ? `$$${latex}$$` : `$${latex}$`}</span>;
-  }
+  const html = katex.renderToString(latex, {
+    throwOnError: false,
+    displayMode: display,
+  });
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 /**
