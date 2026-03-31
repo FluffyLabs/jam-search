@@ -5,7 +5,7 @@ import { writeGraypaperVersions } from "../data/writer.js";
 import type { ArchiveMetadata } from "../jobs/graypaperJob.js";
 
 function getExistingVersions(
-  dataDir: string,
+  dataDir: string
 ): Array<{ version: string; timestamp: string }> {
   const versionsPath = path.join(dataDir, "graypaper", "versions.md");
   if (!fs.existsSync(versionsPath)) {
@@ -22,7 +22,7 @@ function getExistingVersions(
 
 export async function updateGraypaperVersions(
   dataDir: string,
-  metadata: ArchiveMetadata,
+  metadata: ArchiveMetadata
 ): Promise<boolean> {
   const existingVersions = getExistingVersions(dataDir);
   const existingSet = new Set(existingVersions.map((v) => v.version));
@@ -50,7 +50,7 @@ export async function updateGraypaperVersions(
       allVersions.map((v) => ({
         version: v.version,
         timestamp: new Date(v.timestamp),
-      })),
+      }))
     );
   }
 

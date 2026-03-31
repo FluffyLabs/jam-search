@@ -18,9 +18,7 @@ Some content here.`;
   it("should convert smallcaps to uppercase", () => {
     expect(stripPandocArtifacts("[rfc]{.smallcaps}")).toBe("RFC");
     expect(stripPandocArtifacts("[pvm]{.smallcaps}")).toBe("PVM");
-    expect(stripPandocArtifacts("the [evm]{.smallcaps} is")).toBe(
-      "the EVM is",
-    );
+    expect(stripPandocArtifacts("the [evm]{.smallcaps} is")).toBe("the EVM is");
   });
 
   it("should remove ::: directives", () => {
@@ -40,14 +38,14 @@ Content here`;
 
   it("should remove empty anchor spans", () => {
     expect(
-      stripPandocArtifacts('[]{#enum:resilience label="enum:resilience"}'),
+      stripPandocArtifacts('[]{#enum:resilience label="enum:resilience"}')
     ).toBe("");
     expect(stripPandocArtifacts('[]{#eq:prices label="eq:prices"}')).toBe("");
   });
 
   it("should remove image references with local assets", () => {
     expect(
-      stripPandocArtifacts('![image](assets/jam-pen-back.png){width="10cm"}'),
+      stripPandocArtifacts('![image](assets/jam-pen-back.png){width="10cm"}')
     ).toBe("");
     expect(stripPandocArtifacts("![alt](assets/fig1.png)")).toBe("");
   });
@@ -66,7 +64,7 @@ Content here`;
 
   it("should remove \\label{...}", () => {
     expect(stripPandocArtifacts("equation \\label{eq:block} here")).toBe(
-      "equation  here",
+      "equation  here"
     );
   });
 
@@ -78,12 +76,14 @@ Content here`;
 
   it("should preserve external links", () => {
     expect(stripPandocArtifacts("[click](https://example.com)")).toBe(
-      "[click](https://example.com)",
+      "[click](https://example.com)"
     );
   });
 
   it("should convert internal anchor links to text", () => {
-    expect(stripPandocArtifacts("[section 4](#sec:overview)")).toBe("section 4");
+    expect(stripPandocArtifacts("[section 4](#sec:overview)")).toBe(
+      "section 4"
+    );
   });
 
   it("should clean up multiple blank lines", () => {

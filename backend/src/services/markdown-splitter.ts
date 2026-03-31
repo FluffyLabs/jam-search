@@ -21,20 +21,16 @@ export function stripPandocArtifacts(markdown: string): string {
       // Remove image references with local assets
       .replace(/!\[[^\]]*\]\(assets\/[^)]+\)(\{[^}]*\})?/g, "")
       // Handle smallcaps: [text]{.smallcaps} → TEXT
-      .replace(
-        /\[([^\]]+)\]\{\.smallcaps\}/g,
-        (_match, text: string) => text.toUpperCase(),
+      .replace(/\[([^\]]+)\]\{\.smallcaps\}/g, (_match, text: string) =>
+        text.toUpperCase()
       )
       // Remove reference-type attributes from links and convert internal links to text
       .replace(
         /\[((?:[^\]\\]|\\.)*)\]\(#[^)]*\)\{reference-type=[^}]+\}/g,
-        "$1",
+        "$1"
       )
       // Remove remaining reference-type attributes from other links
-      .replace(
-        /(\[(?:[^\]\\]|\\.)*\]\([^)]*\))\{reference-type=[^}]+\}/g,
-        "$1",
-      )
+      .replace(/(\[(?:[^\]\\]|\\.)*\]\([^)]*\))\{reference-type=[^}]+\}/g, "$1")
       // Convert remaining internal anchor links [text](#ref) to just text
       .replace(/\[((?:[^\]\\]|\\.)*)\]\(#[^)]*\)/g, "$1")
       // Remove remaining Pandoc attributes on links/images: {width="..."}, {#id}, etc.

@@ -37,7 +37,7 @@ try {
 async function main() {
   console.log(
     "Running scheduled graypaper update job at",
-    new Date().toISOString(),
+    new Date().toISOString()
   );
 
   // Fetch metadata from the graypaper archive
