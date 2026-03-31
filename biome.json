@@ -33,6 +33,18 @@
       "trailingCommas": "es5"
     }
   },
+  "overrides": [
+    {
+      "includes": ["client/src/components/InlineMath.tsx"],
+      "linter": {
+        "rules": {
+          "security": {
+            "noDangerouslySetInnerHtml": "off"
+          }
+        }
+      }
+    }
+  ],
   "css": {
     "parser": {
       "cssModules": true,

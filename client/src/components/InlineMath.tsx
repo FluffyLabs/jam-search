@@ -2,17 +2,11 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import type { ReactNode } from "react";
 
-/**
- * Render a LaTeX math string to HTML using KaTeX.
- * Returns a span with rendered math, or the raw string on error.
- */
-function MathSpan({ latex, display }: { latex: string; display: boolean }) {
-  const html = katex.renderToString(latex, {
+function renderKatex(latex: string, display: boolean): string {
+  return katex.renderToString(latex, {
     throwOnError: false,
     displayMode: display,
   });
-  // biome-ignore lint/security/noDangerouslySetInnerHtml: KaTeX produces trusted HTML from math notation
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 /**
@@ -33,11 +27,19 @@ export function renderMathInText(text: string): ReactNode[] {
     }
 
     if (match[1] !== undefined) {
-      // Display math $$...$$
-      parts.push(<MathSpan key={key++} latex={match[1]} display={true} />);
+      parts.push(
+        <span
+          key={key++}
+          dangerouslySetInnerHTML={{ __html: renderKatex(match[1], true) }}
+        />
+      );
     } else if (match[2] !== undefined) {
-      // Inline math $...$
-      parts.push(<MathSpan key={key++} latex={match[2]} display={false} />);
+      parts.push(
+        <span
+          key={key++}
+          dangerouslySetInnerHTML={{ __html: renderKatex(match[2], false) }}
+        />
+      );
     }
 
     lastIndex = match.index + match[0].length;
