@@ -14,7 +14,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/mode";
-import { getStoredSources } from "@/lib/sources";
 import { cn } from "@/lib/utils";
 
 const searchOptions = [
@@ -125,11 +124,7 @@ export const SearchForm = ({
   }, []);
 
   // prefetch the results
-  useResults(
-    prefetchingQuery,
-    getStoredSources(),
-    searchMode !== SearchMode.Regular
-  );
+  useResults(prefetchingQuery, searchMode !== SearchMode.Regular);
 
   const getQueryParams = () => {
     // Get current URL parameters and update only the search-related ones

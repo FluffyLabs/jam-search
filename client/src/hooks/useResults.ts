@@ -1,5 +1,4 @@
 import { discord, github, matrix, pages } from "@shared/index";
-import { Source } from "@shared/sources";
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { useSearchPages } from "@/hooks/useSearchPages";
@@ -7,11 +6,7 @@ import { parseSearchQuery } from "@/lib/utils";
 import { useEmbedding } from "./useEmbedding";
 import { useSearchGraypaper } from "./useSearchGraypaper";
 
-export function useResults(
-  richQuery: string,
-  selectedSources: string[],
-  isExtendedSearch: boolean
-) {
+export function useResults(richQuery: string, isExtendedSearch: boolean) {
   // Parse the query to extract filters
   const { query, filters } = parseSearchQuery(richQuery);
   const embedding = useEmbedding(query, isExtendedSearch).data;
@@ -27,7 +22,6 @@ export function useResults(
         channelId: room.id,
         pageSize: 6,
         filters,
-        enabled: selectedSources.includes(room.source),
       }),
     };
   });
@@ -42,7 +36,6 @@ export function useResults(
         pageSize: 6,
         filters,
         channelId: channel.channelId,
-        enabled: selectedSources.includes(channel.source),
       }),
     };
   });
@@ -56,7 +49,6 @@ export function useResults(
         embedding,
         pageSize: 4,
         site: page.dbId,
-        enabled: selectedSources.includes(page.source),
       }),
     };
   });
@@ -70,7 +62,6 @@ export function useResults(
         embedding,
         pageSize: 4,
         site: repo.dbId,
-        enabled: selectedSources.includes(repo.source),
       }),
     };
   });
@@ -80,7 +71,6 @@ export function useResults(
     query,
     embedding,
     pageSize: 6,
-    enabled: selectedSources.includes(Source.Graypaper),
   });
 
   return {
