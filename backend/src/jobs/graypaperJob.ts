@@ -3,10 +3,28 @@ import {
   writeGraypaperSection,
 } from "../data/writer.js";
 import { updateGraypaperVersions } from "../scripts/updateGraypaperVersions.js";
-import { PDFParserService } from "../services/pdf-parser.js";
+import {
+  splitMarkdownSections,
+  stripPandocArtifacts,
+} from "../services/markdown-splitter.js";
 
-const LATEST_GP_PDF = "https://graypaper.com/graypaper.pdf";
+const ARCHIVE_BASE =
+  "https://raw.githubusercontent.com/FluffyLabs/graypaper-archive/main/dist";
+const METADATA_URL = `${ARCHIVE_BASE}/metadata.json`;
 const DATA_DIR = process.env.DATA_DIR || "./data";
+
+export interface ArchiveVersion {
+  name?: string;
+  hash: string;
+  date: string;
+  legacy?: boolean;
+}
+
+export interface ArchiveMetadata {
+  latest: string;
+  versions: Record<string, ArchiveVersion>;
+  nightly: { name: string; hash: string; date: string };
+}
 
 try {
   await main();
@@ -19,28 +37,43 @@ try {
 async function main() {
   console.log(
     "Running scheduled graypaper update job at",
-    new Date().toISOString()
+    new Date().toISOString(),
   );
 
-  const hasNewVersion = await updateGraypaperVersions(DATA_DIR);
+  // Fetch metadata from the graypaper archive
+  const metadataRes = await fetch(METADATA_URL);
+  if (!metadataRes.ok) {
+    throw new Error(`Failed to fetch metadata: ${metadataRes.status}`);
+  }
+  const metadata: ArchiveMetadata = await metadataRes.json();
+
+  const hasNewVersion = await updateGraypaperVersions(DATA_DIR, metadata);
   if (!hasNewVersion) {
     console.log("Graypaper Versions: no new version");
     return;
   }
 
-  console.log("Fetching newest Graypaper");
-  const result = await PDFParserService.getInstance().parsePDF(LATEST_GP_PDF);
-  const flattenedSections = result.sections.flatMap((section) => [
-    section,
-    ...section.subsections,
-  ]);
+  // Fetch the latest markdown from the archive
+  const latestHash = metadata.latest;
+  const mdUrl = `${ARCHIVE_BASE}/graypaper-${latestHash}.md`;
+  console.log(`Fetching graypaper markdown: ${mdUrl}`);
 
-  console.log(`Updating Graypaper sections from PDF: ${result.filename}`);
+  const mdRes = await fetch(mdUrl);
+  if (!mdRes.ok) {
+    throw new Error(`Failed to fetch markdown: ${mdRes.status}`);
+  }
+  const rawMarkdown = await mdRes.text();
+
+  // Strip Pandoc artifacts and split into sections
+  const cleanedMarkdown = stripPandocArtifacts(rawMarkdown);
+  const sections = splitMarkdownSections(cleanedMarkdown);
+
+  console.log(`Split into ${sections.length} sections`);
 
   // Clear existing sections and write new ones
   clearGraypaperSections(DATA_DIR);
-  for (let i = 0; i < flattenedSections.length; i++) {
-    const section = flattenedSections[i];
+  for (let i = 0; i < sections.length; i++) {
+    const section = sections[i];
     writeGraypaperSection(DATA_DIR, {
       title: section.title,
       text: section.text,
@@ -48,5 +81,5 @@ async function main() {
     });
   }
 
-  console.log(`Wrote ${flattenedSections.length} graypaper sections`);
+  console.log(`Wrote ${sections.length} graypaper sections`);
 }

@@ -30,7 +30,10 @@ export function createApp(db: SearchDB, dataDir: string) {
 
   app.use(
     cors({
-      origin: isDevelopment ? ["http://localhost:5173"] : "*",
+      origin: isDevelopment
+        ? (origin) =>
+            /^https?:\/\/localhost(:\d+)?$/.test(origin) ? origin : null
+        : "*",
     })
   );
 

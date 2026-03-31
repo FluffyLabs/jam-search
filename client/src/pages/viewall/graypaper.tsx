@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Container } from "@/components/Container";
+import { withMathRendering } from "@/components/InlineMath";
 import { Paging } from "@/components/Paging";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
@@ -119,7 +120,7 @@ const SectionResult = ({
       </CardHeader>
       <CardContent className="flex flex-col gap-2 p-3 pt-0">
         <div className="text-sm font-light">
-          {getTextToDisplay(text, query, 700)}
+          {withMathRendering(getTextToDisplay(text, query, 700))}
         </div>
         <div className="flex justify-end">
           <ViewEmbedded

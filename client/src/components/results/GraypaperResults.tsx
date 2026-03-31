@@ -3,6 +3,7 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
 import type { useResults } from "@/hooks/useResults";
 import { getTextToDisplay } from "@/lib/utils";
+import { withMathRendering } from "../InlineMath";
 import { ShowAll } from "../ShowAll";
 import { ViewEmbedded } from "../ViewEmbedded";
 import { NoResults } from "./NoResults";
@@ -80,7 +81,7 @@ export const GraypaperResults = ({
             }
             content={
               <div className="text-xs font-light">
-                {getTextToDisplay(section.text, query)}
+                {withMathRendering(getTextToDisplay(section.text, query))}
               </div>
             }
           />
