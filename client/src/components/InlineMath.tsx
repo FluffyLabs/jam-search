@@ -55,7 +55,10 @@ export function renderMathInText(text: string): ReactNode[] {
  * Process an array of ReactNodes (as returned by getTextToDisplay/highlightText)
  * and render math within string segments.
  */
-export function withMathRendering(nodes: ReactNode[]): ReactNode[] {
+export function withMathRendering(
+  input: ReactNode[] | string,
+): ReactNode[] {
+  const nodes = typeof input === "string" ? [input] : input;
   return nodes.flatMap((node) => {
     if (typeof node === "string") {
       return renderMathInText(node);
