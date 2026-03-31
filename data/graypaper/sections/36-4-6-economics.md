@@ -1,0 +1,22 @@
+---
+type: graypaper_section
+title: 4.6 Economics
+index: 36
+---
+The present work describes a crypto-economic system, i.e. one combining elements of both cryptography and economics and game theory to deliver a self-sovereign digital service. In order to codify and manipulate economic incentives we define a token which is native to the system, which we will simply call *tokens* in the present work.
+
+A value of tokens is generally referred to as a *balance*, and such a value is said to be a member of the set of balances, $\balance$, which is exactly equivalent to the set of naturals less than $2^{64}$ (i.e. 64-bit unsigned integers in coding parlance). Formally: $$\begin{aligned}
+
+  \balance \equiv \Nbits{64}\end{aligned}$$
+
+Though unimportant for the present work, we presume that there be a standard named denomination for $10^{9}$ tokens. This is different to both Ethereum (which uses a denomination of $10^{18}$), Polkadot (which uses a denomination of $10^{10}$) and Polkadot's experimental cousin Kusama (which uses $10^{12}$).
+
+The fact that balances are constrained to being less than $2^{64}$ implies that there may never be more than around $18\times10^{9}$ tokens (each divisible into portions of $10^{-9}$) within JAM. We would expect that the total number of tokens ever issued will be a substantially smaller amount than this.
+
+We further presume that a number of constant *prices* stated in terms of tokens are known. However we leave the specific values to be determined in following work:
+
+the additional minimum balance implied for a single item within a mapping.
+
+the additional minimum balance implied for a single octet of data within a mapping.
+
+the minimum balance implied for a service.

@@ -2,31 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import matter from "gray-matter";
 import { writeGraypaperVersions } from "../data/writer.js";
-
-interface GitHubRelease {
-  tag_name: string;
-  published_at: string;
-}
-
-async function fetchLatestReleases(): Promise<GitHubRelease[]> {
-  try {
-    const response = await fetch(
-      "https://api.github.com/repos/gavofyork/graypaper/releases"
-    );
-
-    if (!response.ok) {
-      throw new Error(`GitHub API responded with status: ${response.status}`);
-    }
-
-    return (await response.json()).map((release: GitHubRelease) => ({
-      tag_name: release.tag_name.replace("v", ""),
-      published_at: release.published_at,
-    }));
-  } catch (error) {
-    console.error("Error fetching releases:", error);
-    return [];
-  }
-}
+import type { ArchiveMetadata } from "../jobs/graypaperJob.js";
 
 function getExistingVersions(
   dataDir: string
@@ -45,23 +21,26 @@ function getExistingVersions(
 }
 
 export async function updateGraypaperVersions(
-  dataDir: string
+  dataDir: string,
+  metadata: ArchiveMetadata
 ): Promise<boolean> {
-  const releases = await fetchLatestReleases();
   const existingVersions = getExistingVersions(dataDir);
   const existingSet = new Set(existingVersions.map((v) => v.version));
 
   let hasNew = false;
   const allVersions = [...existingVersions];
 
-  for (const release of releases) {
-    if (!existingSet.has(release.tag_name)) {
+  for (const version of Object.values(metadata.versions)) {
+    // Skip legacy versions without a name
+    if (!version.name) continue;
+
+    if (!existingSet.has(version.name)) {
       allVersions.push({
-        version: release.tag_name,
-        timestamp: release.published_at,
+        version: version.name,
+        timestamp: new Date(version.date).toISOString(),
       });
       hasNew = true;
-      console.log(`Added new graypaper version: ${release.tag_name}`);
+      console.log(`Added new graypaper version: ${version.name}`);
     }
   }
 

@@ -1,6 +1,0 @@
----
-type: graypaper_section
-title: 16. Availability Assurance
-index: 83
----
-Validators should issue a signed statement, called an assurance, when they are in possession of all of their corresponding erasure-coded chunks for a given work-report which is currently pending availability. For any workreport to gain an assurance, there are two classes of data a validator must have: Firstly, their erasure-coded chunk for this report’s bundle. The validity of this chunk can be trivially proven through the work-report’s work-package erasure-root and a Merkle-proof of inclusion in the correct location. The proof should be included from the guarantor. This chunk is needed to verify the work-report’s validity and completeness and need not be retained after the work-report is considered audited. Until then, it should be provided on request to validators. Secondly, the validator should have in hand the corresponding erasure-coded chunk for each of the exported segments referenced by the segments root. These should be retained for 28 days and provided to any validator on request.

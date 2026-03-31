@@ -1,0 +1,14 @@
+---
+type: graypaper_section
+title: 1.4 Document Structure
+index: 6
+---
+We begin with a brief overview of present scaling approaches in blockchain technology in section 2. In section 3 we define and clarify the notation from which we will draw for our formalisms.
+
+We follow with a broad overview of the protocol in section 4 outlining the major areas including the Polkadot Virtual Machine (PVM), the consensus protocols Safrole and GRANDPA, the common clock and build the foundations of the formalism.
+
+We then continue with the full protocol definition split into two parts: firstly the correct on-chain state-transition formula helpful for all nodes wishing to validate the chain state, and secondly, in sections 14 and 19 the honest strategy for the off-chain actions of any actors who wield a validator key.
+
+The main body ends with a discussion over the performance characteristics of the protocol in section 20 and finally conclude in section 21.
+
+The appendix contains various additional material important for the protocol definition including the PVM in appendices 24 & 25, serialization and Merklization in appendices 26 & 27 and cryptography in appendices 28, 30 & 31. We finish with an index of terms which includes the values of all simple constant terms used in the work in appendix 32, and close with the bibliography.
