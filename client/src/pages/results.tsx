@@ -320,9 +320,7 @@ const SearchResults = () => {
                       const status = sourceStatuses.get(s.value);
                       if (!status) return s.label;
                       if (status.isLoading) return `${s.label} (\u2026)`;
-                      if (status.totalResults > 0)
-                        return `${s.label} (${status.totalResults})`;
-                      return s.label;
+                      return `${s.label} (${status.totalResults})`;
                     })
                     .join(", ")}
                   .{" "}
