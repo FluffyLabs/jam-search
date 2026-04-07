@@ -27,7 +27,9 @@ function delay(ms: number): Promise<void> {
 }
 
 async function fetchSitemap(sitemapUrl: string): Promise<PageUrl[]> {
-  const response = await fetch(sitemapUrl);
+  const response = await fetch(sitemapUrl, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   const xml = await response.text();
   const parser = new XMLParser();
   const result = parser.parse(xml) as Sitemap;
@@ -46,10 +48,14 @@ const turndown = new TurndownService({
   codeBlockStyle: "fenced",
 });
 
+const FETCH_TIMEOUT_MS = 30_000;
+
 async function fetchPageContent(
   url: string
 ): Promise<{ content: string; title: string }> {
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   if (!response.ok) {
     throw new FetchError(
       `HTTP ${response.status} ${response.statusText}`,
@@ -82,7 +88,9 @@ export class FetchError extends Error {
 }
 
 export async function discoverLinks(rootUrl: string): Promise<string[]> {
-  const response = await fetch(rootUrl);
+  const response = await fetch(rootUrl, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
   if (!response.ok) {
     throw new FetchError(
       `HTTP ${response.status} ${response.statusText}`,
@@ -200,8 +208,9 @@ export async function fetchAndStorePages(
       const fetchError =
         e instanceof FetchError ? e : new FetchError(String(e), 0);
 
-      // Retry on rate-limit or temporary errors
+      // Retry on rate-limit, temporary errors, or network failures (status 0)
       const isRetryable =
+        fetchError.status === 0 ||
         fetchError.status === 429 ||
         fetchError.status === 408 ||
         fetchError.status === 502 ||
