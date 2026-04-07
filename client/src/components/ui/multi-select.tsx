@@ -457,8 +457,14 @@ export const MultiSelect = React.forwardRef<
                   <CommandSeparator className="bg-secondary-foreground mt-2" />
                   <CommandGroup>
                     {Array.isArray(children) ? (
-                      children.map((child, id) => (
-                        <CommandItem key={`${id}-${child}`}>
+                      React.Children.toArray(children).map((child, index) => (
+                        <CommandItem
+                          key={
+                            React.isValidElement(child)
+                              ? (child.key ?? index)
+                              : index
+                          }
+                        >
                           {child}
                         </CommandItem>
                       ))
