@@ -28,7 +28,7 @@
     "hono-rate-limiter": "^0.5.3",
     "openai": "^6.33.0",
     "turndown": "^7.2.4",
-    "zod": "^3.25.67",
+    "zod": "^4.3.6",
     "zod-to-json-schema": "^3.25.2"
   },
   "devDependencies": {
