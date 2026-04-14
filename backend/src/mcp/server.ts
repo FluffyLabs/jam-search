@@ -4,7 +4,6 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
-import { zodToJsonSchema } from "zod-to-json-schema";
 
 import { searchDiscords } from "../api/searchDiscords.js";
 import { searchGraypaper } from "../api/searchGraypapers.js";
@@ -85,31 +84,31 @@ const TOOLS = [
     name: "search_pages",
     description:
       "Search indexed web pages and github issues and discussions from JAM ecosystem websites including docs.jamcha.in, jam.web3.foundation, jam-conformance, jam-test-vectors, and other technical resources.",
-    inputSchema: zodToJsonSchema(SearchPagesInputSchema),
+    inputSchema: z.toJSONSchema(SearchPagesInputSchema),
   },
   {
     name: "search_discord",
     description:
       "Search Discord messages from JAM-related Discord servers. Useful for finding community discussions, Q&A, and announcements.",
-    inputSchema: zodToJsonSchema(SearchDiscordInputSchema),
+    inputSchema: z.toJSONSchema(SearchDiscordInputSchema),
   },
   {
     name: "search_matrix",
     description:
       "Search Matrix chat messages from JAM-related Matrix rooms. Useful for finding technical discussions and developer conversations.",
-    inputSchema: zodToJsonSchema(SearchMatrixInputSchema),
+    inputSchema: z.toJSONSchema(SearchMatrixInputSchema),
   },
   {
     name: "search_graypaper",
     description:
       "Search the JAM Graypaper (technical specification) sections. Best for finding specific technical details, formulas, and protocol specifications.",
-    inputSchema: zodToJsonSchema(SearchGraypaperInputSchema),
+    inputSchema: z.toJSONSchema(SearchGraypaperInputSchema),
   },
   {
     name: "search_all",
     description:
       "Search across all sources (pages, Github, Discord, Matrix, Graypaper) simultaneously. Returns combined results from all sources.",
-    inputSchema: zodToJsonSchema(SearchAllInputSchema),
+    inputSchema: z.toJSONSchema(SearchAllInputSchema),
   },
 ];
 
