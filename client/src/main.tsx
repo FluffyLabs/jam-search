@@ -11,6 +11,12 @@ import { EmbeddedViewerProvider } from "./providers/EmbeddedResultsContext.tsx";
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.warn(
+    "Supabase environment variables not configured. Auth features will be disabled."
+  );
+}
+
 // Initialize dark mode from system preference (toggled via sidebar)
 const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 document.documentElement.classList.toggle("dark", darkModeQuery.matches);
