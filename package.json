@@ -5,8 +5,8 @@
     "client"
   ],
   "engines": {
-    "node": "22.x",
-    "npm": ">=10"
+    "node": "25.x",
+    "npm": ">=11"
   },
   "version": "1.0.0",
   "type": "module",

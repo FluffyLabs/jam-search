@@ -1,6 +1,7 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import { AppsSidebar } from "@fluffylabs/shared-ui";
+import { AuthCallback, AuthFlow } from "@fluffylabs/shared-ui/supabase";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { EmbeddedViewer } from "./components/EmbeddedViewer";
@@ -8,6 +9,7 @@ import { Header } from "./components/Header";
 import { cn } from "./lib/utils";
 import { IndexPage } from "./pages";
 import SearchResults from "./pages/results";
+import { SettingsPage } from "./pages/settings";
 import DiscordResultsAll from "./pages/viewall/discord";
 import GraypaperResultsAll from "./pages/viewall/graypaper";
 import MatrixResultsAll from "./pages/viewall/matrix";
@@ -28,6 +30,7 @@ const queryClient = new QueryClient({
 
 function App() {
   const isUsingEmbeddedViewer = useEmbeddedViewer().isVisible;
+  const navigate = useNavigate();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -68,6 +71,25 @@ function App() {
                   path="/results/discord"
                   element={<DiscordResultsAll />}
                 />
+                <Route
+                  path="/login"
+                  element={
+                    <AuthFlow
+                      onSuccess={() => navigate("/")}
+                      redirectTo={`${window.location.origin}${window.location.pathname}#/auth/callback`}
+                    />
+                  }
+                />
+                <Route
+                  path="/auth/callback"
+                  element={
+                    <AuthCallback
+                      onSuccess={() => navigate("/")}
+                      onError={() => navigate("/login")}
+                    />
+                  }
+                />
+                <Route path="/settings" element={<SettingsPage />} />
               </Routes>
             </div>
           </div>
