@@ -35,5 +35,5 @@ createRoot(root).render(
         </EmbeddedViewerProvider>
       </SupabaseProvider>
     </HashRouter>
-  </StrictMode>,
+  </StrictMode>
 );

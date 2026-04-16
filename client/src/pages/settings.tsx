@@ -1,6 +1,5 @@
-import { Settings } from "@fluffylabs/shared-ui/supabase";
-import { useUserData } from "@fluffylabs/shared-ui/supabase";
-import { useState, useEffect } from "react";
+import { Settings, useUserData } from "@fluffylabs/shared-ui/supabase";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function SettingsPage() {

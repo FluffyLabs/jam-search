@@ -1,7 +1,7 @@
 import { Header as FluffyHeader } from "@fluffylabs/shared-ui";
 import { UserMenu } from "@fluffylabs/shared-ui/supabase";
-import ToolName from "@/assets/tool-name.svg";
 import { useNavigate } from "react-router-dom";
+import ToolName from "@/assets/tool-name.svg";
 
 export const Header = () => {
   const navigate = useNavigate();

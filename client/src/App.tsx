@@ -9,10 +9,10 @@ import { Header } from "./components/Header";
 import { cn } from "./lib/utils";
 import { IndexPage } from "./pages";
 import SearchResults from "./pages/results";
+import { SettingsPage } from "./pages/settings";
 import DiscordResultsAll from "./pages/viewall/discord";
 import GraypaperResultsAll from "./pages/viewall/graypaper";
 import MatrixResultsAll from "./pages/viewall/matrix";
-import { SettingsPage } from "./pages/settings";
 import PagesResultsAll from "./pages/viewall/pages";
 import { useEmbeddedViewer } from "./providers/EmbeddedResultsContext";
 
