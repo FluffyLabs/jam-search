@@ -9,6 +9,8 @@ import {
 } from "./tools.js";
 import type { AgentEvent, ChatMessage } from "./types.js";
 
+export const MAX_ITERATIONS = 20;
+
 export interface AgentLoopParams {
   messages: ChatMessage[];
   model: string;
@@ -32,8 +34,18 @@ export async function* runAgentLoop(
     ...params.messages,
   ];
 
+  let iterations = 0;
   try {
     while (true) {
+      iterations++;
+      if (iterations > MAX_ITERATIONS) {
+        yield {
+          type: "error",
+          message: `Agent loop exceeded ${MAX_ITERATIONS} iterations. Aborting to prevent runaway costs.`,
+        };
+        return;
+      }
+
       const stream = await params.openai.chat.completions.create({
         model: params.model,
         messages: messages as never,

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { runAgentLoop } from "../../ask/agentLoop.js";
+import { MAX_ITERATIONS, runAgentLoop } from "../../ask/agentLoop.js";
 import type { AgentEvent } from "../../ask/types.js";
 import { createSearchDB, insertDoc } from "../../data/searchIndex.js";
 
@@ -185,5 +185,55 @@ describe("runAgentLoop", () => {
       type: "error",
       message: expect.stringContaining("invalid api key"),
     });
+  });
+
+  it("stops after MAX_ITERATIONS and emits error event", async () => {
+    const db = createSearchDB();
+
+    const makeToolCallStream = () =>
+      toAsyncIterable([
+        {
+          choices: [
+            {
+              delta: {
+                tool_calls: [
+                  {
+                    index: 0,
+                    id: "call_x",
+                    type: "function",
+                    function: {
+                      name: "search_all",
+                      arguments: '{"query":"x"}',
+                    },
+                  },
+                ],
+              },
+              finish_reason: null,
+            },
+          ],
+        },
+        { choices: [{ delta: {}, finish_reason: "tool_calls" }] },
+      ]);
+
+    const scripts = Array.from({ length: MAX_ITERATIONS + 1 }, () =>
+      makeToolCallStream()
+    );
+    const client = fakeOpenAI(scripts);
+
+    const events = await collect(
+      runAgentLoop({
+        messages: [{ role: "user", content: "q" }],
+        model: "test-model",
+        openai: client as never,
+        db,
+        dataDir: "./data",
+      })
+    );
+
+    const errorEvt = events.find((e) => e.type === "error");
+    expect(errorEvt).toBeDefined();
+    expect((errorEvt as { message: string }).message).toMatch(
+      /exceeded.*iterations/i
+    );
   });
 });
