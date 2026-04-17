@@ -42,7 +42,14 @@ export function createCiteParser() {
         buffer = buffer.slice(ltIdx);
       }
 
-      // Now buffer starts with '<'. Look for a complete tag.
+      // Now buffer starts with '<'. Bail out early if it can't be a <cite tag.
+      if (!isPossibleCiteStart(buffer)) {
+        text += "<";
+        buffer = buffer.slice(1);
+        continue;
+      }
+
+      // Could be a cite tag — look for '>'.
       const gtIdx = buffer.indexOf(">");
       if (gtIdx === -1) {
         // Incomplete; keep buffer, wait for more input.
@@ -71,6 +78,22 @@ export function createCiteParser() {
   }
 
   return { feed: consume, flush };
+}
+
+/**
+ * Could this buffer plausibly be the start of a <cite ...> tag?
+ * Returns true while the buffer is still a prefix of "<cite" or while
+ * it starts with "<cite" followed by whitespace, '/', or '>'.
+ * Returns false for things like "<div", "<b>", "<cites", etc.
+ */
+function isPossibleCiteStart(buf: string): boolean {
+  const lower = buf.toLowerCase();
+  if (lower.length <= 5) {
+    return "<cite".startsWith(lower);
+  }
+  if (!lower.startsWith("<cite")) return false;
+  const ch = lower[5];
+  return ch === " " || ch === "\t" || ch === "\n" || ch === "\r" || ch === "/" || ch === ">";
 }
 
 const CITE_TAG_RE = /^<cite\s+([^>]*?)\/?>$/i;

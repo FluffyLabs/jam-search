@@ -50,4 +50,21 @@ describe("createCiteParser", () => {
     const out = p.flush();
     expect(out.text).toBe("<cite n=");
   });
+
+  it("passes through stray '<' as text without buffering past it", () => {
+    const p = createCiteParser();
+    const first = p.feed("P(X < ");
+    expect(first.text).toBe("P(X < ");
+    expect(first.citations).toEqual([]);
+    const second = p.feed("Y) > 0");
+    expect(second.text).toBe("Y) > 0");
+    expect(second.citations).toEqual([]);
+  });
+
+  it("passes through non-cite HTML-like tags without buffering unnecessarily", () => {
+    const p = createCiteParser();
+    const out = p.feed("<div>hello</div>");
+    expect(out.text).toBe("<div>hello</div>");
+    expect(out.citations).toEqual([]);
+  });
 });
