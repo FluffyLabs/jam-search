@@ -18,7 +18,6 @@ import {
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
 import type { SearchDB } from "./data/searchIndex.js";
-import { handleMcpDelete, handleMcpGet, handleMcpPost } from "./mcp/handler.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -77,10 +76,6 @@ export function createApp(db: SearchDB, dataDir: string) {
     const data = searchGraypaperRequestSchema.parse(c.req.query());
     return c.json(await searchGraypaper(data, embeddingCache, db, dataDir));
   });
-
-  app.post("/mcp", handleMcpPost);
-  app.get("/mcp", handleMcpGet);
-  app.delete("/mcp", handleMcpDelete);
 
   return app;
 }
