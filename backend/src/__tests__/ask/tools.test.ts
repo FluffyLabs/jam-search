@@ -36,6 +36,20 @@ describe("executeSearchAll", () => {
       expect(typeof r.preview).toBe("string");
     }
   });
+
+  it("does not throw when OPENAI_API_KEY is unset and returns an array", async () => {
+    const saved = process.env.OPENAI_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    try {
+      const db = createSearchDB();
+      const results = await executeSearchAll({ query: "anything" }, db, "./data");
+      expect(Array.isArray(results)).toBe(true);
+    } finally {
+      if (saved !== undefined) {
+        process.env.OPENAI_API_KEY = saved;
+      }
+    }
+  });
 });
 
 describe("executeGetFullDocument", () => {

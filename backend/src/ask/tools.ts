@@ -1,9 +1,10 @@
 import { getByID } from "@orama/orama";
+import OpenAI from "openai";
 import { searchDiscords } from "../api/searchDiscords.js";
 import { searchGraypaper } from "../api/searchGraypapers.js";
 import { searchMessages } from "../api/searchMessages.js";
 import { searchPages } from "../api/searchPages.js";
-import type { EmbeddingCache } from "../cache/embeddingCache.js";
+import { embeddingCache } from "../cache/embeddingCache.js";
 import type { DocType, SearchDB, SearchDoc } from "../data/searchIndex.js";
 import type { SourceType } from "./types.js";
 
@@ -18,11 +19,26 @@ export interface UnifiedSearchResult {
   score?: number;
 }
 
-const noOpEmbeddingCache: EmbeddingCache = {
-  store: () => "",
-  retrieve: () => undefined,
-  clear: () => {},
-};
+/**
+ * Compute an embedding for the given query using OpenAI.
+ * Returns null if the API key is missing/empty or if the request fails.
+ */
+async function computeQueryEmbedding(query: string): Promise<number[] | null> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return null;
+  try {
+    const openai = new OpenAI({ apiKey });
+    const response = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: query,
+      dimensions: 1536,
+    });
+    return response.data[0].embedding;
+  } catch (err) {
+    console.warn("[tools] Failed to compute query embedding, falling back to fulltext-only:", err);
+    return null;
+  }
+}
 
 function truncate(text: string, max = 500): string {
   return text.length > max ? `${text.slice(0, max)}...` : text;
@@ -34,28 +50,34 @@ export async function executeSearchAll(
   dataDir: string
 ): Promise<UnifiedSearchResult[]> {
   const limit = args.limit ?? 10;
+
+  // Attempt to compute a query embedding for hybrid (text + vector) search.
+  // Falls back to fulltext-only if the API key is absent or the call fails.
+  const embedding = await computeQueryEmbedding(args.query);
+  const embeddingKey = embedding ? embeddingCache.store(embedding) : "";
+
   const [pages, discord, matrix, graypaper] = await Promise.all([
     searchPages(
-      { q: args.query, e: "", page: 1, pageSize: limit },
-      noOpEmbeddingCache,
+      { q: args.query, e: embeddingKey, page: 1, pageSize: limit },
+      embeddingCache,
       db,
       dataDir
     ),
     searchDiscords(
-      { q: args.query, e: "", page: 1, pageSize: limit },
-      noOpEmbeddingCache,
+      { q: args.query, e: embeddingKey, page: 1, pageSize: limit },
+      embeddingCache,
       db,
       dataDir
     ),
     searchMessages(
-      { q: args.query, e: "", page: 1, pageSize: limit },
-      noOpEmbeddingCache,
+      { q: args.query, e: embeddingKey, page: 1, pageSize: limit },
+      embeddingCache,
       db,
       dataDir
     ),
     searchGraypaper(
-      { q: args.query, e: "", page: 1, pageSize: limit },
-      noOpEmbeddingCache,
+      { q: args.query, e: embeddingKey, page: 1, pageSize: limit },
+      embeddingCache,
       db,
       dataDir
     ),
