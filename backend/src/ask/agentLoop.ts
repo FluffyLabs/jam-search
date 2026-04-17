@@ -147,7 +147,7 @@ export async function* runAgentLoop(
           params.dataDir
         );
 
-        yield { type: "tool_result", name: tc.name, resultCount };
+        yield { type: "tool_result", name: tc.name, resultCount, payload };
         messages.push({
           role: "tool",
           tool_call_id: tc.id,

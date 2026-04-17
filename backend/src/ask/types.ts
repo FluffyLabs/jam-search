@@ -30,7 +30,12 @@ export type ChatMessage = z.infer<typeof chatMessageSchema>;
  */
 export type AgentEvent =
   | { type: "tool_call"; name: string; args: unknown }
-  | { type: "tool_result"; name: string; resultCount: number }
+  | {
+      type: "tool_result";
+      name: string;
+      resultCount: number;
+      payload: unknown;
+    }
   | { type: "content_delta"; text: string }
   | { type: "citation"; n: number; docId: string; sourceType: SourceType }
   | { type: "done" }

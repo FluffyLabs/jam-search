@@ -109,8 +109,15 @@ describe("runAgentLoop", () => {
       name: "search_all",
       args: { query: "accumulate" },
     });
-    expect(events[1].type).toBe("tool_result");
-    expect(events[1]).toMatchObject({ name: "search_all" });
+    expect(events[1]).toMatchObject({
+      type: "tool_result",
+      name: "search_all",
+      resultCount: expect.any(Number),
+    });
+    // payload must be present and non-null for search_all
+    expect(
+      (events[1] as { payload: unknown }).payload
+    ).toBeDefined();
     expect(events[2]).toEqual({ type: "content_delta", text: "done." });
     expect(events[3]).toEqual({ type: "done" });
   });
