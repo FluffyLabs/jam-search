@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { executeSearchAll } from "../../ask/tools.js";
+import { executeGetFullDocument, executeSearchAll } from "../../ask/tools.js";
 import { createSearchDB, insertDoc } from "../../data/searchIndex.js";
 
 describe("executeSearchAll", () => {
@@ -35,5 +35,28 @@ describe("executeSearchAll", () => {
       expect(r.id.length).toBeGreaterThan(0);
       expect(typeof r.preview).toBe("string");
     }
+  });
+});
+
+describe("executeGetFullDocument", () => {
+  it("returns the full document markdown by id", async () => {
+    const db = createSearchDB();
+    const id = insertDoc(db, {
+      type: "graypaper_section",
+      title: "Accumulate",
+      content: "Full body of the accumulate section...",
+    });
+
+    const result = await executeGetFullDocument({ id }, db);
+
+    expect(result).not.toBeNull();
+    expect(result?.sourceType).toBe("graypaper");
+    expect(result?.content).toContain("Full body of the accumulate section");
+  });
+
+  it("returns null for an unknown id", async () => {
+    const db = createSearchDB();
+    const result = await executeGetFullDocument({ id: "does-not-exist" }, db);
+    expect(result).toBeNull();
   });
 });

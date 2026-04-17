@@ -1,9 +1,10 @@
+import { getByID } from "@orama/orama";
 import { searchDiscords } from "../api/searchDiscords.js";
 import { searchGraypaper } from "../api/searchGraypapers.js";
 import { searchMessages } from "../api/searchMessages.js";
 import { searchPages } from "../api/searchPages.js";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
-import type { SearchDB } from "../data/searchIndex.js";
+import type { DocType, SearchDB, SearchDoc } from "../data/searchIndex.js";
 import type { SourceType } from "./types.js";
 
 export interface UnifiedSearchResult {
@@ -102,6 +103,51 @@ export async function executeSearchAll(
     });
   }
   return out;
+}
+
+export interface FullDocument {
+  id: string;
+  sourceType: SourceType;
+  content: string;
+  title?: string;
+  url?: string;
+  sender?: string;
+  channelName?: string;
+  roomName?: string;
+  timestamp?: number | null;
+}
+
+function docTypeToSourceType(type: DocType): SourceType {
+  switch (type) {
+    case "graypaper_section":
+    case "graypaper_version":
+      return "graypaper";
+    case "discord":
+      return "discord";
+    case "matrix":
+      return "matrix";
+    case "page":
+      return "page";
+  }
+}
+
+export async function executeGetFullDocument(
+  args: { id: string },
+  db: SearchDB
+): Promise<FullDocument | null> {
+  const doc = (await getByID(db, args.id)) as SearchDoc | undefined;
+  if (!doc) return null;
+  return {
+    id: args.id,
+    sourceType: docTypeToSourceType(doc.type),
+    content: doc.content,
+    title: doc.title,
+    url: doc.url,
+    sender: doc.sender,
+    channelName: doc.channelName,
+    roomName: doc.roomName,
+    timestamp: doc.timestamp ?? null,
+  };
 }
 
 /**
