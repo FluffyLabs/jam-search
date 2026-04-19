@@ -1,4 +1,4 @@
-import { ArrowRight, Search, Sparkles, X } from "lucide-react";
+import { ArrowRight, MessageCircle, Search, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
@@ -39,6 +39,12 @@ const searchModes = [
     label: "Extended Search",
     icon: Sparkles,
     description: "Find semantically similar text.",
+  },
+  {
+    id: SearchMode.Ask,
+    label: "Ask AI",
+    icon: MessageCircle,
+    description: "Let an AI agent answer using all sources.",
   },
 ];
 
@@ -142,15 +148,22 @@ export const SearchForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      const queryParams = getQueryParams();
-      // Navigate to current path with updated query params
-      navigate(
-        `${
-          redirectToResults ? "/results" : location.pathname
-        }?${queryParams.toString()}`
-      );
+    if (!searchQuery.trim()) return;
+
+    if (searchMode === SearchMode.Ask) {
+      const params = new URLSearchParams();
+      params.set("q", searchQuery);
+      params.set("autoSubmit", "1");
+      navigate(`/ask?${params.toString()}`);
+      return;
     }
+
+    const queryParams = getQueryParams();
+    navigate(
+      `${
+        redirectToResults ? "/results" : location.pathname
+      }?${queryParams.toString()}`
+    );
   };
 
   const handlePrefetch = () => {

@@ -8,6 +8,7 @@ import { EmbeddedViewer } from "./components/EmbeddedViewer";
 import { Header } from "./components/Header";
 import { cn } from "./lib/utils";
 import { IndexPage } from "./pages";
+import { AskPage } from "./pages/ask";
 import SearchResults from "./pages/results";
 import { SettingsPage } from "./pages/settings";
 import DiscordResultsAll from "./pages/viewall/discord";
@@ -90,6 +91,7 @@ function App() {
                   }
                 />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/ask" element={<AskPage />} />
               </Routes>
             </div>
           </div>
