@@ -1,9 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { askReducer, initialState } from "../askReducer";
+import { type AssistantMessage, assistantText } from "../askTypes";
 
 function freshAssistant(state = initialState) {
   // Helper: send a user message then an empty assistant placeholder.
   return askReducer(state, { type: "sendUserMessage", text: "hello" });
+}
+
+function lastAssistant(state = initialState): AssistantMessage {
+  const last = state.messages[state.messages.length - 1];
+  if (!last || last.role !== "assistant") {
+    throw new Error("last message is not an assistant");
+  }
+  return last;
 }
 
 describe("askReducer", () => {
@@ -16,36 +25,57 @@ describe("askReducer", () => {
     expect(next.messages[0].role).toBe("user");
     expect(next.messages[0].content).toBe("hi");
     expect(next.messages[1].role).toBe("assistant");
-    expect(next.messages[1].content).toBe("");
-    expect((next.messages[1] as { isStreaming: boolean }).isStreaming).toBe(
-      true
-    );
+    const last = lastAssistant(next);
+    expect(last.parts).toEqual([]);
+    expect(last.isStreaming).toBe(true);
   });
 
-  it("appendContent adds to the last assistant message", () => {
+  it("appendContent merges consecutive text deltas into a single text part", () => {
     let s = freshAssistant();
     s = askReducer(s, { type: "appendContent", text: "foo" });
     s = askReducer(s, { type: "appendContent", text: "bar" });
-    const last = s.messages[s.messages.length - 1];
-    expect(last.content).toBe("foobar");
+    const last = lastAssistant(s);
+    expect(last.parts.length).toBe(1);
+    expect(last.parts[0].kind).toBe("text");
+    expect(assistantText(last)).toBe("foobar");
   });
 
-  it("addToolStep appends a step with a client-generated id", () => {
+  it("addToolStep appends a tool part with a client-generated id", () => {
     let s = freshAssistant();
     s = askReducer(s, {
       type: "addToolStep",
       toolName: "search_all",
       args: { query: "q" },
     });
-    const last = s.messages[s.messages.length - 1] as {
-      toolSteps: { toolName: string; id: string }[];
-    };
-    expect(last.toolSteps.length).toBe(1);
-    expect(last.toolSteps[0].toolName).toBe("search_all");
-    expect(last.toolSteps[0].id).toMatch(/\S/);
+    const last = lastAssistant(s);
+    expect(last.parts.length).toBe(1);
+    const p = last.parts[0];
+    expect(p.kind).toBe("tool");
+    if (p.kind === "tool") {
+      expect(p.toolName).toBe("search_all");
+      expect(p.id).toMatch(/\S/);
+    }
   });
 
-  it("completeToolStep fills resultCount on the newest pending step", () => {
+  it("interleaves text and tool parts in timeline order", () => {
+    let s = freshAssistant();
+    s = askReducer(s, { type: "appendContent", text: "first " });
+    s = askReducer(s, {
+      type: "addToolStep",
+      toolName: "search_all",
+      args: { query: "q" },
+    });
+    s = askReducer(s, { type: "appendContent", text: "second" });
+    const last = lastAssistant(s);
+    expect(last.parts.map((p) => p.kind)).toEqual(["text", "tool", "text"]);
+    const texts = last.parts
+      .filter((p) => p.kind === "text")
+      .map((p) => (p.kind === "text" ? p.content : ""));
+    expect(texts).toEqual(["first ", "second"]);
+    expect(assistantText(last)).toBe("first second");
+  });
+
+  it("completeToolStep fills resultCount on the newest pending tool part", () => {
     let s = freshAssistant();
     s = askReducer(s, {
       type: "addToolStep",
@@ -65,10 +95,12 @@ describe("askReducer", () => {
         },
       ],
     });
-    const last = s.messages[s.messages.length - 1] as {
-      toolSteps: { resultCount?: number }[];
-    };
-    expect(last.toolSteps[0].resultCount).toBe(7);
+    const last = lastAssistant(s);
+    const tool = last.parts[0];
+    expect(tool.kind).toBe("tool");
+    if (tool.kind === "tool") {
+      expect(tool.resultCount).toBe(7);
+    }
     // The payload is cached into state.cards by docId.
     expect(s.cards.d1).toMatchObject({
       docId: "d1",
@@ -92,28 +124,20 @@ describe("askReducer", () => {
       docId: "d1",
       sourceType: "graypaper",
     });
-    const last = s.messages[s.messages.length - 1] as {
-      citations: { n: number }[];
-    };
+    const last = lastAssistant(s);
     expect(last.citations.length).toBe(1);
   });
 
   it("finishStreaming marks the last assistant message as done", () => {
     let s = freshAssistant();
     s = askReducer(s, { type: "finishStreaming" });
-    const last = s.messages[s.messages.length - 1] as {
-      isStreaming: boolean;
-    };
-    expect(last.isStreaming).toBe(false);
+    expect(lastAssistant(s).isStreaming).toBe(false);
   });
 
   it("setError sets error and stops streaming on the last assistant message", () => {
     let s = freshAssistant();
     s = askReducer(s, { type: "setError", message: "boom" });
-    const last = s.messages[s.messages.length - 1] as {
-      isStreaming: boolean;
-      error?: string;
-    };
+    const last = lastAssistant(s);
     expect(last.isStreaming).toBe(false);
     expect(last.error).toBe("boom");
   });

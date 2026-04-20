@@ -1,4 +1,5 @@
 import { useUserData } from "@fluffylabs/shared-ui/supabase";
+import { Sparkles } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChatInput } from "@/components/chat/ChatInput";
@@ -28,6 +29,7 @@ export function AskPage() {
 
   const streamHandleRef = useRef<{ abort: () => void } | null>(null);
   const hasAutoSubmittedRef = useRef(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const send = (text: string) => {
     if (keyLoading) return;
@@ -37,7 +39,7 @@ export function AskPage() {
       dispatch({ type: "sendUserMessage", text });
       dispatch({
         type: "setError",
-        message: "No OpenRouter API key found. Please add one in Settings.",
+        message: "No OpenRouter API key found. Add one in Settings to begin.",
       });
       return;
     }
@@ -114,20 +116,37 @@ export function AskPage() {
     };
   }, []);
 
+  // Auto-scroll as messages stream in.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: state.messages is the trigger
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [state.messages]);
+
   const lastAssistant = [...state.messages]
     .reverse()
     .find((m): m is AssistantMessage => m.role === "assistant");
 
   const streaming = lastAssistant?.isStreaming === true;
+  const isEmpty = state.messages.length === 0;
 
   return (
-    <div className="flex flex-col h-full gap-4">
-      <div className="flex items-center justify-between gap-2">
-        <ModelPicker
-          value={state.model}
-          onChange={(m) => dispatch({ type: "setModel", model: m })}
-        />
-        <div className="flex gap-2">
+    <div className="flex flex-col h-full bg-background">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-card/30">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-brand-dark" />
+            <h1 className="text-base font-semibold text-foreground">Ask AI</h1>
+          </div>
+          <div className="h-4 w-px bg-border" />
+          <ModelPicker
+            value={state.model}
+            onChange={(m) => dispatch({ type: "setModel", model: m })}
+          />
+        </div>
+        <div className="flex items-center gap-1">
           {state.messages.length > 0 && (
             <Button
               variant="ghost"
@@ -145,31 +164,60 @@ export function AskPage() {
             Settings
           </Button>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-[1fr_24rem] gap-4 overflow-hidden">
-        <div className="flex flex-col gap-4 overflow-y-auto p-2">
-          {state.messages.length === 0 && (
-            <div className="text-sm text-muted-foreground">
-              Ask a question about the JAM protocol. The agent will search the
-              knowledge base (graypaper, Discord, Matrix, pages) and cite its
-              sources on the right.
-            </div>
-          )}
-          {state.messages.map((m) => (
-            <Message key={m.id} message={m} />
-          ))}
-        </div>
-        <div className="border-l border-border overflow-y-auto max-md:hidden">
+      {/* Body */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
+        {/* Conversation column */}
+        <section className="flex flex-col overflow-hidden">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto">
+            {isEmpty ? (
+              <EmptyState />
+            ) : (
+              <div className="max-w-[44rem] mx-auto px-6 py-8 flex flex-col gap-6">
+                {state.messages.map((m) => (
+                  <Message key={m.id} message={m} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="max-w-[44rem] w-full mx-auto px-6 pb-6">
+            <ChatInput
+              initialValue={autoSubmit ? "" : initialQuery}
+              disabled={streaming || keyLoading}
+              onSubmit={send}
+              placeholder={
+                isEmpty
+                  ? "What would you like to know about JAM?"
+                  : "Ask a follow-up…"
+              }
+            />
+          </div>
+        </section>
+
+        {/* Sources panel */}
+        <aside className="hidden lg:block border-l border-border overflow-y-auto bg-card/20 px-5 py-6">
           <CitationsPanel assistant={lastAssistant} cards={state.cards} />
-        </div>
+        </aside>
       </div>
+    </div>
+  );
+}
 
-      <ChatInput
-        initialValue={autoSubmit ? "" : initialQuery}
-        disabled={streaming || keyLoading}
-        onSubmit={send}
-      />
+function EmptyState() {
+  return (
+    <div className="max-w-[36rem] mx-auto px-6 pt-16 pb-8 text-center">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-light text-brand-dark mb-5">
+        <Sparkles className="h-5 w-5" />
+      </div>
+      <h2 className="text-2xl font-semibold text-foreground mb-3">
+        Ask anything about JAM
+      </h2>
+      <p className="text-sm text-muted-foreground leading-relaxed max-w-[28rem] mx-auto">
+        An agent will search the Graypaper, Discord and Matrix discussions, and
+        indexed pages, then answer with cited sources.
+      </p>
     </div>
   );
 }

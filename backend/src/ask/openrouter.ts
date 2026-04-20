@@ -10,7 +10,7 @@ export function createOpenRouterClient(apiKey: string): OpenAI {
     baseURL: "https://openrouter.ai/api/v1",
     defaultHeaders: {
       "HTTP-Referer": "https://search.fluffylabs.dev",
-      "X-Title": "JAM Search — Ask AI",
+      "X-Title": "JAM Search - Ask AI",
     },
   });
 }

@@ -1,9 +1,12 @@
 import type {
   AskConversationState,
   AssistantMessage,
+  AssistantPart,
   ChatMessage,
   CitationCardData,
   SourceType,
+  TextPart,
+  ToolPart,
   UserMessage,
 } from "./askTypes";
 import { DEFAULT_MODEL } from "./models";
@@ -112,6 +115,18 @@ function toCard(item: unknown): CitationCardData | null {
   };
 }
 
+function appendToParts(parts: AssistantPart[], text: string): AssistantPart[] {
+  if (parts.length === 0) {
+    return [{ kind: "text", id: nextId(), content: text }];
+  }
+  const last = parts[parts.length - 1];
+  if (last.kind === "text") {
+    const merged: TextPart = { ...last, content: last.content + text };
+    return [...parts.slice(0, -1), merged];
+  }
+  return [...parts, { kind: "text", id: nextId(), content: text }];
+}
+
 export function askReducer(
   state: AskConversationState,
   action: AskAction
@@ -129,8 +144,7 @@ export function askReducer(
       const assistant: AssistantMessage = {
         id: nextId(),
         role: "assistant",
-        content: "",
-        toolSteps: [],
+        parts: [],
         citations: [],
         isStreaming: true,
       };
@@ -145,21 +159,25 @@ export function askReducer(
         ...state,
         messages: mapLastAssistant(state.messages, (m) => ({
           ...m,
-          content: m.content + action.text,
+          parts: appendToParts(m.parts, action.text),
         })),
       };
 
-    case "addToolStep":
+    case "addToolStep": {
+      const newPart: ToolPart = {
+        kind: "tool",
+        id: nextId(),
+        toolName: action.toolName,
+        args: action.args,
+      };
       return {
         ...state,
         messages: mapLastAssistant(state.messages, (m) => ({
           ...m,
-          toolSteps: [
-            ...m.toolSteps,
-            { id: nextId(), toolName: action.toolName, args: action.args },
-          ],
+          parts: [...m.parts, newPart],
         })),
       };
+    }
 
     case "completeToolStep": {
       const extracted = extractCards(action.payload);
@@ -167,17 +185,20 @@ export function askReducer(
         ...state,
         cards: { ...state.cards, ...extracted },
         messages: mapLastAssistant(state.messages, (m) => {
-          // Find newest step matching toolName that has no resultCount yet.
-          let patched = false;
-          const steps = [...m.toolSteps];
-          for (let i = steps.length - 1; i >= 0; i--) {
-            if (steps[i].toolName === action.toolName && !patched) {
-              steps[i] = { ...steps[i], resultCount: action.resultCount };
-              patched = true;
+          // Find newest tool part matching toolName that has no resultCount yet.
+          const parts = [...m.parts];
+          for (let i = parts.length - 1; i >= 0; i--) {
+            const p = parts[i];
+            if (
+              p.kind === "tool" &&
+              p.toolName === action.toolName &&
+              p.resultCount === undefined
+            ) {
+              parts[i] = { ...p, resultCount: action.resultCount };
               break;
             }
           }
-          return { ...m, toolSteps: steps };
+          return { ...m, parts };
         }),
       };
     }

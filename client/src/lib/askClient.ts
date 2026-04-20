@@ -1,4 +1,4 @@
-import type { AgentEvent, ChatMessage } from "./askTypes";
+import { type AgentEvent, assistantText, type ChatMessage } from "./askTypes";
 
 export interface AskParams {
   messages: ChatMessage[];
@@ -60,7 +60,10 @@ export function parseSseBuffer(buffer: string): {
  * Backend expects `{ role, content }` only.
  */
 function toApiMessages(messages: ChatMessage[]): ApiMessage[] {
-  return messages.map((m) => ({ role: m.role, content: m.content }));
+  return messages.map((m) => ({
+    role: m.role,
+    content: m.role === "assistant" ? assistantText(m) : m.content,
+  }));
 }
 
 /**

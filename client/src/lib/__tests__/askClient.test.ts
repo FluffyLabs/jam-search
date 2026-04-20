@@ -36,15 +36,11 @@ describe("parseSseBuffer", () => {
       'event: content_delta\ndata: {"type":"content_de';
     const { events, remainder } = parseSseBuffer(buf);
     expect(events).toEqual([{ type: "content_delta", text: "a" }]);
-    expect(remainder).toBe(
-      'event: content_delta\ndata: {"type":"content_de'
-    );
+    expect(remainder).toBe('event: content_delta\ndata: {"type":"content_de');
   });
 
   it("ignores frames with no data line", () => {
-    const { events, remainder } = parseSseBuffer(
-      "event: done\n\n"
-    );
+    const { events, remainder } = parseSseBuffer("event: done\n\n");
     expect(events).toEqual([]);
     expect(remainder).toBe("");
   });
