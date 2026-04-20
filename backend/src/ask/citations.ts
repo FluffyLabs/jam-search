@@ -93,7 +93,14 @@ function isPossibleCiteStart(buf: string): boolean {
   }
   if (!lower.startsWith("<cite")) return false;
   const ch = lower[5];
-  return ch === " " || ch === "\t" || ch === "\n" || ch === "\r" || ch === "/" || ch === ">";
+  return (
+    ch === " " ||
+    ch === "\t" ||
+    ch === "\n" ||
+    ch === "\r" ||
+    ch === "/" ||
+    ch === ">"
+  );
 }
 
 const CITE_TAG_RE = /^<cite\s+([^>]*?)\/?>$/i;

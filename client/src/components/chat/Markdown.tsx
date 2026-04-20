@@ -67,13 +67,18 @@ const markdownStyles = cn(
   "[&_input[type='checkbox']]:mr-2 [&_input[type='checkbox']]:align-middle"
 );
 
+type CiteComponentProps = React.HTMLAttributes<HTMLElement> & {
+  node?: Element;
+  "data-citation-n"?: string;
+};
+
 function makeComponents(onCitationClick: (n: number) => void): Components {
   return {
-    // biome-ignore lint/suspicious/noExplicitAny: react-markdown passes arbitrary node props through
-    cite: ({ node, children, ...rest }: any) => {
+    cite: ({ node, children, ...rest }: CiteComponentProps) => {
+      const fromNode = node?.properties?.dataCitationN;
       const raw =
-        (node?.properties?.dataCitationN as string | undefined) ??
-        (rest["data-citation-n"] as string | undefined);
+        (typeof fromNode === "string" ? fromNode : undefined) ??
+        rest["data-citation-n"];
       const n = Number(raw);
       if (!Number.isFinite(n) || n <= 0) {
         return <cite {...rest}>{children}</cite>;

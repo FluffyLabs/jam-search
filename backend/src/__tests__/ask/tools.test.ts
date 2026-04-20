@@ -42,7 +42,11 @@ describe("executeSearchAll", () => {
     delete process.env.OPENAI_API_KEY;
     try {
       const db = createSearchDB();
-      const results = await executeSearchAll({ query: "anything" }, db, "./data");
+      const results = await executeSearchAll(
+        { query: "anything" },
+        db,
+        "./data"
+      );
       expect(Array.isArray(results)).toBe(true);
     } finally {
       if (saved !== undefined) {

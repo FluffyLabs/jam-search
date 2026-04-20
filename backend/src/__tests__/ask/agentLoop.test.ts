@@ -115,9 +115,7 @@ describe("runAgentLoop", () => {
       resultCount: expect.any(Number),
     });
     // payload must be present and non-null for search_all
-    expect(
-      (events[1] as { payload: unknown }).payload
-    ).toBeDefined();
+    expect((events[1] as { payload: unknown }).payload).toBeDefined();
     expect(events[2]).toEqual({ type: "content_delta", text: "done." });
     expect(events[3]).toEqual({ type: "done" });
   });
