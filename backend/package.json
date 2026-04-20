@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "tsx ./src/index.ts",
-    "dev": "tsx watch ./src/index.ts",
+    "dev": "EMBEDDINGS_ENABLED=${EMBEDDINGS_ENABLED:-false} tsx watch ./src/index.ts",
     "export": "tsx ./src/scripts/exportToMarkdown.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
