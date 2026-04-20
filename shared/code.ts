@@ -12,8 +12,8 @@ export type CodeRepository = {
 export const CODE_REPOSITORIES: CodeRepository[] = [
   {
     source: Source.GithubFluffyLabsTypeberry,
-    dbId: "github.com/fluffylabs/typeberry",
-    owner: "fluffylabs",
+    dbId: "github.com/FluffyLabs/typeberry",
+    owner: "FluffyLabs",
     repo: "typeberry",
   },
   {
