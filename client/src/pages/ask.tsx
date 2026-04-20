@@ -31,11 +31,12 @@ export function AskPage() {
   const hasAutoSubmittedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const send = (text: string) => {
+  const send = (text: string, options?: { startFresh?: boolean }) => {
     if (keyLoading) return;
     const apiKey =
       typeof keyData === "string" && keyData.trim() !== "" ? keyData : null;
     if (!apiKey) {
+      if (options?.startFresh) dispatch({ type: "reset" });
       dispatch({ type: "sendUserMessage", text });
       dispatch({
         type: "setError",
@@ -44,10 +45,14 @@ export function AskPage() {
       return;
     }
 
+    if (options?.startFresh) dispatch({ type: "reset" });
     dispatch({ type: "sendUserMessage", text });
 
+    // When starting fresh, the prior history we send to the backend is empty;
+    // closure-captured state.messages is stale right after dispatch(reset).
+    const priorMessages = options?.startFresh ? [] : state.messages;
     const nextMessages = [
-      ...state.messages,
+      ...priorMessages,
       { id: "pending", role: "user" as const, content: text },
     ];
 
@@ -96,7 +101,10 @@ export function AskPage() {
     );
   };
 
-  // Auto-submit once if ?q is set and ?autoSubmit=1.
+  // Auto-submit once if ?q is set and ?autoSubmit=1. Before sending, wipe any
+  // pre-existing conversation so the incoming question starts a fresh chat —
+  // otherwise an autosubmit from the home page / results pivot would append to
+  // whatever was lingering in sessionStorage from a prior session in this tab.
   // biome-ignore lint/correctness/useExhaustiveDependencies: send changes every render; hasAutoSubmittedRef guards against re-firing
   useEffect(() => {
     if (
@@ -106,7 +114,8 @@ export function AskPage() {
       !keyLoading
     ) {
       hasAutoSubmittedRef.current = true;
-      send(initialQuery);
+      streamHandleRef.current?.abort();
+      send(initialQuery, { startFresh: true });
     }
   }, [autoSubmit, initialQuery, keyLoading]);
 

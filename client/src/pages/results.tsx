@@ -1,10 +1,10 @@
 import { Source, stringToSource } from "@shared/sources";
-import { MessageCircle } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import GithubLogo from "@/assets/logos/github.png";
 import JamWeb3FoundationLogo from "@/assets/logos/jam-web3-foundation.png";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
+import { AskAboutResults } from "@/components/AskAboutResults";
 import { Container } from "@/components/Container";
 import { DiscordResults } from "@/components/results/DiscordResults";
 import { GraypaperResults } from "@/components/results/GraypaperResults";
@@ -13,7 +13,6 @@ import { PageResultCards } from "@/components/results/PageResultCards";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Section } from "@/components/results/Section";
 import { ShowAll } from "@/components/ShowAll";
-import { Button } from "@/components/ui/button";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/mode";
@@ -33,7 +32,6 @@ function getLogo(logo: string) {
 
 const SearchResults = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
   const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
@@ -128,31 +126,15 @@ const SearchResults = () => {
     <div className="flex flex-col items-center min-h-full w-full bg-card rounded-xl overflow-hidden text-card-foreground">
       <ResultHeader
         left={
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-card/80 border border-border rounded-md">
-              <MultiSelect
-                options={SOURCE_OPTIONS}
-                selectedValues={selectedSources}
-                onValueChange={handleSourceChange}
-                placeholder="Select sources"
-                maxCount={0}
-                required
-              />
-            </div>
-            {richQuery && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const params = new URLSearchParams();
-                  params.set("q", richQuery);
-                  navigate(`/ask?${params.toString()}`);
-                }}
-              >
-                <MessageCircle className="h-4 w-4 mr-1" />
-                Ask AI about these results
-              </Button>
-            )}
+          <div className="flex items-center bg-card/80 border border-border rounded-md">
+            <MultiSelect
+              options={SOURCE_OPTIONS}
+              selectedValues={selectedSources}
+              onValueChange={handleSourceChange}
+              placeholder="Select sources"
+              maxCount={0}
+              required
+            />
           </div>
         }
         showSearchOptions={
@@ -356,6 +338,8 @@ const SearchResults = () => {
               )}
             </div>
           )}
+
+          {richQuery && <AskAboutResults searchQuery={richQuery} />}
         </div>
       </Container>
     </div>

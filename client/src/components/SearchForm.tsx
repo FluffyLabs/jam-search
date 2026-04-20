@@ -1,12 +1,5 @@
 import { useUserData } from "@fluffylabs/shared-ui/supabase";
-import {
-  ArrowRight,
-  ChevronDown,
-  MessageCircle,
-  Search,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { ChevronDown, Search, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
@@ -149,29 +142,6 @@ export const SearchForm = ({
     return queryParams;
   };
 
-  const submitSearch = () => {
-    if (!searchQuery.trim()) return;
-    const queryParams = getQueryParams();
-    navigate(
-      `${
-        redirectToResults ? "/results" : location.pathname
-      }?${queryParams.toString()}`
-    );
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    submitSearch();
-  };
-
-  const submitAskAI = () => {
-    if (!searchQuery.trim()) return;
-    const params = new URLSearchParams();
-    params.set("q", searchQuery);
-    params.set("autoSubmit", "1");
-    navigate(`/ask?${params.toString()}`);
-  };
-
   // Ask AI is gated on having a saved OpenRouter key (which requires Supabase
   // auth to persist in the first place). When it's not available we leave the
   // dropdown entry visible but disabled, with a tooltip explaining why.
@@ -183,11 +153,67 @@ export const SearchForm = ({
   const askAIDisabledReason =
     "Log in and add an OpenRouter API key in Settings";
 
+  // Remember the last action the user chose from the dropdown so the primary
+  // button icon and the Enter-key behavior reflect it. Defaults to "search".
+  const [lastAction, setLastAction] = useState<"search" | "ask">("search");
+  const effectiveAction: "search" | "ask" =
+    lastAction === "ask" && canAskAI ? "ask" : "search";
+
+  // Instant search (auto-submit on type) only applies in Search mode. Ask AI
+  // always requires an explicit submit — we don't fire an LLM call per
+  // keystroke.
+  const instantActive =
+    effectiveAction === "search" && isInstantSearch(searchMode, instantSearch);
+
+  const doSearch = () => {
+    if (!searchQuery.trim()) return;
+    const queryParams = getQueryParams();
+    navigate(
+      `${
+        redirectToResults ? "/results" : location.pathname
+      }?${queryParams.toString()}`
+    );
+  };
+
+  const doAskAI = () => {
+    if (!searchQuery.trim()) return;
+    const params = new URLSearchParams();
+    params.set("q", searchQuery);
+    params.set("autoSubmit", "1");
+    navigate(`/ask?${params.toString()}`);
+  };
+
+  // Selecting an option from the dropdown only switches the active mode —
+  // it does not submit. That way the user can pick "Ask AI", see the form
+  // reconfigure (placeholder, no search-mode selector), refine their question,
+  // then press Enter or click the primary button to actually submit.
+  const pickSearch = () => {
+    setLastAction("search");
+    inputRef.current?.focus();
+  };
+
+  const pickAskAI = () => {
+    if (!canAskAI) return;
+    setLastAction("ask");
+    inputRef.current?.focus();
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (effectiveAction === "ask") {
+      doAskAI();
+    } else {
+      doSearch();
+    }
+  };
+
   const handlePrefetch = () => {
     setPrefetchingQuery(searchQuery);
   };
 
-  const debouncedSubmit = useDebouncedCallback(handleSubmit, 300);
+  // Instant search always performs a plain search, regardless of whether the
+  // user's last explicit action was Ask AI — typing should never jump to /ask.
+  const debouncedSubmit = useDebouncedCallback(doSearch, 300);
   const debouncedPrefetch = useDebouncedCallback(handlePrefetch, 100);
 
   const addSearchOption = (option: string) => {
@@ -225,7 +251,7 @@ export const SearchForm = ({
     setDisplayedValue(highlightFilters(value));
     debouncedPrefetch();
 
-    if (isInstantSearch(searchMode, instantSearch)) {
+    if (instantActive) {
       debouncedSubmit(e);
     }
   };
@@ -240,7 +266,7 @@ export const SearchForm = ({
       e.preventDefault();
 
       // Submit form on Enter if not in instant search mode
-      if (!isInstantSearch(searchMode, instantSearch)) {
+      if (!instantActive) {
         handleSubmit(e);
       }
     }
@@ -263,75 +289,81 @@ export const SearchForm = ({
     <div ref={searchRef} className="relative w-full max-w-4xl">
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative">
-          {/* Search mode dropdown on the left */}
-          <div className="absolute left-3 top-0 h-full z-20 flex items-center justify-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 my-auto border border-border flex items-center justify-center"
-                >
-                  <ModeIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                className="bg-card text-foreground border border-border"
-              >
-                <DropdownMenuLabel>Search Mode</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {searchModes.map((mode) => (
-                  <DropdownMenuItem
-                    key={mode.id}
-                    onClick={() => {
-                      setSearchMode(mode.id);
-
-                      if (!instantSearch) {
-                        return;
-                      }
-
-                      const searchMode = mode.id;
-                      const queryParams = new URLSearchParams(location.search);
-                      queryParams.set("q", searchQuery);
-
-                      // Add search mode parameter (only if not strict, which is the default)
-                      if (searchMode !== SearchMode.Regular) {
-                        queryParams.set("searchMode", searchMode);
-                      } else {
-                        queryParams.delete("searchMode");
-                      }
-
-                      // Navigate to current path with updated query params
-                      navigate(
-                        `${
-                          redirectToResults ? "/results" : location.pathname
-                        }?${queryParams.toString()}`
-                      );
-                    }}
-                    className={`flex items-center gap-2 ${
-                      searchMode === mode.id ? "bg-primary/20" : ""
-                    }`}
+          {/* Search mode dropdown on the left — hidden in Ask AI mode since
+              search modes don't apply to a natural-language question. */}
+          {effectiveAction !== "ask" && (
+            <div className="absolute left-3 top-0 h-full z-20 flex items-center justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 my-auto border border-border flex items-center justify-center"
                   >
-                    <mode.icon className="h-4 w-4" />
-                    <div className="flex flex-col">
-                      <span>{mode.label}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {mode.description}
-                      </span>
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                    <ModeIcon className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="bg-card text-foreground border border-border"
+                >
+                  <DropdownMenuLabel>Search Mode</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {searchModes.map((mode) => (
+                    <DropdownMenuItem
+                      key={mode.id}
+                      onClick={() => {
+                        setSearchMode(mode.id);
 
-          {/* Hidden actual textarea field for form handling */}
-          {/* padding top is 16px to align with the visible display - this is a hack to make the textarea look centered */}
+                        if (!instantSearch) {
+                          return;
+                        }
+
+                        const searchMode = mode.id;
+                        const queryParams = new URLSearchParams(
+                          location.search
+                        );
+                        queryParams.set("q", searchQuery);
+
+                        // Add search mode parameter (only if not strict, which is the default)
+                        if (searchMode !== SearchMode.Regular) {
+                          queryParams.set("searchMode", searchMode);
+                        } else {
+                          queryParams.delete("searchMode");
+                        }
+
+                        // Navigate to current path with updated query params
+                        navigate(
+                          `${
+                            redirectToResults ? "/results" : location.pathname
+                          }?${queryParams.toString()}`
+                        );
+                      }}
+                      className={`flex items-center gap-2 ${
+                        searchMode === mode.id ? "bg-primary/20" : ""
+                      }`}
+                    >
+                      <mode.icon className="h-4 w-4" />
+                      <div className="flex flex-col">
+                        <span>{mode.label}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {mode.description}
+                        </span>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
+
+          {/* Hidden actual textarea field for form handling.
+              Left padding shrinks when the mode selector is hidden. */}
           <Textarea
             ref={inputRef}
             className={cn(
-              "pr-12 pl-14 h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal",
+              "pr-12 h-auto absolute inset-0 z-10 bg-transparent text-transparent caret-foreground resize-none font-sans text-base leading-normal",
+              effectiveAction === "ask" ? "pl-4" : "pl-14",
               {
                 "pt-3 pb-1 min-h-[40px]": size === "sm",
                 "pt-4 pb-2 min-h-[58px]": size === "lg",
@@ -341,13 +373,14 @@ export const SearchForm = ({
             onChange={handleInputChange}
             onFocus={() => setIsFocused(true)}
             onKeyDown={handleKeyDown}
-            maxLength={170}
+            maxLength={effectiveAction === "ask" ? 500 : 170}
           />
 
           {/* Visible styled display with highlighted filters */}
           <div
             className={cn(
-              "pr-12 pl-14 h-auto flex pointer-events-none border border-input rounded-md bg-background text-foreground overflow-auto font-sans text-base leading-normal",
+              "pr-12 h-auto flex pointer-events-none border border-input rounded-md bg-background text-foreground overflow-auto font-sans text-base leading-normal",
+              effectiveAction === "ask" ? "pl-4" : "pl-14",
               {
                 "pt-1 pb-1 min-h-[40px]": size === "sm",
                 "pt-2 pb-2 min-h-[58px]": size === "lg",
@@ -364,7 +397,9 @@ export const SearchForm = ({
               />
             ) : (
               <span className="font-light text-muted-foreground py-2">
-                Examples: grandpa, contest, pvm
+                {effectiveAction === "ask"
+                  ? "e.g. How does the accumulate function work?"
+                  : "Examples: grandpa, contest, pvm"}
               </span>
             )}
           </div>
@@ -376,9 +411,7 @@ export const SearchForm = ({
           <div
             className={cn(
               "absolute top-0 z-20 h-full flex items-center justify-center",
-              !isInstantSearch(searchMode, instantSearch)
-                ? "right-[80px]"
-                : "right-[44px]"
+              "right-[80px]"
             )}
           >
             <Button
@@ -393,33 +426,32 @@ export const SearchForm = ({
           </div>
         )}
 
-        {/* Action split button: primary Search action + dropdown for Ask AI.
-            In instant-search mode the primary submit button is hidden (typing
-            already drives the search) but the dropdown stays so Ask AI remains
-            reachable. */}
+        {/* Action split button: primary submit + dropdown mode picker.
+            The primary button is always visible so the active-mode icon
+            (Search or Sparkles) is never missing; instant-search still
+            auto-submits in the background while it's there as a fallback. */}
         <div className="absolute right-3 top-0 z-20 h-full flex items-center">
           <div className="flex items-stretch">
-            {!isInstantSearch(searchMode, instantSearch) && (
-              <Button
-                variant="default"
-                type="submit"
-                className="bg-brand hover:bg-brand/90 h-9 w-9 rounded-r-none border-r border-brand-dark/20 p-0"
-                aria-label="Search"
-              >
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            )}
+            <Button
+              variant="default"
+              type="submit"
+              className="bg-brand-dark text-white hover:bg-brand-dark/90 dark:bg-brand dark:text-background dark:hover:bg-brand/90 h-9 w-9 rounded-r-none border-r border-white/20 dark:border-background/20 p-0"
+              aria-label={effectiveAction === "ask" ? "Ask AI" : "Search"}
+              title={effectiveAction === "ask" ? "Ask AI" : "Search"}
+            >
+              {effectiveAction === "ask" ? (
+                <Sparkles className="h-4 w-4" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="default"
                   type="button"
                   aria-label="More actions"
-                  className={cn(
-                    "bg-brand hover:bg-brand/90 h-9 px-1.5",
-                    !isInstantSearch(searchMode, instantSearch) &&
-                      "rounded-l-none"
-                  )}
+                  className="bg-brand-dark text-white hover:bg-brand-dark/90 dark:bg-brand dark:text-background dark:hover:bg-brand/90 h-9 px-1.5 rounded-l-none"
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -428,11 +460,14 @@ export const SearchForm = ({
                 align="end"
                 className="bg-card text-foreground border border-border w-64"
               >
-                <DropdownMenuLabel>Submit as</DropdownMenuLabel>
+                <DropdownMenuLabel>Mode</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={submitSearch}
-                  className="flex items-start gap-2"
+                  onClick={pickSearch}
+                  className={cn(
+                    "flex items-start gap-2",
+                    effectiveAction === "search" && "bg-primary/10"
+                  )}
                 >
                   <Search className="h-4 w-4 mt-0.5 shrink-0" />
                   <div className="flex flex-col">
@@ -444,14 +479,15 @@ export const SearchForm = ({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   disabled={!canAskAI}
-                  onClick={canAskAI ? submitAskAI : undefined}
+                  onClick={canAskAI ? pickAskAI : undefined}
                   title={canAskAI ? undefined : askAIDisabledReason}
                   className={cn(
                     "flex items-start gap-2",
-                    !canAskAI && "cursor-not-allowed"
+                    !canAskAI && "cursor-not-allowed",
+                    effectiveAction === "ask" && "bg-primary/10"
                   )}
                 >
-                  <MessageCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                  <Sparkles className="h-4 w-4 mt-0.5 shrink-0" />
                   <div className="flex flex-col">
                     <span>Ask AI</span>
                     <span className="text-xs text-muted-foreground">
