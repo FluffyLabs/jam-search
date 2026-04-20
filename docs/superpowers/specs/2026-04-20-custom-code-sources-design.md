@@ -57,10 +57,29 @@ export type CodeRepository = {
   defaultBranch?: string;    // auto-detected from clone if omitted
 };
 
-export const CODE_REPOSITORIES: CodeRepository[] = [ ... ];
+export const CODE_REPOSITORIES: CodeRepository[] = [
+  {
+    source: Source.GithubFluffyLabsTypeberry,
+    dbId: "github.com/fluffylabs/typeberry",
+    owner: "fluffylabs",
+    repo: "typeberry",
+  },
+  {
+    source: Source.GithubTomusdrwAsLan,
+    dbId: "github.com/tomusdrw/as-lan",
+    owner: "tomusdrw",
+    repo: "as-lan",
+  },
+  {
+    source: Source.GithubTomusdrwAnanAs,
+    dbId: "github.com/tomusdrw/anan-as",
+    owner: "tomusdrw",
+    repo: "anan-as",
+  },
+];
 ```
 
-All three repos start in `CODE_REPOSITORIES` with `defaultBranch` left undefined.
+`defaultBranch` is left undefined; the script auto-detects it from the clone.
 
 ### `client/src/lib/sources.ts`
 
@@ -76,9 +95,9 @@ Per-repo flow:
 1. Create an OS temp directory.
 2. `git clone --depth 1 <url> <tmpDir>`. If `GITHUB_TOKEN` is set, rewrite URL as `https://x-access-token:$GITHUB_TOKEN@github.com/<owner>/<repo>.git` to improve rate limits on the clone.
 3. Resolve the default branch via `git symbolic-ref refs/remotes/origin/HEAD` (falls back to the `CodeRepository.defaultBranch` override if provided). This is used for the `url` field in frontmatter.
-4. Capture the HEAD commit date (`git log -1 --format=%cI`) for `created_at` / `last_modified`.
+4. Capture the HEAD commit date (`git log -1 --format=%cI`) for `created_at` / `last_modified`. Same date is written to every chunk from a given run — per-file commit dates would need extra `git log` invocations per file and are not worth the indexing cost for v1.
 5. Recursively walk the tree applying filters (see below).
-6. For each surviving file: split into line-based chunks of roughly 4000 characters with ~200-character overlap. Never split in the middle of a line. If a single line exceeds 4000 characters, emit it as its own chunk untouched.
+6. For each surviving file: split into line-based chunks. Greedy algorithm: append whole lines to the current chunk until adding the next line would push the chunk past 4000 characters, emit the chunk, then start the next chunk by re-including the trailing ~200 characters' worth of whole lines from the previous chunk as overlap. Never split in the middle of a line. If a single line exceeds 4000 characters, emit it as its own chunk untouched (full-text search still works; embeddings for that chunk are generated from the first 20000 chars, matching existing `embeddingText` behaviour in `embeddings.ts`).
 7. For each chunk compute `sha256(chunk_content)`.
 8. Write one markdown file per chunk to `data/code/<owner>-<repo>/<path>.<chunkIdx>.md` (path directories created as needed).
 9. Remove the temp clone.
