@@ -1,5 +1,6 @@
 import { getByID } from "@orama/orama";
 import OpenAI from "openai";
+import * as matrix from "../../../shared/matrix.js";
 import { searchDiscords } from "../api/searchDiscords.js";
 import { searchGraypaper } from "../api/searchGraypapers.js";
 import { searchMessages } from "../api/searchMessages.js";
@@ -12,11 +13,42 @@ export interface UnifiedSearchResult {
   id: string;
   sourceType: SourceType;
   preview: string;
-  title?: string;
+  /** Resolvable URL that opens the source (Discord link, Matrix archive anchor,
+   *  Graypaper reader URL, or the page URL itself). */
   url?: string;
+  title?: string;
   sender?: string;
+  channelName?: string;
+  roomName?: string;
   timestamp?: number | null;
   score?: number;
+}
+
+function buildDiscordUrl(
+  serverId: string | undefined,
+  channelId: string | undefined,
+  threadId: string | undefined,
+  messageId: string | undefined
+): string | undefined {
+  if (!serverId || !messageId) return undefined;
+  const channel = threadId || channelId;
+  if (!channel) return undefined;
+  return `https://discord.com/channels/${serverId}/${channel}/${messageId}`;
+}
+
+function buildMatrixUrl(
+  roomId: string | undefined,
+  messageId: string | undefined
+): string | undefined {
+  if (!roomId || !messageId) return undefined;
+  const room = matrix.ROOMS.find((r) => r.id === roomId);
+  if (!room) return undefined;
+  return `${room.archiveUrl}#${messageId}`;
+}
+
+function buildGraypaperUrl(title: string | undefined): string | undefined {
+  if (!title) return undefined;
+  return `https://graypaper.fluffylabs.dev/#/?section=${encodeURIComponent(title)}`;
 }
 
 /**
@@ -35,7 +67,10 @@ async function computeQueryEmbedding(query: string): Promise<number[] | null> {
     });
     return response.data[0].embedding;
   } catch (err) {
-    console.warn("[tools] Failed to compute query embedding, falling back to fulltext-only:", err);
+    console.warn(
+      "[tools] Failed to compute query embedding, falling back to fulltext-only:",
+      err
+    );
     return null;
   }
 }
@@ -56,7 +91,7 @@ export async function executeSearchAll(
   const embedding = await computeQueryEmbedding(args.query);
   const embeddingKey = embedding ? embeddingCache.store(embedding) : "";
 
-  const [pages, discord, matrix, graypaper] = await Promise.all([
+  const [pages, discord, matrixRes, graypaper] = await Promise.all([
     searchPages(
       { q: args.query, e: embeddingKey, page: 1, pageSize: limit },
       embeddingCache,
@@ -100,16 +135,18 @@ export async function executeSearchAll(
       id: r.id,
       sourceType: "discord",
       preview: truncate(r.content),
+      url: buildDiscordUrl(r.serverId, r.channelId, r.threadId, r.messageId),
       sender: r.sender,
       timestamp: r.timestamp ? new Date(r.timestamp).getTime() : null,
       score: r.score,
     });
   }
-  for (const r of matrix.results ?? []) {
+  for (const r of matrixRes.results ?? []) {
     out.push({
       id: r.id,
       sourceType: "matrix",
       preview: truncate(r.content),
+      url: buildMatrixUrl(r.roomId, r.messageId),
       sender: r.sender,
       timestamp: r.timestamp ? new Date(r.timestamp).getTime() : null,
       score: r.score,
@@ -121,6 +158,7 @@ export async function executeSearchAll(
       sourceType: "graypaper",
       preview: truncate(r.text ?? ""),
       title: r.title,
+      url: buildGraypaperUrl(r.title),
       score: r.score,
     });
   }
@@ -153,6 +191,25 @@ function docTypeToSourceType(type: DocType): SourceType {
   }
 }
 
+function resolveDocUrl(doc: SearchDoc): string | undefined {
+  switch (doc.type) {
+    case "page":
+      return doc.url;
+    case "discord":
+      return buildDiscordUrl(
+        doc.serverId,
+        doc.channelId,
+        doc.threadId,
+        doc.messageId
+      );
+    case "matrix":
+      return buildMatrixUrl(doc.roomId, doc.messageId);
+    case "graypaper_section":
+    case "graypaper_version":
+      return buildGraypaperUrl(doc.title);
+  }
+}
+
 export async function executeGetFullDocument(
   args: { id: string },
   db: SearchDB
@@ -164,7 +221,7 @@ export async function executeGetFullDocument(
     sourceType: docTypeToSourceType(doc.type),
     content: doc.content,
     title: doc.title,
-    url: doc.url,
+    url: resolveDocUrl(doc),
     sender: doc.sender,
     channelName: doc.channelName,
     roomName: doc.roomName,

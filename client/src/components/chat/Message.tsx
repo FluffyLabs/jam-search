@@ -1,7 +1,6 @@
-import { Fragment } from "react";
-import { splitCitationMarkers } from "@/lib/askMarkers";
 import type { AssistantPart, ChatMessage, TextPart } from "@/lib/askTypes";
 import { cn } from "@/lib/utils";
+import { Markdown } from "./Markdown";
 import { ToolStep } from "./ToolStep";
 
 interface MessageProps {
@@ -20,9 +19,6 @@ export function Message({ message }: MessageProps) {
   }
 
   const { parts, isStreaming } = message;
-  // The blinking caret should attach to the final text part if we're still
-  // streaming; otherwise we show a small "thinking…" indicator after the last
-  // part (which will be a tool call mid-search).
   const lastTextIdx = lastIndexOfKind(parts, "text");
   const showTrailingIndicator =
     isStreaming &&
@@ -66,46 +62,17 @@ function TextBlock({
   part: TextPart;
   streamingCaret: boolean;
 }) {
-  const nodes = splitCitationMarkers(part.content);
-  if (nodes.length === 0 && !streamingCaret) return null;
+  if (!part.content && !streamingCaret) return null;
   return (
-    <div
-      className={cn(
-        "text-[15px] leading-7 text-foreground whitespace-pre-wrap",
-        streamingCaret && "ask-caret"
-      )}
-    >
-      {nodes.map((node, idx) =>
-        typeof node === "string" ? (
-          // biome-ignore lint/suspicious/noArrayIndexKey: append-only streaming content
-          <Fragment key={idx}>{node}</Fragment>
-        ) : (
-          // biome-ignore lint/suspicious/noArrayIndexKey: append-only streaming content
-          <CitationRef key={idx} n={node.n} />
-        )
-      )}
+    <div className={cn("relative", streamingCaret && "ask-caret")}>
+      <Markdown content={part.content} onCitationClick={scrollToCitation} />
     </div>
   );
 }
 
-function CitationRef({ n }: { n: number }) {
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        const el = document.getElementById(`citation-${n}`);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-      }}
-      className={cn(
-        "inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1 mx-0.5",
-        "rounded text-[11px] font-medium tabular-nums",
-        "bg-brand-light text-brand-dark",
-        "hover:bg-brand hover:text-white transition-colors align-middle"
-      )}
-    >
-      {n}
-    </button>
-  );
+function scrollToCitation(n: number): void {
+  const el = document.getElementById(`citation-${n}`);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function lastIndexOfKind(

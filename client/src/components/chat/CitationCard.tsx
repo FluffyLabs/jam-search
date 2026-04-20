@@ -1,4 +1,5 @@
 import { ResultCard } from "@/components/results/ResultCard";
+import { ViewEmbedded } from "@/components/ViewEmbedded";
 import type { Citation, CitationCardData, SourceType } from "@/lib/askTypes";
 import { formatDate } from "@/lib/utils";
 
@@ -9,33 +10,49 @@ interface CitationCardProps {
 
 export function CitationCard({ citation, card }: CitationCardProps) {
   const header = (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 min-w-0 w-full">
       <span className="inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded bg-brand-light text-brand-dark text-[11px] font-medium tabular-nums shrink-0">
         {citation.n}
       </span>
-      <span className="flex-1 min-w-0 truncate font-medium text-foreground text-sm">
-        {renderTitle(citation, card)}
-      </span>
-    </div>
-  );
-
-  const content = (
-    <div className="text-xs text-muted-foreground leading-relaxed">
-      {card?.preview ?? "Loading source…"}
-    </div>
-  );
-
-  const footer = (
-    <div className="flex items-center justify-between w-full gap-2">
-      <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+      <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground shrink-0">
         <span
           className="inline-block w-1.5 h-1.5 rounded-full"
           style={{ background: sourceColor(citation.sourceType) }}
         />
         {sourceLabel(citation.sourceType)}
       </span>
-      {renderMeta(card)}
+      <span className="flex-1 min-w-0 truncate font-medium text-foreground text-xs">
+        {renderTitle(citation, card)}
+      </span>
+      {card?.timestamp && (
+        <time
+          dateTime={new Date(card.timestamp).toISOString()}
+          className="text-[10px] text-muted-foreground tabular-nums shrink-0"
+        >
+          {formatDate(new Date(card.timestamp).toISOString())}
+        </time>
+      )}
     </div>
+  );
+
+  const content = (
+    <div className="text-xs text-muted-foreground font-light leading-relaxed">
+      {card?.preview ?? "Loading source…"}
+    </div>
+  );
+
+  const footer = card?.url ? (
+    <ViewEmbedded
+      url={card.url}
+      searchQuery=""
+      results={[]}
+      noEmbed={citation.sourceType === "discord"}
+      label={openLabel(citation.sourceType)}
+    />
+  ) : (
+    <span className="text-[10px] text-muted-foreground italic">
+      No link available
+    </span>
   );
 
   return (
@@ -43,6 +60,19 @@ export function CitationCard({ citation, card }: CitationCardProps) {
       <ResultCard header={header} content={content} footer={footer} />
     </div>
   );
+}
+
+function openLabel(type: SourceType): string {
+  switch (type) {
+    case "page":
+      return "Open page";
+    case "graypaper":
+      return "Open reader";
+    case "discord":
+      return "Open Discord ↗";
+    case "matrix":
+      return "Open message";
+  }
 }
 
 function sourceLabel(type: SourceType): string {
@@ -90,31 +120,4 @@ function renderTitle(
         ? `${card.sender ?? "matrix"} · ${card.roomName}`
         : (card.sender ?? "matrix");
   }
-}
-
-function renderMeta(card: CitationCardData | undefined): React.ReactNode {
-  if (!card) return null;
-  if (card.url) {
-    return (
-      <a
-        href={card.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-[11px] text-brand-dark hover:underline truncate max-w-[12rem]"
-      >
-        {new URL(card.url).hostname.replace(/^www\./, "")} ↗
-      </a>
-    );
-  }
-  if (card.timestamp) {
-    return (
-      <time
-        dateTime={new Date(card.timestamp).toISOString()}
-        className="text-[11px] text-muted-foreground tabular-nums"
-      >
-        {formatDate(new Date(card.timestamp).toISOString())}
-      </time>
-    );
-  }
-  return null;
 }

@@ -1,4 +1,12 @@
-import { ArrowRight, MessageCircle, Search, Sparkles, X } from "lucide-react";
+import { useUserData } from "@fluffylabs/shared-ui/supabase";
+import {
+  ArrowRight,
+  ChevronDown,
+  MessageCircle,
+  Search,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDebouncedCallback } from "use-debounce";
@@ -26,7 +34,8 @@ const searchOptions = [
   { label: "after", description: "Find messages after a specific date" },
 ];
 
-// Search modes available in the dropdown
+// Search modes available in the left-side dropdown. "Ask AI" is intentionally
+// not a search mode — it's an alternative submit action on the split button.
 const searchModes = [
   {
     id: SearchMode.Regular,
@@ -39,12 +48,6 @@ const searchModes = [
     label: "Extended Search",
     icon: Sparkles,
     description: "Find semantically similar text.",
-  },
-  {
-    id: SearchMode.Ask,
-    label: "Ask AI",
-    icon: MessageCircle,
-    description: "Let an AI agent answer using all sources.",
   },
 ];
 
@@ -146,18 +149,8 @@ export const SearchForm = ({
     return queryParams;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitSearch = () => {
     if (!searchQuery.trim()) return;
-
-    if (searchMode === SearchMode.Ask) {
-      const params = new URLSearchParams();
-      params.set("q", searchQuery);
-      params.set("autoSubmit", "1");
-      navigate(`/ask?${params.toString()}`);
-      return;
-    }
-
     const queryParams = getQueryParams();
     navigate(
       `${
@@ -165,6 +158,30 @@ export const SearchForm = ({
       }?${queryParams.toString()}`
     );
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitSearch();
+  };
+
+  const submitAskAI = () => {
+    if (!searchQuery.trim()) return;
+    const params = new URLSearchParams();
+    params.set("q", searchQuery);
+    params.set("autoSubmit", "1");
+    navigate(`/ask?${params.toString()}`);
+  };
+
+  // Ask AI is gated on having a saved OpenRouter key (which requires Supabase
+  // auth to persist in the first place). When it's not available we leave the
+  // dropdown entry visible but disabled, with a tooltip explaining why.
+  const { data: openrouterKey } = useUserData("openrouter-api-key", {
+    appScoped: true,
+  });
+  const canAskAI =
+    typeof openrouterKey === "string" && openrouterKey.trim().length > 0;
+  const askAIDisabledReason =
+    "Log in and add an OpenRouter API key in Settings";
 
   const handlePrefetch = () => {
     setPrefetchingQuery(searchQuery);
@@ -353,14 +370,16 @@ export const SearchForm = ({
           </div>
         </div>
 
-        {/* Clear button */}
+        {/* Clear button. Offset shifts based on whether the action split is
+            visible (wider when non-instant-search). */}
         {searchQuery.trim() !== "" && (
           <div
-            className={`absolute ${
+            className={cn(
+              "absolute top-0 z-20 h-full flex items-center justify-center",
               !isInstantSearch(searchMode, instantSearch)
-                ? "right-14"
-                : "right-3"
-            } top-0 z-20 h-full flex items-center justify-center`}
+                ? "right-[80px]"
+                : "right-[44px]"
+            )}
           >
             <Button
               variant="ghost"
@@ -374,19 +393,78 @@ export const SearchForm = ({
           </div>
         )}
 
-        {/* Only show submit button for non-strict search modes */}
-        {!isInstantSearch(searchMode, instantSearch) && (
-          <div className="absolute right-3 top-0 z-20 h-full flex items-center justify-center">
-            <Button
-              variant="default"
-              size="icon"
-              type="submit"
-              className="bg-brand h-9 w-9 my-auto"
-            >
-              <ArrowRight className="h-4 w-4" />
-            </Button>
+        {/* Action split button: primary Search action + dropdown for Ask AI.
+            In instant-search mode the primary submit button is hidden (typing
+            already drives the search) but the dropdown stays so Ask AI remains
+            reachable. */}
+        <div className="absolute right-3 top-0 z-20 h-full flex items-center">
+          <div className="flex items-stretch">
+            {!isInstantSearch(searchMode, instantSearch) && (
+              <Button
+                variant="default"
+                type="submit"
+                className="bg-brand hover:bg-brand/90 h-9 w-9 rounded-r-none border-r border-brand-dark/20 p-0"
+                aria-label="Search"
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="default"
+                  type="button"
+                  aria-label="More actions"
+                  className={cn(
+                    "bg-brand hover:bg-brand/90 h-9 px-1.5",
+                    !isInstantSearch(searchMode, instantSearch) &&
+                      "rounded-l-none"
+                  )}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="bg-card text-foreground border border-border w-64"
+              >
+                <DropdownMenuLabel>Submit as</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={submitSearch}
+                  className="flex items-start gap-2"
+                >
+                  <Search className="h-4 w-4 mt-0.5 shrink-0" />
+                  <div className="flex flex-col">
+                    <span>Search</span>
+                    <span className="text-xs text-muted-foreground">
+                      Find matching content across sources.
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  disabled={!canAskAI}
+                  onClick={canAskAI ? submitAskAI : undefined}
+                  title={canAskAI ? undefined : askAIDisabledReason}
+                  className={cn(
+                    "flex items-start gap-2",
+                    !canAskAI && "cursor-not-allowed"
+                  )}
+                >
+                  <MessageCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                  <div className="flex flex-col">
+                    <span>Ask AI</span>
+                    <span className="text-xs text-muted-foreground">
+                      {canAskAI
+                        ? "Get a synthesized answer with cited sources."
+                        : askAIDisabledReason}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        )}
+        </div>
       </form>
 
       {isFocused && showSearchOptions && searchQuery.trim() === "" && (
