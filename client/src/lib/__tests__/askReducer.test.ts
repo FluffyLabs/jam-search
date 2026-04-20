@@ -22,8 +22,11 @@ describe("askReducer", () => {
       text: "hi",
     });
     expect(next.messages.length).toBe(2);
-    expect(next.messages[0].role).toBe("user");
-    expect(next.messages[0].content).toBe("hi");
+    const user = next.messages[0];
+    expect(user.role).toBe("user");
+    if (user.role === "user") {
+      expect(user.content).toBe("hi");
+    }
     expect(next.messages[1].role).toBe("assistant");
     const last = lastAssistant(next);
     expect(last.parts).toEqual([]);

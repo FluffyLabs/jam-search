@@ -252,7 +252,7 @@ export const SearchForm = ({
     debouncedPrefetch();
 
     if (instantActive) {
-      debouncedSubmit(e);
+      debouncedSubmit();
     }
   };
 
