@@ -31,6 +31,24 @@ export const REPOSITORIES: Repository[] = [
     owner: "FluffyLabs",
     repo: "jam-testing",
   },
+  {
+    source: Source.GithubFluffyLabsTypeberry,
+    dbId: "github.com/fluffylabs/typeberry",
+    owner: "fluffylabs",
+    repo: "typeberry",
+  },
+  {
+    source: Source.GithubTomusdrwAsLan,
+    dbId: "github.com/tomusdrw/as-lan",
+    owner: "tomusdrw",
+    repo: "as-lan",
+  },
+  {
+    source: Source.GithubTomusdrwAnanAs,
+    dbId: "github.com/tomusdrw/anan-as",
+    owner: "tomusdrw",
+    repo: "anan-as",
+  },
 ];
 
 export type Repository = {
