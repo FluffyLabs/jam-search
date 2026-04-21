@@ -39,10 +39,30 @@ function cloneUrl(owner: string, repo: string, token?: string): string {
   return `https://github.com/${owner}/${repo}.git`;
 }
 
+function redactToken(error: unknown, token: string | undefined): unknown {
+  if (!token || !(error instanceof Error)) return error;
+  error.message = error.message.replaceAll(token, "***");
+  const maybeStderr = (error as { stderr?: unknown }).stderr;
+  if (typeof maybeStderr === "string") {
+    (error as unknown as { stderr: string }).stderr = maybeStderr.replaceAll(token, "***");
+  } else if (Buffer.isBuffer(maybeStderr)) {
+    (error as unknown as { stderr: Buffer }).stderr = Buffer.from(
+      maybeStderr.toString("utf-8").replaceAll(token, "***"),
+      "utf-8",
+    );
+  }
+  return error;
+}
+
 function detectDefaultBranch(repoDir: string): string {
-  // Example output: "refs/remotes/origin/main"
-  const ref = run("git", ["symbolic-ref", "refs/remotes/origin/HEAD"], repoDir);
-  return ref.replace(/^refs\/remotes\/origin\//, "");
+  try {
+    const ref = run("git", ["symbolic-ref", "refs/remotes/origin/HEAD"], repoDir);
+    return ref.replace(/^refs\/remotes\/origin\//, "");
+  } catch {
+    throw new Error(
+      `Could not detect default branch in ${repoDir}. Set defaultBranch explicitly in CODE_REPOSITORIES.`,
+    );
+  }
 }
 
 function walkFiles(rootDir: string): string[] {
@@ -90,7 +110,11 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
   const clonePath = path.join(tmpRoot, "repo");
 
   try {
-    run("git", ["clone", "--depth", "1", cloneUrl(owner, repo, githubToken), clonePath]);
+    try {
+      run("git", ["clone", "--depth", "1", cloneUrl(owner, repo, githubToken), clonePath]);
+    } catch (e) {
+      throw redactToken(e, githubToken);
+    }
 
     const defaultBranch = opts.defaultBranch ?? detectDefaultBranch(clonePath);
     const headDate = run("git", ["log", "-1", "--format=%cI"], clonePath);
