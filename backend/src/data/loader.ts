@@ -91,6 +91,15 @@ function loadPageFile(
   frontmatter: Record<string, unknown>,
   body: string
 ): SearchDoc[] {
+  const contentKindRaw = frontmatter.content_kind as string | undefined;
+  const contentKind =
+    contentKindRaw === "issue" ||
+    contentKindRaw === "pr" ||
+    contentKindRaw === "discussion" ||
+    contentKindRaw === "code"
+      ? contentKindRaw
+      : undefined;
+
   return [
     {
       type: "page" as const,
@@ -98,6 +107,8 @@ function loadPageFile(
       title: frontmatter.title as string,
       url: frontmatter.url as string,
       site: frontmatter.site as string,
+      contentKind,
+      language: (frontmatter.language as string | undefined) || undefined,
       timestamp: frontmatter.created_at
         ? new Date(frontmatter.created_at as string).getTime()
         : undefined,
