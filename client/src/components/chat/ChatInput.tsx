@@ -17,7 +17,14 @@ export function ChatInput({
   onSubmit,
 }: ChatInputProps) {
   const [value, setValue] = useState(initialValue);
+  const [prevInitial, setPrevInitial] = useState(initialValue);
   const taRef = useRef<HTMLTextAreaElement>(null);
+
+  // Sync with external changes to initialValue (e.g. navigating with ?q=…)
+  if (initialValue !== prevInitial) {
+    setPrevInitial(initialValue);
+    setValue(initialValue);
+  }
 
   // Auto-grow up to a reasonable max
   // biome-ignore lint/correctness/useExhaustiveDependencies: value is the trigger
@@ -27,11 +34,6 @@ export function ChatInput({
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
   }, [value]);
-
-  // Sync with external changes to initialValue (e.g. navigating with ?q=…)
-  useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
 
   const submit = () => {
     const trimmed = value.trim();
