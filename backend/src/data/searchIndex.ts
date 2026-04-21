@@ -22,6 +22,8 @@ export const SCHEMA = {
   filePath: "enum",
   roomName: "enum",
   channelName: "enum",
+  contentKind: "enum",
+  language: "enum",
   // Numeric for range queries
   timestamp: "number",
 } as const;
@@ -53,6 +55,8 @@ export interface SearchDoc {
   filePath?: string;
   roomName?: string;
   channelName?: string;
+  contentKind?: "issue" | "pr" | "discussion" | "code";
+  language?: string;
   timestamp?: number;
 }
 
