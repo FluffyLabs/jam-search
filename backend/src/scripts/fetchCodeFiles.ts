@@ -100,6 +100,10 @@ function ensureDir(p: string): void {
   fs.mkdirSync(p, { recursive: true });
 }
 
+function encodePathForUrl(relPath: string): string {
+  return relPath.split("/").map(encodeURIComponent).join("/");
+}
+
 function sha256Hex(s: string): string {
   return createHash("sha256").update(s, "utf-8").digest("hex");
 }
@@ -144,7 +148,7 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
       const site = `github.com/${owner}/${repo}`;
 
       for (const chunk of chunks) {
-        const url = `https://github.com/${owner}/${repo}/blob/${defaultBranch}/${relPath}#L${chunk.startLine}-L${chunk.endLine}`;
+        const url = `https://github.com/${owner}/${repo}/blob/${defaultBranch}/${encodePathForUrl(relPath)}#L${chunk.startLine}-L${chunk.endLine}`;
         const body = [
           "`" + relPath + "` (lines " + chunk.startLine + "–" + chunk.endLine + ")",
           "",
