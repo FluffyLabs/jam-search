@@ -1,5 +1,8 @@
 # Custom Code Sources Implementation Plan
 
+> **Status:** Executed — see the associated PR for commit history.
+> **Note:** A post-implementation `/reflect` pass consolidated the original two-list config (`REPOSITORIES` + `CODE_REPOSITORIES`) into a single `REPOSITORIES` list in `shared/github.ts` with optional `indexIssues` / `indexCode` flags. References below to `shared/code.ts` / `CODE_REPOSITORIES` reflect the plan as originally written; the final shape lives in `shared/github.ts` and the design doc at `docs/superpowers/specs/2026-04-20-custom-code-sources-design.md` has been updated.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add `fluffylabs/typeberry`, `tomusdrw/as-lan`, and `tomusdrw/anan-as` as searchable sources, indexing both issues/PRs/discussions (existing pipeline) and source code files from each repo's default branch (new pipeline).

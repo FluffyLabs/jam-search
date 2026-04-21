@@ -37,49 +37,39 @@ GithubTomusdrwAnanAs = "GithubTomusdrwAnanAs",
 
 ### `shared/github.ts`
 
-Append three entries to `REPOSITORIES` so the existing issues/PRs/discussions job picks them up automatically. Same shape as existing entries (`{ source, dbId, owner, repo }`).
-
-- `dbId` values: `github.com/fluffylabs/typeberry`, `github.com/tomusdrw/as-lan`, `github.com/tomusdrw/anan-as`.
-
-### `shared/code.ts` (new)
-
-Separate config for code ingestion. Different from `REPOSITORIES` because:
-
-- Code ingestion may need per-repo overrides (default branch, extra file filters).
-- Keeps the issues/PRs config untouched and independently editable.
+Extend the existing `Repository` type with three optional per-repo flags, and append three new entries. A single consolidated list drives both the issues/PRs/discussions job and the new code job, filtered by flag — this replaces the original design's plan to keep a separate `CODE_REPOSITORIES` list.
 
 ```ts
-export type CodeRepository = {
+export type Repository = {
   source: Source;
-  dbId: string;              // same as github.ts entry
+  dbId: string;
   owner: string;
   repo: string;
-  defaultBranch?: string;    // auto-detected from clone if omitted
+  /** Index issues, pull requests, and discussions. Default: true. */
+  indexIssues?: boolean;
+  /** Clone and index source code files. Default: false. */
+  indexCode?: boolean;
+  /** Override default branch for code indexing (auto-detected if omitted). */
+  defaultBranch?: string;
 };
-
-export const CODE_REPOSITORIES: CodeRepository[] = [
-  {
-    source: Source.GithubFluffyLabsTypeberry,
-    dbId: "github.com/fluffylabs/typeberry",
-    owner: "fluffylabs",
-    repo: "typeberry",
-  },
-  {
-    source: Source.GithubTomusdrwAsLan,
-    dbId: "github.com/tomusdrw/as-lan",
-    owner: "tomusdrw",
-    repo: "as-lan",
-  },
-  {
-    source: Source.GithubTomusdrwAnanAs,
-    dbId: "github.com/tomusdrw/anan-as",
-    owner: "tomusdrw",
-    repo: "anan-as",
-  },
-];
 ```
 
-`defaultBranch` is left undefined; the script auto-detects it from the clone.
+Existing repos keep their current shape (both flags defaulting as above). The three new repos opt into code indexing:
+
+```ts
+{
+  source: Source.GithubFluffyLabsTypeberry,
+  dbId: "github.com/FluffyLabs/typeberry",
+  owner: "FluffyLabs",
+  repo: "typeberry",
+  indexCode: true,
+},
+// plus tomusdrw/as-lan and tomusdrw/anan-as with the same flag
+```
+
+- The GitHub pages job iterates `REPOSITORIES` and skips entries where `indexIssues === false`.
+- The code job iterates `REPOSITORIES` and skips entries where `!indexCode`.
+- `defaultBranch` is left undefined; `fetchCodeFiles` auto-detects via `git symbolic-ref`.
 
 ### `client/src/lib/sources.ts`
 
@@ -94,11 +84,11 @@ Per-repo flow:
 
 1. Create an OS temp directory.
 2. `git clone --depth 1 <url> <tmpDir>`. If `GITHUB_TOKEN` is set, rewrite URL as `https://x-access-token:$GITHUB_TOKEN@github.com/<owner>/<repo>.git` to improve rate limits on the clone.
-3. Resolve the default branch via `git symbolic-ref refs/remotes/origin/HEAD` (falls back to the `CodeRepository.defaultBranch` override if provided). This is used for the `url` field in frontmatter.
+3. Resolve the default branch by parsing `git symbolic-ref refs/remotes/origin/HEAD` (returns e.g. `refs/remotes/origin/main`). If the `Repository.defaultBranch` override is present, use that instead. If both fail, throw a descriptive error telling the operator to set `defaultBranch` explicitly in `REPOSITORIES` — we deliberately do NOT guess `main`/`master`, because a silent default would ship broken `#L` URLs for any repo whose default branch is something else.
 4. Capture the HEAD commit date (`git log -1 --format=%cI`) for `created_at` / `last_modified`. Same date is written to every chunk from a given run — per-file commit dates would need extra `git log` invocations per file and are not worth the indexing cost for v1.
-5. Recursively walk the tree applying filters (see below).
-6. For each surviving file: split into line-based chunks. Greedy algorithm: append whole lines to the current chunk until adding the next line would push the chunk past 4000 characters, emit the chunk, then start the next chunk by re-including the trailing ~200 characters' worth of whole lines from the previous chunk as overlap. Never split in the middle of a line. If a single line exceeds 4000 characters, emit it as its own chunk untouched (full-text search still works; embeddings for that chunk are generated from the first 20000 chars, matching existing `embeddingText` behaviour in `embeddings.ts`).
-7. For each chunk compute `sha256(chunk_content)`.
+5. Recursively walk the tree applying filters (see below). Directories in the blocklist are pruned at walk time, not just per-file, to avoid scanning large build artifacts.
+6. For each surviving file: split into line-based chunks. Greedy algorithm: append whole lines to the current chunk until adding the next line would push the chunk past 4000 characters, emit the chunk, then start the next chunk by re-including the trailing ~200 characters' worth of whole lines from the previous chunk as overlap. Never split in the middle of a line. If a single line exceeds 4000 characters, emit it as its own chunk untouched — even if that single line exceeds 20000 characters. The full chunk text is stored in the markdown body (so full-text search covers it), and the embedding for that chunk is generated from the first 20000 characters, matching existing `embeddingText` behaviour in `embeddings.ts`.
+7. For each chunk compute `sha256(utf8_bytes(chunk_text))`, encoded as lowercase hex — matches `createHash("sha256").update(s, "utf-8").digest("hex")` in Node.
 8. Write one markdown file per chunk to `data/code/<owner>-<repo>/<path>.<chunkIdx>.md` (path directories created as needed).
 9. Remove the temp clone.
 
