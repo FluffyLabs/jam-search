@@ -1,12 +1,6 @@
 import * as matrix from "@shared/matrix";
 import { SquareX } from "lucide-react";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { type ReactNode, useCallback, useMemo, useState } from "react";
 import type { PageResult, SearchResult } from "@/lib/api";
 import { cn, formatDate, highlightText } from "@/lib/utils";
 import { useEmbeddedViewer } from "@/providers/EmbeddedResultsContext";
@@ -78,23 +72,28 @@ const Content = ({
   searchQuery,
 }: ViewEmbeddedProps & { close: () => void }) => {
   const [results, setResults] = useState(initialResults);
+  const [prevInitialResults, setPrevInitialResults] = useState(initialResults);
   const [currentUrl, setCurrentUrl] = useState(url);
+  const [prevUrl, setPrevUrl] = useState(url);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
+  // Reset local results when the parent passes a new initial set.
+  if (initialResults !== prevInitialResults) {
+    setPrevInitialResults(initialResults);
     setResults(initialResults);
-  }, [initialResults]);
+  }
+
+  // Update iframe src when the external url prop changes.
+  if (url !== prevUrl) {
+    setPrevUrl(url);
+    setCurrentUrl(url);
+  }
 
   const handleLoadMore = useCallback(async () => {
     if (loadMore) {
       setResults(await loadMore());
     }
   }, [loadMore]);
-
-  // update the iframe content when the external url changes.
-  useEffect(() => {
-    setCurrentUrl(url);
-  }, [url]);
 
   // TODO [ToDr] changing iframe's src causes history
   // entries to be created which fucks up back/forward

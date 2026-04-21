@@ -1,5 +1,5 @@
 import type { UseQueryResult } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export const useSearchCommon = <TData, TError>(
   { initialPage, pageSize }: { initialPage: number; pageSize: number },
@@ -15,11 +15,10 @@ export const useSearchCommon = <TData, TError>(
   // prefetch next page
   useGetPageQuery(prefetchedPage);
 
-  useEffect(() => {
-    if (data?.total) {
-      setTotalResults(data.total);
-    }
-  }, [data?.total]);
+  // Preserve last non-zero total across loading/refetch cycles.
+  if (data?.total && data.total !== totalResults) {
+    setTotalResults(data.total);
+  }
 
   // Calculate total pages
   const totalPages = Math.ceil(totalResults / pageSize);

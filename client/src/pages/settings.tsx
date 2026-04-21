@@ -1,5 +1,5 @@
 import { Settings, useUserData } from "@fluffylabs/shared-ui/supabase";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function SettingsPage() {
@@ -7,16 +7,17 @@ export function SettingsPage() {
   const { data, isLoading, save } = useUserData("openrouter-api-key", {
     appScoped: true,
   });
-  const [apiKey, setApiKey] = useState("");
+  const savedKey = typeof data === "string" ? data : "";
+  const [apiKey, setApiKey] = useState(savedKey);
+  const [lastSavedKey, setLastSavedKey] = useState(savedKey);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (typeof data === "string") {
-      setApiKey(data);
-    }
-  }, [data]);
+  // Sync the input when the persisted value arrives or is refetched.
+  if (savedKey !== lastSavedKey) {
+    setLastSavedKey(savedKey);
+    setApiKey(savedKey);
+  }
 
-  const savedKey = typeof data === "string" ? data : "";
   const isDirty = !isLoading && apiKey !== savedKey;
 
   const handleSave = async () => {
