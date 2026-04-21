@@ -3,7 +3,6 @@ import { createApp } from "./api.js";
 import { loadAllData } from "./data/loader.js";
 import { createSearchDB } from "./data/searchIndex.js";
 import { env } from "./env.js";
-import { cleanupMcpTransports, initMcpHandler } from "./mcp/handler.js";
 
 function printEmbeddingsDisabledWarning() {
   const lines = [
@@ -37,9 +36,6 @@ async function main() {
   const db = createSearchDB();
   await loadAllData(db, dataDir, cacheDir, openaiApiKey, embeddingsEnabled);
 
-  // Initialize MCP handler with db reference
-  initMcpHandler(db, dataDir);
-
   const app = createApp(db, dataDir);
 
   // Start HTTP server
@@ -55,7 +51,6 @@ async function main() {
     if (isShuttingDown) return;
     isShuttingDown = true;
     console.log("Shutting down...");
-    cleanupMcpTransports();
     await new Promise<void>((resolve, reject) => {
       server.close((err?: Error) => (err ? reject(err) : resolve()));
     });

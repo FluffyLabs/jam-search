@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import GithubLogo from "@/assets/logos/github.png";
 import JamWeb3FoundationLogo from "@/assets/logos/jam-web3-foundation.png";
 import JamchainLogo from "@/assets/logos/jamchain.webp";
+import { AskAboutResults } from "@/components/AskAboutResults";
 import { Container } from "@/components/Container";
 import { DiscordResults } from "@/components/results/DiscordResults";
 import { GraypaperResults } from "@/components/results/GraypaperResults";
@@ -337,6 +338,8 @@ const SearchResults = () => {
               )}
             </div>
           )}
+
+          {richQuery && <AskAboutResults searchQuery={richQuery} />}
         </div>
       </Container>
     </div>

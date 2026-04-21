@@ -124,3 +124,17 @@ button:not(:disabled),
 [role="button"]:not(:disabled) {
   cursor: pointer;
 }
+
+/* Blinking caret shown while the Ask AI answer is streaming */
+.ask-caret::after {
+  content: "▍";
+  display: inline-block;
+  margin-left: 0.12em;
+  color: var(--brand-dark);
+  animation: ask-caret-blink 1s steps(2) infinite;
+}
+@keyframes ask-caret-blink {
+  to {
+    opacity: 0;
+  }
+}

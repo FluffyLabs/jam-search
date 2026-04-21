@@ -11,18 +11,27 @@ export function SettingsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (data && typeof data === "string") {
+    if (typeof data === "string") {
       setApiKey(data);
     }
   }, [data]);
 
+  const savedKey = typeof data === "string" ? data : "";
+  const isDirty = !isLoading && apiKey !== savedKey;
+
   const handleSave = async () => {
+    if (!isDirty) return;
     setSaving(true);
     try {
       await save(apiKey || null);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleOk = async () => {
+    if (isDirty) await handleSave();
+    navigate("/");
   };
 
   return (
@@ -48,9 +57,9 @@ export function SettingsPage() {
           />
           <button
             type="button"
-            disabled={saving || isLoading}
+            disabled={saving || isLoading || !isDirty}
             onClick={handleSave}
-            className="rounded-md border border-border px-4 py-2 text-sm text-foreground hover:bg-accent disabled:opacity-50"
+            className="rounded-md border border-border px-4 py-2 text-sm text-foreground hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Save"}
           </button>
@@ -59,10 +68,11 @@ export function SettingsPage() {
       <div className="flex justify-end">
         <button
           type="button"
-          className="px-6 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90"
-          onClick={() => navigate("/")}
+          disabled={saving || isLoading}
+          className="px-6 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          onClick={handleOk}
         >
-          OK
+          {isDirty ? "Save & close" : "OK"}
         </button>
       </div>
     </div>
