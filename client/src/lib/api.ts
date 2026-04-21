@@ -194,6 +194,8 @@ export interface PageSearchResponse {
     site: string;
     title: string;
     content: string;
+    contentKind?: "issue" | "pr" | "discussion" | "code";
+    language?: string;
     lastModified: string;
     createdAt: string;
     similarity: number;
