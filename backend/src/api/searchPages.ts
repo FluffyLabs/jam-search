@@ -10,6 +10,8 @@ export const searchPagesRequestSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
   site: z.string().optional(),
+  contentKind: z.enum(["issue", "pr", "discussion", "code"]).optional(),
+  language: z.string().optional(),
 });
 
 export async function searchPages(
@@ -31,9 +33,9 @@ export async function searchPages(
   }
 
   const where: Record<string, unknown> = {};
-  if (data.site) {
-    where.site = { eq: data.site };
-  }
+  if (data.site) where.site = { eq: data.site };
+  if (data.contentKind) where.contentKind = { eq: data.contentKind };
+  if (data.language) where.language = { eq: data.language };
 
   const results = searchDocs(db, {
     term: data.q,
@@ -55,6 +57,8 @@ export async function searchPages(
       title: hit.document.title,
       content: hit.document.content,
       site: hit.document.site,
+      contentKind: hit.document.contentKind,
+      language: hit.document.language,
       lastModified: hit.document.timestamp
         ? new Date(hit.document.timestamp)
         : null,
