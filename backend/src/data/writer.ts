@@ -172,6 +172,7 @@ export interface PageData {
   site: string;
   createdAt: Date;
   lastModified: Date;
+  contentKind?: "issue" | "pr" | "discussion" | "code";
 }
 
 export function writePageFile(
@@ -186,7 +187,7 @@ export function writePageFile(
   const filePath = path.join(dir, `${fileName}.md`);
   const relativePath = path.relative(dataDir, filePath);
 
-  const frontmatter = {
+  const frontmatter: Record<string, unknown> = {
     type: "page",
     url: page.url,
     title: page.title,
@@ -194,6 +195,9 @@ export function writePageFile(
     created_at: page.createdAt.toISOString(),
     last_modified: page.lastModified.toISOString(),
   };
+  if (page.contentKind) {
+    frontmatter.content_kind = page.contentKind;
+  }
 
   const content = matter.stringify(page.content, frontmatter);
   fs.writeFileSync(filePath, content, "utf-8");
