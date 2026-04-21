@@ -9,6 +9,10 @@ interface CitationCardProps {
 }
 
 export function CitationCard({ citation, card }: CitationCardProps) {
+  // Validate the timestamp before calling toISOString() — an out-of-range or
+  // corrupted value would otherwise throw RangeError at render time.
+  const iso = toIsoOrNull(card?.timestamp);
+
   const header = (
     <div className="flex items-center gap-2 min-w-0 w-full">
       <span className="inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded bg-brand-light text-brand-dark text-[11px] font-medium tabular-nums shrink-0">
@@ -24,12 +28,12 @@ export function CitationCard({ citation, card }: CitationCardProps) {
       <span className="flex-1 min-w-0 truncate font-medium text-foreground text-xs">
         {renderTitle(citation, card)}
       </span>
-      {card?.timestamp && (
+      {iso && (
         <time
-          dateTime={new Date(card.timestamp).toISOString()}
+          dateTime={iso}
           className="text-[10px] text-muted-foreground tabular-nums shrink-0"
         >
-          {formatDate(new Date(card.timestamp).toISOString())}
+          {formatDate(iso)}
         </time>
       )}
     </div>
@@ -60,6 +64,12 @@ export function CitationCard({ citation, card }: CitationCardProps) {
       <ResultCard header={header} content={content} footer={footer} />
     </div>
   );
+}
+
+function toIsoOrNull(ts: number | null | undefined): string | null {
+  if (ts === null || ts === undefined) return null;
+  const d = new Date(ts);
+  return Number.isFinite(d.getTime()) ? d.toISOString() : null;
 }
 
 function openLabel(type: SourceType): string {
