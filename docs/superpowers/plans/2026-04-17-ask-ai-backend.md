@@ -1563,7 +1563,7 @@ After this plan:
 
 - MCP server is removed from the codebase and its dependency is gone.
 - A new `POST /ask` endpoint accepts a chat message array, a model ID, and an OpenRouter key.
-- The endpoint runs an unbounded agentic loop with two tools against the existing Orama index.
+- The endpoint runs an agentic loop (capped at 20 iterations for safety) with two tools against the existing Orama index.
 - SSE events stream `tool_call`, `tool_result`, `content_delta`, `citation`, and `done` in real time.
 - `<cite>` tags are parsed out of the content stream so user-visible text is clean.
 - Tests cover tool executors, cite parser, the agent loop (with a mocked client), and the full HTTP endpoint.

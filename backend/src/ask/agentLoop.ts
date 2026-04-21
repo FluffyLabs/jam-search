@@ -177,8 +177,14 @@ async function executeToolByName(
 ): Promise<{ resultCount: number; payload: unknown }> {
   const a = (args ?? {}) as Record<string, unknown>;
   if (name === "search_all") {
+    // Clamp model-provided limit — tool args are not trustworthy and a
+    // negative or huge value would fan out expensive work across all sources.
+    const rawLimit = Number(a.limit ?? 10);
+    const limit = Number.isFinite(rawLimit)
+      ? Math.min(20, Math.max(1, Math.trunc(rawLimit)))
+      : 10;
     const results = await executeSearchAll(
-      { query: String(a.query ?? ""), limit: Number(a.limit ?? 10) || 10 },
+      { query: String(a.query ?? ""), limit },
       db,
       dataDir
     );

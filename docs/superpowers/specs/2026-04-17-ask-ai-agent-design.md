@@ -49,7 +49,7 @@ A new backend endpoint orchestrates an agentic RAG loop. The frontend sends the 
 ### Key components
 
 - **`POST /ask`** — new Hono endpoint. Accepts `{ messages, model, openrouterKey }`. Responds with `text/event-stream`.
-- **Agent loop** — calls OpenRouter with tools until `finish_reason === "stop"`. Unbounded iteration (depth over cost).
+- **Agent loop** — calls OpenRouter with tools until `finish_reason === "stop"`, with a soft 20-iteration safety cap to prevent runaway costs from degenerate loops (the loop prefers depth over cost but needs a tripwire).
 - **Tools** — exactly two:
   - `search_all(query, limit)` — reuses the existing unified search logic across all sources. Returns an array of result chunks, each with a stable `id` (same ID used by the existing search UI) and a `sourceType` (`graypaper` | `discord` | `matrix` | `page`).
   - `get_full_document(id)` — loads the full markdown of a single document by the `id` returned from `search_all`.

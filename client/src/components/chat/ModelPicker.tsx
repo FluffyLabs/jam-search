@@ -57,7 +57,7 @@ export function ModelPicker({ value, onChange }: ModelPickerProps) {
             {group.models.map((m) => (
               <DropdownMenuItem
                 key={m.id}
-                onClick={() => onChange(m.id)}
+                onSelect={() => onChange(m.id)}
                 className={cn(
                   "cursor-pointer",
                   m.id === value && "font-medium text-brand-dark"

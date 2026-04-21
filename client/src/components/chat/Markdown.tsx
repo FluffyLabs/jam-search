@@ -109,6 +109,12 @@ function rehypeCitations() {
   return (tree: Root) => {
     visit(tree, "text", (node: Text, index, parent) => {
       if (!parent || index === undefined) return;
+      // Don't rewrite [N] inside code blocks, inline code, or links —
+      // those brackets are content, not citation markers.
+      if (parent.type === "element") {
+        const tag = parent.tagName;
+        if (tag === "code" || tag === "pre" || tag === "a") return;
+      }
       if (!CITE_RE.test(node.value)) return;
 
       const parts = splitCitationMarkers(node.value);

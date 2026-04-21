@@ -160,7 +160,11 @@ export function AskPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => dispatch({ type: "reset" })}
+              onClick={() => {
+                streamHandleRef.current?.abort();
+                streamHandleRef.current = null;
+                dispatch({ type: "reset" });
+              }}
             >
               New chat
             </Button>

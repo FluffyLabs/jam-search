@@ -41,6 +41,9 @@ export function ChatInput({
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    // Don't submit while an IME is composing (Enter confirms the composition
+    // in CJK languages — it shouldn't also submit the form).
+    if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       submit();

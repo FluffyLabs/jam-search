@@ -7,9 +7,11 @@ import { chatMessageSchema } from "../ask/types.js";
 import type { SearchDB } from "../data/searchIndex.js";
 
 export const askRequestSchema = z.object({
-  messages: z.array(chatMessageSchema).min(1),
-  model: z.string().min(1),
-  openrouterKey: z.string().min(1),
+  messages: z.array(chatMessageSchema).min(1).max(100),
+  // Accept any string so new models can be added without a backend release.
+  // The frontend has a curated list; we just enforce a reasonable length.
+  model: z.string().trim().min(1).max(128),
+  openrouterKey: z.string().trim().min(1).max(512),
 });
 
 export function handleAsk(db: SearchDB, dataDir: string) {

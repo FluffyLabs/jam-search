@@ -78,44 +78,54 @@ export function askStream(
   const controller = new AbortController();
 
   const done = (async () => {
-    const res = await fetch(`${getApiUrl()}/ask`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        messages: toApiMessages(params.messages),
-        model: params.model,
-        openrouterKey: params.openrouterKey,
-      }),
-      signal: controller.signal,
-    });
+    try {
+      const res = await fetch(`${getApiUrl()}/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: toApiMessages(params.messages),
+          model: params.model,
+          openrouterKey: params.openrouterKey,
+        }),
+        signal: controller.signal,
+      });
 
-    if (!res.ok || !res.body) {
-      const text = await res.text().catch(() => "");
+      if (!res.ok || !res.body) {
+        const text = await res.text().catch(() => "");
+        onEvent({
+          type: "error",
+          message: `HTTP ${res.status}: ${text || res.statusText}`,
+        });
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { value, done: streamDone } = await reader.read();
+        if (streamDone) break;
+        buffer += decoder.decode(value, { stream: true });
+        const { events, remainder } = parseSseBuffer(buffer);
+        buffer = remainder;
+        for (const e of events) onEvent(e);
+      }
+
+      // Final flush
+      buffer += decoder.decode();
+      if (buffer.length > 0) {
+        const { events } = parseSseBuffer(`${buffer}\n\n`);
+        for (const e of events) onEvent(e);
+      }
+    } catch (err) {
+      // Aborts are expected (user navigated, clicked New chat, or closed the tab)
+      // — don't surface them as errors.
+      if (err instanceof DOMException && err.name === "AbortError") return;
       onEvent({
         type: "error",
-        message: `HTTP ${res.status}: ${text || res.statusText}`,
+        message: err instanceof Error ? err.message : String(err),
       });
-      return;
-    }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    while (true) {
-      const { value, done: streamDone } = await reader.read();
-      if (streamDone) break;
-      buffer += decoder.decode(value, { stream: true });
-      const { events, remainder } = parseSseBuffer(buffer);
-      buffer = remainder;
-      for (const e of events) onEvent(e);
-    }
-
-    // Final flush
-    buffer += decoder.decode();
-    if (buffer.length > 0) {
-      const { events } = parseSseBuffer(`${buffer}\n\n`);
-      for (const e of events) onEvent(e);
     }
   })();
 
