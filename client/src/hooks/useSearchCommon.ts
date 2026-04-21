@@ -15,8 +15,10 @@ export const useSearchCommon = <TData, TError>(
   // prefetch next page
   useGetPageQuery(prefetchedPage);
 
-  // Preserve last non-zero total across loading/refetch cycles.
-  if (data?.total && data.total !== totalResults) {
+  // Keep the displayed total from the previous page while a refetch is in
+  // flight (data is undefined). Once data arrives, sync — including zero,
+  // so "no results" is not masked by a stale total from a prior query.
+  if (data?.total != null && data.total !== totalResults) {
     setTotalResults(data.total);
   }
 
