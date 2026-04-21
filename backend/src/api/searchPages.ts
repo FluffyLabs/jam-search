@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CONTENT_KINDS } from "../../../shared/pages.js";
 import type { EmbeddingCache } from "../cache/embeddingCache.js";
 import type { SearchDB } from "../data/searchIndex.js";
 import { searchDocs } from "../data/searchIndex.js";
@@ -10,7 +11,7 @@ export const searchPagesRequestSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().lte(100).default(10),
   site: z.string().optional(),
-  contentKind: z.enum(["issue", "pr", "discussion", "code"]).optional(),
+  contentKind: z.enum(CONTENT_KINDS).optional(),
   language: z.string().optional(),
 });
 

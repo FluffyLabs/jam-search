@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import matter from "gray-matter";
+import type { ContentKind } from "../../../shared/pages.js";
 
 function ensureDir(dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
@@ -172,7 +173,7 @@ export interface PageData {
   site: string;
   createdAt: Date;
   lastModified: Date;
-  contentKind?: "issue" | "pr" | "discussion" | "code";
+  contentKind?: ContentKind;
 }
 
 export function writePageFile(

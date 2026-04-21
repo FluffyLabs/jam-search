@@ -1,5 +1,9 @@
 import { Source } from "./sources.js";
 
+/** Kind of content a `type: page` document represents. */
+export const CONTENT_KINDS = ["issue", "pr", "discussion", "code"] as const;
+export type ContentKind = (typeof CONTENT_KINDS)[number];
+
 export const PAGES: Page[] = [
   {
     source: Source.Jamchain,
