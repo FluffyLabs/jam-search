@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "./App.css";
 import { AppsSidebar } from "@fluffylabs/shared-ui";
 import { AuthCallback, AuthFlow } from "@fluffylabs/shared-ui/supabase";
@@ -28,6 +28,24 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+function AuthCallbackCatchAll({
+  onSuccess,
+  onError,
+}: {
+  onSuccess: () => void;
+  onError: () => void;
+}) {
+  const { pathname } = useLocation();
+  const params = new URLSearchParams(pathname.replace(/^\//, ""));
+  const hasError = params.has("error");
+  const hasToken = params.has("access_token");
+
+  if (hasError || hasToken) {
+    return <AuthCallback onSuccess={onSuccess} onError={onError} />;
+  }
+  return <div className="p-4">Page not found.</div>;
+}
 
 function App() {
   const isUsingEmbeddedViewer = useEmbeddedViewer().isVisible;
@@ -77,7 +95,7 @@ function App() {
                   element={
                     <AuthFlow
                       onSuccess={() => navigate("/")}
-                      redirectTo={`${window.location.origin}${window.location.pathname}#/auth/callback`}
+                      redirectTo={`${window.location.origin}${window.location.pathname}`}
                     />
                   }
                 />
@@ -92,6 +110,15 @@ function App() {
                 />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/ask" element={<AskPage />} />
+                <Route
+                  path="*"
+                  element={
+                    <AuthCallbackCatchAll
+                      onSuccess={() => navigate("/")}
+                      onError={() => navigate("/login")}
+                    />
+                  }
+                />
               </Routes>
             </div>
           </div>

@@ -4,17 +4,37 @@ import { loadAllData } from "./data/loader.js";
 import { createSearchDB } from "./data/searchIndex.js";
 import { env } from "./env.js";
 
+function printEmbeddingsDisabledWarning() {
+  const lines = [
+    "",
+    "╔══════════════════════════════════════════════════════════════╗",
+    "║  ⚠  EMBEDDINGS DISABLED (development mode)                   ║",
+    "║                                                              ║",
+    "║  Semantic search will fall back to fulltext-only results.    ║",
+    "║  To enable embeddings locally, run with:                     ║",
+    "║    EMBEDDINGS_ENABLED=true npm run dev                       ║",
+    "╚══════════════════════════════════════════════════════════════╝",
+    "",
+  ];
+  console.warn(lines.join("\n"));
+}
+
 async function main() {
   const {
     DATA_DIR: dataDir,
     CACHE_DIR: cacheDir,
     OPENAI_API_KEY: openaiApiKey,
+    EMBEDDINGS_ENABLED: embeddingsEnabled,
   } = env;
+
+  if (!embeddingsEnabled) {
+    printEmbeddingsDisabledWarning();
+  }
 
   // Create and populate the in-memory search index
   console.log("Initializing search index...");
   const db = createSearchDB();
-  await loadAllData(db, dataDir, cacheDir, openaiApiKey);
+  await loadAllData(db, dataDir, cacheDir, openaiApiKey, embeddingsEnabled);
 
   const app = createApp(db, dataDir);
 

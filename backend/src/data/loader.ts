@@ -181,7 +181,8 @@ export async function loadAllData(
   db: SearchDB,
   dataDir: string,
   cacheDir: string,
-  openaiApiKey: string
+  openaiApiKey: string,
+  embeddingsEnabled: boolean = true
 ): Promise<void> {
   console.log(`Loading data from ${dataDir}...`);
 
@@ -202,8 +203,12 @@ export async function loadAllData(
 
   console.log(`Parsed ${allDocs.length} documents`);
 
-  // Generate embeddings (uses cache, only calls OpenAI for new docs)
-  await generateEmbeddings(allDocs, cacheDir, openaiApiKey);
+  if (embeddingsEnabled) {
+    // Generate embeddings (uses cache, only calls OpenAI for new docs)
+    await generateEmbeddings(allDocs, cacheDir, openaiApiKey);
+  } else {
+    console.log("Skipping embedding generation (EMBEDDINGS_ENABLED=false)");
+  }
 
   // Batch insert into Orama
   if (allDocs.length > 0) {

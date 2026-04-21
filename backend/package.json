@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "start": "tsx ./src/index.ts",
-    "dev": "tsx watch ./src/index.ts",
+    "dev": "EMBEDDINGS_ENABLED=${EMBEDDINGS_ENABLED:-false} tsx watch ./src/index.ts",
     "export": "tsx ./src/scripts/exportToMarkdown.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -23,7 +23,7 @@
     "dotenv": "^17.4.1",
     "fast-xml-parser": "^5.5.10",
     "gray-matter": "^4.0.3",
-    "hono": "^4.12.12",
+    "hono": "^4.12.14",
     "hono-rate-limiter": "^0.5.3",
     "openai": "^6.33.0",
     "turndown": "^7.2.4",
