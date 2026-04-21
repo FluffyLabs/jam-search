@@ -31,62 +31,86 @@ export const PageResultCards = ({
         </>
       ) : null}
       {results.map((result) => {
+        const isCode = result.contentKind === "code";
         const isGithub = result.site.includes("github");
         const githubNumber = Number(result.url.split("/").pop());
         const githubId =
-          isGithub && Number.isFinite(githubNumber) ? `#${githubNumber}` : "";
+          isGithub && !isCode && Number.isFinite(githubNumber)
+            ? `#${githubNumber}`
+            : "";
+
+        const header = isCode ? (
+          <>
+            <span className="font-mono text-sm truncate">{result.title}</span>
+            {result.language ? (
+              <span className="text-xs text-muted-foreground ml-2 uppercase tracking-wide">
+                {result.language}
+              </span>
+            ) : null}
+          </>
+        ) : (
+          <>
+            <span>
+              {result.title}{" "}
+              <span className="text-muted-foreground">{githubId}</span>
+            </span>
+            <span
+              className={cn(
+                "text-xs text-muted-foreground ml-2",
+                !isGithub ? "font-mono" : ""
+              )}
+            >
+              {isGithub ? (
+                <>
+                  {result.url.includes("/pull/") ||
+                  result.url.includes("/issues/") ? (
+                    <>
+                      {result.url.includes("/pull/") ? "PR" : "Issue"}
+                      {githubId}
+                      {" - "}
+                    </>
+                  ) : null}
+                  {formatDate(result.createdAt)}
+                </>
+              ) : (
+                result.url
+                  .replace(/http[s]:\/\//, "")
+                  .replace(result.site, "")
+              )}
+            </span>
+          </>
+        );
+
+        const content = isCode ? (
+          <div className="font-mono text-xs whitespace-pre-wrap break-words">
+            <PageResultHighlighter
+              result={result}
+              searchQuery={searchQuery}
+              options={{ maxLength: 400, contextLength: 120 }}
+            />
+          </div>
+        ) : (
+          <PageResultHighlighter
+            result={result}
+            searchQuery={searchQuery}
+            options={{ maxLength: 250, contextLength: 75 }}
+          />
+        );
 
         return (
           <ResultCard
             key={result.id}
-            header={
-              <>
-                <span>
-                  {result.title}{" "}
-                  <span className="text-muted-foreground">{githubId}</span>
-                </span>
-                <span
-                  className={cn(
-                    "text-xs text-muted-foreground ml-2",
-                    !isGithub ? "font-mono" : ""
-                  )}
-                >
-                  {isGithub ? (
-                    <>
-                      {result.url.includes("/pull/") ||
-                      result.url.includes("/issues/") ? (
-                        <>
-                          {result.url.includes("/pull/") ? "PR" : "Issue"}
-                          {githubId}
-                          {" - "}
-                        </>
-                      ) : null}
-                      {formatDate(result.createdAt)}
-                    </>
-                  ) : (
-                    result.url
-                      .replace(/http[s]:\/\//, "")
-                      .replace(result.site, "")
-                  )}
-                </span>
-              </>
-            }
+            header={header}
             footer={
               <ViewEmbedded
                 noEmbed={isGithub}
-                label={isGithub ? "Open Github" : "Open page"}
+                label={isCode ? "Open on GitHub" : isGithub ? "Open Github" : "Open page"}
                 url={result.url}
                 results={results}
                 searchQuery={searchQuery}
               />
             }
-            content={
-              <PageResultHighlighter
-                result={result}
-                searchQuery={searchQuery}
-                options={{ maxLength: 250, contextLength: 75 }}
-              />
-            }
+            content={content}
           />
         );
       })}
