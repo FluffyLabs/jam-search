@@ -10,7 +10,9 @@ export interface CodeChunk {
 }
 
 export interface ChunkOptions {
+  /** Approximate soft cap in JS string length (UTF-16 code units), not bytes. */
   maxChars: number;
+  /** Trailing characters from the prior chunk re-included as overlap. */
   overlapChars: number;
 }
 
