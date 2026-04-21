@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { createHash } from "node:crypto";
 import OpenAI from "openai";
 import type { SearchDoc } from "./searchIndex.js";
 
@@ -14,6 +15,10 @@ interface EmbeddingsCache {
 function embeddingKey(doc: SearchDoc): string {
   if (doc.messageId && doc.filePath) {
     return `${doc.filePath}:${doc.messageId}`;
+  }
+  if (doc.contentKind === "code" && doc.content) {
+    const sha = createHash("sha256").update(doc.content, "utf-8").digest("hex");
+    return `code:${sha}`;
   }
   return doc.filePath || doc.url || doc.id || "";
 }
