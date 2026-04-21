@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import matter from "gray-matter";
+import type { ContentKind } from "../../../shared/pages.js";
 
 function ensureDir(dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
@@ -172,6 +173,7 @@ export interface PageData {
   site: string;
   createdAt: Date;
   lastModified: Date;
+  contentKind?: ContentKind;
 }
 
 export function writePageFile(
@@ -186,7 +188,7 @@ export function writePageFile(
   const filePath = path.join(dir, `${fileName}.md`);
   const relativePath = path.relative(dataDir, filePath);
 
-  const frontmatter = {
+  const frontmatter: Record<string, unknown> = {
     type: "page",
     url: page.url,
     title: page.title,
@@ -194,6 +196,9 @@ export function writePageFile(
     created_at: page.createdAt.toISOString(),
     last_modified: page.lastModified.toISOString(),
   };
+  if (page.contentKind) {
+    frontmatter.content_kind = page.contentKind;
+  }
 
   const content = matter.stringify(page.content, frontmatter);
   fs.writeFileSync(filePath, content, "utf-8");

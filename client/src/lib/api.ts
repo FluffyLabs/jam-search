@@ -2,6 +2,8 @@
  * API client for making network requests
  */
 
+import type { ContentKind } from "@shared/pages";
+
 // Base URL for API requests
 const API_URL =
   import.meta.env.VITE_API_URL || "https://search-api.fluffylabs.dev";
@@ -194,6 +196,8 @@ export interface PageSearchResponse {
     site: string;
     title: string;
     content: string;
+    contentKind?: ContentKind;
+    language?: string;
     lastModified: string;
     createdAt: string;
     similarity: number;

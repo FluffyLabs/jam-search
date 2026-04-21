@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import matter from "gray-matter";
+import { CONTENT_KINDS, type ContentKind } from "../../../shared/pages.js";
 import { generateEmbeddings } from "./embeddings.js";
 import {
   countDocs,
@@ -91,6 +92,13 @@ function loadPageFile(
   frontmatter: Record<string, unknown>,
   body: string
 ): SearchDoc[] {
+  const contentKindRaw = frontmatter.content_kind as string | undefined;
+  const contentKind = (CONTENT_KINDS as readonly string[]).includes(
+    contentKindRaw ?? ""
+  )
+    ? (contentKindRaw as ContentKind)
+    : undefined;
+
   return [
     {
       type: "page" as const,
@@ -98,6 +106,8 @@ function loadPageFile(
       title: frontmatter.title as string,
       url: frontmatter.url as string,
       site: frontmatter.site as string,
+      contentKind,
+      language: frontmatter.language as string | undefined,
       timestamp: frontmatter.created_at
         ? new Date(frontmatter.created_at as string).getTime()
         : undefined,

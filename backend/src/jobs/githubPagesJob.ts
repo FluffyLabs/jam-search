@@ -21,11 +21,13 @@ async function main() {
 
   const errors = [];
   for (const config of github.REPOSITORIES) {
+    if (config.indexIssues === false) continue;
     try {
       console.log(`Fetching content from ${config.owner}/${config.repo}...`);
 
       const content = await fetchGitHubContent({
-        ...config,
+        owner: config.owner,
+        repo: config.repo,
         token: GITHUB_TOKEN,
       });
       console.log(
@@ -54,6 +56,6 @@ async function main() {
   console.log("GitHub pages fetch job completed");
 
   if (errors.length) {
-    throw errors;
+    throw new AggregateError(errors, `${errors.length} repo(s) failed`);
   }
 }

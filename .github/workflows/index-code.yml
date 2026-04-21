@@ -1,0 +1,41 @@
+name: "Index: Code"
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run weekly on Sunday at 05:00 UTC
+    - cron: '0 5 * * 0'
+
+permissions:
+  contents: write
+
+jobs:
+  run-code-files-job:
+    name: Update source code index
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GH_INDEX_TOKEN }}
+
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run code files job
+        run: npm exec tsx -w backend -- ./src/jobs/codeFilesJob.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_INDEX_TOKEN }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DATA_DIR: ./data
+
+      - uses: ./.github/actions/commit-data
+        with:
+          commit-message: "index: update code files"

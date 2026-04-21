@@ -26,6 +26,18 @@ export const SOURCE_OPTIONS = [
     value: Source.GithubFluffyLabsJamTesting,
   },
   {
+    label: "github.com/FluffyLabs/typeberry",
+    value: Source.GithubFluffyLabsTypeberry,
+  },
+  {
+    label: "github.com/tomusdrw/as-lan",
+    value: Source.GithubTomusdrwAsLan,
+  },
+  {
+    label: "github.com/tomusdrw/anan-as",
+    value: Source.GithubTomusdrwAnanAs,
+  },
+  {
     label: "jam.web3.foundation",
     value: Source.JamWeb3Foundation,
   },
@@ -42,6 +54,9 @@ export const initialSources = [
   Source.GithubW3fJamMilestoneDelivery,
   Source.JamWeb3Foundation,
   Source.GithubFluffyLabsJamTesting,
+  Source.GithubFluffyLabsTypeberry,
+  Source.GithubTomusdrwAsLan,
+  Source.GithubTomusdrwAnanAs,
 ];
 
 // localStorage key for user's selected sources

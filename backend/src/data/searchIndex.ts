@@ -1,5 +1,6 @@
 import type { Orama, Result, Results } from "@orama/orama";
 import { count, create, insert, insertMultiple, search } from "@orama/orama";
+import type { ContentKind } from "../../../shared/pages.js";
 
 export const SCHEMA = {
   // Document type for filtering
@@ -22,6 +23,8 @@ export const SCHEMA = {
   filePath: "enum",
   roomName: "enum",
   channelName: "enum",
+  contentKind: "enum",
+  language: "enum",
   // Numeric for range queries
   timestamp: "number",
 } as const;
@@ -53,6 +56,8 @@ export interface SearchDoc {
   filePath?: string;
   roomName?: string;
   channelName?: string;
+  contentKind?: ContentKind;
+  language?: string;
   timestamp?: number;
 }
 

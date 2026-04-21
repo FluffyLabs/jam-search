@@ -333,6 +333,12 @@ export function storeContentInMarkdown(
       site,
       createdAt: new Date(item.created_at),
       lastModified,
+      contentKind:
+        item.type === "pull_request"
+          ? "pr"
+          : item.type === "discussion"
+            ? "discussion"
+            : "issue",
     };
 
     writeGithubPage(dataDir, owner, repo, type, item.number, pageData);
