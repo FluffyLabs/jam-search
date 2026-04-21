@@ -54,8 +54,8 @@ describe("languageFor", () => {
     expect(languageFor("script.sh")).toBe("bash");
   });
 
-  it("falls back to empty string for unknown extension", () => {
-    expect(languageFor("mystery")).toBe("");
+  it("returns undefined for unknown extension", () => {
+    expect(languageFor("mystery")).toBeUndefined();
   });
 });
 

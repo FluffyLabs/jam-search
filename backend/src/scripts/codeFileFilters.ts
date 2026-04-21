@@ -47,9 +47,9 @@ export function shouldIndexPath(relativePath: string): boolean {
   return EXT_ALLOWLIST.has(ext);
 }
 
-export function languageFor(relativePath: string): string {
+export function languageFor(relativePath: string): string | undefined {
   const ext = path.extname(relativePath).toLowerCase();
-  return LANGUAGE_MAP[ext] ?? "";
+  return LANGUAGE_MAP[ext];
 }
 
 export function isBinary(buf: Buffer): boolean {

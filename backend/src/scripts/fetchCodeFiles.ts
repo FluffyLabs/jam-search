@@ -148,13 +148,13 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
         const body = [
           "`" + relPath + "` (lines " + chunk.startLine + "–" + chunk.endLine + ")",
           "",
-          "```" + language,
+          "```" + (language ?? ""),
           chunk.text.endsWith("\n") ? chunk.text.slice(0, -1) : chunk.text,
           "```",
           "",
         ].join("\n");
 
-        const frontmatter = {
+        const frontmatter: Record<string, unknown> = {
           type: "page",
           content_kind: "code",
           url,
@@ -165,8 +165,8 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
           chunk_index: chunk.chunkIndex,
           chunk_total: chunk.chunkTotal,
           content_sha: sha256Hex(chunk.text),
-          language,
         };
+        if (language) frontmatter.language = language;
 
         const outPath = path.join(
           destDir,

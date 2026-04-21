@@ -110,7 +110,7 @@ function loadPageFile(
       url: frontmatter.url as string,
       site: frontmatter.site as string,
       contentKind,
-      language: (frontmatter.language as string | undefined) || undefined,
+      language: frontmatter.language as string | undefined,
       timestamp: frontmatter.created_at
         ? new Date(frontmatter.created_at as string).getTime()
         : undefined,
