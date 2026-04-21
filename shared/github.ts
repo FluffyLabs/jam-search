@@ -1,5 +1,18 @@
 import { Source } from "./sources.js";
 
+export type Repository = {
+  source: Source;
+  dbId: string;
+  owner: string;
+  repo: string;
+  /** Index issues, pull requests, and discussions. Default: true. */
+  indexIssues?: boolean;
+  /** Clone and index source code files. Default: false. */
+  indexCode?: boolean;
+  /** Override default branch for code indexing (auto-detected if omitted). */
+  defaultBranch?: string;
+};
+
 export const REPOSITORIES: Repository[] = [
   {
     source: Source.GithubW3fJamTestVectors,
@@ -36,24 +49,20 @@ export const REPOSITORIES: Repository[] = [
     dbId: "github.com/FluffyLabs/typeberry",
     owner: "FluffyLabs",
     repo: "typeberry",
+    indexCode: true,
   },
   {
     source: Source.GithubTomusdrwAsLan,
     dbId: "github.com/tomusdrw/as-lan",
     owner: "tomusdrw",
     repo: "as-lan",
+    indexCode: true,
   },
   {
     source: Source.GithubTomusdrwAnanAs,
     dbId: "github.com/tomusdrw/anan-as",
     owner: "tomusdrw",
     repo: "anan-as",
+    indexCode: true,
   },
 ];
-
-export type Repository = {
-  source: Source;
-  dbId: string;
-  owner: string;
-  repo: string;
-};

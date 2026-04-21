@@ -1,4 +1,4 @@
-import { code } from "../../../shared/index.js";
+import { github } from "../../../shared/index.js";
 import { env } from "../env.js";
 import { fetchCodeFiles } from "../scripts/fetchCodeFiles.js";
 
@@ -16,7 +16,8 @@ async function main() {
   console.log("Running code files fetch job at", new Date().toISOString());
 
   const errors: unknown[] = [];
-  for (const config of code.CODE_REPOSITORIES) {
+  for (const config of github.REPOSITORIES) {
+    if (!config.indexCode) continue;
     try {
       console.log(`Fetching code from ${config.owner}/${config.repo}...`);
       const count = await fetchCodeFiles({
