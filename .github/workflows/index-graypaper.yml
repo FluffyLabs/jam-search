@@ -31,7 +31,7 @@ jobs:
       - name: Run graypaper job
         run: npm exec tsx -w backend -- ./src/jobs/graypaperJob.ts
         env:
-          DATA_DIR: ./data
+          DATA_DIR: ${{ github.workspace }}/data
 
       - uses: ./.github/actions/commit-data
         with:
