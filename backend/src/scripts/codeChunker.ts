@@ -30,7 +30,8 @@ export function chunkCodeFile(text: string, opts: ChunkOptions): CodeChunk[] {
   // trailing line-without-newline case.
   const rawLines = text.match(/[^\n]*\n?/g) ?? [];
   // The regex always appends one empty trailing match; drop it if present.
-  const lines = rawLines[rawLines.length - 1] === "" ? rawLines.slice(0, -1) : rawLines;
+  const lines =
+    rawLines[rawLines.length - 1] === "" ? rawLines.slice(0, -1) : rawLines;
   if (lines.length === 0) return [];
 
   const chunks: Omit<CodeChunk, "chunkIndex" | "chunkTotal">[] = [];

@@ -1,6 +1,6 @@
+import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createHash } from "node:crypto";
 import OpenAI from "openai";
 import type { SearchDoc } from "./searchIndex.js";
 

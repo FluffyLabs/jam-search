@@ -1,10 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import matter from "gray-matter";
-import {
-  CONTENT_KINDS,
-  type ContentKind,
-} from "../../../shared/pages.js";
+import { CONTENT_KINDS, type ContentKind } from "../../../shared/pages.js";
 import { generateEmbeddings } from "./embeddings.js";
 import {
   countDocs,

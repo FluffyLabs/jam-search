@@ -73,9 +73,7 @@ export const PageResultCards = ({
                   {formatDate(result.createdAt)}
                 </>
               ) : (
-                result.url
-                  .replace(/http[s]:\/\//, "")
-                  .replace(result.site, "")
+                result.url.replace(/http[s]:\/\//, "").replace(result.site, "")
               )}
             </span>
           </>
@@ -85,7 +83,11 @@ export const PageResultCards = ({
           <PageResultHighlighter
             result={result}
             searchQuery={searchQuery}
-            options={{ maxLength: 400, contextLength: 120, preserveWhitespace: true }}
+            options={{
+              maxLength: 400,
+              contextLength: 120,
+              preserveWhitespace: true,
+            }}
           />
         ) : (
           <PageResultHighlighter
@@ -102,7 +104,13 @@ export const PageResultCards = ({
             footer={
               <ViewEmbedded
                 noEmbed={isGithub}
-                label={isCode ? "Open on GitHub" : isGithub ? "Open Github" : "Open page"}
+                label={
+                  isCode
+                    ? "Open on GitHub"
+                    : isGithub
+                      ? "Open Github"
+                      : "Open page"
+                }
                 url={result.url}
                 results={results}
                 searchQuery={searchQuery}

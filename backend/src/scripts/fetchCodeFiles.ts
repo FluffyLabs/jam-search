@@ -1,15 +1,11 @@
-import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import matter from "gray-matter";
 import { chunkCodeFile } from "./codeChunker.js";
-import {
-  isBinary,
-  languageFor,
-  shouldIndexPath,
-} from "./codeFileFilters.js";
+import { isBinary, languageFor, shouldIndexPath } from "./codeFileFilters.js";
 
 const MAX_FILE_BYTES = 200 * 1024;
 const CHUNK_MAX_CHARS = 4000;
@@ -44,11 +40,14 @@ function redactToken(error: unknown, token: string | undefined): unknown {
   error.message = error.message.replaceAll(token, "***");
   const maybeStderr = (error as { stderr?: unknown }).stderr;
   if (typeof maybeStderr === "string") {
-    (error as unknown as { stderr: string }).stderr = maybeStderr.replaceAll(token, "***");
+    (error as unknown as { stderr: string }).stderr = maybeStderr.replaceAll(
+      token,
+      "***"
+    );
   } else if (Buffer.isBuffer(maybeStderr)) {
     (error as unknown as { stderr: Buffer }).stderr = Buffer.from(
       maybeStderr.toString("utf-8").replaceAll(token, "***"),
-      "utf-8",
+      "utf-8"
     );
   }
   return error;
@@ -56,11 +55,15 @@ function redactToken(error: unknown, token: string | undefined): unknown {
 
 function detectDefaultBranch(repoDir: string): string {
   try {
-    const ref = run("git", ["symbolic-ref", "refs/remotes/origin/HEAD"], repoDir);
+    const ref = run(
+      "git",
+      ["symbolic-ref", "refs/remotes/origin/HEAD"],
+      repoDir
+    );
     return ref.replace(/^refs\/remotes\/origin\//, "");
   } catch {
     throw new Error(
-      `Could not detect default branch in ${repoDir}. Set defaultBranch explicitly in CODE_REPOSITORIES.`,
+      `Could not detect default branch in ${repoDir}. Set defaultBranch explicitly in CODE_REPOSITORIES.`
     );
   }
 }
@@ -110,12 +113,20 @@ function sha256Hex(s: string): string {
 
 export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
   const { owner, repo, dataDir, githubToken } = opts;
-  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), `jam-code-${owner}-${repo}-`));
+  const tmpRoot = fs.mkdtempSync(
+    path.join(os.tmpdir(), `jam-code-${owner}-${repo}-`)
+  );
   const clonePath = path.join(tmpRoot, "repo");
 
   try {
     try {
-      run("git", ["clone", "--depth", "1", cloneUrl(owner, repo, githubToken), clonePath]);
+      run("git", [
+        "clone",
+        "--depth",
+        "1",
+        cloneUrl(owner, repo, githubToken),
+        clonePath,
+      ]);
     } catch (e) {
       throw redactToken(e, githubToken);
     }
@@ -150,7 +161,13 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
       for (const chunk of chunks) {
         const url = `https://github.com/${owner}/${repo}/blob/${defaultBranch}/${encodePathForUrl(relPath)}#L${chunk.startLine}-L${chunk.endLine}`;
         const body = [
-          "`" + relPath + "` (lines " + chunk.startLine + "–" + chunk.endLine + ")",
+          "`" +
+            relPath +
+            "` (lines " +
+            chunk.startLine +
+            "–" +
+            chunk.endLine +
+            ")",
           "",
           "```" + (language ?? ""),
           chunk.text.endsWith("\n") ? chunk.text.slice(0, -1) : chunk.text,
@@ -172,10 +189,7 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
         };
         if (language) frontmatter.language = language;
 
-        const outPath = path.join(
-          destDir,
-          `${relPath}.${chunk.chunkIndex}.md`,
-        );
+        const outPath = path.join(destDir, `${relPath}.${chunk.chunkIndex}.md`);
         ensureDir(path.dirname(outPath));
         fs.writeFileSync(outPath, matter.stringify(body, frontmatter), "utf-8");
         written++;
@@ -183,7 +197,7 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
     }
 
     console.log(
-      `Wrote ${written} code chunks from ${owner}/${repo} (branch ${defaultBranch})`,
+      `Wrote ${written} code chunks from ${owner}/${repo} (branch ${defaultBranch})`
     );
     return written;
   } finally {

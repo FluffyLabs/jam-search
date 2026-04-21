@@ -27,7 +27,9 @@ async function main() {
         dataDir: DATA_DIR,
         githubToken: env.GITHUB_TOKEN,
       });
-      console.log(`Successfully processed ${config.owner}/${config.repo}: ${count} chunks`);
+      console.log(
+        `Successfully processed ${config.owner}/${config.repo}: ${count} chunks`
+      );
     } catch (error) {
       console.error(`Error processing ${config.owner}/${config.repo}:`, error);
       errors.push(error);
