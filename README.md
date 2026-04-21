@@ -14,6 +14,7 @@ A search engine aggregating content from multiple sources including Discord serv
 [![Index: Pages](https://github.com/FluffyLabs/jam-search/actions/workflows/index-pages.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-pages.yml)
 [![Index: Graypaper](https://github.com/FluffyLabs/jam-search/actions/workflows/index-graypaper.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-graypaper.yml)
 [![Index: Matrix](https://github.com/FluffyLabs/jam-search/actions/workflows/index-matrix.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-matrix.yml)
+[![Index: Code](https://github.com/FluffyLabs/jam-search/actions/workflows/index-code.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-code.yml)
 [![Index: Embeddings](https://github.com/FluffyLabs/jam-search/actions/workflows/index-embeddings.yml/badge.svg)](https://github.com/FluffyLabs/jam-search/actions/workflows/index-embeddings.yml)
 
 ## Tech Stack
@@ -73,6 +74,7 @@ The backend includes scripts for indexing content:
 ```bash
 npm run fetch-discord         # Index Discord messages
 npm run fetch-github          # Index GitHub pages
+npm run fetch-code            # Index source code from configured repos
 npm run fetch-pages           # Index web pages
 npm run generate-embeddings   # Generate vector embeddings
 ```
