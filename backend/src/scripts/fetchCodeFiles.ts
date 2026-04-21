@@ -5,7 +5,12 @@ import * as os from "node:os";
 import * as path from "node:path";
 import matter from "gray-matter";
 import { chunkCodeFile } from "./codeChunker.js";
-import { isBinary, languageFor, shouldIndexPath } from "./codeFileFilters.js";
+import {
+  isBinary,
+  languageFor,
+  shouldIndexPath,
+  WALK_DIR_BLOCKLIST,
+} from "./codeFileFilters.js";
 
 const MAX_FILE_BYTES = 200 * 1024;
 const CHUNK_MAX_CHARS = 4000;
@@ -83,7 +88,7 @@ function walkFiles(rootDir: string): string[] {
     for (const entry of entries) {
       const entryRel = rel ? `${rel}/${entry.name}` : entry.name;
       if (entry.isDirectory()) {
-        if (entry.name === ".git") continue;
+        if (WALK_DIR_BLOCKLIST.has(entry.name)) continue;
         stack.push(entryRel);
       } else if (entry.isFile()) {
         out.push(entryRel);

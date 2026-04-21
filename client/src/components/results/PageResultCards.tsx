@@ -108,7 +108,7 @@ export const PageResultCards = ({
                   isCode
                     ? "Open on GitHub"
                     : isGithub
-                      ? "Open Github"
+                      ? "Open GitHub"
                       : "Open page"
                 }
                 url={result.url}

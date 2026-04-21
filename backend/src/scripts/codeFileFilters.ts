@@ -24,7 +24,10 @@ const EXT_ALLOWLIST = new Set([
   ".c",
 ]);
 
-const DIR_BLOCKLIST = new Set([
+/** Directories to skip while walking a cloned repo. Shared with the walker
+ * in `fetchCodeFiles.ts` so pruning happens before recursion, not just
+ * per-file filtering. */
+export const WALK_DIR_BLOCKLIST = new Set([
   "node_modules",
   "target",
   "dist",
@@ -71,7 +74,7 @@ export function shouldIndexPath(relativePath: string): boolean {
   const norm = relativePath.replace(/\\/g, "/");
   const parts = norm.split("/");
   for (const part of parts.slice(0, -1)) {
-    if (DIR_BLOCKLIST.has(part)) return false;
+    if (WALK_DIR_BLOCKLIST.has(part)) return false;
   }
   const base = parts[parts.length - 1];
   if (FILENAME_BLOCKLIST.has(base)) return false;
