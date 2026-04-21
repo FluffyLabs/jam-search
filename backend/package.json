@@ -9,6 +9,7 @@
     "start": "tsx ./src/index.ts",
     "dev": "EMBEDDINGS_ENABLED=${EMBEDDINGS_ENABLED:-false} tsx watch ./src/index.ts",
     "export": "tsx ./src/scripts/exportToMarkdown.ts",
+    "fetch-code": "tsx ./src/jobs/codeFilesJob.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
