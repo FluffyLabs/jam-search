@@ -174,7 +174,7 @@ export async function fetchCodeFiles(opts: FetchCodeOptions): Promise<number> {
             chunk.endLine +
             ")",
           "",
-          "```" + (language ?? ""),
+          `\`\`\`${language ?? ""}`,
           chunk.text.endsWith("\n") ? chunk.text.slice(0, -1) : chunk.text,
           "```",
           "",
