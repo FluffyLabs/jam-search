@@ -56,6 +56,6 @@ async function main() {
   console.log("GitHub pages fetch job completed");
 
   if (errors.length) {
-    throw errors;
+    throw new AggregateError(errors, `${errors.length} repo(s) failed`);
   }
 }

@@ -36,6 +36,6 @@ async function main() {
 
   console.log("Code files fetch job completed");
   if (errors.length) {
-    throw errors;
+    throw new AggregateError(errors, `${errors.length} repo(s) failed`);
   }
 }
