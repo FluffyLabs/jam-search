@@ -1,7 +1,12 @@
 # Custom Code Sources Implementation Plan
 
 > **Status:** Executed — see the associated PR for commit history.
-> **Note:** A post-implementation `/reflect` pass consolidated the original two-list config (`REPOSITORIES` + `CODE_REPOSITORIES`) into a single `REPOSITORIES` list in `shared/github.ts` with optional `indexIssues` / `indexCode` flags. References below to `shared/code.ts` / `CODE_REPOSITORIES` reflect the plan as originally written; the final shape lives in `shared/github.ts` and the design doc at `docs/superpowers/specs/2026-04-20-custom-code-sources-design.md` has been updated.
+> **Note:** This is the plan as originally written. A post-implementation `/reflect` pass refined several details that may not be reflected verbatim below. For the final shape, read the code and the design doc at `docs/superpowers/specs/2026-04-20-custom-code-sources-design.md`. Known drift:
+> - The two-list config (`REPOSITORIES` + `CODE_REPOSITORIES`) was consolidated into a single `REPOSITORIES` in `shared/github.ts` with optional `indexIssues` / `indexCode` flags. `shared/code.ts` no longer exists.
+> - `languageFor` returns `string | undefined` for unknown extensions (originally `string` with `?? ""` fallback), for type honesty.
+> - `fetchCodeFiles.ts` shares its directory blocklist with `walkFiles` (pruning at walk time, not per file), redacts the GitHub token from `git clone` error messages, and URL-encodes file paths when building `#L<start>-L<end>` blob URLs.
+> - The `ContentKind` union was extracted to `shared/pages.ts` rather than duplicated across 4+ sites.
+> - Both the GitHub pages job and the code files job throw `AggregateError` on per-repo failures.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -448,8 +453,8 @@ describe("languageFor", () => {
     expect(languageFor("script.sh")).toBe("bash");
   });
 
-  it("falls back to empty string for unknown extension", () => {
-    expect(languageFor("mystery")).toBe("");
+  it("returns undefined for unknown extension", () => {
+    expect(languageFor("mystery")).toBeUndefined();
   });
 });
 
@@ -525,9 +530,9 @@ export function shouldIndexPath(relativePath: string): boolean {
   return EXT_ALLOWLIST.has(ext);
 }
 
-export function languageFor(relativePath: string): string {
+export function languageFor(relativePath: string): string | undefined {
   const ext = path.extname(relativePath).toLowerCase();
-  return LANGUAGE_MAP[ext] ?? "";
+  return LANGUAGE_MAP[ext];
 }
 
 export function isBinary(buf: Buffer): boolean {
