@@ -82,13 +82,11 @@ export const PageResultCards = ({
         );
 
         const content = isCode ? (
-          <div className="font-mono text-xs whitespace-pre-wrap break-words">
-            <PageResultHighlighter
-              result={result}
-              searchQuery={searchQuery}
-              options={{ maxLength: 400, contextLength: 120 }}
-            />
-          </div>
+          <PageResultHighlighter
+            result={result}
+            searchQuery={searchQuery}
+            options={{ maxLength: 400, contextLength: 120, preserveWhitespace: true }}
+          />
         ) : (
           <PageResultHighlighter
             result={result}

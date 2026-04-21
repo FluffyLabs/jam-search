@@ -10,6 +10,7 @@ interface PageResultHighlighterProps {
   options: {
     maxLength: number;
     contextLength: number;
+    preserveWhitespace?: boolean;
   };
 }
 
@@ -126,10 +127,13 @@ const truncateContent = (
   options: {
     maxLength: number;
     contextLength: number;
+    preserveWhitespace?: boolean;
   }
 ): string => {
-  // Normalize spaces in both content and query
-  const normalizedContent = content.replace(/\s+/g, " ");
+  // When preserving whitespace (e.g. for code), don't collapse newlines/indentation
+  const normalizedContent = options.preserveWhitespace
+    ? content
+    : content.replace(/\s+/g, " ");
   const normalizedQuery = searchQuery.replace(/\s+/g, " ");
 
   // Find the best match of the search query
