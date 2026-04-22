@@ -1,6 +1,6 @@
-import { useUserData } from "@fluffylabs/shared-ui/supabase";
+import { useSession, useUserData } from "@fluffylabs/shared-ui/supabase";
 import { Sparkles } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { CitationsPanel } from "@/components/chat/CitationsPanel";
@@ -22,102 +22,137 @@ export function AskPage() {
   const autoSubmit = searchParams.get("autoSubmit") === "1";
 
   const { state, dispatch } = useAskConversation();
+  // Auth-session restore is async on page refresh. useUserData short-circuits
+  // to { isLoading: false, data: null } while `user` is null, so gating on
+  // keyLoading alone is a false-negative — we must also wait for the session.
+  const { isLoading: sessionLoading } = useSession();
   const { data: keyData, isLoading: keyLoading } = useUserData(
     "openrouter-api-key",
     { appScoped: true }
   );
+  const isReady = !sessionLoading && !keyLoading;
 
   const streamHandleRef = useRef<{ abort: () => void } | null>(null);
   const hasAutoSubmittedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const send = (text: string, options?: { startFresh?: boolean }) => {
-    if (keyLoading) return;
-    const apiKey =
-      typeof keyData === "string" && keyData.trim() !== "" ? keyData : null;
-    if (!apiKey) {
+  const send = useCallback(
+    (text: string, options?: { startFresh?: boolean }) => {
+      if (!isReady) return;
+      const apiKey =
+        typeof keyData === "string" && keyData.trim() !== "" ? keyData : null;
+      if (!apiKey) {
+        if (options?.startFresh) dispatch({ type: "reset" });
+        dispatch({ type: "sendUserMessage", text });
+        dispatch({
+          type: "setError",
+          message: "No OpenRouter API key found. Add one in Settings to begin.",
+        });
+        return;
+      }
+
       if (options?.startFresh) dispatch({ type: "reset" });
       dispatch({ type: "sendUserMessage", text });
-      dispatch({
-        type: "setError",
-        message: "No OpenRouter API key found. Add one in Settings to begin.",
-      });
-      return;
-    }
 
-    if (options?.startFresh) dispatch({ type: "reset" });
-    dispatch({ type: "sendUserMessage", text });
+      // When starting fresh, the prior history we send to the backend is empty;
+      // closure-captured state.messages is stale right after dispatch(reset).
+      const priorMessages = options?.startFresh ? [] : state.messages;
+      const nextMessages = [
+        ...priorMessages,
+        { id: "pending", role: "user" as const, content: text },
+      ];
 
-    // When starting fresh, the prior history we send to the backend is empty;
-    // closure-captured state.messages is stale right after dispatch(reset).
-    const priorMessages = options?.startFresh ? [] : state.messages;
-    const nextMessages = [
-      ...priorMessages,
-      { id: "pending", role: "user" as const, content: text },
-    ];
-
-    streamHandleRef.current = askStream(
-      {
-        messages: nextMessages,
-        model: state.model,
-        openrouterKey: apiKey,
-      },
-      (event) => {
-        switch (event.type) {
-          case "tool_call":
-            dispatch({
-              type: "addToolStep",
-              toolName: event.name,
-              args: event.args,
-            });
-            break;
-          case "tool_result":
-            dispatch({
-              type: "completeToolStep",
-              toolName: event.name,
-              resultCount: event.resultCount,
-              payload: event.payload,
-            });
-            break;
-          case "content_delta":
-            dispatch({ type: "appendContent", text: event.text });
-            break;
-          case "citation":
-            dispatch({
-              type: "addCitation",
-              n: event.n,
-              docId: event.docId,
-              sourceType: event.sourceType,
-            });
-            break;
-          case "done":
-            dispatch({ type: "finishStreaming" });
-            break;
-          case "error":
-            dispatch({ type: "setError", message: event.message });
-            break;
+      streamHandleRef.current = askStream(
+        {
+          messages: nextMessages,
+          model: state.model,
+          openrouterKey: apiKey,
+        },
+        (event) => {
+          switch (event.type) {
+            case "tool_call":
+              dispatch({
+                type: "addToolStep",
+                toolName: event.name,
+                args: event.args,
+              });
+              break;
+            case "tool_result":
+              dispatch({
+                type: "completeToolStep",
+                toolName: event.name,
+                resultCount: event.resultCount,
+                payload: event.payload,
+              });
+              break;
+            case "content_delta":
+              dispatch({ type: "appendContent", text: event.text });
+              break;
+            case "citation":
+              dispatch({
+                type: "addCitation",
+                n: event.n,
+                docId: event.docId,
+                sourceType: event.sourceType,
+              });
+              break;
+            case "done":
+              dispatch({ type: "finishStreaming" });
+              break;
+            case "error":
+              dispatch({ type: "setError", message: event.message });
+              break;
+          }
         }
-      }
-    );
-  };
+      );
+    },
+    [isReady, keyData, dispatch, state.messages, state.model]
+  );
 
-  // Auto-submit once if ?q is set and ?autoSubmit=1. Before sending, wipe any
-  // pre-existing conversation so the incoming question starts a fresh chat —
-  // otherwise an autosubmit from the home page / results pivot would append to
-  // whatever was lingering in sessionStorage from a prior session in this tab.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: send changes every render; hasAutoSubmittedRef guards against re-firing
+  // Auto-submit once if ?q is set and ?autoSubmit=1. Skip the re-run if the
+  // hydrated sessionStorage conversation already ends with a completed answer
+  // for this same prompt. Either way, strip ?autoSubmit=1 from the URL so a
+  // refresh doesn't re-trigger submission. The hasAutoSubmittedRef guard keeps
+  // this idempotent even though the effect re-runs as deps like state.messages
+  // change during streaming; re-runs after the first fire hit the early return.
   useEffect(() => {
-    if (
-      autoSubmit &&
-      initialQuery &&
-      !hasAutoSubmittedRef.current &&
-      !keyLoading
-    ) {
-      hasAutoSubmittedRef.current = true;
+    if (!autoSubmit || !initialQuery || hasAutoSubmittedRef.current) return;
+    if (!isReady) return;
+
+    hasAutoSubmittedRef.current = true;
+
+    const lastUser = [...state.messages]
+      .reverse()
+      .find((m) => m.role === "user");
+    const lastAssistant = [...state.messages]
+      .reverse()
+      .find((m): m is AssistantMessage => m.role === "assistant");
+    const alreadyAnswered =
+      lastUser?.content === initialQuery &&
+      !!lastAssistant &&
+      !lastAssistant.isStreaming &&
+      !lastAssistant.error;
+
+    if (!alreadyAnswered) {
       streamHandleRef.current?.abort();
       send(initialQuery, { startFresh: true });
     }
-  }, [autoSubmit, initialQuery, keyLoading]);
+
+    const nextParams = new URLSearchParams(location.search);
+    nextParams.delete("autoSubmit");
+    navigate(`${location.pathname}?${nextParams.toString()}`, {
+      replace: true,
+    });
+  }, [
+    autoSubmit,
+    initialQuery,
+    isReady,
+    location.pathname,
+    location.search,
+    navigate,
+    send,
+    state.messages,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -198,7 +233,7 @@ export function AskPage() {
           <div className="max-w-[44rem] w-full mx-auto px-6 pb-6">
             <ChatInput
               initialValue={autoSubmit ? "" : initialQuery}
-              disabled={streaming || keyLoading}
+              disabled={streaming || !isReady}
               onSubmit={send}
               placeholder={
                 isEmpty
