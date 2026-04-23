@@ -50,6 +50,10 @@ function AuthCallbackCatchAll({
 function App() {
   const isUsingEmbeddedViewer = useEmbeddedViewer().isVisible;
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  // /ask manages its own scroll/padding so the section/aside border can
+  // span the full available height.
+  const fullBleed = pathname === "/ask";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -73,7 +77,7 @@ function App() {
           >
             <EmbeddedViewer />
             <div
-              className={cn("p-4 h-full overflow-y-auto", {
+              className={cn("h-full", fullBleed ? "" : "p-4 overflow-y-auto", {
                 invisible: isUsingEmbeddedViewer,
               })}
             >
