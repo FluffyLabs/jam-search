@@ -14,6 +14,8 @@ export const envSchema = z
       .union([z.literal("true"), z.literal("false")])
       .default("true")
       .transform((v) => v === "true"),
+    DATA_REPO_URL: z.string().url().optional(),
+    DATA_REF: z.string().default("main"),
   })
   .superRefine((parsed, ctx) => {
     if (parsed.EMBEDDINGS_ENABLED && !parsed.OPENAI_API_KEY.trim()) {
