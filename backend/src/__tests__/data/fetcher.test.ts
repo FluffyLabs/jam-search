@@ -172,3 +172,27 @@ describe("fetchData — happy path", () => {
     }
   });
 });
+
+describe("fetchData — errors", () => {
+  it("throws with git stderr when the ref does not exist", async () => {
+    const fixture = await makeFixtureRepo({
+      dataFiles: { "a.md": "hello" },
+    });
+    const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "fetcher-work-"));
+    const dataDir = path.join(workDir, "data");
+    try {
+      await expect(
+        fetchData({
+          repoUrl: fixture.bareUrl,
+          ref: "does-not-exist",
+          dataDir,
+        })
+      ).rejects.toThrow(/git fetch/i);
+      // Existing dataDir absence confirmed — nothing got created
+      expect(fs.existsSync(dataDir)).toBe(false);
+    } finally {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      fixture.cleanup();
+    }
+  });
+});
