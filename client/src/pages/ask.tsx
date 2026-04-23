@@ -92,6 +92,9 @@ export function AskPage() {
                 sourceType: event.sourceType,
               });
               break;
+            case "model_used":
+              dispatch({ type: "setMessageModel", model: event.model });
+              break;
             case "done":
               dispatch({ type: "finishStreaming" });
               break;

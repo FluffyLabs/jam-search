@@ -35,6 +35,7 @@ export async function* runAgentLoop(
   ];
 
   let iterations = 0;
+  let lastReportedModel: string | null = null;
   try {
     while (true) {
       iterations++;
@@ -58,6 +59,7 @@ export async function* runAgentLoop(
       const citeParser = createCiteParser();
 
       for await (const chunk of stream as AsyncIterable<{
+        model?: string;
         choices: Array<{
           delta: {
             content?: string;
@@ -71,6 +73,14 @@ export async function* runAgentLoop(
           finish_reason: string | null;
         }>;
       }>) {
+        // OpenRouter populates `chunk.model` with the actual underlying model
+        // it routed to (for `openrouter/auto`, this can differ per iteration).
+        // Emit when it changes so the frontend can display attribution that
+        // matches what really ran.
+        if (chunk.model && chunk.model !== lastReportedModel) {
+          lastReportedModel = chunk.model;
+          yield { type: "model_used", model: chunk.model };
+        }
         const choice = chunk.choices?.[0];
         if (!choice) continue;
         const delta = choice.delta;

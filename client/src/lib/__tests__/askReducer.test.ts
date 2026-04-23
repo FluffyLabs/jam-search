@@ -31,6 +31,28 @@ describe("askReducer", () => {
     const last = lastAssistant(next);
     expect(last.parts).toEqual([]);
     expect(last.isStreaming).toBe(true);
+    // Eager attribution: the new assistant message is tagged with whatever
+    // model the picker is on at send time.
+    expect(last.model).toBe(initialState.model);
+  });
+
+  it("sendUserMessage tags the new assistant message with the current model", () => {
+    let s = askReducer(initialState, {
+      type: "setModel",
+      model: "openai/gpt-5",
+    });
+    s = askReducer(s, { type: "sendUserMessage", text: "hi" });
+    expect(lastAssistant(s).model).toBe("openai/gpt-5");
+  });
+
+  it("setMessageModel overwrites the model on the last assistant message", () => {
+    let s = freshAssistant();
+    expect(lastAssistant(s).model).toBe(initialState.model);
+    s = askReducer(s, {
+      type: "setMessageModel",
+      model: "anthropic/claude-sonnet-4.5",
+    });
+    expect(lastAssistant(s).model).toBe("anthropic/claude-sonnet-4.5");
   });
 
   it("appendContent merges consecutive text deltas into a single text part", () => {

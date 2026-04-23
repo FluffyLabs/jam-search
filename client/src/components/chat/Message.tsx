@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import type { AssistantPart, ChatMessage, TextPart } from "@/lib/askTypes";
+import { modelLabel } from "@/lib/models";
 import { cn } from "@/lib/utils";
 import { Markdown } from "./Markdown";
 import { ToolStep } from "./ToolStep";
@@ -63,6 +64,12 @@ export function Message({ message }: MessageProps) {
               Go to Settings
             </Button>
           )}
+        </div>
+      )}
+
+      {message.model && (
+        <div className="text-[11px] text-muted-foreground/80">
+          via {modelLabel(message.model)}
         </div>
       )}
     </div>

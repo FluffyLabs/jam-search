@@ -38,3 +38,12 @@ export const MODELS: ModelOption[] = [
 
 /** Default is a balanced Sonnet — good tool use without Opus latency/cost. */
 export const DEFAULT_MODEL = "anthropic/claude-sonnet-4.5";
+
+/**
+ * Display label for a model id. Uses the curated list when possible so
+ * familiar names like "Claude Sonnet 4.5" appear instead of raw ids; falls
+ * back to the raw id for whatever OpenRouter routes to outside the list.
+ */
+export function modelLabel(id: string): string {
+  return MODELS.find((m) => m.id === id)?.label ?? id;
+}

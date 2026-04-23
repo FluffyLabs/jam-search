@@ -38,6 +38,7 @@ export type AgentEvent =
     }
   | { type: "content_delta"; text: string }
   | { type: "citation"; n: number; docId: string; sourceType: SourceType }
+  | { type: "model_used"; model: string }
   | { type: "done" }
   | { type: "error"; message: string };
 
