@@ -199,4 +199,26 @@ describe("fetchData — errors", () => {
       fixture.cleanup();
     }
   });
+
+  it("throws when the repo has no data/ directory", async () => {
+    const fixture = await makeFixtureRepo({
+      dataFiles: {},
+      nonDataFiles: { "README.md": "no data here" },
+    });
+    const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "fetcher-work-"));
+    const dataDir = path.join(workDir, "data");
+    try {
+      await expect(
+        fetchData({
+          repoUrl: fixture.bareUrl,
+          ref: "main",
+          dataDir,
+        })
+      ).rejects.toThrow(/no data\/ directory/i);
+      expect(fs.existsSync(dataDir)).toBe(false);
+    } finally {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      fixture.cleanup();
+    }
+  });
 });

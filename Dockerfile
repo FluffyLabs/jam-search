@@ -24,8 +24,9 @@ ENV CACHE_DIR=/app/cache
 VOLUME /app/cache
 
 # Fetch data on start from the repo. Override DATA_REF to pin to a specific
-# commit; leave DATA_REPO_URL empty to serve whatever's at /app/data (not
-# recommended for prod — the image no longer bundles data/).
+# commit or tag for rollback. DATA_REPO_URL must stay set — the image no
+# longer bundles data/ (see .dockerignore), so unsetting it will crash at
+# startup.
 ENV DATA_REPO_URL=https://github.com/FluffyLabs/jam-search.git
 ENV DATA_REF=main
 
