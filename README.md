@@ -81,6 +81,14 @@ npm run generate-embeddings   # Generate vector embeddings
 
 Automated jobs run daily to keep content updated.
 
+## MCP
+
+The backend also exposes a [Model Context Protocol](https://modelcontextprotocol.io)
+endpoint at `/mcp` with two tools (`search_all`, `get_full_document`) — the
+same tools the `/ask` assistant uses. Point any MCP-compatible client at
+`https://search-api.fluffylabs.dev/mcp` to query the index. See
+[`backend/README.md`](./backend/README.md#mcp) for details.
+
 ## Deployment
 
 - **Backend**: Deployed to <https://search-api.fluffylabs.dev>
