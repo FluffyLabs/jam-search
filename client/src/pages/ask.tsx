@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
-import { ModelPicker } from "@/components/chat/ModelPicker";
 import { Button } from "@/components/ui/button";
 import { useAskConversation } from "@/hooks/useAskConversation";
 import { askStream } from "@/lib/askClient";
@@ -22,15 +21,13 @@ export function AskPage() {
   const autoSubmit = searchParams.get("autoSubmit") === "1";
 
   const { state, dispatch } = useAskConversation();
-  // Auth-session restore is async on page refresh. useUserData short-circuits
-  // to { isLoading: false, data: null } while `user` is null, so gating on
-  // keyLoading alone is a false-negative — we must also wait for the session.
   const { isLoading: sessionLoading } = useSession();
   const { data: keyData, isLoading: keyLoading } = useUserData(
     "openrouter-api-key",
     { appScoped: true }
   );
   const isReady = !sessionLoading && !keyLoading;
+  const hasApiKey = typeof keyData === "string" && keyData.trim() !== "";
 
   const streamHandleRef = useRef<{ abort: () => void } | null>(null);
   const hasAutoSubmittedRef = useRef(false);
@@ -39,8 +36,7 @@ export function AskPage() {
   const send = useCallback(
     (text: string, options?: { startFresh?: boolean }) => {
       if (!isReady) return;
-      const apiKey =
-        typeof keyData === "string" && keyData.trim() !== "" ? keyData : null;
+      const apiKey = hasApiKey ? (keyData as string) : null;
       if (!apiKey) {
         if (options?.startFresh) dispatch({ type: "reset" });
         dispatch({ type: "sendUserMessage", text });
@@ -55,8 +51,6 @@ export function AskPage() {
       if (options?.startFresh) dispatch({ type: "reset" });
       dispatch({ type: "sendUserMessage", text });
 
-      // When starting fresh, the prior history we send to the backend is empty;
-      // closure-captured state.messages is stale right after dispatch(reset).
       const priorMessages = options?.startFresh ? [] : state.messages;
       const nextMessages = [
         ...priorMessages,
@@ -107,15 +101,9 @@ export function AskPage() {
         }
       );
     },
-    [isReady, keyData, dispatch, state.messages, state.model]
+    [isReady, hasApiKey, keyData, dispatch, state.messages, state.model]
   );
 
-  // Auto-submit once if ?q is set and ?autoSubmit=1. Skip the re-run if the
-  // hydrated sessionStorage conversation already ends with a completed answer
-  // for this same prompt. Either way, strip ?autoSubmit=1 from the URL so a
-  // refresh doesn't re-trigger submission. The hasAutoSubmittedRef guard keeps
-  // this idempotent even though the effect re-runs as deps like state.messages
-  // change during streaming; re-runs after the first fire hit the early return.
   useEffect(() => {
     if (!autoSubmit || !initialQuery || hasAutoSubmittedRef.current) return;
     if (!isReady) return;
@@ -161,7 +149,6 @@ export function AskPage() {
     };
   }, []);
 
-  // Auto-scroll as messages stream in.
   // biome-ignore lint/correctness/useExhaustiveDependencies: state.messages is the trigger
   useEffect(() => {
     const el = scrollRef.current;
@@ -176,66 +163,51 @@ export function AskPage() {
   const streaming = lastAssistant?.isStreaming === true;
   const isEmpty = state.messages.length === 0;
 
+  const handleNewChat = () => {
+    streamHandleRef.current?.abort();
+    streamHandleRef.current = null;
+    dispatch({ type: "reset" });
+  };
+
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-card/30">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-brand-dark" />
-            <h1 className="text-base font-semibold text-foreground">Ask AI</h1>
-          </div>
-          <div className="h-4 w-px bg-border" />
-          <ModelPicker
-            value={state.model}
-            onChange={(m) => dispatch({ type: "setModel", model: m })}
-          />
-        </div>
-        <div className="flex items-center gap-1">
-          {state.messages.length > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                streamHandleRef.current?.abort();
-                streamHandleRef.current = null;
-                dispatch({ type: "reset" });
-              }}
-            >
-              New chat
-            </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/settings")}
-          >
-            Settings
-          </Button>
-        </div>
-      </header>
-
-      {/* Body */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
-        {/* Conversation column */}
         <section className="flex flex-col overflow-hidden">
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
             {isEmpty ? (
-              <EmptyState />
+              <EmptyState
+                showApiKeyCta={isReady && !hasApiKey}
+                onOpenSettings={() => navigate("/settings")}
+              />
             ) : (
-              <div className="max-w-[44rem] mx-auto px-6 py-8 flex flex-col gap-6">
-                {state.messages.map((m) => (
-                  <Message key={m.id} message={m} />
-                ))}
-              </div>
+              <>
+                <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
+                  <div className="max-w-[52rem] mx-auto px-6 py-2 flex justify-end">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleNewChat}
+                    >
+                      New chat
+                    </Button>
+                  </div>
+                </div>
+                <div className="max-w-[52rem] mx-auto px-6 py-8 flex flex-col gap-6">
+                  {state.messages.map((m) => (
+                    <Message key={m.id} message={m} />
+                  ))}
+                </div>
+              </>
             )}
           </div>
 
-          <div className="max-w-[44rem] w-full mx-auto px-6 pb-6">
+          <div className="max-w-[52rem] w-full mx-auto px-6 pb-6">
             <ChatInput
               initialValue={autoSubmit ? "" : initialQuery}
               disabled={streaming || !isReady}
               onSubmit={send}
+              model={state.model}
+              onModelChange={(m) => dispatch({ type: "setModel", model: m })}
               placeholder={
                 isEmpty
                   ? "What would you like to know about JAM?"
@@ -245,7 +217,6 @@ export function AskPage() {
           </div>
         </section>
 
-        {/* Sources panel */}
         <aside className="hidden lg:block border-l border-border overflow-y-auto bg-card/20 px-5 py-6">
           <CitationsPanel assistant={lastAssistant} cards={state.cards} />
         </aside>
@@ -254,7 +225,12 @@ export function AskPage() {
   );
 }
 
-function EmptyState() {
+interface EmptyStateProps {
+  showApiKeyCta: boolean;
+  onOpenSettings: () => void;
+}
+
+function EmptyState({ showApiKeyCta, onOpenSettings }: EmptyStateProps) {
   return (
     <div className="max-w-[36rem] mx-auto px-6 pt-16 pb-8 text-center">
       <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-light text-brand-dark mb-5">
@@ -267,6 +243,13 @@ function EmptyState() {
         An agent will search the Graypaper, Discord and Matrix discussions, and
         indexed pages, then answer with cited sources.
       </p>
+      {showApiKeyCta && (
+        <div className="mt-6">
+          <Button variant="outline" onClick={onOpenSettings}>
+            Configure OpenRouter API key
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
