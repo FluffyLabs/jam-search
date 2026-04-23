@@ -1,19 +1,27 @@
 import { useUserData } from "@fluffylabs/shared-ui/supabase";
 import { Sparkles } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
 import { ModelPicker } from "@/components/chat/ModelPicker";
 import { Button } from "@/components/ui/button";
 import { useAskConversation } from "@/hooks/useAskConversation";
+import { useSessions } from "@/hooks/useSessions";
 import { askStream } from "@/lib/askClient";
 import type { AssistantMessage } from "@/lib/askTypes";
+import { deriveTitle } from "@/lib/sessionTypes";
 
 export function AskPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { sessionId } = useParams<{ sessionId?: string }>();
   const searchParams = useMemo(
     () => new URLSearchParams(location.search),
     [location.search]
@@ -22,6 +30,7 @@ export function AskPage() {
   const autoSubmit = searchParams.get("autoSubmit") === "1";
 
   const { state, dispatch } = useAskConversation();
+  const sessions = useSessions();
   const { data: keyData, isLoading: keyLoading } = useUserData(
     "openrouter-api-key",
     { appScoped: true }
@@ -30,8 +39,66 @@ export function AskPage() {
   const streamHandleRef = useRef<{ abort: () => void } | null>(null);
   const hasAutoSubmittedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hydratedRef = useRef<string | null>(null);
+  const createdRef = useRef<Set<string>>(new Set());
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const send = (text: string, options?: { startFresh?: boolean }) => {
+  // Hydrate when sessionId changes. Abort any running stream first.
+  useEffect(() => {
+    if (!sessionId) {
+      if (hydratedRef.current !== null) {
+        streamHandleRef.current?.abort();
+        streamHandleRef.current = null;
+        dispatch({ type: "reset" });
+        hydratedRef.current = null;
+      }
+      return;
+    }
+    if (hydratedRef.current === sessionId) return;
+    if (createdRef.current.has(sessionId)) {
+      // We just created this row locally; avoid an immediate round-trip
+      // that would overwrite our in-memory state with the freshly-written one.
+      hydratedRef.current = sessionId;
+      return;
+    }
+    streamHandleRef.current?.abort();
+    streamHandleRef.current = null;
+    let cancelled = false;
+    (async () => {
+      const record = await sessions.get(sessionId);
+      if (cancelled) return;
+      if (!record) {
+        navigate("/ask", { replace: true });
+        return;
+      }
+      dispatch({ type: "hydrate", state: record.state });
+      hydratedRef.current = sessionId;
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId, sessions, dispatch, navigate]);
+
+  // Persist after an assistant turn finishes streaming.
+  useEffect(() => {
+    if (!sessionId) return;
+    if (hydratedRef.current !== sessionId) return;
+    const last = state.messages[state.messages.length - 1];
+    if (!last || last.role !== "assistant" || last.isStreaming) return;
+    const timer = setTimeout(async () => {
+      try {
+        await sessions.update(sessionId, { state: stateRef.current });
+        setSaveError(null);
+      } catch (err) {
+        setSaveError((err as Error).message);
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [sessionId, sessions, state]);
+
+  const send = async (text: string, options?: { startFresh?: boolean }) => {
     if (keyLoading) return;
     const apiKey =
       typeof keyData === "string" && keyData.trim() !== "" ? keyData : null;
@@ -55,6 +122,32 @@ export function AskPage() {
       ...priorMessages,
       { id: "pending", role: "user" as const, content: text },
     ];
+
+    // If this is the first message in a new chat, create the session row and
+    // move to /ask/:id so hydration + persistence can latch on.
+    let activeId = sessionId;
+    if (!activeId) {
+      activeId = uuidv4();
+      createdRef.current.add(activeId);
+      const provisional = deriveTitle({
+        ...state,
+        messages: [{ id: "pending", role: "user", content: text }],
+      });
+      try {
+        await sessions.create({
+          id: activeId,
+          title: provisional,
+          state: {
+            ...state,
+            messages: [{ id: "pending", role: "user", content: text }],
+          },
+        });
+        hydratedRef.current = activeId;
+        navigate(`/ask/${activeId}`, { replace: true });
+      } catch (err) {
+        setSaveError((err as Error).message);
+      }
+    }
 
     streamHandleRef.current = askStream(
       {
@@ -101,10 +194,7 @@ export function AskPage() {
     );
   };
 
-  // Auto-submit once if ?q is set and ?autoSubmit=1. Before sending, wipe any
-  // pre-existing conversation so the incoming question starts a fresh chat —
-  // otherwise an autosubmit from the home page / results pivot would append to
-  // whatever was lingering in sessionStorage from a prior session in this tab.
+  // Auto-submit once if ?q is set and ?autoSubmit=1.
   // biome-ignore lint/correctness/useExhaustiveDependencies: send changes every render; hasAutoSubmittedRef guards against re-firing
   useEffect(() => {
     if (
@@ -163,7 +253,7 @@ export function AskPage() {
               onClick={() => {
                 streamHandleRef.current?.abort();
                 streamHandleRef.current = null;
-                dispatch({ type: "reset" });
+                navigate("/ask");
               }}
             >
               New chat
@@ -178,6 +268,37 @@ export function AskPage() {
           </Button>
         </div>
       </header>
+
+      {saveError && (
+        <div
+          role="alert"
+          className="flex items-center gap-3 border-b border-red-300 bg-red-50 px-6 py-2 text-sm text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-100"
+        >
+          <span className="flex-1">Couldn't save: {saveError}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={async () => {
+              if (!sessionId) return;
+              try {
+                await sessions.update(sessionId, { state: stateRef.current });
+                setSaveError(null);
+              } catch (err) {
+                setSaveError((err as Error).message);
+              }
+            }}
+          >
+            Retry
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setSaveError(null)}
+          >
+            Dismiss
+          </Button>
+        </div>
+      )}
 
       {/* Body */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
