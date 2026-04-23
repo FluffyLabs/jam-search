@@ -72,3 +72,83 @@ The application includes scheduled cron jobs that run daily to:
 - `GET /search/graypaper` - Search graypaper sections
 - `GET /search/discords` - Search Discord messages
 - `GET /embeddings` - Get embeddings for a query
+- `POST /ask` - Streaming AI assistant (SSE). See [Ask API](#ask-api).
+- `POST|GET|DELETE /mcp` - Model Context Protocol endpoint. See [MCP](#mcp).
+
+## Ask API
+
+`POST /ask` runs an agent loop that answers questions using the JAM knowledge
+base. Responses stream back as Server-Sent Events.
+
+Request body:
+
+```json
+{
+  "messages": [{ "role": "user", "content": "What is a refinement context?" }],
+  "model": "openai/gpt-4o-mini",
+  "openrouterKey": "sk-or-..."
+}
+```
+
+The agent has access to two tools — `search_all` (unified search across all
+sources) and `get_full_document` (fetch full markdown by id). These are the
+same tools exposed via [MCP](#mcp).
+
+## MCP
+
+The backend serves a [Model Context Protocol](https://modelcontextprotocol.io)
+endpoint at `/mcp` using the Streamable HTTP transport. It exposes the same
+two tools the `/ask` agent uses:
+
+- `search_all(query, limit?)` — unified search across graypaper, discord,
+  matrix and pages. Returns an array of result chunks, each with a stable `id`,
+  `sourceType`, and content preview.
+- `get_full_document(id)` — fetch the full markdown of a document by id
+  returned from `search_all`.
+
+### Connecting a client
+
+Any MCP-compatible client that supports Streamable HTTP can use it. Point the
+client at the public deployment or your local dev server:
+
+- Production: `https://search-api.fluffylabs.dev/mcp`
+- Local dev: `http://localhost:3000/mcp`
+
+Example Claude Desktop (`claude_desktop_config.json`) entry:
+
+```json
+{
+  "mcpServers": {
+    "jam-search": {
+      "url": "https://search-api.fluffylabs.dev/mcp"
+    }
+  }
+}
+```
+
+### Manual probe
+
+You can drive the endpoint with `curl`:
+
+```bash
+# 1. Initialize — capture the returned mcp-session-id header
+curl -i -X POST http://localhost:3000/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize",
+       "params":{"protocolVersion":"2025-03-26","capabilities":{},
+                 "clientInfo":{"name":"probe","version":"0.0.1"}}}'
+
+# 2. Send the initialized notification, then list/call tools using the
+#    session id from the previous response.
+SID=<copy from mcp-session-id response header>
+curl -X POST http://localhost:3000/mcp \
+  -H "mcp-session-id: $SID" -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+
+curl -X POST http://localhost:3000/mcp \
+  -H "mcp-session-id: $SID" -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+```
