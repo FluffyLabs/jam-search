@@ -49,7 +49,13 @@ async function main() {
       await fillArchivedMessages(DATA_DIR, [room], fromDate, toDate);
     } catch (error) {
       console.error(`Error backfilling ${room.name}:`, error);
-      errors.push(error);
+      // fillArchivedMessages wraps its own errors in AggregateError; unwrap
+      // so CI logs show the root cause at one level, not two.
+      if (error instanceof AggregateError) {
+        errors.push(...error.errors);
+      } else {
+        errors.push(error);
+      }
     }
   }
 
