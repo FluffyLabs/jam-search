@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useAskConversation } from "@/hooks/useAskConversation";
 import { useSessions } from "@/hooks/useSessions";
 import { askStream } from "@/lib/askClient";
+import { requestTitle } from "@/lib/askTitleClient";
 import type { AssistantMessage } from "@/lib/askTypes";
 import { deriveTitle } from "@/lib/sessionTypes";
 
@@ -144,6 +145,13 @@ export function AskPage() {
         });
         hydratedRef.current = activeId;
         navigate(`/ask/${activeId}`, { replace: true });
+        // Fire-and-forget title generation; patch the row when it resolves.
+        const newId = activeId;
+        requestTitle({ question: text, openrouterKey: apiKey }).then(
+          (generated) => {
+            if (generated) sessions.update(newId, { title: generated });
+          },
+        );
       } catch (err) {
         setSaveError((err as Error).message);
       }
