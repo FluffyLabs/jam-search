@@ -7,6 +7,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import { SharePopover } from "@/components/ask/SharePopover";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
@@ -254,6 +255,19 @@ export function AskPage() {
           />
         </div>
         <div className="flex items-center gap-1">
+          {sessionId &&
+            sessions.sessions?.find((s) => s.id === sessionId) && (
+              <SharePopover
+                sessionId={sessionId}
+                isPublic={
+                  sessions.sessions.find((s) => s.id === sessionId)
+                    ?.isPublic ?? false
+                }
+                onToggle={(next) =>
+                  sessions.update(sessionId, { isPublic: next })
+                }
+              />
+            )}
           {state.messages.length > 0 && (
             <Button
               variant="ghost"
