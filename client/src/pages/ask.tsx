@@ -233,7 +233,7 @@ interface EmptyStateProps {
 function EmptyState({ showApiKeyCta, onOpenSettings }: EmptyStateProps) {
   return (
     <div className="max-w-[36rem] mx-auto px-6 pt-16 pb-8 text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-light text-brand-dark mb-5">
+      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-light text-brand-dark dark:bg-brand-dark dark:text-brand mb-5">
         <Sparkles className="h-5 w-5" />
       </div>
       <h2 className="text-2xl font-semibold text-foreground mb-3">
