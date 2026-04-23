@@ -55,6 +55,96 @@ describe("runAgentLoop", () => {
     ]);
   });
 
+  it("emits model_used with the actual model from the OpenRouter chunk", async () => {
+    const client = fakeOpenAI([
+      toAsyncIterable([
+        {
+          model: "anthropic/claude-sonnet-4.5",
+          choices: [{ delta: { content: "ok" }, finish_reason: "stop" }],
+        },
+      ]),
+    ]);
+
+    const events = await collect(
+      runAgentLoop({
+        messages: [{ role: "user", content: "q" }],
+        model: "openrouter/auto",
+        openai: client as never,
+        db: createSearchDB(),
+        dataDir: "./data",
+      })
+    );
+
+    expect(events[0]).toEqual({
+      type: "model_used",
+      model: "anthropic/claude-sonnet-4.5",
+    });
+    expect(events.filter((e) => e.type === "model_used")).toHaveLength(1);
+  });
+
+  it("re-emits model_used only when the underlying model changes between iterations", async () => {
+    const db = createSearchDB();
+    insertDoc(db, {
+      type: "graypaper_section",
+      title: "Accumulate",
+      content: "Accumulate body",
+    });
+
+    const client = fakeOpenAI([
+      // Iteration 1 (tool call): all chunks report model A.
+      toAsyncIterable([
+        {
+          model: "model/a",
+          choices: [
+            {
+              delta: {
+                tool_calls: [
+                  {
+                    index: 0,
+                    id: "call_1",
+                    type: "function",
+                    function: {
+                      name: "search_all",
+                      arguments: '{"query":"accumulate"}',
+                    },
+                  },
+                ],
+              },
+              finish_reason: null,
+            },
+          ],
+        },
+        {
+          model: "model/a",
+          choices: [{ delta: {}, finish_reason: "tool_calls" }],
+        },
+      ]),
+      // Iteration 2 (final answer): model switches to B.
+      toAsyncIterable([
+        {
+          model: "model/b",
+          choices: [{ delta: { content: "done." }, finish_reason: "stop" }],
+        },
+      ]),
+    ]);
+
+    const events = await collect(
+      runAgentLoop({
+        messages: [{ role: "user", content: "q" }],
+        model: "openrouter/auto",
+        openai: client as never,
+        db,
+        dataDir: "./data",
+      })
+    );
+
+    const modelEvents = events.filter((e) => e.type === "model_used");
+    expect(modelEvents).toEqual([
+      { type: "model_used", model: "model/a" },
+      { type: "model_used", model: "model/b" },
+    ]);
+  });
+
   it("executes a tool call and emits tool_call + tool_result", async () => {
     const db = createSearchDB();
     insertDoc(db, {

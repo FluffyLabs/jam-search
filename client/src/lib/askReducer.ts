@@ -37,6 +37,7 @@ export type AskAction =
   | { type: "finishStreaming" }
   | { type: "setError"; message: string; kind?: ErrorKind }
   | { type: "setModel"; model: string }
+  | { type: "setMessageModel"; model: string }
   | { type: "reset" }
   | { type: "hydrate"; state: AskConversationState };
 
@@ -148,6 +149,10 @@ export function askReducer(
         parts: [],
         citations: [],
         isStreaming: true,
+        // Eager attribution: snapshot the user-selected model at send time.
+        // Will be overwritten by `setMessageModel` once the backend reports
+        // the actual model OpenRouter routed to.
+        model: state.model,
       };
       return {
         ...state,
@@ -245,6 +250,15 @@ export function askReducer(
 
     case "setModel":
       return { ...state, model: action.model };
+
+    case "setMessageModel":
+      return {
+        ...state,
+        messages: mapLastAssistant(state.messages, (m) => ({
+          ...m,
+          model: action.model,
+        })),
+      };
 
     case "reset":
       return { ...initialState, model: state.model };

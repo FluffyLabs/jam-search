@@ -13,6 +13,7 @@ export type AgentEvent =
     }
   | { type: "content_delta"; text: string }
   | { type: "citation"; n: number; docId: string; sourceType: SourceType }
+  | { type: "model_used"; model: string }
   | { type: "done" }
   | { type: "error"; message: string };
 
@@ -72,6 +73,11 @@ export interface AssistantMessage {
   error?: string;
   errorKind?: ErrorKind;
   isStreaming: boolean;
+  /** Model that produced this response. Tagged with the user-selected id at
+   *  send time, then overwritten with the actual id once the backend reports
+   *  it via `model_used`. Optional for backwards-compat with conversations
+   *  persisted before this field existed. */
+  model?: string;
 }
 
 /** Flatten an assistant message's text parts into a single string. Used when
