@@ -47,6 +47,7 @@ export function AskPage() {
         dispatch({
           type: "setError",
           message: "No OpenRouter API key found. Add one in Settings to begin.",
+          kind: "missingApiKey",
         });
         return;
       }
