@@ -183,11 +183,7 @@ export function AskPage() {
               <>
                 <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
                   <div className="max-w-[52rem] mx-auto px-6 py-2 flex justify-end">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleNewChat}
-                    >
+                    <Button variant="ghost" size="sm" onClick={handleNewChat}>
                       New chat
                     </Button>
                   </div>

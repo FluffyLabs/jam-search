@@ -90,11 +90,7 @@ export function ChatInput({
         </span>
         <div className="flex items-center gap-2 ml-auto">
           <ModelPicker value={model} onChange={onModelChange} />
-          <Button
-            onClick={submit}
-            disabled={!ready}
-            size="sm"
-          >
+          <Button onClick={submit} disabled={!ready} size="sm">
             Ask
           </Button>
         </div>
