@@ -119,7 +119,9 @@ describe("fetchData — happy path", () => {
         ref: "main",
         dataDir,
       });
-      expect(fs.readFileSync(path.join(dataDir, "a.md"), "utf-8")).toBe("hello");
+      expect(fs.readFileSync(path.join(dataDir, "a.md"), "utf-8")).toBe(
+        "hello"
+      );
       expect(fs.readFileSync(path.join(dataDir, "sub/b.md"), "utf-8")).toBe(
         "world"
       );
@@ -143,7 +145,9 @@ describe("fetchData — happy path", () => {
         ref: fixture.sha,
         dataDir,
       });
-      expect(fs.readFileSync(path.join(dataDir, "a.md"), "utf-8")).toBe("hello");
+      expect(fs.readFileSync(path.join(dataDir, "a.md"), "utf-8")).toBe(
+        "hello"
+      );
     } finally {
       fs.rmSync(workDir, { recursive: true, force: true });
       fixture.cleanup();

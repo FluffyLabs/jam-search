@@ -40,7 +40,7 @@ async function main() {
     console.log("Fetched data.");
   } else {
     console.log(
-      "DATA_REPO_URL not set; using local DATA_DIR as-is (dev mode).",
+      "DATA_REPO_URL not set; using local DATA_DIR as-is (dev mode)."
     );
   }
 
