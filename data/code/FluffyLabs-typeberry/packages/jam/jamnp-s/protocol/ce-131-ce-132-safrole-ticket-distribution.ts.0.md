@@ -1,0 +1,112 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/protocol/ce-131-ce-132-safrole-ticket-distribution.ts#L1-L94
+title: packages/jam/jamnp-s/protocol/ce-131-ce-132-safrole-ticket-distribution.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: e7229c8ea01308072e1f909b0de6671c973d1653eff0d98d066d52bd7357d36b
+language: typescript
+---
+`packages/jam/jamnp-s/protocol/ce-131-ce-132-safrole-ticket-distribution.ts` (lines 1–94)
+
+```typescript
+import type { Epoch } from "@typeberry/block";
+import { SignedTicket } from "@typeberry/block/tickets.js";
+import type { BytesBlob } from "@typeberry/bytes";
+import { type CodecRecord, codec, Decoder, Encoder } from "@typeberry/codec";
+import type { ChainSpec } from "@typeberry/config";
+import { Logger } from "@typeberry/logger";
+import { WithDebug } from "@typeberry/utils";
+import { type StreamHandler, type StreamId, type StreamMessageSender, tryAsStreamKind } from "./stream.js";
+
+/**
+ * JAM-SNP CE-131 and CE-132 streams.
+ *
+ * Safrole ticket distribution from generating validator to proxy validator (131) and from proxy validator to all validators (132).
+ *
+ * https://github.com/zdave-parity/jam-np/blob/main/simple.md#ce-131132-safrole-ticket-distribution
+ */
+
+export const STREAM_KIND_GENERATOR_TO_PROXY = tryAsStreamKind(131);
+export const STREAM_KIND_PROXY_TO_ALL = tryAsStreamKind(132);
+
+type STREAM_KIND = typeof STREAM_KIND_GENERATOR_TO_PROXY | typeof STREAM_KIND_PROXY_TO_ALL;
+
+/**
+ * Network protocol message for distributing a single ticket.
+ * Used in CE-131/CE-132 streams.
+ */
+export class TicketDistributionRequest extends WithDebug {
+  static Codec = codec.Class(TicketDistributionRequest, {
+    epochIndex: codec.u32.asOpaque<Epoch>(),
+    ticket: SignedTicket.Codec,
+  });
+
+  static create({ epochIndex, ticket }: CodecRecord<TicketDistributionRequest>) {
+    return new TicketDistributionRequest(epochIndex, ticket);
+  }
+
+  private constructor(
+    public readonly epochIndex: Epoch,
+    public readonly ticket: SignedTicket,
+  ) {
+    super();
+  }
+}
+
+const logger = Logger.new(import.meta.filename, "protocol/ce-131-ce-132");
+
+export class ServerHandler<T extends STREAM_KIND> implements StreamHandler<T> {
+  static new<T extends STREAM_KIND>(
+    chainSpec: ChainSpec,
+    kind: T,
+    onTicketReceived: (epochIndex: Epoch, ticket: SignedTicket) => void,
+  ) {
+    return new ServerHandler<T>(chainSpec, kind, onTicketReceived);
+  }
+
+  private constructor(
+    private readonly chainSpec: ChainSpec,
+    public readonly kind: T,
+    private readonly onTicketReceived: (epochIndex: Epoch, ticket: SignedTicket) => void,
+  ) {}
+
+  onStreamMessage(sender: StreamMessageSender, message: BytesBlob): void {
+    const ticketDistribution = Decoder.decodeObject(TicketDistributionRequest.Codec, message, this.chainSpec);
+    logger.log`[${sender.streamId}][ce-${this.kind}] Received ticket for epoch ${ticketDistribution.epochIndex}`;
+    this.onTicketReceived(ticketDistribution.epochIndex, ticketDistribution.ticket);
+    sender.close();
+  }
+
+  onClose(_streamId: StreamId) {}
+}
+
+export class ClientHandler<T extends STREAM_KIND> implements StreamHandler<T> {
+  static new<T extends STREAM_KIND>(chainSpec: ChainSpec, kind: T) {
+    return new ClientHandler<T>(chainSpec, kind);
+  }
+
+  private constructor(
+    private readonly chainSpec: ChainSpec,
+    public readonly kind: T,
+  ) {}
+
+  onStreamMessage(sender: StreamMessageSender): void {
+    logger.warn`[${sender.streamId}][ce-${this.kind}] Unexpected message received. Closing.`;
+    sender.close();
+  }
+
+  onClose(_streamId: StreamId) {}
+
+  sendTicket(sender: StreamMessageSender, epochIndex: Epoch, ticket: SignedTicket) {
+    const request = TicketDistributionRequest.create({ epochIndex, ticket });
+    sender.bufferAndSend(Encoder.encodeObject(TicketDistributionRequest.Codec, request, this.chainSpec));
+    sender.close();
+  }
+}
+```

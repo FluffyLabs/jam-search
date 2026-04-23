@@ -1,0 +1,113 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/general/write.ts#L1-L95
+title: packages/jam/jam-host-calls/general/write.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 09268007d1462673acc88f309b8595d29141b8f32f2c0cf40d5db0d49f9abb7a
+language: typescript
+---
+`packages/jam/jam-host-calls/general/write.ts` (lines 1–95)
+
+```typescript
+import type { ServiceId } from "@typeberry/block";
+import { BytesBlob } from "@typeberry/bytes";
+import { tryAsU64 } from "@typeberry/numbers";
+import type { HostCallHandler, HostCallMemory, HostCallRegisters } from "@typeberry/pvm-host-calls";
+import { PvmExecution, traceRegisters, tryAsHostCallIndex } from "@typeberry/pvm-host-calls";
+import { type IGasCounter, tryAsSmallGas } from "@typeberry/pvm-interface";
+import type { StorageKey } from "@typeberry/state";
+import { asOpaqueType, type Result, resultToString, safeAllocUint8Array } from "@typeberry/utils";
+import { logger } from "../logger.js";
+import { clampU64ToU32 } from "../utils.js";
+import { HostCallResult } from "./results.js";
+
+/** Account data interface for write host calls. */
+export interface AccountsWrite {
+  /**
+   * Alter the account storage. Put `data` under given key hash.
+   * `null` indicates the storage entry should be removed.
+   *
+   * Returns "full" error if there is not enough balance to pay for
+   * the storage and previous value length otherwise.
+   *
+   * https://graypaper.fluffylabs.dev/#/9a08063/331002331402?v=0.6.6
+   */
+  write(rawKey: BytesBlob, data: BytesBlob | null): Result<number | null, "full">;
+}
+
+const IN_OUT_REG = 7;
+
+/**
+ * Write account storage.
+ *
+ * https://graypaper.fluffylabs.dev/#/7e6ff6a/334901334901?v=0.6.7
+ */
+export class Write implements HostCallHandler {
+  index = tryAsHostCallIndex(4);
+  basicGasCost = tryAsSmallGas(10);
+  tracedRegisters = traceRegisters(IN_OUT_REG, 8, 9, 10);
+
+  static new(currentServiceId: ServiceId, account: AccountsWrite) {
+    return new Write(currentServiceId, account);
+  }
+
+  private constructor(
+    public readonly currentServiceId: ServiceId,
+    private readonly account: AccountsWrite,
+  ) {}
+
+  async execute(_gas: IGasCounter, regs: HostCallRegisters, memory: HostCallMemory): Promise<undefined | PvmExecution> {
+    // k_0
+    const storageKeyStartAddress = regs.get(IN_OUT_REG);
+    // k_z
+    const storageKeyLength = regs.get(8);
+    // v_0
+    const valueStart = regs.get(9);
+    // v_z
+    const valueLength = regs.get(10);
+
+    const storageKeyLengthClamped = clampU64ToU32(storageKeyLength);
+
+    const rawStorageKey = safeAllocUint8Array(storageKeyLengthClamped);
+    const keyLoadingResult = memory.loadInto(rawStorageKey, storageKeyStartAddress);
+    if (keyLoadingResult.isError) {
+      logger.trace`[${this.currentServiceId}] WRITE() <- PANIC`;
+      return PvmExecution.Panic;
+    }
+
+    // k
+    const storageKey: StorageKey = asOpaqueType(BytesBlob.blobFrom(rawStorageKey));
+
+    const valueLengthClamped = clampU64ToU32(valueLength);
+    const value = safeAllocUint8Array(valueLengthClamped);
+    const valueLoadingResult = memory.loadInto(value, valueStart);
+    // Note [MaSo] this is ok to return bcs if valueLength is 0, then this panic won't happen
+    if (valueLoadingResult.isError) {
+      logger.trace`[${this.currentServiceId}] WRITE(${storageKey}) <- PANIC`;
+      return PvmExecution.Panic;
+    }
+
+    /** https://graypaper.fluffylabs.dev/#/9a08063/33af0133b201?v=0.6.6 */
+    const maybeValue = valueLength === 0n ? null : BytesBlob.blobFrom(value);
+
+    // a
+    const result = this.account.write(storageKey, maybeValue);
+    logger.trace`[${this.currentServiceId}] WRITE(${storageKey}, ${maybeValue?.toStringTruncated() ?? "remove"}) <- ${resultToString(result)}`;
+    logger.insane`[${this.currentServiceId}] WRITE(${storageKey}, ${maybeValue ?? "remove"}) <- ${resultToString(result)}`;
+
+    if (result.isError) {
+      regs.set(IN_OUT_REG, HostCallResult.FULL);
+      return;
+    }
+
+    // l
+    regs.set(IN_OUT_REG, result.ok === null ? HostCallResult.NONE : tryAsU64(result.ok));
+  }
+}
+```

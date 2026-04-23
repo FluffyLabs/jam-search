@@ -1,0 +1,79 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/hash-set.test.ts#L1-L61
+title: packages/core/collections/hash-set.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: ab4dd0b6f79fdc611ca74c188d4a39c0a43e53b418a515ee830797c1011dff55
+language: typescript
+---
+`packages/core/collections/hash-set.test.ts` (lines 1–61)
+
+```typescript
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import { Bytes } from "@typeberry/bytes";
+import { HASH_SIZE } from "@typeberry/hash";
+import { HashSet } from "./hash-set.js";
+
+function key(n: number) {
+  return Bytes.fill(HASH_SIZE, n);
+}
+
+describe("HashSet", () => {
+  it("should return true/false for keys present in the dictionary", () => {
+    const set = HashSet.new();
+    set.insert(key(1));
+    set.insert(key(2));
+
+    assert.deepStrictEqual(set.has(key(0)), false);
+    assert.deepStrictEqual(set.has(key(1)), true);
+    assert.deepStrictEqual(set.has(key(2)), true);
+    assert.deepStrictEqual(set.has(key(3)), false);
+  });
+
+  it("should insert multiple elements", () => {
+    const set = HashSet.new();
+    set.insertAll([key(1), key(2)]);
+
+    assert.deepStrictEqual(set.has(key(1)), true);
+    assert.deepStrictEqual(set.has(key(2)), true);
+  });
+
+  it("should remove some values", () => {
+    const dict = HashSet.new();
+    dict.insert(key(1));
+    dict.insert(key(2));
+    assert.deepStrictEqual(dict.has(key(1)), true);
+    assert.deepStrictEqual(dict.has(key(2)), true);
+
+    dict.delete(key(0));
+    dict.delete(key(1));
+    dict.delete(key(3));
+
+    assert.deepStrictEqual(dict.has(key(0)), false);
+    assert.deepStrictEqual(dict.has(key(1)), false);
+    assert.deepStrictEqual(dict.has(key(2)), true);
+    assert.deepStrictEqual(dict.has(key(3)), false);
+  });
+
+  it("should return intersection of two sets", () => {
+    const dict1 = HashSet.new();
+    dict1.insertAll([key(1), key(2)]);
+
+    const dict2 = HashSet.new();
+    dict2.insertAll([key(2), key(3)]);
+
+    const intersect1 = Array.from(dict1.intersection(dict2));
+    const intersect2 = Array.from(dict2.intersection(dict1));
+
+    assert.deepStrictEqual(intersect1.toString(), intersect2.toString());
+    assert.deepStrictEqual(intersect1.toString(), "0x0202020202020202020202020202020202020202020202020202020202020202");
+  });
+});
+```

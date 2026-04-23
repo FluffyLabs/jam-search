@@ -1,0 +1,163 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/statistics.ts#L1-L145
+title: packages/jam/state/statistics.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: 78d1a4a8f6e64d295244fba2eaec26d6703f1df57acbfb1175f4a8c21b4808e6
+language: typescript
+---
+`packages/jam/state/statistics.ts` (lines 1–145)
+
+```typescript
+import {
+  codecPerValidator,
+  type PerValidator,
+  type ServiceGas,
+  type ServiceId,
+  tryAsServiceGas,
+} from "@typeberry/block";
+import { type CodecRecord, codec, type DescribedBy, type Descriptor } from "@typeberry/codec";
+import { tryAsU16, tryAsU32, tryAsU64, type U16, type U32 } from "@typeberry/numbers";
+import { codecPerCore, type PerCore } from "./common.js";
+
+/**
+ * Activity Record of a single validator.
+ *
+ * https://graypaper.fluffylabs.dev/#/579bd12/183701183701
+ */
+export class ValidatorStatistics {
+  static Codec = codec.Class(ValidatorStatistics, {
+    blocks: codec.u32,
+    tickets: codec.u32,
+    preImages: codec.u32,
+    preImagesSize: codec.u32,
+    guarantees: codec.u32,
+    assurances: codec.u32,
+  });
+
+  static create({
+    blocks,
+    tickets,
+    preImages,
+    preImagesSize,
+    guarantees,
+    assurances,
+  }: CodecRecord<ValidatorStatistics>) {
+    return new ValidatorStatistics(blocks, tickets, preImages, preImagesSize, guarantees, assurances);
+  }
+
+  private constructor(
+    /** The number of blocks produced by the validator. */
+    public blocks: U32,
+    /** The number of tickets introduced by the validator. */
+    public tickets: U32,
+    /** The number of preimages introduced by the validator. */
+    public preImages: U32,
+    /** The total number of octets across all preimages introduced by the validator. */
+    public preImagesSize: U32,
+    /** The number of reports guaranteed by the validator. */
+    public guarantees: U32,
+    /** The number of availability assurances made by the validator. */
+    public assurances: U32,
+  ) {}
+
+  static empty() {
+    const zero = tryAsU32(0);
+    return new ValidatorStatistics(zero, zero, zero, zero, zero, zero);
+  }
+}
+
+const codecVarU16 = codec.varU32.convert<U16>(
+  (i) => tryAsU32(i),
+  (o) => tryAsU16(o),
+);
+
+/** Encode/decode unsigned gas. */
+const codecVarGas: Descriptor<ServiceGas> = codec.varU64.convert(
+  (g) => tryAsU64(g),
+  (i) => tryAsServiceGas(i),
+);
+
+/**
+ * Single core statistics.
+ * Updated per block, based on incoming work reports (`w`).
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/197902197902?v=0.7.2
+ * https://github.com/gavofyork/graypaper/blob/9bffb08f3ea7b67832019176754df4fb36b9557d/text/statistics.tex#L65
+ */
+export class CoreStatistics {
+  static Codec = codec.Class(CoreStatistics, {
+    dataAvailabilityLoad: codec.varU32,
+    popularity: codecVarU16,
+    imports: codecVarU16,
+    extrinsicCount: codecVarU16,
+    extrinsicSize: codec.varU32,
+    exports: codecVarU16,
+    bundleSize: codec.varU32,
+    gasUsed: codecVarGas,
+  });
+
+  static create(v: CodecRecord<CoreStatistics>) {
+    return new CoreStatistics(
+      v.dataAvailabilityLoad,
+      v.popularity,
+      v.imports,
+      v.exports,
+      v.extrinsicSize,
+      v.extrinsicCount,
+      v.bundleSize,
+      v.gasUsed,
+    );
+  }
+
+  private constructor(
+    /** `d` */
+    public dataAvailabilityLoad: U32,
+    /** `p` */
+    public popularity: U16,
+    /** `i` */
+    public imports: U16,
+    /** `e` */
+    public exports: U16,
+    /** `z` */
+    public extrinsicSize: U32,
+    /** `x` */
+    public extrinsicCount: U16,
+    /** `b` */
+    public bundleSize: U32,
+    /** `u` */
+    public gasUsed: ServiceGas,
+  ) {}
+
+  static empty() {
+    const zero = tryAsU32(0);
+    const zero16 = tryAsU16(0);
+    const zeroGas = tryAsServiceGas(0);
+    return new CoreStatistics(zero, zero16, zero16, zero16, zero, zero16, zero, zeroGas);
+  }
+}
+
+/**
+ * Service statistics.
+ * Updated per block, based on available work reports (`W`).
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/19e20219e202?v=0.7.2
+ */
+export class ServiceStatistics {
+  static Codec = codec.Class(ServiceStatistics, {
+    providedCount: codecVarU16,
+    providedSize: codec.varU32,
+    refinementCount: codec.varU32,
+    refinementGasUsed: codecVarGas,
+    imports: codecVarU16,
+    extrinsicCount: codecVarU16,
+    extrinsicSize: codec.varU32,
+    exports: codecVarU16,
+    accumulateCount: codec.varU32,
+```

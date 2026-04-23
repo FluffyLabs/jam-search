@@ -1,0 +1,100 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block/common.ts#L1-L82
+title: packages/jam/block/common.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: e3e65d1d735a1d4c1cdc66d5511c0d0468407c14c78e12593b102a3d23262f9c
+language: typescript
+---
+`packages/jam/block/common.ts` (lines 1–82)
+
+```typescript
+import type { Descriptor, SequenceView } from "@typeberry/codec";
+import { asKnownSize, type KnownSizeArray } from "@typeberry/collections";
+import type { ChainSpec } from "@typeberry/config";
+import type { Blake2bHash, OpaqueHash } from "@typeberry/hash";
+import { tryAsU16, tryAsU32, tryAsU64, type U16, type U32, type U64 } from "@typeberry/numbers";
+import { asOpaqueType, check, type Opaque } from "@typeberry/utils";
+import { codecKnownSizeArray, codecWithContext } from "./codec-utils.js";
+
+/**
+ * Time slot index.
+ *
+ * "an index of a six-second timeslots from the JAM Common Era"
+ *
+ * https://graypaper.fluffylabs.dev/#/579bd12/0b46000b4a00
+ */
+export type TimeSlot = Opaque<U32, "TimeSlot[u32]">;
+/** Attempt to convert a number into `TimeSlot`. */
+export const tryAsTimeSlot = (v: number): TimeSlot => asOpaqueType(tryAsU32(v));
+
+/** Index of the validator in current validators set. */
+export type ValidatorIndex = Opaque<U16, "ValidatorIndex[u16]">;
+/** Attempt to convert a number into `ValidatorIndex`. */
+export const tryAsValidatorIndex = (v: number): ValidatorIndex => asOpaqueType(tryAsU16(v));
+
+/** Unique service identifier. */
+export type ServiceId = Opaque<U32, "ServiceId[u32]">;
+/** Attempt to convert a number into `ServiceId`. */
+export const tryAsServiceId = (v: number): ServiceId => asOpaqueType(tryAsU32(v));
+
+/** Service gas - a measure of execution time/complexity. */
+export type ServiceGas = Opaque<U64, "ServiceGas[u64]">;
+export const tryAsServiceGas = (v: number | bigint): ServiceGas => asOpaqueType(tryAsU64(v));
+
+/** Index of the core on which the execution of the work package is done. */
+export type CoreIndex = Opaque<U16, "CoreIndex[u16]">;
+/** Attempt to convert a number into `CoreIndex`. */
+export const tryAsCoreIndex = (v: number): CoreIndex => asOpaqueType(tryAsU16(v));
+
+/** `eta`: epoch randomness */
+export type EntropyHash = Opaque<Blake2bHash, "EntropyHash">;
+
+/** Hash of the merkle root of the state. */
+export type StateRootHash = Opaque<OpaqueHash, "StateRootHash">;
+
+/**
+ * Index of an epoch.
+ *
+ * https://graypaper.fluffylabs.dev/#/579bd12/0b39000b3c00
+ */
+export type Epoch = Opaque<U32, "Epoch">;
+/** Attempt to convert a number into `Epoch`. */
+export const tryAsEpoch = (v: number): Epoch => asOpaqueType(tryAsU32(v));
+
+/** One entry of `T` per one validator. */
+export type PerValidator<T> = KnownSizeArray<T, "ValidatorsCount">;
+export function tryAsPerValidator<T>(array: T[], spec: ChainSpec): PerValidator<T> {
+  check`
+    ${array.length === spec.validatorsCount}
+    Invalid per-validator array length. Expected ${spec.validatorsCount}, got: ${array.length}
+  `;
+  return asKnownSize(array);
+}
+export const codecPerValidator = <T, V>(val: Descriptor<T, V>): Descriptor<PerValidator<T>, SequenceView<T, V>> =>
+  codecWithContext((context) => {
+    return codecKnownSizeArray(val, {
+      fixedLength: context.validatorsCount,
+    });
+  });
+
+/** One entry of `T` per one block in epoch. */
+export type PerEpochBlock<T> = KnownSizeArray<T, "EpochLength">;
+export function tryAsPerEpochBlock<T>(array: T[], spec: ChainSpec): PerEpochBlock<T> {
+  check`
+    ${array.length === spec.epochLength}
+    Invalid per-epoch-block array length. Expected ${spec.epochLength}, got: ${array.length}
+  `;
+  return asKnownSize(array);
+}
+export const codecPerEpochBlock = <T, V>(val: Descriptor<T, V>): Descriptor<PerEpochBlock<T>, SequenceView<T, V>> =>
+  codecWithContext((context) => {
+    return codecKnownSizeArray(val, { fixedLength: context.epochLength });
+  });
+```

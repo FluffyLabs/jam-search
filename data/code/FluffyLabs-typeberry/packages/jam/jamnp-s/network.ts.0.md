@@ -1,0 +1,107 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/network.ts#L1-L89
+title: packages/jam/jamnp-s/network.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 0a0d5a7ad96fe99abd8a82f14f6bfaf20d8203ed57385cad0bc31cbafd1b6df5
+language: typescript
+---
+`packages/jam/jamnp-s/network.ts` (lines 1–89)
+
+```typescript
+import { setTimeout } from "node:timers/promises";
+import type { BlockView, HeaderHash } from "@typeberry/block";
+import type { ChainSpec } from "@typeberry/config";
+import type { ed25519 } from "@typeberry/crypto";
+import type { BlocksDb } from "@typeberry/database";
+import { Blake2b } from "@typeberry/hash";
+import { Logger } from "@typeberry/logger";
+import { type Network, type Peer, Quic } from "@typeberry/networking";
+import { OK } from "@typeberry/utils";
+import { type Bootnode, Connections } from "./peers.js";
+import { StreamManager } from "./stream-manager.js";
+import { SyncTask } from "./tasks/sync.js";
+import { TicketDistributionTask } from "./tasks/ticket-distribution.js";
+import { handleAsyncErrors } from "./utils.js";
+
+const logger = Logger.new(import.meta.filename, "jamnps");
+
+export async function setup(
+  bind: { host: string; port: number },
+  genesisHash: HeaderHash,
+  key: ed25519.Ed25519Pair,
+  bootnodes: Bootnode[],
+  spec: ChainSpec,
+  blocks: BlocksDb,
+  // TODO [ToDr] handle back pressure?
+  onNewBlocks: (blocks: BlockView[]) => Promise<void>,
+) {
+  const blake2b = await Blake2b.createHasher();
+  const genesisFirstBytes = genesisHash.toString().substring(2, 10);
+  const network = await Quic.setup({
+    host: bind.host,
+    port: bind.port,
+    key,
+    protocols: [`jamnp-s/0/${genesisFirstBytes}`],
+  });
+
+  const connections = Connections.new(network);
+  connections.addPersistentRetry(bootnodes);
+
+  const streamManager = new StreamManager();
+
+  // start the networking tasks
+  const syncTask = SyncTask.start(spec, blake2b, streamManager, connections, blocks, onNewBlocks);
+  const ticketTask = TicketDistributionTask.start(streamManager, connections, spec);
+
+  setImmediate(async () => {
+    while (network.isRunning) {
+      await setTimeout(3000);
+      syncTask.maintainSync();
+      ticketTask.maintainDistribution();
+    }
+  });
+
+  // TODO [ToDr] This design is a bit weird,
+  // however we don't want the sync task to handle that
+  // (since only parts of it are sync-related), but that
+  // should be a general behavior of the JAMNP-S.
+  // For now it's simply an external function that's exposed
+  // for tests as well.
+  setupPeerListeners(syncTask, network, streamManager);
+
+  return {
+    network,
+    syncTask,
+    ticketTask,
+    streamManager,
+  };
+}
+
+export function setupPeerListeners(syncTask: SyncTask, network: Network<Peer>, streamManager: StreamManager) {
+  network.peers.onPeerConnected((peer) => {
+    // whenever the peer wants to open a stream with us, let's handle that.
+    peer.addOnIncomingStream((stream) => {
+      handleAsyncErrors(
+        () => streamManager.onIncomingStream(peer, stream),
+        (e) => {
+          logger.error`[${peer.id}:${stream.streamId}]🚰  Stream error: ${e}. Disconnecting peer.`;
+          peer.disconnect();
+        },
+      );
+      return OK;
+    });
+
+    // open UP0 stream with each new peer after the connection is fully estabilished.
+    syncTask.openUp0(peer);
+
+    return OK;
+  });
+}
+```

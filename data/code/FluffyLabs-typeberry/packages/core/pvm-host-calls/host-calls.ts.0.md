@@ -1,0 +1,91 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-host-calls/host-calls.ts#L1-L73
+title: packages/core/pvm-host-calls/host-calls.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: fcd74e8e7d1e5614f5f296d1f31e025fe263fc5eb6046c6ba04b3d2c42ae0664
+language: typescript
+---
+`packages/core/pvm-host-calls/host-calls.ts` (lines 1–73)
+
+```typescript
+import { Level, Logger } from "@typeberry/logger";
+import { tryAsU32 } from "@typeberry/numbers";
+import { type Gas, tryAsSmallGas } from "@typeberry/pvm-interface";
+import { check } from "@typeberry/utils";
+import {
+  type HostCallHandler,
+  type HostCallIndex,
+  type PvmExecution,
+  tryAsHostCallIndex,
+} from "./host-call-handler.js";
+import type { HostCallRegisters } from "./host-call-registers.js";
+
+const logger = Logger.new(import.meta.filename, "host-calls-pvm");
+
+/** Container for all available host calls. */
+export class HostCalls {
+  private readonly hostCalls = new Map<HostCallIndex, HostCallHandler>();
+  private readonly missing;
+
+  /** Build a `HostCalls` registry, verifying that no two handlers share an index. */
+  static new({ missing, handlers = [] }: { missing: HostCallHandler; handlers?: HostCallHandler[] }) {
+    const hostCalls = new HostCalls(missing);
+    for (const handler of handlers) {
+      check`${hostCalls.hostCalls.get(handler.index) === undefined} Overwriting host call handler at index ${handler.index}`;
+      hostCalls.hostCalls.set(handler.index, handler);
+    }
+    return hostCalls;
+  }
+
+  private constructor(missing: HostCallHandler) {
+    this.missing = missing;
+  }
+
+  /** Get a host call by index. */
+  get(hostCallIndex: HostCallIndex): HostCallHandler {
+    return this.hostCalls.get(hostCallIndex) ?? this.missing;
+  }
+
+  traceHostCall(
+    context: string,
+    hostCallIndex: HostCallIndex,
+    hostCallHandler: HostCallHandler,
+    registers: HostCallRegisters,
+    gas: Gas,
+  ) {
+    if (logger.getLevel() > Level.INSANE) {
+      return;
+    }
+
+    const { currentServiceId } = hostCallHandler;
+    const requested = hostCallIndex !== hostCallHandler.index ? ` (${hostCallIndex})` : "";
+    const name = `${hostCallHandler.constructor.name}:${hostCallHandler.index}`;
+    const registerValues = hostCallHandler.tracedRegisters
+      .map((idx) => [idx.toString().padStart(2, "0"), registers.get(idx)] as const)
+      .filter((v) => v[1] !== 0n)
+      .map(([idx, value]) => {
+        return `r${idx}=${value} (0x${value.toString(16)})`;
+      })
+      .join(", ");
+    logger.insane`[${currentServiceId}] ${context} ${name}${requested}.  Gas: ${gas}. Regs: ${registerValues}.`;
+  }
+}
+
+export class NoopMissing implements HostCallHandler {
+  index = tryAsHostCallIndex(2 ** 32 - 1);
+  basicGasCost = tryAsSmallGas(0);
+  currentServiceId = tryAsU32(0);
+  tracedRegisters = [];
+
+  async execute(): Promise<undefined | PvmExecution> {
+    return;
+  }
+}
+```

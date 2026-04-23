@@ -1,0 +1,82 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/refine/export.ts#L1-L64
+title: packages/jam/jam-host-calls/refine/export.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: bc1607bb830194868ec146c7991cc1e28dee850866077e2c3a2f6b61e41c8c8b
+language: typescript
+---
+`packages/jam/jam-host-calls/refine/export.ts` (lines 1–64)
+
+```typescript
+import { SEGMENT_BYTES, type Segment } from "@typeberry/block";
+import { Bytes } from "@typeberry/bytes";
+import { minU64, tryAsU64 } from "@typeberry/numbers";
+import {
+  type HostCallHandler,
+  type HostCallMemory,
+  type HostCallRegisters,
+  PvmExecution,
+  traceRegisters,
+  tryAsHostCallIndex,
+} from "@typeberry/pvm-host-calls";
+import { type IGasCounter, tryAsSmallGas } from "@typeberry/pvm-interface";
+import { resultToString } from "@typeberry/utils";
+import type { RefineExternalities } from "../externalities/refine-externalities.js";
+import { HostCallResult } from "../general/results.js";
+import { logger } from "../logger.js";
+import { CURRENT_SERVICE_ID } from "../utils.js";
+
+const IN_OUT_REG = 7;
+
+/**
+ * Export a segment to be imported by some future `refine` invokation.
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/33db0233db02?v=0.7.2
+ */
+export class Export implements HostCallHandler {
+  index = tryAsHostCallIndex(7);
+  basicGasCost = tryAsSmallGas(10);
+  currentServiceId = CURRENT_SERVICE_ID;
+  tracedRegisters = traceRegisters(IN_OUT_REG, 8);
+
+  static new(refine: RefineExternalities) {
+    return new Export(refine);
+  }
+
+  private constructor(private readonly refine: RefineExternalities) {}
+
+  async execute(_gas: IGasCounter, regs: HostCallRegisters, memory: HostCallMemory): Promise<PvmExecution | undefined> {
+    // `p`: segment start address
+    const segmentStart = regs.get(IN_OUT_REG);
+    // `z`: segment bounded length
+    // NOTE [MaSo] it's always safe to cast to u32 (number) because the length is bounded by SEGMENT_BYTES.
+    const segmentLength = Number(minU64(regs.get(8), tryAsU64(SEGMENT_BYTES)));
+
+    // `x`: destination (padded with zeros).
+    const segment: Segment = Bytes.zero(SEGMENT_BYTES);
+    const segmentReadResult = memory.loadInto(segment.raw.subarray(0, segmentLength), segmentStart);
+    if (segmentReadResult.isError) {
+      logger.trace`[${this.currentServiceId}] EXPORT(${segment.toStringTruncated()}) <- PANIC`;
+      return PvmExecution.Panic;
+    }
+
+    // attempt to export a segment and fail if it's above the maximum.
+    const segmentExported = this.refine.exportSegment(segment);
+    logger.trace`[${this.currentServiceId}] EXPORT(${segment.toStringTruncated()}) <- ${resultToString(segmentExported)}`;
+    logger.insane`[${this.currentServiceId}] EXPORT(${segment}) <- ${resultToString(segmentExported)}`;
+
+    if (segmentExported.isOk) {
+      regs.set(IN_OUT_REG, tryAsU64(segmentExported.ok));
+    } else {
+      regs.set(IN_OUT_REG, HostCallResult.FULL);
+    }
+  }
+}
+```

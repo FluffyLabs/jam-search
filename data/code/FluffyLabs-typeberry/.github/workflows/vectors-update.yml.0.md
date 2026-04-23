@@ -1,0 +1,112 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/vectors-update.yml#L1-L94
+title: .github/workflows/vectors-update.yml
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: c60c524f324090af60e01ba4f0d336917f13ec4401f3ecd4a3fb5da94d425928
+language: yaml
+---
+`.github/workflows/vectors-update.yml` (lines 1–94)
+
+```yaml
+name: VECTORS - auto update
+
+permissions:
+  contents: write       # push branch, create release
+  pull-requests: write  # open PR
+
+on:
+  schedule:
+    # Run every day at 09:00 UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-test-vectors:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Get current test vectors ref
+      id: current_ref
+      run: |
+        CURRENT_REF=$(grep "^REF=" .github/scripts/load-test-ref.sh | cut -d'=' -f2)
+        echo "current_ref=$CURRENT_REF" >> $GITHUB_OUTPUT
+        echo "Current test vectors ref: $CURRENT_REF"
+
+    - name: Get latest test vectors ref
+      id: latest_ref
+      run: |
+        LATEST_REF=$(curl -s https://api.github.com/repos/FluffyLabs/test-vectors/commits/main | jq -r '.sha')
+        echo "latest_ref=$LATEST_REF" >> $GITHUB_OUTPUT
+        echo "Latest test vectors ref: $LATEST_REF"
+
+    - name: Check if update is needed
+      id: check_update
+      run: |
+        if [ "${{ steps.current_ref.outputs.current_ref }}" != "${{ steps.latest_ref.outputs.latest_ref }}" ]; then
+          echo "update_needed=true" >> $GITHUB_OUTPUT
+          echo "Update needed: ${{ steps.current_ref.outputs.current_ref }} -> ${{ steps.latest_ref.outputs.latest_ref }}"
+        else
+          echo "update_needed=false" >> $GITHUB_OUTPUT
+          echo "No update needed"
+        fi
+
+    - name: Configure Git
+      if: steps.check_update.outputs.update_needed == 'true'
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Update test vectors ref
+      if: steps.check_update.outputs.update_needed == 'true'
+      run: |
+        NEW_REF="${{ steps.latest_ref.outputs.latest_ref }}"
+        sed -i "s/^REF=.*/REF=$NEW_REF/" .github/scripts/load-test-ref.sh
+        echo "Updated test vectors ref to: $NEW_REF"
+
+    - name: Generate GitHub App Token
+      if: steps.check_update.outputs.update_needed == 'true'
+      id: app-token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.PR_APP_ID }}
+        private-key: ${{ secrets.PR_APP_PRIVATE_KEY }}
+
+    - name: Create Pull Request
+      if: steps.check_update.outputs.update_needed == 'true'
+      uses: peter-evans/create-pull-request@v7
+      id: pr
+      with:
+        token: ${{ steps.app-token.outputs.token }}
+        base: 'main'
+        branch: update-test-vectors/${{ steps.latest_ref.outputs.latest_ref }}
+        title: "Update test vectors to ${{ steps.latest_ref.outputs.latest_ref }}"
+        commit-message: "Update test vectors ref to ${{ steps.latest_ref.outputs.latest_ref }}"
+        body: |
+          ## Update Test Vectors Reference
+
+          This PR updates the test vectors reference from `${{ steps.current_ref.outputs.current_ref }}` to `${{ steps.latest_ref.outputs.latest_ref }}`.
+
+          **Changes:**
+          - Updated `.github/scripts/load-test-ref.sh` with the latest commit hash from [FluffyLabs/test-vectors](https://github.com/FluffyLabs/test-vectors)
+
+          **Latest commit:** https://github.com/FluffyLabs/test-vectors/commit/${{ steps.latest_ref.outputs.latest_ref }}
+
+          🤖 This PR was created automatically by the `update-test-vectors` workflow.
+
+    - name: PR created
+      if: steps.check_update.outputs.update_needed == 'true' && steps.pr.outputs.pull-request-number
+      run: |
+        echo "Pull request created: ${{ steps.pr.outputs.pull-request-url }}"
+```

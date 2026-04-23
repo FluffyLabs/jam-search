@@ -1,0 +1,21 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/safrole-data.test.ts#L88-L90
+title: packages/jam/state/safrole-data.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 11
+chunk_total: 15
+content_sha: ff257e32c3e28cef2d8c4acbe5b9c884c843b9c5c86f589129441fd1b70fae73
+language: typescript
+---
+`packages/jam/state/safrole-data.test.ts` (lines 88–90)
+
+```typescript
+  "0x0c0b7537993b0a700def26bb16e99ed0bfb530f616e4c13cf63ecb60bcbe83387d021912baa74049a4cad89dc3f0646144459b691b926cf8b9c1c4a5bbfa1ee0c3310122fdcfa858e5195e222174597d7d33bd66d97748c413b876f7a132134ce9baef0023bd628fd365a0f3ecd10db746dd04ec5efe61f96da19ae070c44b97d3c9a7b80231d6a25525ff4bd6e47e611646d7b5835b94b5c0a69c225371b2b762c93095a20131e9b8070f42d7c9083eca5879e5528191259a395761b8fcc068dcdd36b06be40139120d5b82981c7f5aba8247925f358afb9539839b61602a0726f51efb35ef4c0039e2d23807ff3788156eac40cc0a622a9fd23e9468bf962aebe48079c0fd2f1a0039f7d99b86f90cada4aa3b08adfe310024813fca0bdcdff944873a2cc2e4707401665df13fd353ffe92e9bd68ae952f4511681f04bd2ffb9a6da1b1f5f706c53ec026b5cc620ed50042cd517ec8267706c82482f07ebcb3c65bfb6288ef5984141a7017914d0dc71014a8106875c440ec79dc8358ef5e65700f8780f0af56d317314e000";
+
+const TEST_DATA =
+```

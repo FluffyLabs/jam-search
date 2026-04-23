@@ -1,0 +1,95 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/eject.ts#L1-L77
+title: packages/jam/jam-host-calls/accumulate/eject.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 1ddc2c5545b823a18bc64606836b7b64a3d49fb23f95d2ad3afc1165d6852f13
+language: typescript
+---
+`packages/jam/jam-host-calls/accumulate/eject.ts` (lines 1–77)
+
+```typescript
+import type { ServiceId } from "@typeberry/block";
+import type { PreimageHash } from "@typeberry/block/preimage.js";
+import { Bytes } from "@typeberry/bytes";
+import { HASH_SIZE } from "@typeberry/hash";
+import type { HostCallHandler, HostCallMemory, HostCallRegisters } from "@typeberry/pvm-host-calls";
+import { PvmExecution, traceRegisters, tryAsHostCallIndex } from "@typeberry/pvm-host-calls";
+import { type IGasCounter, tryAsSmallGas } from "@typeberry/pvm-interface";
+import { assertNever, resultToString } from "@typeberry/utils";
+import { EjectError, type PartialState } from "../externalities/partial-state.js";
+import { HostCallResult } from "../general/results.js";
+import { logger } from "../logger.js";
+import { getServiceId } from "../utils.js";
+
+const IN_OUT_REG = 7;
+
+/**
+ * Remove the provided service account and transfer the remaining balance to current service account.
+ *
+ * https://graypaper.fluffylabs.dev/#/7e6ff6a/373b01373b01?v=0.6.7
+ */
+export class Eject implements HostCallHandler {
+  index = tryAsHostCallIndex(21);
+  basicGasCost = tryAsSmallGas(10);
+  tracedRegisters = traceRegisters(IN_OUT_REG, 8);
+
+  static new(currentServiceId: ServiceId, partialState: PartialState) {
+    return new Eject(currentServiceId, partialState);
+  }
+
+  private constructor(
+    public readonly currentServiceId: ServiceId,
+    private readonly partialState: PartialState,
+  ) {}
+
+  async execute(_gas: IGasCounter, regs: HostCallRegisters, memory: HostCallMemory): Promise<undefined | PvmExecution> {
+    // `d`: account to eject from (source)
+    const serviceId = getServiceId(regs.get(IN_OUT_REG));
+    // `o`: preimage hash start memory index
+    const preimageHashStart = regs.get(8);
+
+    // `h`: hash
+    const previousCodeHash = Bytes.zero(HASH_SIZE).asOpaque<PreimageHash>();
+    const memoryReadResult = memory.loadInto(previousCodeHash.raw, preimageHashStart);
+    if (memoryReadResult.isError) {
+      logger.trace`[${this.currentServiceId}] EJECT(${serviceId}) <- PANIC`;
+      return PvmExecution.Panic;
+    }
+
+    // cannot eject self
+    if (serviceId === this.currentServiceId) {
+      regs.set(IN_OUT_REG, HostCallResult.WHO);
+      logger.trace`[${this.currentServiceId}] EJECT(${serviceId}, ${previousCodeHash}) <- WHO`;
+      return;
+    }
+
+    const result = this.partialState.eject(serviceId, previousCodeHash);
+
+    // All good!
+    if (result.isOk) {
+      logger.trace`[${this.currentServiceId}] EJECT(${serviceId}, ${previousCodeHash}) <- OK`;
+      regs.set(IN_OUT_REG, HostCallResult.OK);
+      return;
+    }
+
+    const e = result.error;
+
+    if (e === EjectError.InvalidService) {
+      logger.trace`[${this.currentServiceId}] EJECT(${serviceId}, ${previousCodeHash}) <- WHO ${resultToString(result)}`;
+      regs.set(IN_OUT_REG, HostCallResult.WHO);
+    } else if (e === EjectError.InvalidPreimage) {
+      logger.trace`[${this.currentServiceId}] EJECT(${serviceId}, ${previousCodeHash}) <- HUH ${resultToString(result)}`;
+      regs.set(IN_OUT_REG, HostCallResult.HUH);
+    } else {
+      assertNever(e);
+    }
+  }
+}
+```

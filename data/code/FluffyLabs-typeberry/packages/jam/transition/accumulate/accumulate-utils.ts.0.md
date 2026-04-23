@@ -1,0 +1,93 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/accumulate/accumulate-utils.ts#L1-L75
+title: packages/jam/transition/accumulate/accumulate-utils.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 5decef1145b9712fdc177f9653a1ed9065add886aa9385062ff661aeebc94e98
+language: typescript
+---
+`packages/jam/transition/accumulate/accumulate-utils.ts` (lines 1–75)
+
+```typescript
+import { type EntropyHash, type ServiceId, type TimeSlot, tryAsServiceId } from "@typeberry/block";
+import { MIN_PUBLIC_SERVICE_INDEX } from "@typeberry/block/gp-constants.js";
+import type { WorkPackageHash } from "@typeberry/block/refine-context.js";
+import type { WorkReport } from "@typeberry/block/work-report.js";
+import { codec, Encoder } from "@typeberry/codec";
+import { HashSet } from "@typeberry/collections";
+import type { ChainSpec } from "@typeberry/config";
+import { type Blake2b, HASH_SIZE } from "@typeberry/hash";
+import { leBytesAsU32 } from "@typeberry/numbers";
+
+/**
+ * A function that removes duplicates but does not change order - it keeps the first occurence.
+ */
+export function uniquePreserveOrder<T extends number>(arr: T[]): T[] {
+  const set = new Set<T>();
+
+  for (const item of arr) {
+    set.add(item);
+  }
+
+  return Array.from(set);
+}
+
+/**
+ * A function that returns work package hashes for given work reports
+ *
+ * https://graypaper.fluffylabs.dev/#/7e6ff6a/160102160102?v=0.6.7
+ */
+export function getWorkPackageHashes(reports: WorkReport[]): HashSet<WorkPackageHash> {
+  const workPackageHashes = reports.map((report) => report.workPackageSpec.hash);
+  return HashSet.from(workPackageHashes);
+}
+
+type NextServiceIdInput = {
+  /** currently accumulated service */
+  serviceId: ServiceId;
+  /** `eta_0'` */
+  entropy: EntropyHash;
+  /** `H_t`: time slot of the header. */
+  timeslot: TimeSlot;
+};
+
+const NEXT_ID_CODEC = codec.object({
+  serviceId: codec.varU32.asOpaque<ServiceId>(),
+  entropy: codec.bytes(HASH_SIZE).asOpaque<EntropyHash>(),
+  timeslot: codec.varU32.asOpaque<TimeSlot>(),
+});
+
+/**
+ * Generate a next service id.
+ *
+ * Please not that it does not call `check` function!
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/2fa9042fc304?v=0.7.2
+ */
+export function generateNextServiceId(
+  { serviceId, entropy, timeslot }: NextServiceIdInput,
+  chainSpec: ChainSpec,
+  blake2b: Blake2b,
+): ServiceId {
+  const encoded = Encoder.encodeObject(
+    NEXT_ID_CODEC,
+    {
+      serviceId,
+      entropy,
+      timeslot,
+    },
+    chainSpec,
+  );
+
+  const result = blake2b.hashBytes(encoded).raw.subarray(0, 4);
+  const number = leBytesAsU32(result) >>> 0;
+  const mod = 2 ** 32 - MIN_PUBLIC_SERVICE_INDEX - 2 ** 8;
+  return tryAsServiceId((number % mod) + MIN_PUBLIC_SERVICE_INDEX);
+}
+```

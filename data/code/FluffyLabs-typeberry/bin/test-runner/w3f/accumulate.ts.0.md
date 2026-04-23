@@ -1,0 +1,147 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/w3f/accumulate.ts#L1-L129
+title: bin/test-runner/w3f/accumulate.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: 256506db419dfd09403e4c085467bfa6fd05c3403905c67bd81c4b0b3f8f4c9c
+language: typescript
+---
+`bin/test-runner/w3f/accumulate.ts` (lines 1–129)
+
+```typescript
+import assert from "node:assert";
+import {
+  type EntropyHash,
+  type ServiceGas,
+  type ServiceId,
+  type TimeSlot,
+  tryAsPerEpochBlock,
+  tryAsServiceGas,
+  tryAsServiceId,
+} from "@typeberry/block";
+import type { WorkPackageHash } from "@typeberry/block/refine-context.js";
+import type { WorkReport } from "@typeberry/block/work-report.js";
+import { fromJson, workReportFromJson } from "@typeberry/block-json";
+import { asKnownSize, HashSet } from "@typeberry/collections";
+import { type ChainSpec, PvmBackend, PvmBackendNames } from "@typeberry/config";
+import { Blake2b } from "@typeberry/hash";
+import { type FromJson, json } from "@typeberry/json-parser";
+import {
+  type InMemoryService,
+  InMemoryState,
+  NotYetAccumulatedReport,
+  PrivilegedServices,
+  tryAsPerCore,
+} from "@typeberry/state";
+import { JsonService, JsonServicePre072 } from "@typeberry/state-json";
+import { AccumulateOutput } from "@typeberry/transition/accumulate/accumulate-output.js";
+import { Accumulate, type AccumulateRoot } from "@typeberry/transition/accumulate/index.js";
+import { Compatibility, deepEqual, GpVersion, Result } from "@typeberry/utils";
+import type { RunOptions } from "../common.js";
+
+class Input {
+  static fromJson: FromJson<Input> = {
+    slot: "number",
+    reports: json.array(workReportFromJson),
+  };
+
+  slot!: TimeSlot;
+  reports!: WorkReport[];
+}
+
+class TestState {
+  static fromJson = json.object<TestState, TestState>(
+    {
+      slot: "number",
+      entropy: fromJson.bytes32(),
+      ready_queue: [
+        "array",
+        json.array({
+          report: workReportFromJson,
+          dependencies: json.array(fromJson.bytes32()),
+        }),
+      ],
+      accumulated: ["array", json.array(fromJson.bytes32())],
+      privileges: {
+        bless: "number",
+        assign: json.array("number"),
+        designate: "number",
+        register: "number",
+        always_acc: json.array({
+          id: "number",
+          gas: json.fromNumber((x) => tryAsServiceGas(x)),
+        }),
+      },
+      accounts: json.array(
+        Compatibility.isGreaterOrEqual(GpVersion.V0_7_2) ? JsonService.fromJson : JsonServicePre072.fromJson,
+      ),
+    },
+    (x) => x,
+  );
+
+  slot!: TimeSlot;
+  entropy!: EntropyHash;
+  ready_queue!: { report: WorkReport; dependencies: WorkPackageHash[] }[][];
+  accumulated!: WorkPackageHash[][];
+  privileges!: {
+    bless: ServiceId;
+    assign: ServiceId[];
+    designate: ServiceId;
+    register: ServiceId;
+    always_acc: { id: ServiceId; gas: ServiceGas }[];
+  };
+  accounts!: InMemoryService[];
+
+  static toAccumulateState(
+    { accounts, slot, ready_queue, accumulated, privileges }: TestState,
+    chainSpec: ChainSpec,
+  ): InMemoryState {
+    const autoAccumulateServices = new Map(privileges.always_acc.map(({ gas, id }) => [id, gas]));
+
+    return InMemoryState.partial(chainSpec, {
+      timeslot: slot,
+      accumulationQueue: tryAsPerEpochBlock(
+        ready_queue.map((queue) =>
+          queue.map((item) =>
+            NotYetAccumulatedReport.create({ report: item.report, dependencies: asKnownSize(item.dependencies) }),
+          ),
+        ),
+        chainSpec,
+      ),
+      recentlyAccumulated: tryAsPerEpochBlock(
+        accumulated.map((queue) => HashSet.from(queue)),
+        chainSpec,
+      ),
+      privilegedServices: PrivilegedServices.create({
+        manager: privileges.bless,
+        assigners: tryAsPerCore(privileges.assign, chainSpec),
+        delegator: privileges.designate,
+        registrar: privileges.register ?? tryAsServiceId(2 ** 32 - 1),
+        autoAccumulateServices,
+      }),
+      services: new Map(accounts.map((service) => [service.serviceId, service.clone()])),
+    });
+  }
+}
+
+class Output {
+  static fromJson: FromJson<Output> = {
+    ok: fromJson.bytes32(),
+  };
+
+  ok!: AccumulateRoot;
+
+  static toAccumulateOutput(output: Output): Result<AccumulateRoot, never> {
+    return Result.ok(output.ok);
+  }
+}
+
+export class AccumulateTest {
+  static fromJson: FromJson<AccumulateTest> = {
+```

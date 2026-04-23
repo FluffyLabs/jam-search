@@ -1,0 +1,73 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/upgrade.ts#L1-L55
+title: packages/jam/jam-host-calls/accumulate/upgrade.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: d5cae6788c1e20c4ea8760d1f489d9a31beac6222089ef237b19003c001aa5a4
+language: typescript
+---
+`packages/jam/jam-host-calls/accumulate/upgrade.ts` (lines 1–55)
+
+```typescript
+import type { ServiceId } from "@typeberry/block";
+import { Bytes } from "@typeberry/bytes";
+import { HASH_SIZE } from "@typeberry/hash";
+import type { HostCallHandler, HostCallMemory, HostCallRegisters } from "@typeberry/pvm-host-calls";
+import { PvmExecution, traceRegisters, tryAsHostCallIndex } from "@typeberry/pvm-host-calls";
+import { type IGasCounter, tryAsSmallGas } from "@typeberry/pvm-interface";
+import type { PartialState } from "../externalities/partial-state.js";
+import { HostCallResult } from "../general/results.js";
+import { logger } from "../logger.js";
+
+const IN_OUT_REG = 7; // `o`
+const GAS_REG = 8; // `g`
+const ALLOWANCE_REG = 9; // `m`
+
+/**
+ * Upgrade the code of the service.
+ *
+ * https://graypaper.fluffylabs.dev/#/7e6ff6a/36d00336d003?v=0.6.7
+ */
+export class Upgrade implements HostCallHandler {
+  index = tryAsHostCallIndex(19);
+  basicGasCost = tryAsSmallGas(10);
+  tracedRegisters = traceRegisters(IN_OUT_REG, GAS_REG, ALLOWANCE_REG);
+
+  static new(currentServiceId: ServiceId, partialState: PartialState) {
+    return new Upgrade(currentServiceId, partialState);
+  }
+
+  private constructor(
+    public readonly currentServiceId: ServiceId,
+    private readonly partialState: PartialState,
+  ) {}
+
+  async execute(_gas: IGasCounter, regs: HostCallRegisters, memory: HostCallMemory): Promise<undefined | PvmExecution> {
+    // `o`
+    const codeHashStart = regs.get(IN_OUT_REG);
+    // `g`
+    const gas = regs.get(GAS_REG);
+    // `m`
+    const allowance = regs.get(ALLOWANCE_REG);
+
+    // `c`
+    const codeHash = Bytes.zero(HASH_SIZE);
+    const memoryReadResult = memory.loadInto(codeHash.raw, codeHashStart);
+    if (memoryReadResult.isError) {
+      logger.trace`[${this.currentServiceId}] UPGRADE(${codeHash}, ${gas}, ${allowance}) <- PANIC`;
+      return PvmExecution.Panic;
+    }
+
+    this.partialState.upgradeService(codeHash.asOpaque(), gas, allowance);
+    logger.trace`[${this.currentServiceId}] UPGRADE(${codeHash}, ${gas}, ${allowance})`;
+
+    regs.set(IN_OUT_REG, HostCallResult.OK);
+  }
+}
+```

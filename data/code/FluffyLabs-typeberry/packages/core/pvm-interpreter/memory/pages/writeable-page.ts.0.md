@@ -1,0 +1,101 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/pages/writeable-page.ts#L1-L83
+title: packages/core/pvm-interpreter/memory/pages/writeable-page.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 6ff8a3bc75d7562d87f9a5ba45cf9b2d23a61bb0e632492f8a4209ba5a4c6f3a
+language: typescript
+---
+`packages/core/pvm-interpreter/memory/pages/writeable-page.ts` (lines 1–83)
+
+```typescript
+import { OK, Result } from "@typeberry/utils";
+import { PageFault } from "../errors.js";
+import { MIN_ALLOCATION_LENGTH, PAGE_SIZE } from "../memory-consts.js";
+import { MemoryPage } from "./memory-page.js";
+import type { PageIndex, PageNumber } from "./page-utils.js";
+
+/**
+ * I had to extend ArrayBuffer type to use resizable ArrayBuffer.
+ * We will be able to remove it when this is merged: https://github.com/microsoft/TypeScript/pull/58573
+ * And then a new version of TypeScript is released.
+ */
+declare global {
+  interface ArrayBufferConstructor {
+    new (length: number, options?: { maxByteLength: number }): ArrayBuffer;
+  }
+
+  interface ArrayBuffer {
+    resize(length: number): void;
+  }
+}
+
+export class WriteablePage extends MemoryPage {
+  private buffer: ArrayBuffer;
+  private view: Uint8Array;
+
+  static new(pageNumber: PageNumber, initialData?: Uint8Array) {
+    return new WriteablePage(pageNumber, initialData);
+  }
+
+  private constructor(pageNumber: PageNumber, initialData?: Uint8Array) {
+    super(pageNumber);
+    const dataLength = initialData?.length ?? 0;
+    const initialPageLength = Math.min(PAGE_SIZE, Math.max(dataLength, MIN_ALLOCATION_LENGTH));
+    this.buffer = new ArrayBuffer(initialPageLength, { maxByteLength: PAGE_SIZE });
+    this.view = new Uint8Array(this.buffer);
+    if (initialData !== undefined) {
+      this.view.set(initialData);
+    }
+  }
+
+  loadInto(result: Uint8Array, startIndex: PageIndex, length: number): Result<OK, PageFault> {
+    const endIndex = startIndex + length;
+    if (endIndex > PAGE_SIZE) {
+      return Result.error(
+        PageFault.fromMemoryIndex(this.start + PAGE_SIZE),
+        () => `Page fault: read beyond page boundary at ${this.start + PAGE_SIZE}`,
+      );
+    }
+
+    const bytes = this.view.subarray(startIndex, endIndex);
+    // we zero the bytes, since the view might not yet be initialized at `endIndex`.
+    result.fill(0, bytes.length, length);
+    result.set(bytes);
+
+    return Result.ok(OK);
+  }
+
+  storeFrom(startIndex: PageIndex, bytes: Uint8Array): Result<OK, PageFault> {
+    if (this.buffer.byteLength < startIndex + bytes.length && this.buffer.byteLength < PAGE_SIZE) {
+      const newLength = Math.min(PAGE_SIZE, Math.max(MIN_ALLOCATION_LENGTH, startIndex + bytes.length));
+      this.buffer.resize(newLength);
+    }
+
+    this.view.set(bytes, startIndex);
+    return Result.ok(OK);
+  }
+
+  setData(pageIndex: PageIndex, data: Uint8Array) {
+    if (this.buffer.byteLength < pageIndex + data.length && this.buffer.byteLength < PAGE_SIZE) {
+      const newLength = Math.min(PAGE_SIZE, Math.max(MIN_ALLOCATION_LENGTH, pageIndex + data.length));
+      this.buffer.resize(newLength);
+    }
+    this.view.set(data, pageIndex);
+  }
+
+  isWriteable() {
+    return true;
+  }
+
+  getPageDump() {
+    return this.view;
+  }
+}
+```

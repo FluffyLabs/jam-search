@@ -1,0 +1,108 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops/load-ops.test.ts#L249-L338
+title: packages/core/pvm-interpreter/ops/load-ops.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 3
+chunk_total: 5
+content_sha: 882a23437852d0e3361fd03144197d512575850e687264dfc1f7dcc739624b97
+language: typescript
+---
+`packages/core/pvm-interpreter/ops/load-ops.test.ts` (lines 249–338)
+
+```typescript
+      const expectedUnsignedValue = 18446744073709542860n;
+
+      loadOps.loadIndI32(resultRegisterIndex, addressRegisterIndex, immediate);
+
+      assert.deepStrictEqual(registers.getU64(resultRegisterIndex), expectedUnsignedValue);
+      assert.deepStrictEqual(registers.getI64(resultRegisterIndex), expectedSignedValue);
+    });
+  });
+
+  describe("loadInd (U8, U16 and U32)", () => {
+    it("should load u8 from memory to register and extend the number to the register size", () => {
+      const address = tryAsMemoryIndex(1 + RESERVED_NUMBER_OF_PAGES * PAGE_SIZE);
+      const data = new Uint8Array([0x11, 0x11, 0xff, 0xee, 0xdd, 0xcc]);
+      const { loadOps, registers, resultRegisterIndex, addressRegisterIndex, immediate } = prepareLoadIndData(
+        address,
+        data,
+        1n + 16n * BigInt(PAGE_SIZE),
+        1n,
+      );
+      const expectedValue = 0xffn;
+
+      loadOps.loadIndU8(resultRegisterIndex, addressRegisterIndex, immediate);
+
+      assert.deepStrictEqual(registers.getU64(resultRegisterIndex), expectedValue);
+      assert.deepStrictEqual(registers.getI64(resultRegisterIndex), expectedValue);
+    });
+
+    it("should load u16 from memory to register and extend the number to the register size", () => {
+      const address = tryAsMemoryIndex(1 + RESERVED_NUMBER_OF_PAGES * PAGE_SIZE);
+      const data = new Uint8Array([0x11, 0x11, 0xff, 0xee, 0xdd, 0xcc]);
+      const { loadOps, registers, resultRegisterIndex, addressRegisterIndex, immediate } = prepareLoadIndData(
+        address,
+        data,
+        1n + 16n * BigInt(PAGE_SIZE),
+        1n,
+      );
+      const expectedValue = 61183n;
+
+      loadOps.loadIndU16(resultRegisterIndex, addressRegisterIndex, immediate);
+
+      assert.deepStrictEqual(registers.getU64(resultRegisterIndex), expectedValue);
+      assert.deepStrictEqual(registers.getI64(resultRegisterIndex), expectedValue);
+    });
+
+    it("should load u32 from memory to register and extend the number to the register size", () => {
+      const address = tryAsMemoryIndex(1 + RESERVED_NUMBER_OF_PAGES * PAGE_SIZE);
+      const data = new Uint8Array([0x11, 0x11, 0xff, 0xee, 0xdd, 0x0c]);
+      const { loadOps, registers, resultRegisterIndex, addressRegisterIndex, immediate } = prepareLoadIndData(
+        address,
+        data,
+        1n + 16n * BigInt(PAGE_SIZE),
+        1n,
+      );
+      const expectedValue = 215871231n;
+
+      loadOps.loadIndU32(resultRegisterIndex, addressRegisterIndex, immediate);
+
+      assert.deepStrictEqual(registers.getU64(resultRegisterIndex), expectedValue);
+      assert.deepStrictEqual(registers.getI64(resultRegisterIndex), expectedValue);
+    });
+
+    it("should load u64 from memory to register", () => {
+      const address = tryAsMemoryIndex(1 + RESERVED_NUMBER_OF_PAGES * PAGE_SIZE);
+      const data = new Uint8Array([0x11, 0x11, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa, 0x99, 0x08]);
+      const { loadOps, registers, resultRegisterIndex, addressRegisterIndex, immediate } = prepareLoadIndData(
+        address,
+        data,
+        1n + 16n * BigInt(PAGE_SIZE),
+        1n,
+      );
+      const expectedValue = 619714147312856831n;
+
+      loadOps.loadIndU64(resultRegisterIndex, addressRegisterIndex, immediate);
+
+      assert.deepStrictEqual(registers.getU64(resultRegisterIndex), expectedValue);
+      assert.deepStrictEqual(registers.getI64(resultRegisterIndex), expectedValue);
+    });
+
+    it("should load u64 from memory to register (negative number)", () => {
+      const address = tryAsMemoryIndex(1 + RESERVED_NUMBER_OF_PAGES * PAGE_SIZE);
+      const data = new Uint8Array([0x11, 0x11, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]);
+      const { loadOps, registers, resultRegisterIndex, addressRegisterIndex, immediate } = prepareLoadIndData(
+        address,
+        data,
+        1n + 16n * BigInt(PAGE_SIZE),
+        1n,
+      );
+      const expectedSignedValue = -1n;
+      const expectedUnsignedValue = 2n ** 64n - 1n;
+
+```

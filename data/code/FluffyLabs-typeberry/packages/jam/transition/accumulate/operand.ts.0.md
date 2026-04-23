@@ -1,0 +1,94 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/accumulate/operand.ts#L1-L76
+title: packages/jam/transition/accumulate/operand.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: e5cca1e85e092a9f6549d7752748f485db8547a6100539ac072b0a544a30abef
+language: typescript
+---
+`packages/jam/transition/accumulate/operand.ts` (lines 1–76)
+
+```typescript
+import { type ServiceGas, tryAsServiceGas } from "@typeberry/block";
+import type { AuthorizerHash, ExportsRootHash, WorkPackageHash } from "@typeberry/block/refine-context.js";
+import { WorkExecResult } from "@typeberry/block/work-result.js";
+import { BytesBlob } from "@typeberry/bytes";
+import { type CodecRecord, codec } from "@typeberry/codec";
+import { HASH_SIZE, type OpaqueHash } from "@typeberry/hash";
+import { WithDebug } from "@typeberry/utils";
+
+/**
+ * The set of wrangled operand tuples, used as an operand to the PVM Accumulation function.
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/176b00176b00?v=0.7.2
+ */
+export class Operand extends WithDebug {
+  static Codec = codec.Class(Operand, {
+    // h
+    hash: codec.bytes(HASH_SIZE).asOpaque<WorkPackageHash>(),
+    // e
+    exportsRoot: codec.bytes(HASH_SIZE).asOpaque<ExportsRootHash>(),
+    // a
+    authorizerHash: codec.bytes(HASH_SIZE).asOpaque<AuthorizerHash>(),
+    // y
+    payloadHash: codec.bytes(HASH_SIZE),
+    // g
+    gas: codec.varU64.asOpaque<ServiceGas>(),
+    // d
+    result: WorkExecResult.Codec,
+    // o
+    authorizationOutput: codec.blob,
+  });
+
+  /**
+   * https://graypaper.fluffylabs.dev/#/ab2cdbd/18680118eb01?v=0.7.2
+   */
+  hash: WorkPackageHash;
+  exportsRoot: ExportsRootHash;
+  authorizerHash: AuthorizerHash;
+  payloadHash: OpaqueHash;
+  gas: ServiceGas;
+  result: WorkExecResult;
+  authorizationOutput: BytesBlob;
+
+  static create({
+    authorizationOutput,
+    authorizerHash,
+    exportsRoot,
+    gas,
+    hash,
+    payloadHash,
+    result,
+  }: CodecRecord<Operand>) {
+    return new Operand({
+      gas: tryAsServiceGas(gas),
+      payloadHash: payloadHash.asOpaque(),
+      result: result,
+      authorizationOutput: BytesBlob.blobFrom(authorizationOutput.raw),
+      exportsRoot: exportsRoot.asOpaque(),
+      hash: hash.asOpaque(),
+      authorizerHash: authorizerHash.asOpaque(),
+    });
+  }
+  private constructor(operand: CodecRecord<Operand>) {
+    super();
+    this.gas = operand.gas;
+    this.payloadHash = operand.payloadHash;
+    this.result = operand.result;
+    this.authorizationOutput = operand.authorizationOutput;
+    this.exportsRoot = operand.exportsRoot;
+    this.hash = operand.hash;
+    this.authorizerHash = operand.authorizerHash;
+  }
+
+  static new(operand: Pick<Operand, keyof Operand>) {
+    return new Operand(operand);
+  }
+}
+```

@@ -1,0 +1,123 @@
+---
+type: page
+content_kind: code
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L106'
+title: package.json
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 39142764d6950efc50235ab44ecc3a0634e3e6609104fc7474bf4dce4fa77e33
+language: json
+---
+`package.json` (lines 1–106)
+
+```json
+{
+  "name": "@typeberry/jam",
+  "version": "0.5.11",
+  "description": "JAM implementation in TypeScript",
+  "private": true,
+  "workspaces": [
+    "benchmarks",
+    "bin/convert",
+    "bin/ipc2rpc",
+    "bin/jam",
+    "bin/lib",
+    "bin/pvm",
+    "bin/rpc",
+    "bin/tci",
+    "bin/test-runner",
+    "packages/configs",
+    "packages/core/bytes",
+    "packages/core/codec",
+    "packages/core/collections",
+    "packages/core/concurrent",
+    "packages/core/crypto",
+    "packages/core/erasure-coding",
+    "packages/core/hash",
+    "packages/core/json-parser",
+    "packages/core/listener",
+    "packages/core/logger",
+    "packages/core/mmr",
+    "packages/core/networking",
+    "packages/core/numbers",
+    "packages/core/ordering",
+    "packages/core/pvm-host-calls",
+    "packages/core/pvm-interface",
+    "packages/core/pvm-interpreter",
+    "packages/core/pvm-interpreter-ananas",
+    "packages/core/shuffling",
+    "packages/core/telemetry",
+    "packages/core/trie",
+    "packages/core/utils",
+    "packages/extensions/ipc",
+    "packages/jam/block",
+    "packages/jam/block-json",
+    "packages/jam/config",
+    "packages/jam/config-node",
+    "packages/jam/database",
+    "packages/jam/database-lmdb",
+    "packages/jam/executor",
+    "packages/jam/fuzz-proto",
+    "packages/jam/in-core",
+    "packages/jam/jam-host-calls",
+    "packages/jam/jamnp-s",
+    "packages/jam/node",
+    "packages/jam/rpc-client",
+    "packages/jam/rpc-validation",
+    "packages/jam/safrole",
+    "packages/jam/state",
+    "packages/jam/state-json",
+    "packages/jam/state-merkleization",
+    "packages/jam/state-vectors",
+    "packages/jam/transition",
+    "packages/jam/transition/disputes",
+    "packages/misc/benchmark",
+    "packages/workers/api",
+    "packages/workers/api-node",
+    "packages/workers/block-authorship",
+    "packages/workers/comms-authorship-network",
+    "packages/workers/importer",
+    "packages/workers/jam-network"
+  ],
+  "engines": {
+    "node": ">=24",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "build": "tsc",
+    "docs": "npm run docs --workspaces --if-present && npx typedoc",
+    "qa": "biome ci && eslint .",
+    "qa-fix": "npm run format; npm run lint",
+    "format": "biome format --write",
+    "lint": "biome check --write && biome lint --write",
+    "start": "npm start -w @typeberry/jam --",
+    "inspect": "npm run inspect -w @typeberry/jam --",
+    "tiny-network": "npm run tiny-network -w @typeberry/jam --",
+    "test": "tsx --test $(find . -type d -name node_modules -prune -type f -o -name '*.test.ts' | tr '\\n' ' ')",
+    "test-only": "node --test-only --import tsx $(find . -type d -name node_modules -prune -type f -o -name '*.test.ts' | tr '\\n' ' ')",
+    "reader-notes": "npx @fluffylabs/links-check --ignore-file=.gitignore --generate-notes ./web/links.json --generate-notes-label typeberry-$(git rev-parse --short HEAD) **/*.ts",
+    "check:cycles": "npx madge --circular --warning --extensions ts ./packages"
+  },
+  "author": "Fluffy Labs",
+  "license": "MPL-2.0",
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.4",
+    "@eslint/js": "^9.39.1",
+    "@tsconfig/node24": "^24.0.4",
+    "@types/eslint__js": "^8.42.3",
+    "eslint": "^9.39.1",
+    "eslint-plugin-import": "^2.32.0",
+    "tsx": "^4.20.6",
+    "typedoc-github-theme": "^0.3.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4"
+  },
+  "dependencies": {
+    "rollup": "^4.53.2"
+  }
+}
+```

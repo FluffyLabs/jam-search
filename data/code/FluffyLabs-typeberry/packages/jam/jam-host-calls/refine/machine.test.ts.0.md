@@ -1,0 +1,113 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/refine/machine.test.ts#L1-L95
+title: packages/jam/jam-host-calls/refine/machine.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: 67025e7733f4aff75f1ce461a4844b28449898f0ab74fefc7518d337f37a2411
+language: typescript
+---
+`packages/jam/jam-host-calls/refine/machine.test.ts` (lines 1–95)
+
+```typescript
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import { tryAsServiceId } from "@typeberry/block";
+import { BytesBlob } from "@typeberry/bytes";
+import { tryAsU64 } from "@typeberry/numbers";
+import { HostCallMemory, HostCallRegisters, PvmExecution } from "@typeberry/pvm-host-calls";
+import { tryAsGas } from "@typeberry/pvm-interface";
+import { gasCounter, MemoryBuilder, tryAsMemoryIndex } from "@typeberry/pvm-interpreter";
+import { tryAsSbrkIndex } from "@typeberry/pvm-interpreter/memory/memory-index.js";
+import { PAGE_SIZE } from "@typeberry/pvm-interpreter/spi-decoder/memory-conts.js";
+import { type ProgramCounter, tryAsMachineId, tryAsProgramCounter } from "../externalities/refine-externalities.js";
+import { TestRefineExt } from "../externalities/refine-externalities.test.js";
+import { HostCallResult } from "../general/results.js";
+import { Machine } from "./machine.js";
+
+const gas = gasCounter(tryAsGas(0));
+const CODE_START_REG = 7;
+const RESULT_REG = CODE_START_REG;
+const CODE_LEN_REG = 8;
+const PC_REG = 9;
+
+function prepareRegsAndMemory(code: BytesBlob, pc: ProgramCounter, { skipCode = false }: { skipCode?: boolean } = {}) {
+  const memStart = 2 ** 20;
+  const registers = HostCallRegisters.empty();
+  registers.set(CODE_START_REG, tryAsU64(memStart));
+  registers.set(CODE_LEN_REG, tryAsU64(code.length));
+  registers.set(PC_REG, pc);
+
+  const builder = new MemoryBuilder();
+  if (!skipCode) {
+    builder.setReadablePages(tryAsMemoryIndex(memStart), tryAsMemoryIndex(memStart + PAGE_SIZE), code.raw);
+  }
+  const memory = HostCallMemory.new(builder.finalize(tryAsMemoryIndex(0), tryAsSbrkIndex(0)));
+  return {
+    registers,
+    memory,
+  };
+}
+
+describe("HostCalls: Machine", () => {
+  it("should start a new nested machine with minimal code", async () => {
+    const refine = new TestRefineExt();
+    const machine = Machine.new(refine);
+    const machineId = tryAsMachineId(10_000);
+    machine.currentServiceId = tryAsServiceId(10_000);
+    const code = BytesBlob.blobFromNumbers([0, 0, 0]);
+    const programCounter = tryAsProgramCounter(5);
+    const { registers, memory } = prepareRegsAndMemory(code, programCounter);
+    refine.machineStartData.set(machineId, code, programCounter);
+
+    // when
+    const result = await machine.execute(gas, registers, memory);
+
+    // then
+    assert.deepStrictEqual(result, undefined);
+    assert.deepStrictEqual(registers.get(RESULT_REG), machineId);
+  });
+
+  it("should start a new nested machine with fibbonacci code", async () => {
+    const refine = new TestRefineExt();
+    const machine = Machine.new(refine);
+    const machineId = tryAsMachineId(10_000);
+    machine.currentServiceId = tryAsServiceId(10_000);
+    const code = BytesBlob.blobFromNumbers([
+      0, 0, 33, 51, 8, 1, 51, 9, 1, 40, 3, 0, 149, 119, 255, 81, 7, 12, 100, 138, 200, 152, 8, 100, 169, 40, 243, 100,
+      135, 51, 8, 51, 9, 1, 50, 0, 73, 147, 82, 213, 0,
+    ]);
+    const programCounter = tryAsProgramCounter(5);
+    const { registers, memory } = prepareRegsAndMemory(code, programCounter);
+    refine.machineStartData.set(machineId, code, programCounter);
+
+    // when
+    const result = await machine.execute(gas, registers, memory);
+
+    // then
+    assert.deepStrictEqual(result, undefined);
+    assert.deepStrictEqual(registers.get(RESULT_REG), machineId);
+  });
+
+  it("should panic when code is unavailable", async () => {
+    const refine = new TestRefineExt();
+    const machine = Machine.new(refine);
+    machine.currentServiceId = tryAsServiceId(10_000);
+    const code = BytesBlob.blobFromString("amazing PVM code");
+    const programCounter = tryAsProgramCounter(5);
+    const { registers, memory } = prepareRegsAndMemory(code, programCounter, { skipCode: true });
+
+    // when
+    const result = await machine.execute(gas, registers, memory);
+
+    // then
+    assert.deepStrictEqual(result, PvmExecution.Panic);
+  });
+
+  it("should return HUH when code is invalid", async () => {
+```
