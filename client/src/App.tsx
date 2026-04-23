@@ -8,6 +8,7 @@ import { EmbeddedViewer } from "./components/EmbeddedViewer";
 import { Header } from "./components/Header";
 import { cn } from "./lib/utils";
 import { AskLayout } from "@/components/ask/AskLayout";
+import { peekForkPending } from "@/lib/forkPending";
 import { IndexPage } from "./pages";
 import { AskPage } from "./pages/ask";
 import { AskSharedPage } from "./pages/askShared";
@@ -96,7 +97,10 @@ function App() {
                   path="/login"
                   element={
                     <AuthFlow
-                      onSuccess={() => navigate("/")}
+                      onSuccess={() => {
+                        const pending = peekForkPending();
+                        navigate(pending ? `/ask/s/${pending}` : "/");
+                      }}
                       redirectTo={`${window.location.origin}${window.location.pathname}`}
                     />
                   }
@@ -105,7 +109,10 @@ function App() {
                   path="/auth/callback"
                   element={
                     <AuthCallback
-                      onSuccess={() => navigate("/")}
+                      onSuccess={() => {
+                        const pending = peekForkPending();
+                        navigate(pending ? `/ask/s/${pending}` : "/");
+                      }}
                       onError={() => navigate("/login")}
                     />
                   }

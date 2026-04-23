@@ -66,7 +66,8 @@ export function AskSharedPage() {
     };
   }, [client, sessionId]);
 
-  // If we returned here after auth, complete the deferred fork.
+  // If the auth callback redirected us back here with a matching pending
+  // token, auto-complete the deferred fork.
   useEffect(() => {
     if (!user || !sessionId || !(record && record !== "notfound")) return;
     const pending = consumeForkPending();

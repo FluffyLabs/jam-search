@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { consumeForkPending, markForkPending } from "@/lib/forkPending";
+import {
+  consumeForkPending,
+  markForkPending,
+  peekForkPending,
+} from "@/lib/forkPending";
 
 describe("forkPending", () => {
   beforeEach(() => window.sessionStorage.clear());
@@ -10,7 +14,16 @@ describe("forkPending", () => {
     expect(consumeForkPending()).toBeNull();
   });
 
+  it("peek does not clear", () => {
+    markForkPending("xyz");
+    expect(peekForkPending()).toBe("xyz");
+    expect(peekForkPending()).toBe("xyz");
+    expect(consumeForkPending()).toBe("xyz");
+    expect(consumeForkPending()).toBeNull();
+  });
+
   it("returns null when nothing stored", () => {
     expect(consumeForkPending()).toBeNull();
+    expect(peekForkPending()).toBeNull();
   });
 });

@@ -8,6 +8,17 @@ export function markForkPending(sessionId: string): void {
   }
 }
 
+/** Read without clearing. Used by the auth callback to decide where to
+ *  redirect after login — the AskSharedPage consumes the token to actually
+ *  perform the fork. */
+export function peekForkPending(): string | null {
+  try {
+    return window.sessionStorage.getItem(KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function consumeForkPending(): string | null {
   try {
     const v = window.sessionStorage.getItem(KEY);
