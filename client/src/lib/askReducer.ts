@@ -4,6 +4,7 @@ import type {
   AssistantPart,
   ChatMessage,
   CitationCardData,
+  ErrorKind,
   SourceType,
   TextPart,
   ToolPart,
@@ -34,7 +35,7 @@ export type AskAction =
       sourceType: SourceType;
     }
   | { type: "finishStreaming" }
-  | { type: "setError"; message: string }
+  | { type: "setError"; message: string; kind?: ErrorKind }
   | { type: "setModel"; model: string }
   | { type: "reset" }
   | { type: "hydrate"; state: AskConversationState };
@@ -238,6 +239,7 @@ export function askReducer(
           ...m,
           isStreaming: false,
           error: action.message,
+          errorKind: action.kind,
         })),
       };
 

@@ -63,8 +63,8 @@
   --secondary-foreground: hsl(0 0% 52%);
 
   --card-foreground: var(--title-foreground);
-  --popover: hsl(190 84% 4.9%);
-  --popover-foreground: hsl(210 40% 98%);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
   --primary: hsl(175 80% 65%);
   --primary-foreground: hsl(190 47.4% 11.2%);
   --muted: hsl(0 0% 0%);
