@@ -8,8 +8,8 @@ import { HashRouter } from "react-router-dom";
 import App from "./App.tsx";
 import { EmbeddedViewerProvider } from "./providers/EmbeddedResultsContext.tsx";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
 // Initialize dark mode from system preference (toggled via sidebar)
 const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
