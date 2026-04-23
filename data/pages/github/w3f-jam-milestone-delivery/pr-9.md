@@ -5,6 +5,7 @@ title: Create project_name-milestone_number.md
 site: github.com/w3f/jam-milestone-delivery
 created_at: '2024-12-11T22:09:09.000Z'
 last_modified: '2024-12-11T22:09:09.000Z'
+content_kind: pr
 ---
 
 # Create project_name-milestone_number.md

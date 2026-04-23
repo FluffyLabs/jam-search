@@ -5,6 +5,7 @@ title: PVM FFI-able library for JAM Implementers
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-12T17:17:56.000Z'
 last_modified: '2025-09-12T17:17:56.000Z'
+content_kind: issue
 ---
 
 # PVM FFI-able library for JAM Implementers

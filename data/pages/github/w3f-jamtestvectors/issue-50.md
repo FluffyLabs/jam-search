@@ -7,6 +7,7 @@ title: >-
 site: github.com/w3f/jamtestvectors
 created_at: '2025-06-06T14:52:39.000Z'
 last_modified: '2025-06-06T14:52:39.000Z'
+content_kind: issue
 ---
 
 # Accumulation same_code_different_services-1, wrong values for bytes and items in service accounts?

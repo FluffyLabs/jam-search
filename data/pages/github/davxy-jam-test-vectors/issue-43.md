@@ -5,6 +5,7 @@ title: Test vectors for services
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-26T16:19:14.000Z'
 last_modified: '2025-04-26T16:19:14.000Z'
+content_kind: issue
 ---
 
 # Test vectors for services

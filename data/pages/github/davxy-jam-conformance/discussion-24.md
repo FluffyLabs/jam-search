@@ -5,6 +5,7 @@ title: '`1754982087/00000005` is not using compact encoding for generating servi
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-20T07:05:14.000Z'
 last_modified: '2025-08-20T07:05:14.000Z'
+content_kind: discussion
 ---
 
 # `1754982087/00000005` is not using compact encoding for generating service ids

@@ -5,6 +5,7 @@ title: Storage Encoding is not using hash of values
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-23T09:52:00.000Z'
 last_modified: '2025-05-23T09:52:00.000Z'
+content_kind: issue
 ---
 
 # Storage Encoding is not using hash of values

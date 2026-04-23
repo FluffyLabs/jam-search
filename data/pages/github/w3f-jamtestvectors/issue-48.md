@@ -5,6 +5,7 @@ title: Possible issue in preimage integration and statistics
 site: github.com/w3f/jamtestvectors
 created_at: '2025-05-25T16:43:15.000Z'
 last_modified: '2025-05-25T16:43:15.000Z'
+content_kind: issue
 ---
 
 # Possible issue in preimage integration and statistics

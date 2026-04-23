@@ -5,6 +5,7 @@ title: Typeberry
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-14T20:52:49.000Z'
 last_modified: '2025-09-14T20:52:49.000Z'
+content_kind: issue
 ---
 
 # Typeberry

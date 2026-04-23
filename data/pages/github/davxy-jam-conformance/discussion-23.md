@@ -5,6 +5,7 @@ title: Introduce category `trace` for discussions of specified trace
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-20T06:29:42.000Z'
 last_modified: '2025-08-20T06:29:42.000Z'
+content_kind: discussion
 ---
 
 # Introduce category `trace` for discussions of specified trace

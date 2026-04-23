@@ -5,6 +5,7 @@ title: Boka
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-15T07:21:26.000Z'
 last_modified: '2025-08-15T07:21:26.000Z'
+content_kind: issue
 ---
 
 # Boka

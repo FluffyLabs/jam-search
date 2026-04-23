@@ -5,6 +5,7 @@ title: Wrong order Statistics attributes
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-08-25T14:54:52.000Z'
 last_modified: '2025-08-25T14:54:52.000Z'
+content_kind: issue
 ---
 
 # Wrong order Statistics attributes

@@ -5,6 +5,7 @@ title: Preimages unneeded tests
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-15T18:49:04.000Z'
 last_modified: '2025-02-15T18:49:04.000Z'
+content_kind: issue
 ---
 
 # Preimages unneeded tests

@@ -5,6 +5,7 @@ title: 1768864701 - Step 00014908
 site: github.com/davxy/jam-conformance
 created_at: '2026-01-24T13:47:00.000Z'
 last_modified: '2026-01-24T13:47:00.000Z'
+content_kind: discussion
 ---
 
 # 1768864701 - Step 00014908

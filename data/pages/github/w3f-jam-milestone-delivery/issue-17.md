@@ -5,6 +5,7 @@ title: KYB link seems to be out of date
 site: github.com/w3f/jam-milestone-delivery
 created_at: '2025-12-11T20:38:13.000Z'
 last_modified: '2025-12-11T20:38:13.000Z'
+content_kind: issue
 ---
 
 # KYB link seems to be out of date

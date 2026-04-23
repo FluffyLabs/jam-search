@@ -5,6 +5,7 @@ title: Accumulation vectors statistics issue
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-07T17:45:09.000Z'
 last_modified: '2025-05-07T17:45:09.000Z'
+content_kind: issue
 ---
 
 # Accumulation vectors statistics issue

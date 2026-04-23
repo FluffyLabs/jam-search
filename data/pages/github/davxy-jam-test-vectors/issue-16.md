@@ -5,6 +5,7 @@ title: GP Version has changed E.10 prefix to "peak" instead of "node".
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-08T21:45:02.000Z'
 last_modified: '2025-02-08T21:45:02.000Z'
+content_kind: issue
 ---
 
 # GP Version has changed E.10 prefix to "peak" instead of "node".

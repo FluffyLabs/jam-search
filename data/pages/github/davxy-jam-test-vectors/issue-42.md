@@ -5,6 +5,7 @@ title: Test vectors for state keys
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-26T14:34:20.000Z'
 last_modified: '2025-04-26T14:34:20.000Z'
+content_kind: issue
 ---
 
 # Test vectors for state keys

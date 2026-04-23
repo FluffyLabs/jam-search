@@ -5,6 +5,7 @@ title: 'header signatures tests '
 site: github.com/w3f/jamtestvectors
 created_at: '2024-12-04T03:42:50.000Z'
 last_modified: '2024-12-04T03:42:50.000Z'
+content_kind: issue
 ---
 
 # header signatures tests 

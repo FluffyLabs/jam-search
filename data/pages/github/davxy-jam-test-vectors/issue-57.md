@@ -7,6 +7,7 @@ title: >-
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-20T18:28:36.000Z'
 last_modified: '2025-05-20T18:28:36.000Z'
+content_kind: issue
 ---
 
 # Core index encoding is using E2 (little endian) instead of normal integer encoding

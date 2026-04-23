@@ -5,6 +5,7 @@ title: Add initial PVM test vectors
 site: github.com/w3f/jamtestvectors
 created_at: '2024-06-24T14:24:56.000Z'
 last_modified: '2024-06-24T14:24:56.000Z'
+content_kind: pr
 ---
 
 # Add initial PVM test vectors

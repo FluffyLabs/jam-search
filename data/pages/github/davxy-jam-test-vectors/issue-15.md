@@ -5,6 +5,7 @@ title: Ordering of Reporters Set
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-05T14:43:54.000Z'
 last_modified: '2025-02-05T14:43:54.000Z'
+content_kind: issue
 ---
 
 # Ordering of Reporters Set

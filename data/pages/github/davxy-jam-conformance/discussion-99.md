@@ -5,6 +5,7 @@ title: Empty post_state in 1758708840/00000958.json
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-25T15:19:50.000Z'
 last_modified: '2025-09-25T15:19:50.000Z'
+content_kind: discussion
 ---
 
 # Empty post_state in 1758708840/00000958.json

@@ -5,6 +5,7 @@ title: '1757862207: Accumulation Output Order'
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-16T11:17:49.000Z'
 last_modified: '2025-09-16T11:17:49.000Z'
+content_kind: discussion
 ---
 
 # 1757862207: Accumulation Output Order

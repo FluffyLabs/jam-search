@@ -5,6 +5,7 @@ title: preimage not needed fix
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-28T15:58:48.000Z'
 last_modified: '2024-12-28T15:58:48.000Z'
+content_kind: issue
 ---
 
 # preimage not needed fix

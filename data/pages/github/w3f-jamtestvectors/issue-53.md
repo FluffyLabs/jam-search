@@ -5,6 +5,7 @@ title: Service keys are missing hash invocation
 site: github.com/w3f/jamtestvectors
 created_at: '2025-07-08T20:05:31.000Z'
 last_modified: '2025-07-08T20:05:31.000Z'
+content_kind: issue
 ---
 
 # Service keys are missing hash invocation

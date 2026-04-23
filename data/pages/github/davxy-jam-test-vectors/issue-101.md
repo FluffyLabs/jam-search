@@ -5,6 +5,7 @@ title: transfer_for_ejected_service-1 wrong statistics
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-10-09T11:59:27.000Z'
 last_modified: '2025-10-09T11:59:27.000Z'
+content_kind: issue
 ---
 
 # transfer_for_ejected_service-1 wrong statistics

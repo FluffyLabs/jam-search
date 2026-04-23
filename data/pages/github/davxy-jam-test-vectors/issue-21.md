@@ -5,6 +5,7 @@ title: '[nit] Disputes test case improvement'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-15T00:39:41.000Z'
 last_modified: '2025-02-15T00:39:41.000Z'
+content_kind: issue
 ---
 
 # [nit] Disputes test case improvement

@@ -5,6 +5,7 @@ title: update milestone-delivery template
 site: github.com/w3f/jam-milestone-delivery
 created_at: '2024-09-02T01:22:50.000Z'
 last_modified: '2024-09-02T01:22:50.000Z'
+content_kind: pr
 ---
 
 # update milestone-delivery template

@@ -5,6 +5,7 @@ title: 1763371498 - designate updated by designate service
 site: github.com/davxy/jam-conformance
 created_at: '2025-11-17T14:24:15.000Z'
 last_modified: '2025-11-17T14:24:15.000Z'
+content_kind: discussion
 ---
 
 # 1763371498 - designate updated by designate service

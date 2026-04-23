@@ -5,6 +5,7 @@ title: JamDuna
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-07T21:03:32.000Z'
 last_modified: '2025-08-07T21:03:32.000Z'
+content_kind: issue
 ---
 
 # JamDuna

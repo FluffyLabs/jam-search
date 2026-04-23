@@ -5,6 +5,7 @@ title: OnTransfer statistics in trace 1758621198/00000042.json
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-23T13:44:47.000Z'
 last_modified: '2025-09-23T13:44:47.000Z'
+content_kind: discussion
 ---
 
 # OnTransfer statistics in trace 1758621198/00000042.json

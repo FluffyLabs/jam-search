@@ -5,6 +5,7 @@ title: Add jotl
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-14T13:07:44.000Z'
 last_modified: '2026-03-14T13:07:44.000Z'
+content_kind: pr
 ---
 
 # Add jotl

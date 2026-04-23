@@ -5,6 +5,7 @@ title: Statistics test vector with preimage data does not lead to services stats
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-10T12:19:25.000Z'
 last_modified: '2025-04-10T12:19:25.000Z'
+content_kind: issue
 ---
 
 # Statistics test vector with preimage data does not lead to services stats

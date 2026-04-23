@@ -5,6 +5,7 @@ title: Gossamer-Jam
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-05T13:33:40.000Z'
 last_modified: '2025-09-05T13:33:40.000Z'
+content_kind: issue
 ---
 
 # Gossamer-Jam

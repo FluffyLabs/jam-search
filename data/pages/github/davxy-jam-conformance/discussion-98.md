@@ -5,6 +5,7 @@ title: Privileged services in trace 1758622403/00000239.json
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-23T15:03:36.000Z'
 last_modified: '2025-09-23T15:03:36.000Z'
+content_kind: discussion
 ---
 
 # Privileged services in trace 1758622403/00000239.json

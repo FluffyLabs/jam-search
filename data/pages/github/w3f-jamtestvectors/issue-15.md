@@ -5,6 +5,7 @@ title: Optimizing Erasure coding parameters
 site: github.com/w3f/jamtestvectors
 created_at: '2024-10-10T17:11:10.000Z'
 last_modified: '2024-10-10T17:11:10.000Z'
+content_kind: issue
 ---
 
 # Optimizing Erasure coding parameters

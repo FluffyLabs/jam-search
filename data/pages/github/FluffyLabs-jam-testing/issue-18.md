@@ -5,6 +5,7 @@ title: 'Demo fuzz failure: graymatter → pbnjam'
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-17T22:42:18.000Z'
 last_modified: '2026-03-17T22:42:18.000Z'
+content_kind: issue
 ---
 
 # Demo fuzz failure: graymatter → pbnjam

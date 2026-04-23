@@ -5,6 +5,7 @@ title: Request for PVM trace of work done in tiny/process_one_immediate_report-1
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-01T18:26:44.000Z'
 last_modified: '2025-05-01T18:26:44.000Z'
+content_kind: issue
 ---
 
 # Request for PVM trace of work done in tiny/process_one_immediate_report-1

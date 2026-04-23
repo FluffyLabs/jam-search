@@ -5,6 +5,7 @@ title: Added trie test vectors
 site: github.com/w3f/jamtestvectors
 created_at: '2024-06-24T13:55:46.000Z'
 last_modified: '2024-06-24T13:55:46.000Z'
+content_kind: pr
 ---
 
 # Added trie test vectors

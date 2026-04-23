@@ -5,6 +5,7 @@ title: Trace 1766479507_7943
 site: github.com/davxy/jam-conformance
 created_at: '2026-01-27T21:56:32.000Z'
 last_modified: '2026-01-27T21:56:32.000Z'
+content_kind: discussion
 ---
 
 # Trace 1766479507_7943

@@ -5,6 +5,7 @@ title: '1756572122'
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-02T15:54:36.000Z'
 last_modified: '2025-09-02T15:54:36.000Z'
+content_kind: discussion
 ---
 
 # 1756572122

@@ -5,6 +5,7 @@ title: Incorrect extrinsic_hash in the codec block test vector
 site: github.com/w3f/jamtestvectors
 created_at: '2025-03-18T16:51:26.000Z'
 last_modified: '2025-03-18T16:51:26.000Z'
+content_kind: issue
 ---
 
 # Incorrect extrinsic_hash in the codec block test vector

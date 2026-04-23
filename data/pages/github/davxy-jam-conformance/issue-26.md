@@ -5,6 +5,7 @@ title: TurboJam
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-20T23:05:42.000Z'
 last_modified: '2025-08-20T23:05:42.000Z'
+content_kind: issue
 ---
 
 # TurboJam
@@ -267,3 +268,36 @@ Report published. I'll bench you impl in the next days
 A new TurboJam Docker image has been published with the following updates:
 - Fixes the single failing trace identified in the previous report.
 - Transitions to a new database engine primarily to refine the development cycle, with potential performance improvements for storage-heavy service code as a byproduct.
+
+
+## Comment by @davxy
+
+I'm not able to run your target anymore 
+
+`./target.py run turbojam`
+
+[here](https://github.com/davxy/jam-conformance/blob/c2e505988fbe23ee3a3c8ee3cd741ee764aaae23/scripts/targets.json#L112) is your target entry.
+
+Which means that the command `fuzzer-api {TARGET_SOCK}` is run
+
+
+## Comment by @sierkov
+
+@davxy My current best guess is that the fuzzer uses an explicit --user argument when running docker run, and that user changed from 1001:1001 (which the container expects, and which is also used when --user is not specified) to something else. As a result, some permissions no longer worked.
+
+As a countermeasure, I made the tjam binary setuid, so the container should now work even when invoked with different user IDs.
+
+I’ve published the updated container. Its hash is sha256:98a17f56fc28b74186a57ae0be8026d97e85535572ecba1444b98d3cca6850ab.
+
+Let me know whether that solves the problem.
+
+
+## Comment by @sierkov
+
+Another TurboJam Docker image has been published that fixes the recently discovered trace 1775225235_3525.
+It's hash: sha256:ec1da5b57eabae469b42971e721f0092fd116db8c96ccdea94de499ffabe67b9.
+
+
+## Comment by @davxy
+
+Results updated

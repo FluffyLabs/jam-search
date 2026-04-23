@@ -5,6 +5,7 @@ title: '[M1 FUZZ] Unclarity around the `type` of the Unix socket'
 site: github.com/davxy/jam-conformance
 created_at: '2025-07-05T19:26:14.000Z'
 last_modified: '2025-07-05T19:26:14.000Z'
+content_kind: issue
 ---
 
 # [M1 FUZZ] Unclarity around the `type` of the Unix socket

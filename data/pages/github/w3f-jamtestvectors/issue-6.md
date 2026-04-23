@@ -5,6 +5,7 @@ title: '[Safrole] Tests use truncated BLAKE2b-512'
 site: github.com/w3f/jamtestvectors
 created_at: '2024-06-29T22:22:35.000Z'
 last_modified: '2024-06-29T22:22:35.000Z'
+content_kind: issue
 ---
 
 # [Safrole] Tests use truncated BLAKE2b-512

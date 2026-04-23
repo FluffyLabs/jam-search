@@ -5,6 +5,7 @@ title: Buildin test runner
 site: github.com/w3f/jamtestvectors
 created_at: '2024-07-15T23:07:55.000Z'
 last_modified: '2024-07-15T23:07:55.000Z'
+content_kind: issue
 ---
 
 # Buildin test runner

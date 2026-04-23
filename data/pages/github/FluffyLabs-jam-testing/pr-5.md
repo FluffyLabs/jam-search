@@ -5,6 +5,7 @@ title: 'JOTL: increase container memory to 2048m'
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-14T13:10:04.000Z'
 last_modified: '2026-03-14T13:10:04.000Z'
+content_kind: pr
 ---
 
 # JOTL: increase container memory to 2048m

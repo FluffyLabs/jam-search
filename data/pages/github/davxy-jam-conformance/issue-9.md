@@ -5,6 +5,7 @@ title: Jamixir
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-05T14:17:11.000Z'
 last_modified: '2025-08-05T14:17:11.000Z'
+content_kind: issue
 ---
 
 # Jamixir

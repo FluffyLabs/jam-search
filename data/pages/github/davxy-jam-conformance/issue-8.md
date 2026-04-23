@@ -5,6 +5,7 @@ title: JavaJAM
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-05T12:32:58.000Z'
 last_modified: '2025-08-05T12:32:58.000Z'
+content_kind: issue
 ---
 
 # JavaJAM

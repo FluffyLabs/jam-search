@@ -5,6 +5,7 @@ title: Update README.md
 site: github.com/w3f/jam-milestone-delivery
 created_at: '2024-11-27T10:40:11.000Z'
 last_modified: '2024-11-27T10:40:11.000Z'
+content_kind: pr
 ---
 
 # Update README.md

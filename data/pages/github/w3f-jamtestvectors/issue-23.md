@@ -5,6 +5,7 @@ title: assurances_for_stale_report timeout value
 site: github.com/w3f/jamtestvectors
 created_at: '2024-12-03T11:57:37.000Z'
 last_modified: '2024-12-03T11:57:37.000Z'
+content_kind: issue
 ---
 
 # assurances_for_stale_report timeout value

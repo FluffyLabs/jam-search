@@ -5,6 +5,7 @@ title: Safrole vectors
 site: github.com/w3f/jamtestvectors
 created_at: '2024-06-23T17:15:23.000Z'
 last_modified: '2024-06-23T17:15:23.000Z'
+content_kind: pr
 ---
 
 # Safrole vectors

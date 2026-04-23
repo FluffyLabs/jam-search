@@ -5,6 +5,7 @@ title: Tessera
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-05T16:00:31.000Z'
 last_modified: '2025-09-05T16:00:31.000Z'
+content_kind: issue
 ---
 
 # Tessera

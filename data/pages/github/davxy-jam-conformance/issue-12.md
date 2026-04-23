@@ -5,6 +5,7 @@ title: "Jamzilla \U0001F996"
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-09T13:47:19.000Z'
 last_modified: '2025-08-09T13:47:19.000Z'
+content_kind: issue
 ---
 
 # Jamzilla 🦖

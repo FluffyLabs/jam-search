@@ -5,6 +5,7 @@ title: 'Demo fuzz failure: graymatter → javajam'
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-25T21:19:38.000Z'
 last_modified: '2026-03-25T21:19:38.000Z'
+content_kind: issue
 ---
 
 # Demo fuzz failure: graymatter → javajam

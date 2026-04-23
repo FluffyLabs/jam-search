@@ -5,6 +5,7 @@ title: Question about handling of `post_state.slot` in statistics test vector
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-08-17T10:06:14.000Z'
 last_modified: '2025-08-17T10:06:14.000Z'
+content_kind: issue
 ---
 
 # Question about handling of `post_state.slot` in statistics test vector

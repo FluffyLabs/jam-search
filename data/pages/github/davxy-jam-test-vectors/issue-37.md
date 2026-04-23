@@ -5,6 +5,7 @@ title: Core index in work reports is not encoded as compact
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-06T20:57:06.000Z'
 last_modified: '2025-04-06T20:57:06.000Z'
+content_kind: issue
 ---
 
 # Core index in work reports is not encoded as compact

@@ -5,6 +5,7 @@ title: consistence between testvectors format in `stf/preimages` and `stf/accumu
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-11-05T17:39:22.000Z'
 last_modified: '2025-11-05T17:39:22.000Z'
+content_kind: issue
 ---
 
 # consistence between testvectors format in `stf/preimages` and `stf/accumulate`

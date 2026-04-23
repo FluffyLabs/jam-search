@@ -5,6 +5,7 @@ title: Add JOTL (JAM On The Lisp) to conformance & performance testing
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-13T21:08:25.000Z'
 last_modified: '2026-03-13T21:08:25.000Z'
+content_kind: pr
 ---
 
 # Add JOTL (JAM On The Lisp) to conformance & performance testing

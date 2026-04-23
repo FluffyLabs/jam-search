@@ -5,6 +5,7 @@ title: Wrong encoded or inconsistent data structure
 site: github.com/w3f/jamtestvectors
 created_at: '2025-07-01T12:29:53.000Z'
 last_modified: '2025-07-01T12:29:53.000Z'
+content_kind: issue
 ---
 
 # Wrong encoded or inconsistent data structure

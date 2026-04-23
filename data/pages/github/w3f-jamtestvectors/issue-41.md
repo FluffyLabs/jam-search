@@ -5,6 +5,7 @@ title: Requesting for the tracking list of M2 Conformance
 site: github.com/w3f/jamtestvectors
 created_at: '2025-04-26T17:07:27.000Z'
 last_modified: '2025-04-26T17:07:27.000Z'
+content_kind: issue
 ---
 
 # Requesting for the tracking list of M2 Conformance

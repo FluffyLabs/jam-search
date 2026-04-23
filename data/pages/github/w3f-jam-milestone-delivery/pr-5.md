@@ -5,6 +5,7 @@ title: 'Universaldot [Milestone 1]'
 site: github.com/w3f/jam-milestone-delivery
 created_at: '2024-10-06T17:12:02.000Z'
 last_modified: '2024-10-06T17:12:02.000Z'
+content_kind: pr
 ---
 
 # Universaldot [Milestone 1]

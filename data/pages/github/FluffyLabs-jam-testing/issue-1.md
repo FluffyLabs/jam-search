@@ -5,6 +5,7 @@ title: Fuzzing all targets
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-13T16:57:13.000Z'
 last_modified: '2026-03-13T16:57:13.000Z'
+content_kind: issue
 ---
 
 # Fuzzing all targets

@@ -5,6 +5,7 @@ title: Clarification on genesis state
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-16T14:05:46.000Z'
 last_modified: '2025-06-16T14:05:46.000Z'
+content_kind: issue
 ---
 
 # Clarification on genesis state

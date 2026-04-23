@@ -7,6 +7,7 @@ title: >-
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-01-06T18:36:14.000Z'
 last_modified: '2025-01-06T18:36:14.000Z'
+content_kind: issue
 ---
 
 # Different semantic for services in `preimages` and `accumulation` and `reports`

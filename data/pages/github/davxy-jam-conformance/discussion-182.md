@@ -5,6 +5,7 @@ title: Serialization order of fields in recent_history (beta) does not match GP 
 site: github.com/davxy/jam-conformance
 created_at: '2026-03-25T08:30:45.000Z'
 last_modified: '2026-03-25T08:30:45.000Z'
+content_kind: discussion
 ---
 
 # Serialization order of fields in recent_history (beta) does not match GP 0.7.2

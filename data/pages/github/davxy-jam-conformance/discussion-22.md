@@ -5,6 +5,7 @@ title: Welcome to JAM Conformance Discussions!
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-20T06:22:00.000Z'
 last_modified: '2025-08-20T06:22:00.000Z'
+content_kind: discussion
 ---
 
 # Welcome to JAM Conformance Discussions!
