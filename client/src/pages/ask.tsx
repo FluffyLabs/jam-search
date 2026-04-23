@@ -172,7 +172,7 @@ export function AskPage() {
   return (
     <div className="flex flex-col h-full bg-background">
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
-        <section className="flex flex-col overflow-hidden">
+        <section className="flex flex-col overflow-hidden border-r-1 border-r-[#D4D4D4] dark:border-r-1 dark:border-r-[#181818]">
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
             {isEmpty ? (
               <EmptyState
@@ -217,7 +217,7 @@ export function AskPage() {
           </div>
         </section>
 
-        <aside className="hidden lg:block border-l border-border overflow-y-auto bg-card/20 px-5 py-6">
+        <aside className="hidden lg:block border-l-1 border-l-white dark:border-l-1 dark:border-l-[#353535] overflow-y-auto bg-card/20 px-5 py-6">
           <CitationsPanel assistant={lastAssistant} cards={state.cards} />
         </aside>
       </div>
