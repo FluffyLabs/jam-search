@@ -86,9 +86,20 @@ export function createMcpServer(db: SearchDB, dataDir: string): Server {
           };
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      // Zod validation errors describe the caller's own input and are safe
+      // (and useful) to surface. Anything else might contain internal detail
+      // like file paths or DB errors — log server-side, return generic text.
+      if (error instanceof z.ZodError) {
+        return {
+          content: [
+            { type: "text", text: `Invalid arguments: ${error.message}` },
+          ],
+          isError: true,
+        };
+      }
+      console.error("MCP tool execution failed:", error);
       return {
-        content: [{ type: "text", text: `Error: ${message}` }],
+        content: [{ type: "text", text: "Tool execution failed" }],
         isError: true,
       };
     }

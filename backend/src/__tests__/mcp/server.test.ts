@@ -1,22 +1,34 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { createSearchDB, insertDoc } from "../../data/searchIndex.js";
 import { createMcpServer } from "../../mcp/server.js";
 
-async function connectClient(db = createSearchDB()) {
-  const server = createMcpServer(db, "./data");
-  const [clientTransport, serverTransport] =
-    InMemoryTransport.createLinkedPair();
-  const client = new Client({ name: "test", version: "0.0.0" });
-  await Promise.all([
-    server.connect(serverTransport),
-    client.connect(clientTransport),
-  ]);
-  return { client, db };
-}
-
 describe("mcp server", () => {
+  const opened: Array<() => Promise<void>> = [];
+
+  afterEach(async () => {
+    await Promise.all(opened.map((close) => close()));
+    opened.length = 0;
+  });
+
+  async function connectClient(db = createSearchDB()) {
+    const server = createMcpServer(db, "./data");
+    const [clientTransport, serverTransport] =
+      InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: "test", version: "0.0.0" });
+    await Promise.all([
+      server.connect(serverTransport),
+      client.connect(clientTransport),
+    ]);
+    opened.push(async () => {
+      // close() is idempotent in the MCP SDK; closing both sides cleans up
+      // protocol state, transport handlers, and linked transport pair.
+      await Promise.all([client.close(), server.close()]);
+    });
+    return { client, db };
+  }
+
   it("lists exactly the two /ask tools", async () => {
     const { client } = await connectClient();
     const { tools } = await client.listTools();
