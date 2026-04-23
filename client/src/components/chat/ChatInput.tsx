@@ -94,7 +94,6 @@ export function ChatInput({
             onClick={submit}
             disabled={!ready}
             size="sm"
-            variant={ready ? "default" : "ghost"}
           >
             Ask
           </Button>
