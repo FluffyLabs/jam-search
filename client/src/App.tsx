@@ -7,8 +7,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { EmbeddedViewer } from "./components/EmbeddedViewer";
 import { Header } from "./components/Header";
 import { cn } from "./lib/utils";
+import { AskLayout } from "@/components/ask/AskLayout";
 import { IndexPage } from "./pages";
 import { AskPage } from "./pages/ask";
+import { AskSharedPage } from "./pages/askShared";
 import SearchResults from "./pages/results";
 import { SettingsPage } from "./pages/settings";
 import DiscordResultsAll from "./pages/viewall/discord";
@@ -109,7 +111,11 @@ function App() {
                   }
                 />
                 <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/ask" element={<AskPage />} />
+                <Route path="/ask" element={<AskLayout />}>
+                  <Route index element={<AskPage />} />
+                  <Route path=":sessionId" element={<AskPage />} />
+                </Route>
+                <Route path="/ask/s/:sessionId" element={<AskSharedPage />} />
                 <Route
                   path="*"
                   element={
