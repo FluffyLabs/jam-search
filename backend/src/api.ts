@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { rateLimiter } from "hono-rate-limiter";
 import { handleAsk } from "./api/ask.js";
+import { handleAskTitle } from "./api/askTitle.js";
 import { getEmbedding, getEmbeddingSchema } from "./api/getEmbedding.js";
 import {
   searchDiscords,
@@ -79,6 +80,7 @@ export function createApp(db: SearchDB, dataDir: string) {
   });
 
   app.post("/ask", handleAsk(db, dataDir));
+  app.post("/ask/title", handleAskTitle());
 
   return app;
 }
