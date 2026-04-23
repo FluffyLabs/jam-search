@@ -4,9 +4,10 @@ import { fillArchivedMessages } from "../scripts/fillArchivedMessages.js";
 import { findLatestIndexedDate } from "../scripts/latestIndexedDate.js";
 
 const DATA_DIR = process.env.DATA_DIR || "./data";
-// Fallback backfill window when a room has no indexed days yet. Bounds the
-// work done for new/empty rooms; self-healing for outages up to ~a month.
-const FALLBACK_BACKFILL_DAYS = 30;
+// Minimum backfill window. Re-scanning is idempotent (writer dedupes by
+// messageId), so we always look back at least this far to heal any older
+// holes. The watermark extends the window further back when needed.
+const MIN_BACKFILL_DAYS = 30;
 
 try {
   await main();
@@ -21,28 +22,20 @@ async function main() {
 
   const yesterday = subDays(new Date(), 1);
   const toDate = format(yesterday, "yyyy-MM-dd");
-  const fallbackFrom = format(
-    subDays(yesterday, FALLBACK_BACKFILL_DAYS),
+  const defaultFrom = format(
+    subDays(yesterday, MIN_BACKFILL_DAYS),
     "yyyy-MM-dd"
   );
 
   const errors: unknown[] = [];
   for (const room of matrix.ROOMS) {
     const latest = findLatestIndexedDate(DATA_DIR, room.name);
-    // Start from the watermark day itself: the writer deduplicates by
-    // messageId, so re-fetching it catches late-arriving messages safely.
-    const fromDate = latest ?? fallbackFrom;
-
-    if (fromDate > toDate) {
-      console.log(
-        `Skipping ${room.name}: latest indexed day ${fromDate} is after ${toDate}`
-      );
-      continue;
-    }
+    // Always scan at least MIN_BACKFILL_DAYS (ISO dates compare lexicographically);
+    // extend further back if the watermark is older than that window.
+    const fromDate = latest && latest < defaultFrom ? latest : defaultFrom;
 
     console.log(
-      `Backfilling ${room.name}: ${fromDate}..${toDate}` +
-        (latest ? ` (watermark)` : ` (fallback, no prior data)`)
+      `Backfilling ${room.name}: ${fromDate}..${toDate} (latest indexed: ${latest ?? "none"})`
     );
 
     try {
