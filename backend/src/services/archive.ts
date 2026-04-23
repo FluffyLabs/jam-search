@@ -132,6 +132,6 @@ export async function fetchArchivedMessages(
     return messages;
   } catch (error) {
     console.error(`Error fetching messages from archive ${archiveUrl}:`, error);
-    return [];
+    throw error;
   }
 }
