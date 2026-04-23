@@ -149,4 +149,26 @@ describe("fetchData — happy path", () => {
       fixture.cleanup();
     }
   });
+
+  it("replaces existing dataDir contents rather than merging", async () => {
+    const fixture = await makeFixtureRepo({
+      dataFiles: { "new.md": "new" },
+    });
+    const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "fetcher-work-"));
+    const dataDir = path.join(workDir, "data");
+    fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(path.join(dataDir, "stale.md"), "stale");
+    try {
+      await fetchData({
+        repoUrl: fixture.bareUrl,
+        ref: "main",
+        dataDir,
+      });
+      expect(fs.existsSync(path.join(dataDir, "new.md"))).toBe(true);
+      expect(fs.existsSync(path.join(dataDir, "stale.md"))).toBe(false);
+    } finally {
+      fs.rmSync(workDir, { recursive: true, force: true });
+      fixture.cleanup();
+    }
+  });
 });
