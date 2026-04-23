@@ -44,7 +44,9 @@ export function AskPage() {
   const hydratedRef = useRef<string | null>(null);
   const createdRef = useRef<Set<string>>(new Set());
   const stateRef = useRef(state);
-  stateRef.current = state;
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // Hydrate when sessionId changes. Abort any running stream first.
