@@ -176,6 +176,198 @@ git commit -m "feat(supabase): add ask_sessions table with RLS"
 
 ---
 
+## Task 1b: Backend `/ask/title` endpoint (TDD)
+
+**Files:**
+- Create: `backend/src/ask/titleGen.ts`
+- Create: `backend/src/api/askTitle.ts`
+- Create: `backend/src/__tests__/ask/titleGen.test.ts`
+- Modify: `backend/src/api.ts` — register route
+- Modify: `backend/src/env.ts` — add `TITLE_MODEL` default (or `.env.example` if env is plain `process.env`)
+
+- [ ] **Step 1: Write the failing test**
+
+```ts
+// backend/src/__tests__/ask/titleGen.test.ts
+import { describe, expect, it, vi } from "vitest";
+import { generateTitle } from "../../ask/titleGen.js";
+
+describe("generateTitle", () => {
+  it("returns a trimmed, quote-free title", async () => {
+    const fakeOpenAI = {
+      chat: {
+        completions: {
+          create: vi.fn().mockResolvedValue({
+            choices: [{ message: { content: '"How work results accumulate"' } }],
+          }),
+        },
+      },
+    } as never;
+    const title = await generateTitle({
+      openai: fakeOpenAI,
+      model: "anthropic/claude-haiku-4-5",
+      question: "How do work results accumulate in JAM?",
+    });
+    expect(title).toBe("How work results accumulate");
+  });
+
+  it("throws on empty model output", async () => {
+    const fakeOpenAI = {
+      chat: {
+        completions: {
+          create: vi.fn().mockResolvedValue({ choices: [{ message: { content: "" } }] }),
+        },
+      },
+    } as never;
+    await expect(
+      generateTitle({
+        openai: fakeOpenAI,
+        model: "x",
+        question: "q",
+      }),
+    ).rejects.toThrow(/empty/i);
+  });
+
+  it("truncates to 80 chars max", async () => {
+    const long = "A".repeat(200);
+    const fakeOpenAI = {
+      chat: {
+        completions: {
+          create: vi.fn().mockResolvedValue({ choices: [{ message: { content: long } }] }),
+        },
+      },
+    } as never;
+    const title = await generateTitle({
+      openai: fakeOpenAI,
+      model: "x",
+      question: "q",
+    });
+    expect(title.length).toBeLessThanOrEqual(80);
+  });
+});
+```
+
+- [ ] **Step 2: Run and confirm failure**
+
+Run: `npm test --workspace backend -- titleGen`
+Expected: FAIL — module not found.
+
+- [ ] **Step 3: Implement `titleGen.ts`**
+
+```ts
+// backend/src/ask/titleGen.ts
+import type OpenAI from "openai";
+
+const TITLE_SYSTEM_PROMPT =
+  "You generate short, descriptive titles for a user's first question in a " +
+  "chat. Respond with ONLY the title — 5 to 8 words, no surrounding quotes, " +
+  "no trailing punctuation, no prefix like 'Title:'. Plain text only.";
+
+export async function generateTitle(args: {
+  openai: OpenAI;
+  model: string;
+  question: string;
+}): Promise<string> {
+  const { openai, model, question } = args;
+  const res = await openai.chat.completions.create({
+    model,
+    messages: [
+      { role: "system", content: TITLE_SYSTEM_PROMPT },
+      { role: "user", content: question },
+    ],
+    max_tokens: 40,
+    temperature: 0.2,
+  });
+  const raw = res.choices[0]?.message?.content?.trim() ?? "";
+  if (!raw) throw new Error("Title generation returned empty output");
+  const stripped = raw
+    .replace(/^["'`]|["'`]$/g, "")
+    .replace(/[.!?]+$/g, "")
+    .trim();
+  return stripped.slice(0, 80);
+}
+```
+
+- [ ] **Step 4: Run test**
+
+Run: `npm test --workspace backend -- titleGen`
+Expected: PASS (3 tests).
+
+- [ ] **Step 5: Implement the HTTP handler**
+
+```ts
+// backend/src/api/askTitle.ts
+import type { Context } from "hono";
+import { z } from "zod";
+import { createOpenRouterClient } from "../ask/openrouter.js";
+import { generateTitle } from "../ask/titleGen.js";
+
+const titleRequestSchema = z.object({
+  question: z.string().trim().min(1).max(8000),
+  openrouterKey: z.string().trim().min(1).max(512),
+});
+
+export function handleAskTitle() {
+  return async (c: Context) => {
+    let body: unknown;
+    try {
+      body = await c.req.json();
+    } catch {
+      return c.json({ error: "Invalid JSON body" }, 400);
+    }
+    const parsed = titleRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return c.json(
+        { error: "Invalid request", issues: parsed.error.issues },
+        400,
+      );
+    }
+    const { question, openrouterKey } = parsed.data;
+    const model = process.env.TITLE_MODEL ?? "anthropic/claude-haiku-4-5";
+    const openai = createOpenRouterClient(openrouterKey);
+    try {
+      const title = await generateTitle({ openai, model, question });
+      return c.json({ title });
+    } catch (err) {
+      return c.json(
+        { error: (err as Error).message || "Title generation failed" },
+        502,
+      );
+    }
+  };
+}
+```
+
+- [ ] **Step 6: Register the route**
+
+In `backend/src/api.ts`, next to the existing `app.post("/ask", handleAsk(db, dataDir));` line, add:
+
+```ts
+import { handleAskTitle } from "./api/askTitle.js";
+// ...
+app.post("/ask/title", handleAskTitle());
+```
+
+- [ ] **Step 7: Document the env var**
+
+Append to `.env.example` at the repo root (or wherever env vars are documented):
+
+```
+# Cheap model used to generate titles for Ask sessions. Defaults to Haiku.
+TITLE_MODEL=anthropic/claude-haiku-4-5
+```
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add backend/src/ask/titleGen.ts backend/src/api/askTitle.ts \
+        backend/src/api.ts backend/src/__tests__/ask/titleGen.test.ts \
+        .env.example
+git commit -m "feat(backend): POST /ask/title endpoint using TITLE_MODEL"
+```
+
+---
+
 ## Task 2: Session types + serialization (TDD)
 
 **Files:**
@@ -1111,6 +1303,141 @@ git commit -m "feat(ask): hydrate from supabase and persist turns"
 
 ---
 
+## Task 8b: Title generation wiring + `requestTitle` client
+
+**Files:**
+- Create: `client/src/lib/askTitleClient.ts`
+- Create: `client/src/lib/__tests__/askTitleClient.test.ts`
+- Modify: `client/src/pages/ask.tsx` — fire title request in parallel with first stream; UPDATE `title` when it resolves.
+
+- [ ] **Step 1: Write the failing test**
+
+```ts
+// client/src/lib/__tests__/askTitleClient.test.ts
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { requestTitle } from "@/lib/askTitleClient";
+
+afterEach(() => vi.restoreAllMocks());
+
+describe("requestTitle", () => {
+  it("posts to /ask/title and returns the title", async () => {
+    const fetchMock = vi
+      .spyOn(global, "fetch")
+      .mockResolvedValue(
+        new Response(JSON.stringify({ title: "Hello world" }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+      );
+    const title = await requestTitle({
+      question: "Hi there",
+      openrouterKey: "k",
+    });
+    expect(title).toBe("Hello world");
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringMatching(/\/ask\/title$/),
+      expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("returns null when the endpoint errors", async () => {
+    vi.spyOn(global, "fetch").mockResolvedValue(new Response("", { status: 502 }));
+    const title = await requestTitle({ question: "q", openrouterKey: "k" });
+    expect(title).toBeNull();
+  });
+});
+```
+
+- [ ] **Step 2: Run and confirm failure**
+
+Run: `npm test --workspace client -- askTitleClient`
+Expected: FAIL — module not found.
+
+- [ ] **Step 3: Implement**
+
+```ts
+// client/src/lib/askTitleClient.ts
+const API_URL =
+  (typeof window !== "undefined" && window.localStorage?.getItem("API_URL")) ||
+  import.meta.env?.VITE_API_URL ||
+  "https://search-api.fluffylabs.dev";
+
+export async function requestTitle(args: {
+  question: string;
+  openrouterKey: string;
+  signal?: AbortSignal;
+}): Promise<string | null> {
+  try {
+    const res = await fetch(`${API_URL}/ask/title`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        question: args.question,
+        openrouterKey: args.openrouterKey,
+      }),
+      signal: args.signal,
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as { title?: string };
+    return body.title?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+```
+
+- [ ] **Step 4: Run test**
+
+Run: `npm test --workspace client -- askTitleClient`
+Expected: PASS.
+
+- [ ] **Step 5: Wire it into the session-create flow in `AskPage`**
+
+In `client/src/pages/ask.tsx`, update the `send()` function's new-session branch (from Task 8) so that *in parallel* with creating the row and starting the stream it also fires a title request:
+
+```tsx
+if (!activeId) {
+  activeId = uuidv4();
+  createdRef.current.add(activeId);
+  const provisional = deriveTitle({
+    ...state,
+    messages: [{ id: "pending", role: "user", content: text }],
+  });
+  await sessions.create({
+    id: activeId,
+    title: provisional,
+    state: { ...state, messages: [
+      { id: "pending", role: "user", content: text },
+    ] },
+  });
+  hydratedRef.current = activeId;
+  navigate(`/ask/${activeId}`, { replace: true });
+
+  // Fire-and-forget title generation; patch the row when it resolves.
+  requestTitle({ question: text, openrouterKey: apiKey }).then((title) => {
+    if (title) sessions.update(activeId!, { title });
+  });
+}
+```
+
+The `provisional` title (from Task 2's `deriveTitle` fallback) means the sidebar has *something* immediately; the LLM-generated title overwrites it within a couple of seconds.
+
+- [ ] **Step 6: Manual test**
+
+Run dev server. Ask a new question. Within 2–3 seconds of submitting, the sidebar entry title should change from the first-60-chars fallback to a concise LLM title.
+
+If the backend is local-only (not yet deployed), point `localStorage.API_URL` at `http://localhost:PORT` before testing.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add client/src/lib/askTitleClient.ts client/src/lib/__tests__/askTitleClient.test.ts \
+        client/src/pages/ask.tsx
+git commit -m "feat(ask): generate session titles via /ask/title in parallel"
+```
+
+---
+
 ## Task 9: Save-error banner
 
 **Files:**
@@ -1232,6 +1559,7 @@ describe("SessionsSidebar", () => {
           onRename={vi.fn()}
           onDelete={vi.fn()}
           onToggleShare={vi.fn()}
+          onRegenerateTitle={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -1251,6 +1579,7 @@ describe("SessionsSidebar", () => {
           onRename={vi.fn()}
           onDelete={vi.fn()}
           onToggleShare={vi.fn()}
+          onRegenerateTitle={vi.fn()}
         />
       </MemoryRouter>,
     );
@@ -1287,12 +1616,14 @@ export function SessionRow({
   onRename,
   onDelete,
   onToggleShare,
+  onRegenerateTitle,
 }: {
   session: AskSessionSummary;
   active: boolean;
   onRename: (id: string) => void;
   onDelete: (id: string) => void;
   onToggleShare: (id: string, next: boolean) => void;
+  onRegenerateTitle: (id: string) => void;
 }) {
   return (
     <div
@@ -1318,6 +1649,9 @@ export function SessionRow({
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => onRename(session.id)}>
             Rename
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onRegenerateTitle(session.id)}>
+            Regenerate title
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => onToggleShare(session.id, !session.isPublic)}
@@ -1357,6 +1691,7 @@ export function SessionsSidebar({
   onRename,
   onDelete,
   onToggleShare,
+  onRegenerateTitle,
 }: {
   sessions: AskSessionSummary[];
   activeId: string | null;
@@ -1364,6 +1699,7 @@ export function SessionsSidebar({
   onRename: (id: string) => void;
   onDelete: (id: string) => void;
   onToggleShare: (id: string, next: boolean) => void;
+  onRegenerateTitle: (id: string) => void;
 }) {
   const [filter, setFilter] = useState("");
   const filtered = useMemo(() => {
@@ -1406,6 +1742,7 @@ export function SessionsSidebar({
                 onRename={onRename}
                 onDelete={onDelete}
                 onToggleShare={onToggleShare}
+                onRegenerateTitle={onRegenerateTitle}
               />
             ))}
           </div>
@@ -1425,10 +1762,12 @@ export function SessionsSidebar({
 
 ```tsx
 // client/src/components/ask/AskLayout.tsx
+import { useUserData } from "@fluffylabs/shared-ui/supabase";
 import { Outlet, useParams } from "react-router-dom";
 import { AuthGate } from "@/components/ask/AuthGate";
 import { SessionsSidebar } from "@/components/ask/SessionsSidebar";
 import { useSessions } from "@/hooks/useSessions";
+import { requestTitle } from "@/lib/askTitleClient";
 
 export function AskLayout() {
   return (
@@ -1441,6 +1780,10 @@ export function AskLayout() {
 function LayoutInner() {
   const { sessionId } = useParams<{ sessionId?: string }>();
   const sessions = useSessions();
+  const { data: keyData } = useUserData("openrouter-api-key", {
+    appScoped: true,
+  });
+  const apiKey = typeof keyData === "string" ? keyData : null;
   return (
     <div className="flex h-full">
       <SessionsSidebar
@@ -1456,6 +1799,22 @@ function LayoutInner() {
           }
         }}
         onToggleShare={(id, next) => sessions.update(id, { isPublic: next })}
+        onRegenerateTitle={async (id) => {
+          if (!apiKey) {
+            window.alert(
+              "Add an OpenRouter API key in Settings before regenerating titles.",
+            );
+            return;
+          }
+          const record = await sessions.get(id);
+          const first = record?.state.messages.find((m) => m.role === "user");
+          if (!first || first.role !== "user") return;
+          const title = await requestTitle({
+            question: first.content,
+            openrouterKey: apiKey,
+          });
+          if (title) await sessions.update(id, { title });
+        }}
       />
       <div className="flex-1 min-w-0">
         <Outlet />
@@ -1991,6 +2350,9 @@ Run through before handing off to execution.
 |---------------------------------------|------------------------------|
 | `ask_sessions` schema + indexes + trigger | Task 1                    |
 | RLS `owner_all` + `public_read`       | Task 1                       |
+| Title generation (backend endpoint)   | Task 1b                      |
+| Title generation (frontend wiring)    | Task 8b                      |
+| Regenerate title action (sidebar)     | Task 10                      |
 | `messages` JSONB shape, strip `isStreaming` | Task 2                  |
 | Sidebar groups: Today/Yesterday/7/30/Older | Task 3                    |
 | Frontend CRUD (no backend changes)    | Task 4                       |

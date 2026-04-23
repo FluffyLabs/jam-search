@@ -105,7 +105,19 @@ The URL is the source of truth for "which session is active". A session row is c
 1. Generates a UUID client-side (so the URL can update immediately).
 2. Navigates to `/ask/<uuid>` (replace, not push — the prior blank `/ask` shouldn't land in history).
 3. Initiates the SSE stream to `/ask` as today.
-4. On `done`, INSERTs the row with the full `messages` array, generated `title` (first 60 chars of the first user message, trimmed at a word boundary), and `model`.
+4. **In parallel**, fires a non-streaming `POST /ask/title` request with the first user message. The response (a short title, ~5–8 words) is written back to the session row via a follow-up UPDATE. The main answer stream is not blocked by title generation.
+5. On the main stream's `done`, UPDATEs the row with the full `messages` array and `cards`. If title generation has also completed by then, the `title` field is included in the same write; otherwise the title write lands separately when it resolves.
+
+### Title generation
+
+Generated once per session by a cheap model, server-side:
+
+- **Endpoint:** `POST /ask/title` — new backend route. Non-streaming. Request: `{ question: string, openrouterKey: string }`. Response: `{ title: string }`.
+- **Model:** hardcoded on the backend via `TITLE_MODEL` env var, default `anthropic/claude-haiku-4-5`. Not user-selectable.
+- **Prompt:** a short system prompt instructing the model to return a 5–8 word title, no quotes, no trailing punctuation.
+- **Cost:** borne by the user's own OpenRouter key — same mechanism as `/ask`. Fractions of a cent per session, but callers should surface this somewhere in Settings.
+- **Failure modes:** on error or timeout (5s cap), the session `title` stays `null` and the sidebar renders an "Untitled" placeholder. No retry.
+- **Regeneration:** no automatic regen on subsequent turns. A "Regenerate title" action in the sidebar row menu lets the user re-run generation manually. Rename remains available for full manual override.
 
 ### Turn completion writes
 
@@ -123,7 +135,7 @@ Hard delete. A deleted session's public link 404s immediately. No soft-delete co
 
 ### Title editing
 
-Users can rename a session from the sidebar (right-click or hover menu). This is a single-field UPDATE of `title`.
+Users can rename a session from the sidebar hover menu (single-field UPDATE of `title`). The same menu offers "Regenerate title" which re-calls `/ask/title` with the first user message and overwrites `title`.
 
 ## URL Structure & Routing
 
