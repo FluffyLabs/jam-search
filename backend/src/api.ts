@@ -83,9 +83,9 @@ export function createApp(db: SearchDB, dataDir: string) {
 
   // MCP (Model Context Protocol) endpoint — exposes the same two tools
   // the /ask agent uses (search_all + get_full_document) over Streamable HTTP.
-  app.post("/mcp", (c) => handleMcpPost(c));
-  app.get("/mcp", (c) => handleMcpGet(c));
-  app.delete("/mcp", (c) => handleMcpDelete(c));
+  app.post("/mcp", handleMcpPost);
+  app.get("/mcp", handleMcpGet);
+  app.delete("/mcp", handleMcpDelete);
 
   return app;
 }

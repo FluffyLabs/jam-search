@@ -1,3 +1,6 @@
+// MCP server exposing the same two tools as the /ask agent. The tool handlers
+// delegate to executeSearchAll / executeGetFullDocument in ../ask/tools.ts so
+// both surfaces share one implementation — keep tool semantics in sync there.
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
@@ -10,12 +13,15 @@ import type { SearchDB } from "../data/searchIndex.js";
 
 const SearchAllInputSchema = z.object({
   query: z.string().describe("Natural-language or keyword query."),
+  // `.optional()` after `.default()` keeps `limit` out of JSON-schema `required`,
+  // so strict MCP clients don't have to pass it explicitly.
   limit: z
     .number()
     .int()
     .min(1)
     .max(20)
     .default(10)
+    .optional()
     .describe("Max results per source (so up to 4 × limit total)."),
 });
 
