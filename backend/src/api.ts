@@ -19,7 +19,7 @@ import {
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
 import type { SearchDB } from "./data/searchIndex.js";
-import { handleMcpDelete, handleMcpGet, handleMcpPost } from "./mcp/handler.js";
+import { createMcpHandler } from "./mcp/handler.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -29,14 +29,18 @@ export function createApp(db: SearchDB, dataDir: string) {
   // Middleware
   app.use(logger());
 
-  app.use(
-    cors({
-      origin: isDevelopment
-        ? (origin) =>
-            /^https?:\/\/localhost(:\d+)?$/.test(origin) ? origin : null
-        : "*",
-    })
-  );
+  // CORS is only relevant for browser-origin callers; /mcp is server-to-server
+  // and must not advertise any allowed origin. Skip the middleware for it.
+  const corsMiddleware = cors({
+    origin: isDevelopment
+      ? (origin) =>
+          /^https?:\/\/localhost(:\d+)?$/.test(origin) ? origin : null
+      : "*",
+  });
+  app.use(async (c, next) => {
+    if (c.req.path === "/mcp") return next();
+    return corsMiddleware(c, next);
+  });
 
   // Health check endpoint
   app.get("/health", (c) => {
@@ -81,11 +85,9 @@ export function createApp(db: SearchDB, dataDir: string) {
 
   app.post("/ask", handleAsk(db, dataDir));
 
-  // MCP (Model Context Protocol) endpoint — exposes the same two tools
-  // the /ask agent uses (search_all + get_full_document) over Streamable HTTP.
-  app.post("/mcp", handleMcpPost);
-  app.get("/mcp", handleMcpGet);
-  app.delete("/mcp", handleMcpDelete);
+  // MCP (Model Context Protocol): stateless Streamable HTTP endpoint exposing
+  // the same two tools the /ask agent uses (search_all + get_full_document).
+  app.all("/mcp", createMcpHandler(db, dataDir));
 
   return app;
 }

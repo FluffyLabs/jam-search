@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { executeGetFullDocument, executeSearchAll } from "../../ask/tools.js";
+import {
+  executeGetFullDocument,
+  executeSearchAll,
+  TOOL_DEFINITIONS,
+  TOOL_SPECS,
+} from "../../ask/tools.js";
 import { createSearchDB, insertDoc } from "../../data/searchIndex.js";
 
 describe("executeSearchAll", () => {
@@ -76,5 +81,25 @@ describe("executeGetFullDocument", () => {
     const db = createSearchDB();
     const result = await executeGetFullDocument({ id: "does-not-exist" }, db);
     expect(result).toBeNull();
+  });
+});
+
+describe("tool specs", () => {
+  it("TOOL_DEFINITIONS is derived 1:1 from TOOL_SPECS (no duplication)", () => {
+    expect(TOOL_DEFINITIONS.map((d) => d.function.name)).toEqual(
+      TOOL_SPECS.map((s) => s.name)
+    );
+    for (let i = 0; i < TOOL_SPECS.length; i++) {
+      expect(TOOL_DEFINITIONS[i].function.description).toBe(
+        TOOL_SPECS[i].description
+      );
+    }
+  });
+
+  it("search_all parameters do not require `limit`", () => {
+    const spec = TOOL_DEFINITIONS.find((d) => d.function.name === "search_all");
+    expect(spec).toBeDefined();
+    const params = spec?.function.parameters as { required?: string[] };
+    expect(params.required).toEqual(["query"]);
   });
 });

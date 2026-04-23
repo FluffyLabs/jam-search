@@ -1,6 +1,7 @@
-// MCP server exposing the same two tools as the /ask agent. The tool handlers
-// delegate to executeSearchAll / executeGetFullDocument in ../ask/tools.ts so
-// both surfaces share one implementation — keep tool semantics in sync there.
+// MCP server exposing the same two tools as the /ask agent. Tool specs and
+// implementations are sourced from ../ask/tools.ts so both surfaces stay in
+// sync. MCP explicitly disables embeddings to keep the server's OpenAI quota
+// off the anonymous path.
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import {
   CallToolRequestSchema,
@@ -8,41 +9,22 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 
-import { executeGetFullDocument, executeSearchAll } from "../ask/tools.js";
+import {
+  executeGetFullDocument,
+  executeSearchAll,
+  TOOL_SPECS,
+} from "../ask/tools.js";
 import type { SearchDB } from "../data/searchIndex.js";
 
-const SearchAllInputSchema = z.object({
-  query: z.string().describe("Natural-language or keyword query."),
-  // `.optional()` after `.default()` keeps `limit` out of JSON-schema `required`,
-  // so strict MCP clients don't have to pass it explicitly.
-  limit: z
-    .number()
-    .int()
-    .min(1)
-    .max(20)
-    .default(10)
-    .optional()
-    .describe("Max results per source (so up to 4 × limit total)."),
-});
+const MCP_TOOLS = TOOL_SPECS.map((spec) => ({
+  name: spec.name,
+  description: spec.description,
+  inputSchema: z.toJSONSchema(spec.schema),
+}));
 
-const GetFullDocumentInputSchema = z.object({
-  id: z.string().describe("The `id` from a search_all result."),
-});
-
-const TOOLS = [
-  {
-    name: "search_all",
-    description:
-      "Search across all indexed knowledge sources (graypaper, discord, matrix, pages). Returns up to `limit` result chunks per source with a stable `id`, a `sourceType`, and a short preview. Use this first to discover relevant material; follow up with get_full_document if a preview is insufficient.",
-    inputSchema: z.toJSONSchema(SearchAllInputSchema),
-  },
-  {
-    name: "get_full_document",
-    description:
-      "Fetch the full markdown of a single document by the `id` returned from search_all. Use when a search preview is insufficient to answer the question.",
-    inputSchema: z.toJSONSchema(GetFullDocumentInputSchema),
-  },
-];
+function specFor(name: string) {
+  return TOOL_SPECS.find((spec) => spec.name === name);
+}
 
 export function createMcpServer(db: SearchDB, dataDir: string): Server {
   const server = new Server(
@@ -58,7 +40,7 @@ export function createMcpServer(db: SearchDB, dataDir: string): Server {
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return { tools: TOOLS };
+    return { tools: MCP_TOOLS };
   });
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -67,14 +49,23 @@ export function createMcpServer(db: SearchDB, dataDir: string): Server {
     try {
       switch (name) {
         case "search_all": {
-          const parsed = SearchAllInputSchema.parse(args);
-          const results = await executeSearchAll(parsed, db, dataDir);
+          const spec = specFor("search_all");
+          if (!spec) throw new Error("search_all spec missing");
+          const parsed = spec.schema.parse(args) as {
+            query: string;
+            limit?: number;
+          };
+          const results = await executeSearchAll(parsed, db, dataDir, {
+            useEmbeddings: false,
+          });
           return {
             content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
           };
         }
         case "get_full_document": {
-          const parsed = GetFullDocumentInputSchema.parse(args);
+          const spec = specFor("get_full_document");
+          if (!spec) throw new Error("get_full_document spec missing");
+          const parsed = spec.schema.parse(args) as { id: string };
           const doc = await executeGetFullDocument(parsed, db);
           if (!doc) {
             return {

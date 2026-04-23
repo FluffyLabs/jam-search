@@ -106,10 +106,22 @@ two tools the `/ask` agent uses:
 - `get_full_document(id)` — fetch the full markdown of a document by id
   returned from `search_all`.
 
+### Design choices
+
+- **Stateless.** A fresh `Server` + `Transport` is created per request. No
+  session state is kept between calls; `initialize` does not return an
+  `mcp-session-id` header and there is no `GET` / `DELETE` lifecycle. Any
+  MCP client that supports stateless Streamable HTTP works.
+- **No CORS.** `/mcp` intentionally sets no `Access-Control-Allow-Origin`
+  header. It is meant for server-to-server / local MCP clients, not browser
+  origins. The other endpoints still apply CORS for the frontend.
+- **No embeddings.** Tool calls run fulltext-only search; the server's
+  OpenAI quota is never spent on anonymous MCP traffic. `/ask` still uses
+  hybrid search because the caller supplies their own OpenRouter key.
+
 ### Connecting a client
 
-Any MCP-compatible client that supports Streamable HTTP can use it. Point the
-client at the public deployment or your local dev server:
+Point any MCP client at the public deployment or your local dev server:
 
 - Production: `https://search-api.fluffylabs.dev/mcp`
 - Local dev: `http://localhost:3000/mcp`
@@ -128,27 +140,27 @@ Example Claude Desktop (`claude_desktop_config.json`) entry:
 
 ### Manual probe
 
-You can drive the endpoint with `curl`:
+Stateless mode means a single POST per interaction — no session bookkeeping.
 
 ```bash
-# 1. Initialize — capture the returned mcp-session-id header
-curl -i -X POST http://localhost:3000/mcp \
+# Initialize and read the server's advertised capabilities:
+curl -s -X POST http://localhost:3000/mcp \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize",
        "params":{"protocolVersion":"2025-03-26","capabilities":{},
                  "clientInfo":{"name":"probe","version":"0.0.1"}}}'
 
-# 2. Send the initialized notification, then list/call tools using the
-#    session id from the previous response.
-SID=<copy from mcp-session-id response header>
-curl -X POST http://localhost:3000/mcp \
-  -H "mcp-session-id: $SID" -H 'Content-Type: application/json' \
-  -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
-
-curl -X POST http://localhost:3000/mcp \
-  -H "mcp-session-id: $SID" -H 'Content-Type: application/json' \
+# List the two tools:
+curl -s -X POST http://localhost:3000/mcp \
+  -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+
+# Call search_all:
+curl -s -X POST http://localhost:3000/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call",
+       "params":{"name":"search_all","arguments":{"query":"refine"}}}'
 ```
