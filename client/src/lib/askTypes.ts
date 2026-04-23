@@ -1,5 +1,7 @@
 export type SourceType = "graypaper" | "discord" | "matrix" | "page";
 
+export type ErrorKind = "missingApiKey";
+
 /** Raw agent events streamed from the backend `/ask` SSE endpoint. */
 export type AgentEvent =
   | { type: "tool_call"; name: string; args: unknown }
@@ -68,6 +70,7 @@ export interface AssistantMessage {
   parts: AssistantPart[];
   citations: Citation[];
   error?: string;
+  errorKind?: ErrorKind;
   isStreaming: boolean;
 }
 

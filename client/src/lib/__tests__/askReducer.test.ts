@@ -145,6 +145,29 @@ describe("askReducer", () => {
     expect(last.error).toBe("boom");
   });
 
+  it("setError stores errorKind when provided", () => {
+    let s = freshAssistant();
+    s = askReducer(s, {
+      type: "setError",
+      message: "No OpenRouter API key found. Add one in Settings to begin.",
+      kind: "missingApiKey",
+    });
+    const last = lastAssistant(s);
+    expect(last.error).toBe(
+      "No OpenRouter API key found. Add one in Settings to begin."
+    );
+    expect(last.errorKind).toBe("missingApiKey");
+    expect(last.isStreaming).toBe(false);
+  });
+
+  it("setError leaves errorKind undefined when kind is omitted", () => {
+    let s = freshAssistant();
+    s = askReducer(s, { type: "setError", message: "boom" });
+    const last = lastAssistant(s);
+    expect(last.error).toBe("boom");
+    expect(last.errorKind).toBeUndefined();
+  });
+
   it("setModel updates only the model field", () => {
     const s = askReducer(initialState, {
       type: "setModel",
