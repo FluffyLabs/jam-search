@@ -60,10 +60,11 @@ export function ModelPicker({ value, onChange }: ModelPickerProps) {
                 onSelect={() => onChange(m.id)}
                 className={cn(
                   "cursor-pointer",
-                  m.id === value && "font-medium text-brand-dark"
+                  m.id === value &&
+                    "font-medium text-brand-dark dark:text-brand"
                 )}
               >
-                <span className="w-3 text-brand-dark">
+                <span className="w-3 text-brand-dark dark:text-brand">
                   {m.id === value ? "✓" : ""}
                 </span>
                 <span className="flex-1">{m.label}</span>
