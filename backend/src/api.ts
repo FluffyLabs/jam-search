@@ -19,11 +19,7 @@ import {
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
 import type { SearchDB } from "./data/searchIndex.js";
-import {
-  handleMcpDelete,
-  handleMcpGet,
-  handleMcpPost,
-} from "./mcp/handler.js";
+import { handleMcpDelete, handleMcpGet, handleMcpPost } from "./mcp/handler.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
