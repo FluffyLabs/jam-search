@@ -19,6 +19,11 @@ import {
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
 import type { SearchDB } from "./data/searchIndex.js";
+import {
+  handleMcpDelete,
+  handleMcpGet,
+  handleMcpPost,
+} from "./mcp/handler.js";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -79,6 +84,12 @@ export function createApp(db: SearchDB, dataDir: string) {
   });
 
   app.post("/ask", handleAsk(db, dataDir));
+
+  // MCP (Model Context Protocol) endpoint — exposes the same two tools
+  // the /ask agent uses (search_all + get_full_document) over Streamable HTTP.
+  app.post("/mcp", (c) => handleMcpPost(c));
+  app.get("/mcp", (c) => handleMcpGet(c));
+  app.delete("/mcp", (c) => handleMcpDelete(c));
 
   return app;
 }

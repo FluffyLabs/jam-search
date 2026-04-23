@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.13",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@octokit/rest": "^22.0.1",
     "@orama/orama": "^3.1.18",
     "cheerio": "^1.2.0",
