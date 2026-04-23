@@ -78,7 +78,7 @@ rendered in two places only when `isReady && !hasApiKey`:
   missing-API-key string, the error block will include a "Go to
   Settings" button. We detect this either by exact-string match on the
   rendered error, or by extending the error payload with a
-  `kind: "missing-api-key"` discriminator (preferred; cleaner than
+  `kind: "missingApiKey"` discriminator (preferred; cleaner than
   string matching).
 
 The `hasApiKey` boolean is computed in `AskPage` from `keyData` (already
@@ -94,8 +94,12 @@ that the header is gone.
 ## Out of Scope
 
 - `CitationsPanel` / sources column layout.
-- `Message` component rendering.
-- Backend, routing, or `useAskConversation` reducer logic.
+- `Message` component's content rendering (text parts, tool steps,
+  citations). The error block inside `Message.tsx` is in scope and gains
+  a conditional "Go to Settings" button — see Files Touched.
+- Backend and routing. The `useAskConversation` reducer gains a small
+  `errorKind` discriminator (see Files Touched) but no other logic
+  changes.
 
 ## Risks
 

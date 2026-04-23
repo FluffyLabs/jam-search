@@ -27,7 +27,8 @@ export function AskPage() {
     { appScoped: true }
   );
   const isReady = !sessionLoading && !keyLoading;
-  const hasApiKey = typeof keyData === "string" && keyData.trim() !== "";
+  const trimmedApiKey = typeof keyData === "string" ? keyData.trim() : "";
+  const hasApiKey = trimmedApiKey !== "";
 
   const streamHandleRef = useRef<{ abort: () => void } | null>(null);
   const hasAutoSubmittedRef = useRef(false);
@@ -36,7 +37,7 @@ export function AskPage() {
   const send = useCallback(
     (text: string, options?: { startFresh?: boolean }) => {
       if (!isReady) return;
-      const apiKey = hasApiKey ? (keyData as string) : null;
+      const apiKey = hasApiKey ? trimmedApiKey : null;
       if (!apiKey) {
         if (options?.startFresh) dispatch({ type: "reset" });
         dispatch({ type: "sendUserMessage", text });
@@ -101,7 +102,7 @@ export function AskPage() {
         }
       );
     },
-    [isReady, hasApiKey, keyData, dispatch, state.messages, state.model]
+    [isReady, hasApiKey, trimmedApiKey, dispatch, state.messages, state.model]
   );
 
   useEffect(() => {
