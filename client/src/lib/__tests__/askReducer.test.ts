@@ -165,4 +165,20 @@ describe("askReducer", () => {
     expect(s.cards).toEqual({});
     expect(s.model).toBe("openai/gpt-5");
   });
+
+  it("hydrate replaces messages, cards, and model", () => {
+    const next = askReducer(initialState, {
+      type: "hydrate",
+      state: {
+        model: "anthropic/claude-haiku-4-5",
+        cards: {
+          docA: { docId: "docA", sourceType: "graypaper" },
+        },
+        messages: [{ id: "u1", role: "user", content: "hi" }],
+      },
+    });
+    expect(next.messages).toHaveLength(1);
+    expect(next.model).toBe("anthropic/claude-haiku-4-5");
+    expect(next.cards.docA).toBeDefined();
+  });
 });
