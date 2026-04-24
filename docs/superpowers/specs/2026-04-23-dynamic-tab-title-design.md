@@ -51,14 +51,14 @@ known remains `JAM Search`.
 New file `client/src/hooks/useDocumentTitle.ts`:
 
 ```ts
-export function useDocumentTitle(title: string | null): void;
+export function useDocumentTitle(topic: string | null): void;
 ```
 
 Behavior:
 
-- When `title` is a non-empty string: set `document.title` to
-  `\`${title} - JAM Search\``.
-- When `title` is `null` or empty: set `document.title` to `"JAM Search"`.
+- When `topic` is a non-empty string: set `document.title` to
+  `\`${topic} - JAM Search\``.
+- When `topic` is `null` or empty: set `document.title` to `"JAM Search"`.
 - On unmount, restore `document.title` to `"JAM Search"`.
 
 The format and suffix live entirely inside the hook so call sites only
