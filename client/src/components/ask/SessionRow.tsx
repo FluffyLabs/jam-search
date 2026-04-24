@@ -14,33 +14,31 @@ export function SessionRow({
   active,
   onRename,
   onDelete,
-  onToggleShare,
-  onRegenerateTitle,
+  onShare,
 }: {
   session: AskSessionSummary;
   active: boolean;
   onRename: (id: string) => void;
   onDelete: (id: string) => void;
-  onToggleShare: (id: string, next: boolean) => void;
-  onRegenerateTitle: (id: string) => void;
+  onShare: (id: string) => void;
 }) {
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent",
+        "group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-accent",
         active && "bg-accent"
       )}
     >
       <Link
         to={`/ask/${session.id}`}
-        className="flex-1 min-w-0 truncate"
+        className="flex-1 min-w-0 truncate text-foreground"
         title={session.title ?? "Untitled"}
       >
         {session.title ?? "Untitled"}
       </Link>
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="opacity-0 group-hover:opacity-100 focus:opacity-100"
+          className="opacity-0 group-hover:opacity-100 focus:opacity-100 text-muted-foreground hover:text-foreground"
           aria-label="Session actions"
         >
           <MoreHorizontal className="size-4" />
@@ -49,16 +47,11 @@ export function SessionRow({
           <DropdownMenuItem onClick={() => onRename(session.id)}>
             Rename
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onRegenerateTitle(session.id)}>
-            Regenerate title
+          <DropdownMenuItem onClick={() => onShare(session.id)}>
+            Share…
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => onToggleShare(session.id, !session.isPublic)}
-          >
-            {session.isPublic ? "Unshare" : "Share…"}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-destructive"
+            className="text-destructive focus:text-destructive"
             onClick={() => onDelete(session.id)}
           >
             Delete

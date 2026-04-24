@@ -13,16 +13,14 @@ export function SessionsSidebar({
   now,
   onRename,
   onDelete,
-  onToggleShare,
-  onRegenerateTitle,
+  onShare,
 }: {
   sessions: AskSessionSummary[];
   activeId: string | null;
   now?: Date;
   onRename: (id: string) => void;
   onDelete: (id: string) => void;
-  onToggleShare: (id: string, next: boolean) => void;
-  onRegenerateTitle: (id: string) => void;
+  onShare: (id: string) => void;
 }) {
   const [filter, setFilter] = useState("");
   const filtered = useMemo(() => {
@@ -35,7 +33,7 @@ export function SessionsSidebar({
   const groups = useMemo(() => groupSessions(filtered, now), [filtered, now]);
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-card/50">
+    <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-card/50 text-foreground">
       <div className="p-2">
         <Button asChild size="sm" variant="outline" className="w-full">
           <Link to="/ask">
@@ -64,8 +62,7 @@ export function SessionsSidebar({
                 active={s.id === activeId}
                 onRename={onRename}
                 onDelete={onDelete}
-                onToggleShare={onToggleShare}
-                onRegenerateTitle={onRegenerateTitle}
+                onShare={onShare}
               />
             ))}
           </div>

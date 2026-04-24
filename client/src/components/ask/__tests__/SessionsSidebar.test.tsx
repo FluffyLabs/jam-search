@@ -26,8 +26,7 @@ function renderSidebar(sessions: AskSessionSummary[]) {
         now={new Date("2026-04-23T12:00:00Z")}
         onRename={vi.fn()}
         onDelete={vi.fn()}
-        onToggleShare={vi.fn()}
-        onRegenerateTitle={vi.fn()}
+        onShare={vi.fn()}
       />
     </MemoryRouter>
   );
