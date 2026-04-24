@@ -86,7 +86,7 @@ Remove the menu item from `SessionRow`, the prop from `SessionsSidebar`, and the
 **Behavior:** Clicking the "Share" item in `SessionRow`'s dropdown:
 1. If the session is not public, calls `sessions.update(id, { isPublic: true })`.
 2. Copies the shareable link (`${origin}${pathname}#/ask/s/${id}`) to the clipboard.
-3. Shows a toast: "Link copied — made public" if we flipped it, "Link copied" if it was already public.
+3. Shows a toast: "Link copied. Session is public now" if we flipped it, "Link copied" if it was already public.
 
 **Toast infrastructure:** Add `sonner` dependency and mount `<Toaster />` in `App.tsx`. Lightweight, shadcn-native, matches the existing UI patterns.
 
