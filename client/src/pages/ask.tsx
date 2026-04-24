@@ -10,10 +10,10 @@ import { Message } from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
 import { useAskConversation } from "@/hooks/useAskConversation";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { useSessions } from "@/hooks/useSessions";
+import { type UseSessionsApi, useSessions } from "@/hooks/useSessions";
 import { askStream } from "@/lib/askClient";
 import { requestTitle } from "@/lib/askTitleClient";
-import type { AssistantMessage } from "@/lib/askTypes";
+import type { AskConversationState, AssistantMessage } from "@/lib/askTypes";
 import { deriveTitle } from "@/lib/sessionTypes";
 
 export function AskPage() {
@@ -42,38 +42,59 @@ export function AskPage() {
   const hasAutoSubmittedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hydratedRef = useRef<string | null>(null);
-  const createdRef = useRef<Set<string>>(new Set());
   const stateRef = useRef(state);
+  // `sessions` identity changes on every react-query state transition
+  // (mutation pending, refetch, invalidation…). The hydrate/save effects
+  // only need access at call time, so we route through a ref instead of
+  // listing `sessions` as a dep and re-running on every render.
+  const sessionsRef = useRef<UseSessionsApi>(sessions);
+  // What we last persisted to the DB for the active session. When the
+  // reducer state matches this reference, the save effect skips —
+  // preventing a save/invalidate/refetch/render loop.
+  const lastSavedStateRef = useRef<AskConversationState | null>(null);
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
+  useEffect(() => {
+    sessionsRef.current = sessions;
+  }, [sessions]);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // Hydrate when sessionId changes. Abort any running stream first.
+  // Intentionally NOT depending on `sessions` — see sessionsRef above.
   useEffect(() => {
     if (!sessionId) {
       if (hydratedRef.current !== null) {
+        const prevSessionId = hydratedRef.current;
         streamHandleRef.current?.abort();
         streamHandleRef.current = null;
+        // Best-effort flush: the user may be navigating away mid-stream
+        // (e.g., clicking "New chat" during the answer). `abort()` kills
+        // the stream without firing `finishStreaming`, so the normal save
+        // effect won't run. Persist a snapshot so the session survives.
+        const snapshot = stateRef.current;
+        if (
+          snapshot.messages.length > 0 &&
+          lastSavedStateRef.current !== snapshot
+        ) {
+          void sessionsRef.current
+            .update(prevSessionId, { state: snapshot })
+            .catch(() => {
+              /* best-effort; user is leaving this session anyway */
+            });
+        }
         dispatch({ type: "reset" });
         hydratedRef.current = null;
+        lastSavedStateRef.current = null;
       }
       return;
     }
     if (hydratedRef.current === sessionId) return;
-    if (createdRef.current.has(sessionId)) {
-      // We just created this row locally; avoid an immediate round-trip
-      // that would overwrite our in-memory state with the freshly-written one.
-      // Consume the flag so that navigating away and back re-hydrates from DB.
-      createdRef.current.delete(sessionId);
-      hydratedRef.current = sessionId;
-      return;
-    }
     streamHandleRef.current?.abort();
     streamHandleRef.current = null;
     let cancelled = false;
     (async () => {
-      const record = await sessions.get(sessionId);
+      const record = await sessionsRef.current.get(sessionId);
       if (cancelled) return;
       if (!record) {
         navigate("/ask", { replace: true });
@@ -81,28 +102,36 @@ export function AskPage() {
       }
       dispatch({ type: "hydrate", state: record.state });
       hydratedRef.current = sessionId;
+      // The hydrated state is by definition what's in the DB; mark it so
+      // the save effect doesn't immediately re-save it on the next render.
+      lastSavedStateRef.current = record.state;
     })();
     return () => {
       cancelled = true;
     };
-  }, [sessionId, sessions, dispatch, navigate]);
+  }, [sessionId, dispatch, navigate]);
 
-  // Persist after an assistant turn finishes streaming.
+  // Persist after an assistant turn finishes streaming. Skip when the
+  // reducer state already matches what we persisted — otherwise the save
+  // loops via invalidate→refetch→render→reschedule.
   useEffect(() => {
     if (!sessionId) return;
     if (hydratedRef.current !== sessionId) return;
     const last = state.messages[state.messages.length - 1];
     if (!last || last.role !== "assistant" || last.isStreaming) return;
+    if (lastSavedStateRef.current === state) return;
     const timer = setTimeout(async () => {
+      const stateToSave = stateRef.current;
       try {
-        await sessions.update(sessionId, { state: stateRef.current });
+        await sessionsRef.current.update(sessionId, { state: stateToSave });
+        lastSavedStateRef.current = stateToSave;
         setSaveError(null);
       } catch (err) {
         setSaveError((err as Error).message);
       }
     }, 100);
     return () => clearTimeout(timer);
-  }, [sessionId, sessions, state]);
+  }, [sessionId, state]);
 
   const send = useCallback(
     async (text: string, options?: { startFresh?: boolean }) => {
@@ -119,10 +148,14 @@ export function AskPage() {
         return;
       }
 
+      // Snapshot the reducer state before dispatching; we need it for the
+      // provisional title and for building the outgoing message list.
+      const currentState = stateRef.current;
+
       if (options?.startFresh) dispatch({ type: "reset" });
       dispatch({ type: "sendUserMessage", text });
 
-      const priorMessages = options?.startFresh ? [] : state.messages;
+      const priorMessages = options?.startFresh ? [] : currentState.messages;
       const nextMessages = [
         ...priorMessages,
         { id: "pending", role: "user" as const, content: text },
@@ -133,38 +166,44 @@ export function AskPage() {
       let activeId = sessionId;
       if (!activeId) {
         activeId = uuidv4();
-        createdRef.current.add(activeId);
         const provisional = deriveTitle({
-          ...state,
+          ...currentState,
           messages: [{ id: "pending", role: "user", content: text }],
         });
         try {
-          await sessions.create({
+          await sessionsRef.current.create({
             id: activeId,
             title: provisional,
             state: {
-              ...state,
+              ...currentState,
               messages: [{ id: "pending", role: "user", content: text }],
             },
           });
+          // Mark the new row as already-hydrated BEFORE navigating so the
+          // hydrate effect short-circuits instead of round-tripping. Setting
+          // this before `await create` would be wrong — a re-render during
+          // the mutation's pending state would fire the nav-away flush path.
           hydratedRef.current = activeId;
           navigate(`/ask/${activeId}`, { replace: true });
           // Fire-and-forget title generation; patch the row when it resolves.
           const newId = activeId;
           requestTitle({ question: text, openrouterKey: apiKey }).then(
             (generated) => {
-              if (generated) sessions.update(newId, { title: generated });
+              if (generated) {
+                void sessionsRef.current.update(newId, { title: generated });
+              }
             }
           );
         } catch (err) {
           setSaveError((err as Error).message);
+          return;
         }
       }
 
       streamHandleRef.current = askStream(
         {
           messages: nextMessages,
-          model: state.model,
+          model: currentState.model,
           openrouterKey: apiKey,
         },
         (event) => {
@@ -208,16 +247,7 @@ export function AskPage() {
         }
       );
     },
-    [
-      isReady,
-      hasApiKey,
-      trimmedApiKey,
-      dispatch,
-      state,
-      sessionId,
-      sessions,
-      navigate,
-    ]
+    [isReady, hasApiKey, trimmedApiKey, dispatch, sessionId, navigate]
   );
 
   useEffect(() => {
@@ -307,7 +337,11 @@ export function AskPage() {
             onClick={async () => {
               if (!sessionId) return;
               try {
-                await sessions.update(sessionId, { state: stateRef.current });
+                const stateToSave = stateRef.current;
+                await sessionsRef.current.update(sessionId, {
+                  state: stateToSave,
+                });
+                lastSavedStateRef.current = stateToSave;
                 setSaveError(null);
               } catch (err) {
                 setSaveError((err as Error).message);

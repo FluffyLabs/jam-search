@@ -123,7 +123,22 @@ export function createUseSessions(deps: {
         const { error } = await supabase.from("ask_sessions").insert(row);
         if (error) throw new Error(error.message);
       },
-      onSuccess: () => {
+      onSuccess: (_data, args) => {
+        // Optimistic insert: put the new row at the top of the cached list
+        // so the sidebar reflects it immediately, before the refetch lands.
+        queryClient.setQueryData<AskSessionSummary[]>(key, (old) => {
+          const now = new Date().toISOString();
+          const summary: AskSessionSummary = {
+            id: args.id,
+            userId,
+            title: args.title,
+            isPublic: false,
+            model: args.state.model,
+            createdAt: now,
+            updatedAt: now,
+          };
+          return old ? [summary, ...old] : [summary];
+        });
         void invalidate();
       },
     });
@@ -158,8 +173,33 @@ export function createUseSessions(deps: {
           .eq("id", args.id);
         if (error) throw new Error(error.message);
       },
-      onSuccess: () => {
-        void invalidate();
+      onSuccess: (_data, args) => {
+        // Only invalidate when something the sidebar actually displays
+        // changed. State-only saves (the 100ms autosave path) bump
+        // `updated_at` but nothing visible — and invalidating from there
+        // would churn the save effect via refetch-triggered renders,
+        // which is the whole autosave-loop bug we're preventing.
+        if ("title" in args.patch || "isPublic" in args.patch) {
+          // Patch the cached summary immediately for instant sidebar feedback.
+          queryClient.setQueryData<AskSessionSummary[]>(key, (old) =>
+            old
+              ? old.map((s) =>
+                  s.id === args.id
+                    ? {
+                        ...s,
+                        ...("title" in args.patch
+                          ? { title: args.patch.title ?? null }
+                          : {}),
+                        ...("isPublic" in args.patch
+                          ? { isPublic: args.patch.isPublic ?? s.isPublic }
+                          : {}),
+                      }
+                    : s
+                )
+              : old
+          );
+          void invalidate();
+        }
       },
     });
 
@@ -171,7 +211,12 @@ export function createUseSessions(deps: {
           .eq("id", id);
         if (error) throw new Error(error.message);
       },
-      onSuccess: () => {
+      onSuccess: (_data, id) => {
+        // Optimistic remove so the deleted row disappears from the
+        // sidebar without waiting for the refetch.
+        queryClient.setQueryData<AskSessionSummary[]>(key, (old) =>
+          old ? old.filter((s) => s.id !== id) : old
+        );
         void invalidate();
       },
     });
