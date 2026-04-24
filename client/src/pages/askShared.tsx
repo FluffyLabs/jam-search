@@ -1,5 +1,6 @@
 import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { AssistantMessage } from "@/lib/askTypes";
 import { consumeForkPending, markForkPending } from "@/lib/forkPending";
+import { invalidateSessions } from "@/hooks/useSessions";
 import {
   type AskSessionRecord,
   type AskSessionRow,
@@ -22,6 +24,7 @@ async function forkAndGo(args: {
   userId: string;
   source: AskSessionRecord;
   navigate: (path: string) => void;
+  queryClient: QueryClient;
 }) {
   const newId = uuidv4();
   const row = toRow({
@@ -33,12 +36,14 @@ async function forkAndGo(args: {
   });
   const { error } = await args.client.from("ask_sessions").insert(row);
   if (error) throw error;
+  invalidateSessions(args.queryClient, args.userId);
   args.navigate(`/ask/${newId}`);
 }
 
 export function AskSharedPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { client, user } = useSupabaseContext();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [record, setRecord] = useState<AskSessionRecord | null | "notfound">(
     null
@@ -74,7 +79,7 @@ export function AskSharedPage() {
     if (!user || !sessionId || !(record && record !== "notfound")) return;
     const pending = consumeForkPending();
     if (pending === sessionId) {
-      forkAndGo({ client, userId: user.id, source: record, navigate }).catch(
+      forkAndGo({ client, userId: user.id, source: record, navigate, queryClient }).catch(
         (err) => setForkError((err as Error).message)
       );
     }
@@ -109,7 +114,7 @@ export function AskSharedPage() {
       return;
     }
     try {
-      await forkAndGo({ client, userId: user.id, source: record, navigate });
+      await forkAndGo({ client, userId: user.id, source: record, navigate, queryClient });
     } catch (err) {
       setForkError((err as Error).message);
     }

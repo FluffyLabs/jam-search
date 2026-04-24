@@ -1,5 +1,6 @@
 import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
 import {
+  type QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
@@ -220,5 +221,19 @@ export function useSessions(): UseSessionsApi {
     throw new Error("useSessions requires an authenticated user");
   }
   return createUseSessions({ supabase: ctx.client, userId: ctx.user.id })();
+}
+
+/**
+ * Imperative cache invalidation for paths that write to `ask_sessions`
+ * outside the hook — currently `askShared.tsx::forkAndGo`, which inserts
+ * directly via the Supabase client and then navigates. Call after the
+ * insert so the sidebar picks up the new row on the next render instead
+ * of waiting for the next natural refetch.
+ */
+export function invalidateSessions(
+  queryClient: QueryClient,
+  userId: string
+): void {
+  void queryClient.invalidateQueries({ queryKey: sessionsKey(userId) });
 }
 
