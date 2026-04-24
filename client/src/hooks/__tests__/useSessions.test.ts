@@ -19,15 +19,15 @@ function makeClient(rows: unknown[] = []) {
   builder.eq = vi.fn(() => builder);
   builder.order = vi.fn(() => Promise.resolve({ data: rows, error: null }));
   builder.insert = vi.fn(() =>
-    Promise.resolve({ data: rows[0] ?? null, error: null }),
+    Promise.resolve({ data: rows[0] ?? null, error: null })
   );
   builder.update = vi.fn(() => builder);
   builder.delete = vi.fn(() => builder);
   builder.single = vi.fn(() =>
-    Promise.resolve({ data: rows[0] ?? null, error: null }),
+    Promise.resolve({ data: rows[0] ?? null, error: null })
   );
   builder.maybeSingle = vi.fn(() =>
-    Promise.resolve({ data: rows[0] ?? null, error: null }),
+    Promise.resolve({ data: rows[0] ?? null, error: null })
   );
   const from = vi.fn(() => builder);
   return { client: { from }, from, builder };
@@ -37,10 +37,10 @@ describe("useSessions", () => {
   it("list() queries ask_sessions ordered by updated_at desc for the user", async () => {
     const { client, from, builder } = makeClient([]);
     const hook = renderHook(() =>
-      createUseSessions({ supabase: client as never, userId: "u1" })(),
+      createUseSessions({ supabase: client as never, userId: "u1" })()
     );
     await waitFor(() =>
-      expect(hook.result.current.sessions).not.toBeUndefined(),
+      expect(hook.result.current.sessions).not.toBeUndefined()
     );
     expect(from).toHaveBeenCalledWith("ask_sessions");
     expect(builder.select).toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe("useSessions", () => {
         title: "Hello",
         is_public: false,
         model: "m",
-      }),
+      })
     );
   });
 
@@ -86,7 +86,7 @@ describe("useSessions", () => {
     const hook = renderHook(() => useHook());
     await hook.result.current.update("abc", { isPublic: true });
     expect(builder.update).toHaveBeenCalledWith(
-      expect.objectContaining({ is_public: true }),
+      expect.objectContaining({ is_public: true })
     );
     expect(builder.eq).toHaveBeenCalledWith("id", "abc");
   });

@@ -42,11 +42,8 @@ describe("groupSessions", () => {
 
   it("preserves input order within a bucket", () => {
     const groups = groupSessions(
-      [
-        sess("a", "2026-04-23T09:00:00Z"),
-        sess("b", "2026-04-23T10:00:00Z"),
-      ],
-      now,
+      [sess("a", "2026-04-23T09:00:00Z"), sess("b", "2026-04-23T10:00:00Z")],
+      now
     );
     expect(groups[0].sessions.map((s) => s.id)).toEqual(["a", "b"]);
   });

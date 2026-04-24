@@ -3,7 +3,7 @@ import { requestTitle } from "@/lib/askTitleClient";
 
 function fakeResponse(
   body: unknown,
-  init: { ok?: boolean; status?: number } = {},
+  init: { ok?: boolean; status?: number } = {}
 ) {
   const status = init.status ?? 200;
   return {
@@ -28,9 +28,9 @@ function installFetchMock(fn: ReturnType<typeof vi.fn>) {
 
 describe("requestTitle", () => {
   it("posts to /ask/title and returns the title", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      fakeResponse({ title: "Hello world" }),
-    );
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(fakeResponse({ title: "Hello world" }));
     installFetchMock(fetchMock);
     const title = await requestTitle({
       question: "Hi there",
@@ -38,14 +38,14 @@ describe("requestTitle", () => {
     });
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringMatching(/\/ask\/title$/),
-      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({ method: "POST" })
     );
     expect(title).toBe("Hello world");
   });
 
   it("returns null when the endpoint errors", async () => {
     installFetchMock(
-      vi.fn().mockResolvedValue(fakeResponse({}, { status: 502 })),
+      vi.fn().mockResolvedValue(fakeResponse({}, { status: 502 }))
     );
     const title = await requestTitle({ question: "q", openrouterKey: "k" });
     expect(title).toBeNull();

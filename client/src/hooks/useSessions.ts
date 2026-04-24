@@ -26,7 +26,7 @@ export interface UseSessionsApi {
       title: string | null;
       isPublic: boolean;
       state: AskConversationState;
-    }>,
+    }>
   ) => Promise<void>;
   remove: (id: string) => Promise<void>;
 }
@@ -50,7 +50,7 @@ export function createUseSessions(deps: {
   const { supabase, userId } = deps;
   return function useSessions(): UseSessionsApi {
     const [sessions, setSessions] = useState<AskSessionSummary[] | undefined>(
-      undefined,
+      undefined
     );
     const [error, setError] = useState<string | null>(null);
 
@@ -99,7 +99,7 @@ export function createUseSessions(deps: {
         }
         await list();
       },
-      [list],
+      [list]
     );
 
     const update = useCallback<UseSessionsApi["update"]>(
@@ -126,7 +126,7 @@ export function createUseSessions(deps: {
         if (error) setError(error.message);
         else await list();
       },
-      [list],
+      [list]
     );
 
     const remove = useCallback(
@@ -138,7 +138,7 @@ export function createUseSessions(deps: {
         if (error) setError(error.message);
         else await list();
       },
-      [list],
+      [list]
     );
 
     useEffect(() => {

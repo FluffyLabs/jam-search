@@ -19,11 +19,9 @@ function bucketIndex(updated: Date, now: Date): number {
   const updatedDay = new Date(
     updated.getFullYear(),
     updated.getMonth(),
-    updated.getDate(),
+    updated.getDate()
   );
-  const daysDiff = Math.round(
-    (today.getTime() - updatedDay.getTime()) / day,
-  );
+  const daysDiff = Math.round((today.getTime() - updatedDay.getTime()) / day);
   if (daysDiff <= 0) return 0;
   if (daysDiff === 1) return 1;
   const ms = now.getTime() - updated.getTime();
@@ -34,7 +32,7 @@ function bucketIndex(updated: Date, now: Date): number {
 
 export function groupSessions(
   sessions: AskSessionSummary[],
-  now: Date = new Date(),
+  now: Date = new Date()
 ): SessionGroup[] {
   const buckets: AskSessionSummary[][] = LABELS.map(() => []);
   for (const s of sessions) {

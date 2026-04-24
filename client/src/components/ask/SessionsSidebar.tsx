@@ -29,13 +29,10 @@ export function SessionsSidebar({
     if (!filter.trim()) return sessions;
     const needle = filter.toLowerCase();
     return sessions.filter((s) =>
-      (s.title ?? "Untitled").toLowerCase().includes(needle),
+      (s.title ?? "Untitled").toLowerCase().includes(needle)
     );
   }, [sessions, filter]);
-  const groups = useMemo(
-    () => groupSessions(filtered, now),
-    [filtered, now],
-  );
+  const groups = useMemo(() => groupSessions(filtered, now), [filtered, now]);
 
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-border bg-card/50">

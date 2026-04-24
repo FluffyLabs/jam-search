@@ -1,4 +1,4 @@
-import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase";
+import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 

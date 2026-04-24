@@ -34,9 +34,7 @@ function LayoutInner() {
         }}
         onDelete={(id) => {
           if (
-            window.confirm(
-              "Delete this session? Any public link will 404.",
-            )
+            window.confirm("Delete this session? Any public link will 404.")
           ) {
             sessions.remove(id);
           }
@@ -45,7 +43,7 @@ function LayoutInner() {
         onRegenerateTitle={async (id) => {
           if (!apiKey) {
             window.alert(
-              "Add an OpenRouter API key in Settings before regenerating titles.",
+              "Add an OpenRouter API key in Settings before regenerating titles."
             );
             return;
           }

@@ -29,7 +29,7 @@ function renderSidebar(sessions: AskSessionSummary[]) {
         onToggleShare={vi.fn()}
         onRegenerateTitle={vi.fn()}
       />
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 }
 

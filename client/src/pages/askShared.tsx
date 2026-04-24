@@ -1,4 +1,4 @@
-import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase";
+import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -38,9 +38,9 @@ export function AskSharedPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
   const { client, user } = useSupabaseContext();
   const navigate = useNavigate();
-  const [record, setRecord] = useState<
-    AskSessionRecord | null | "notfound"
-  >(null);
+  const [record, setRecord] = useState<AskSessionRecord | null | "notfound">(
+    null
+  );
   const [forkError, setForkError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export function AskSharedPage() {
     const pending = consumeForkPending();
     if (pending === sessionId) {
       forkAndGo({ client, userId: user.id, source: record, navigate }).catch(
-        (err) => setForkError((err as Error).message),
+        (err) => setForkError((err as Error).message)
       );
     }
   }, [user, sessionId, record, client, navigate]);

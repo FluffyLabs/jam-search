@@ -38,7 +38,7 @@ describe("generateTitle", () => {
         openai: fakeOpenAI(""),
         model: "x",
         question: "q",
-      }),
+      })
     ).rejects.toThrow(/empty/i);
   });
 

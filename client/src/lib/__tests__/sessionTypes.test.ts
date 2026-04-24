@@ -97,16 +97,14 @@ describe("toRow / fromRow", () => {
         cards: {},
         created_at: "",
         updated_at: "",
-      }),
+      })
     ).toBeNull();
   });
 });
 
 describe("deriveTitle", () => {
   it("returns null for empty state", () => {
-    expect(
-      deriveTitle({ model: "m", cards: {}, messages: [] }),
-    ).toBeNull();
+    expect(deriveTitle({ model: "m", cards: {}, messages: [] })).toBeNull();
   });
 
   it("returns first user message verbatim when short", () => {
@@ -115,7 +113,7 @@ describe("deriveTitle", () => {
         model: "m",
         cards: {},
         messages: [{ id: "u1", role: "user", content: "Hi there" }],
-      }),
+      })
     ).toBe("Hi there");
   });
 

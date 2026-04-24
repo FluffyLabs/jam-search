@@ -1,11 +1,7 @@
 import { useUserData } from "@fluffylabs/shared-ui/supabase";
 import { Sparkles } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { SharePopover } from "@/components/ask/SharePopover";
 import { ChatInput } from "@/components/chat/ChatInput";
@@ -153,7 +149,7 @@ export function AskPage() {
         requestTitle({ question: text, openrouterKey: apiKey }).then(
           (generated) => {
             if (generated) sessions.update(newId, { title: generated });
-          },
+          }
         );
       } catch (err) {
         setSaveError((err as Error).message);
@@ -206,7 +202,7 @@ export function AskPage() {
   };
 
   // Auto-submit once if ?q is set and ?autoSubmit=1.
-  // send changes every render; hasAutoSubmittedRef guards against re-firing.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: send changes every render; hasAutoSubmittedRef guards against re-firing
   useEffect(() => {
     if (
       autoSubmit &&
@@ -218,7 +214,6 @@ export function AskPage() {
       streamHandleRef.current?.abort();
       send(initialQuery, { startFresh: true });
     }
-    // biome-ignore lint/correctness/useExhaustiveDependencies: see comment above
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSubmit, initialQuery, keyLoading]);
 
@@ -259,19 +254,18 @@ export function AskPage() {
           />
         </div>
         <div className="flex items-center gap-1">
-          {sessionId &&
-            sessions.sessions?.find((s) => s.id === sessionId) && (
-              <SharePopover
-                sessionId={sessionId}
-                isPublic={
-                  sessions.sessions.find((s) => s.id === sessionId)
-                    ?.isPublic ?? false
-                }
-                onToggle={(next) =>
-                  sessions.update(sessionId, { isPublic: next })
-                }
-              />
-            )}
+          {sessionId && sessions.sessions?.find((s) => s.id === sessionId) && (
+            <SharePopover
+              sessionId={sessionId}
+              isPublic={
+                sessions.sessions.find((s) => s.id === sessionId)?.isPublic ??
+                false
+              }
+              onToggle={(next) =>
+                sessions.update(sessionId, { isPublic: next })
+              }
+            />
+          )}
           {state.messages.length > 0 && (
             <Button
               variant="ghost"
@@ -316,11 +310,7 @@ export function AskPage() {
           >
             Retry
           </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setSaveError(null)}
-          >
+          <Button size="sm" variant="ghost" onClick={() => setSaveError(null)}>
             Dismiss
           </Button>
         </div>

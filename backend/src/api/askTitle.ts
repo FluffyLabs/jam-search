@@ -20,7 +20,7 @@ export function handleAskTitle() {
     if (!parsed.success) {
       return c.json(
         { error: "Invalid request", issues: parsed.error.issues },
-        400,
+        400
       );
     }
     const { question, openrouterKey } = parsed.data;
@@ -32,7 +32,7 @@ export function handleAskTitle() {
     } catch (err) {
       return c.json(
         { error: (err as Error).message || "Title generation failed" },
-        502,
+        502
       );
     }
   };
