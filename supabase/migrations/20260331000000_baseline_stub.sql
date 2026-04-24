@@ -1,0 +1,2 @@
+-- Pre-existing migration applied out-of-band before CLI adoption.
+-- Empty stub so local history matches remote.

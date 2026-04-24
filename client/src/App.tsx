@@ -4,11 +4,14 @@ import { AppsSidebar } from "@fluffylabs/shared-ui";
 import { AuthCallback, AuthFlow } from "@fluffylabs/shared-ui/supabase";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { AskLayout } from "@/components/ask/AskLayout";
+import { peekForkPending } from "@/lib/forkPending";
 import { EmbeddedViewer } from "./components/EmbeddedViewer";
 import { Header } from "./components/Header";
 import { cn } from "./lib/utils";
 import { IndexPage } from "./pages";
 import { AskPage } from "./pages/ask";
+import { AskSharedPage } from "./pages/askShared";
 import SearchResults from "./pages/results";
 import { SettingsPage } from "./pages/settings";
 import DiscordResultsAll from "./pages/viewall/discord";
@@ -45,6 +48,43 @@ function AuthCallbackCatchAll({
     return <AuthCallback onSuccess={onSuccess} onError={onError} />;
   }
   return <div className="p-4">Page not found.</div>;
+}
+
+/** Resolves the post-auth destination:
+ *  1. pending fork (if any) → the shared-view route to complete the fork
+ *  2. `location.state.from` passed through by AuthGate
+ *  3. fallback to `/`
+ */
+function usePostAuthRedirect(): () => string {
+  const location = useLocation();
+  return () => {
+    const pending = peekForkPending();
+    if (pending) return `/ask/s/${pending}`;
+    const from = (location.state as { from?: string } | null)?.from;
+    return from || "/";
+  };
+}
+
+function LoginRoute() {
+  const navigate = useNavigate();
+  const resolve = usePostAuthRedirect();
+  return (
+    <AuthFlow
+      onSuccess={() => navigate(resolve())}
+      redirectTo={`${window.location.origin}${window.location.pathname}`}
+    />
+  );
+}
+
+function AuthCallbackRoute() {
+  const navigate = useNavigate();
+  const resolve = usePostAuthRedirect();
+  return (
+    <AuthCallback
+      onSuccess={() => navigate(resolve())}
+      onError={() => navigate("/login")}
+    />
+  );
 }
 
 function App() {
@@ -97,26 +137,14 @@ function App() {
                   path="/results/discord"
                   element={<DiscordResultsAll />}
                 />
-                <Route
-                  path="/login"
-                  element={
-                    <AuthFlow
-                      onSuccess={() => navigate("/")}
-                      redirectTo={`${window.location.origin}${window.location.pathname}`}
-                    />
-                  }
-                />
-                <Route
-                  path="/auth/callback"
-                  element={
-                    <AuthCallback
-                      onSuccess={() => navigate("/")}
-                      onError={() => navigate("/login")}
-                    />
-                  }
-                />
+                <Route path="/login" element={<LoginRoute />} />
+                <Route path="/auth/callback" element={<AuthCallbackRoute />} />
                 <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/ask" element={<AskPage />} />
+                <Route path="/ask" element={<AskLayout />}>
+                  <Route index element={<AskPage />} />
+                  <Route path=":sessionId" element={<AskPage />} />
+                </Route>
+                <Route path="/ask/s/:sessionId" element={<AskSharedPage />} />
                 <Route
                   path="*"
                   element={

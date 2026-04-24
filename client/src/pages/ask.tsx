@@ -1,18 +1,24 @@
 import { useSession, useUserData } from "@fluffylabs/shared-ui/supabase";
 import { Sparkles } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import { SharePopover } from "@/components/ask/SharePopover";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
 import { useAskConversation } from "@/hooks/useAskConversation";
+import { useSessions } from "@/hooks/useSessions";
 import { askStream } from "@/lib/askClient";
+import { requestTitle } from "@/lib/askTitleClient";
 import type { AssistantMessage } from "@/lib/askTypes";
+import { deriveTitle } from "@/lib/sessionTypes";
 
 export function AskPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { sessionId } = useParams<{ sessionId?: string }>();
   const searchParams = useMemo(
     () => new URLSearchParams(location.search),
     [location.search]
@@ -21,6 +27,7 @@ export function AskPage() {
   const autoSubmit = searchParams.get("autoSubmit") === "1";
 
   const { state, dispatch } = useAskConversation();
+  const sessions = useSessions();
   const { isLoading: sessionLoading } = useSession();
   const { data: keyData, isLoading: keyLoading } = useUserData(
     "openrouter-api-key",
@@ -33,9 +40,69 @@ export function AskPage() {
   const streamHandleRef = useRef<{ abort: () => void } | null>(null);
   const hasAutoSubmittedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hydratedRef = useRef<string | null>(null);
+  const createdRef = useRef<Set<string>>(new Set());
+  const stateRef = useRef(state);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Hydrate when sessionId changes. Abort any running stream first.
+  useEffect(() => {
+    if (!sessionId) {
+      if (hydratedRef.current !== null) {
+        streamHandleRef.current?.abort();
+        streamHandleRef.current = null;
+        dispatch({ type: "reset" });
+        hydratedRef.current = null;
+      }
+      return;
+    }
+    if (hydratedRef.current === sessionId) return;
+    if (createdRef.current.has(sessionId)) {
+      // We just created this row locally; avoid an immediate round-trip
+      // that would overwrite our in-memory state with the freshly-written one.
+      hydratedRef.current = sessionId;
+      return;
+    }
+    streamHandleRef.current?.abort();
+    streamHandleRef.current = null;
+    let cancelled = false;
+    (async () => {
+      const record = await sessions.get(sessionId);
+      if (cancelled) return;
+      if (!record) {
+        navigate("/ask", { replace: true });
+        return;
+      }
+      dispatch({ type: "hydrate", state: record.state });
+      hydratedRef.current = sessionId;
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId, sessions, dispatch, navigate]);
+
+  // Persist after an assistant turn finishes streaming.
+  useEffect(() => {
+    if (!sessionId) return;
+    if (hydratedRef.current !== sessionId) return;
+    const last = state.messages[state.messages.length - 1];
+    if (!last || last.role !== "assistant" || last.isStreaming) return;
+    const timer = setTimeout(async () => {
+      try {
+        await sessions.update(sessionId, { state: stateRef.current });
+        setSaveError(null);
+      } catch (err) {
+        setSaveError((err as Error).message);
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [sessionId, sessions, state]);
 
   const send = useCallback(
-    (text: string, options?: { startFresh?: boolean }) => {
+    async (text: string, options?: { startFresh?: boolean }) => {
       if (!isReady) return;
       const apiKey = hasApiKey ? trimmedApiKey : null;
       if (!apiKey) {
@@ -57,6 +124,39 @@ export function AskPage() {
         ...priorMessages,
         { id: "pending", role: "user" as const, content: text },
       ];
+
+      // If this is the first message in a new chat, create the session row and
+      // move to /ask/:id so hydration + persistence can latch on.
+      let activeId = sessionId;
+      if (!activeId) {
+        activeId = uuidv4();
+        createdRef.current.add(activeId);
+        const provisional = deriveTitle({
+          ...state,
+          messages: [{ id: "pending", role: "user", content: text }],
+        });
+        try {
+          await sessions.create({
+            id: activeId,
+            title: provisional,
+            state: {
+              ...state,
+              messages: [{ id: "pending", role: "user", content: text }],
+            },
+          });
+          hydratedRef.current = activeId;
+          navigate(`/ask/${activeId}`, { replace: true });
+          // Fire-and-forget title generation; patch the row when it resolves.
+          const newId = activeId;
+          requestTitle({ question: text, openrouterKey: apiKey }).then(
+            (generated) => {
+              if (generated) sessions.update(newId, { title: generated });
+            }
+          );
+        } catch (err) {
+          setSaveError((err as Error).message);
+        }
+      }
 
       streamHandleRef.current = askStream(
         {
@@ -105,7 +205,16 @@ export function AskPage() {
         }
       );
     },
-    [isReady, hasApiKey, trimmedApiKey, dispatch, state.messages, state.model]
+    [
+      isReady,
+      hasApiKey,
+      trimmedApiKey,
+      dispatch,
+      state,
+      sessionId,
+      sessions,
+      navigate,
+    ]
   );
 
   useEffect(() => {
@@ -128,6 +237,7 @@ export function AskPage() {
 
     if (!alreadyAnswered) {
       streamHandleRef.current?.abort();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       send(initialQuery, { startFresh: true });
     }
 
@@ -170,11 +280,41 @@ export function AskPage() {
   const handleNewChat = () => {
     streamHandleRef.current?.abort();
     streamHandleRef.current = null;
-    dispatch({ type: "reset" });
+    navigate("/ask");
   };
+
+  const activeSession = sessionId
+    ? sessions.sessions?.find((s) => s.id === sessionId)
+    : undefined;
 
   return (
     <div className="flex flex-col h-full bg-background">
+      {saveError && (
+        <div
+          role="alert"
+          className="flex items-center gap-3 border-b border-red-300 bg-red-50 px-6 py-2 text-sm text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-100"
+        >
+          <span className="flex-1">Couldn't save: {saveError}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={async () => {
+              if (!sessionId) return;
+              try {
+                await sessions.update(sessionId, { state: stateRef.current });
+                setSaveError(null);
+              } catch (err) {
+                setSaveError((err as Error).message);
+              }
+            }}
+          >
+            Retry
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setSaveError(null)}>
+            Dismiss
+          </Button>
+        </div>
+      )}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
         <section className="flex flex-col overflow-hidden border-r-1 border-r-[#D4D4D4] dark:border-r-1 dark:border-r-[#181818]">
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
@@ -186,7 +326,16 @@ export function AskPage() {
             ) : (
               <>
                 <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
-                  <div className="max-w-[52rem] mx-auto px-6 py-2 flex justify-end">
+                  <div className="max-w-[52rem] mx-auto px-6 py-2 flex items-center justify-end gap-1">
+                    {activeSession && sessionId && (
+                      <SharePopover
+                        sessionId={sessionId}
+                        isPublic={activeSession.isPublic}
+                        onToggle={(next) =>
+                          sessions.update(sessionId, { isPublic: next })
+                        }
+                      />
+                    )}
                     <Button variant="ghost" size="sm" onClick={handleNewChat}>
                       New chat
                     </Button>

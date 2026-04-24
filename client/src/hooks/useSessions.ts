@@ -1,0 +1,174 @@
+import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { useCallback, useEffect, useState } from "react";
+import type { AskConversationState } from "@/lib/askTypes";
+import {
+  type AskSessionRecord,
+  type AskSessionRow,
+  type AskSessionSummary,
+  fromRow,
+  toRow,
+} from "@/lib/sessionTypes";
+
+export interface UseSessionsApi {
+  sessions: AskSessionSummary[] | undefined;
+  error: string | null;
+  list: () => Promise<void>;
+  get: (id: string) => Promise<AskSessionRecord | null>;
+  create: (args: {
+    id: string;
+    title: string | null;
+    state: AskConversationState;
+  }) => Promise<void>;
+  update: (
+    id: string,
+    patch: Partial<{
+      title: string | null;
+      isPublic: boolean;
+      state: AskConversationState;
+    }>
+  ) => Promise<void>;
+  remove: (id: string) => Promise<void>;
+}
+
+function rowToSummary(row: AskSessionRow): AskSessionSummary {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    title: row.title,
+    isPublic: row.is_public,
+    model: row.model,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export function createUseSessions(deps: {
+  supabase: SupabaseClient;
+  userId: string;
+}) {
+  const { supabase, userId } = deps;
+  return function useSessions(): UseSessionsApi {
+    const [sessions, setSessions] = useState<AskSessionSummary[] | undefined>(
+      undefined
+    );
+    const [error, setError] = useState<string | null>(null);
+
+    // supabase and userId are captured from the factory closure; they are
+    // stable for the lifetime of this hook instance, so they are omitted from
+    // the dep arrays below (the linter cannot tell).
+    //
+    // Mutating callbacks (create/update/remove) throw on failure in addition to
+    // setting the hook's `error` state. This lets callers choose: await with
+    // try/catch for operation-level handling, or read `sessions.error` for
+    // surfaced UI state.
+    const list = useCallback(async () => {
+      const { data, error } = await supabase
+        .from("ask_sessions")
+        .select("id,user_id,title,is_public,model,created_at,updated_at")
+        .eq("user_id", userId)
+        .order("updated_at", { ascending: false });
+      if (error) {
+        setError(error.message);
+        throw new Error(error.message);
+      }
+      setSessions((data as AskSessionRow[]).map(rowToSummary));
+    }, []);
+
+    // Uses maybeSingle so that a missing row returns null rather than erroring,
+    // letting callers distinguish "not found" from real query failures.
+    const get = useCallback(async (id: string) => {
+      const { data, error } = await supabase
+        .from("ask_sessions")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+      if (error) {
+        setError(error.message);
+        throw new Error(error.message);
+      }
+      if (!data) return null;
+      return fromRow(data as AskSessionRow);
+    }, []);
+
+    const create = useCallback<UseSessionsApi["create"]>(
+      async ({ id, title, state }) => {
+        const row = toRow({
+          id,
+          userId,
+          title,
+          isPublic: false,
+          state,
+        });
+        const { error } = await supabase.from("ask_sessions").insert(row);
+        if (error) {
+          setError(error.message);
+          throw new Error(error.message);
+        }
+        await list();
+      },
+      [list]
+    );
+
+    const update = useCallback<UseSessionsApi["update"]>(
+      async (id, patch) => {
+        const dbPatch: Record<string, unknown> = {};
+        if ("title" in patch) dbPatch.title = patch.title ?? null;
+        if ("isPublic" in patch) dbPatch.is_public = patch.isPublic;
+        if (patch.state) {
+          const row = toRow({
+            id,
+            userId,
+            title: null,
+            isPublic: false,
+            state: patch.state,
+          });
+          dbPatch.messages = row.messages;
+          dbPatch.cards = row.cards;
+          dbPatch.model = row.model;
+        }
+        const { error } = await supabase
+          .from("ask_sessions")
+          .update(dbPatch)
+          .eq("id", id);
+        if (error) {
+          setError(error.message);
+          throw new Error(error.message);
+        }
+        await list();
+      },
+      [list]
+    );
+
+    const remove = useCallback(
+      async (id: string) => {
+        const { error } = await supabase
+          .from("ask_sessions")
+          .delete()
+          .eq("id", id);
+        if (error) {
+          setError(error.message);
+          throw new Error(error.message);
+        }
+        await list();
+      },
+      [list]
+    );
+
+    useEffect(() => {
+      // Errors are surfaced via `error` state; swallow the rejection here to
+      // avoid unhandled-promise warnings.
+      list().catch(() => {});
+    }, [list]);
+
+    return { sessions, error, list, get, create, update, remove };
+  };
+}
+
+export function useSessions(): UseSessionsApi {
+  const ctx = useSupabaseContext();
+  if (!ctx.user) {
+    throw new Error("useSessions requires an authenticated user");
+  }
+  return createUseSessions({ supabase: ctx.client, userId: ctx.user.id })();
+}
