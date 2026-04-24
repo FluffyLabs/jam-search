@@ -364,7 +364,7 @@ export function AskPage() {
         </div>
       )}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
-        <section className="flex flex-col overflow-hidden border-r-1 border-r-[#D4D4D4] dark:border-r-1 dark:border-r-[#181818]">
+        <section className="flex flex-col overflow-hidden border-l-1 border-l-white dark:border-l-[#353535] border-r-1 border-r-[#D4D4D4] dark:border-r-[#181818]">
           <SessionSectionHeader
             sessionId={sessionId}
             activeSession={activeSession}
@@ -373,7 +373,10 @@ export function AskPage() {
               if (sessionId) sessions.update(sessionId, { isPublic: next });
             }}
           />
-          <div ref={scrollRef} className="flex-1 overflow-y-auto">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto border-t-1 border-t-white dark:border-t-[#353535]"
+          >
             {isHydrating ? (
               <SessionLoadingSkeleton />
             ) : isEmpty ? (
@@ -408,8 +411,8 @@ export function AskPage() {
           </div>
         </section>
 
-        <aside className="hidden lg:flex flex-col border-l-1 border-l-white dark:border-l-1 dark:border-l-[#353535] bg-card/20 text-foreground overflow-hidden">
-          <div className="h-12 shrink-0 border-b border-border/60 px-5 flex items-center gap-2">
+        <aside className="hidden lg:flex flex-col border-l-1 border-l-white dark:border-l-[#353535] bg-card/20 text-foreground overflow-hidden">
+          <div className="h-12 shrink-0 border-b-1 border-b-[#D4D4D4] dark:border-b-[#181818] px-5 flex items-center gap-2">
             <span className="text-sm font-semibold text-foreground">
               Sources
             </span>
@@ -417,7 +420,7 @@ export function AskPage() {
               {lastAssistant?.citations?.length ?? 0}
             </span>
           </div>
-          <div className="flex-1 overflow-y-auto px-5 py-4">
+          <div className="flex-1 overflow-y-auto px-5 py-4 border-t-1 border-t-white dark:border-t-[#353535]">
             {isHydrating ? (
               <div
                 className="flex flex-col gap-3"
@@ -452,7 +455,7 @@ function SessionSectionHeader({
   onToggleShare: (next: boolean) => void;
 }) {
   return (
-    <div className="h-12 shrink-0 border-b border-border/60 px-6 flex items-center gap-3">
+    <div className="h-12 shrink-0 border-b-1 border-b-[#D4D4D4] dark:border-b-[#181818] px-6 flex items-center gap-3">
       <div className="flex-1 min-w-0 truncate text-sm font-medium text-foreground">
         {sessionId ? (
           (activeSession?.title ?? (
