@@ -24,7 +24,7 @@ export function handleAskTitle() {
       );
     }
     const { question, openrouterKey } = parsed.data;
-    const model = process.env.TITLE_MODEL ?? "anthropic/claude-haiku-4-5";
+    const model = process.env.TITLE_MODEL ?? "anthropic/claude-haiku-4.5";
     const openai = createOpenRouterClient(openrouterKey);
     try {
       const title = await generateTitle({ openai, model, question });

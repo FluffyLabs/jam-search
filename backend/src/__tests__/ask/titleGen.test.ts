@@ -17,7 +17,7 @@ describe("generateTitle", () => {
   it("returns a trimmed, quote-free title", async () => {
     const title = await generateTitle({
       openai: fakeOpenAI('"How work results accumulate"'),
-      model: "anthropic/claude-haiku-4-5",
+      model: "anthropic/claude-haiku-4.5",
       question: "How do work results accumulate in JAM?",
     });
     expect(title).toBe("How work results accumulate");
