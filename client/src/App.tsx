@@ -92,9 +92,10 @@ function App() {
   const isUsingEmbeddedViewer = useEmbeddedViewer().isVisible;
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  // /ask manages its own scroll/padding so the section/aside border can
-  // span the full available height.
-  const fullBleed = pathname === "/ask";
+  // /ask (and its nested session routes + shared view) manages its own
+  // scroll/padding so the section/aside border can span the full height
+  // and the shared page doesn't double-pad.
+  const fullBleed = pathname === "/ask" || pathname.startsWith("/ask/");
 
   return (
     <QueryClientProvider client={queryClient}>
