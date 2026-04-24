@@ -14,6 +14,7 @@ import { ResultHeader } from "@/components/results/ResultHeader";
 import { Section } from "@/components/results/Section";
 import { ShowAll } from "@/components/ShowAll";
 import { MultiSelect } from "@/components/ui/multi-select";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useResults } from "@/hooks/useResults";
 import { SearchMode } from "@/lib/mode";
 import {
@@ -35,6 +36,7 @@ const SearchResults = () => {
   const searchParams = new URLSearchParams(location.search);
   const richQuery = searchParams.get("q") || "";
   const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
+  useDocumentTitle(richQuery || null);
 
   const [selectedSources, setSelectedSources] =
     useState<Source[]>(getStoredSources);

@@ -7,6 +7,7 @@ import { Paging } from "@/components/Paging";
 import { DiscordResultList } from "@/components/results/DiscordResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchDiscord } from "@/hooks/useSearchDiscord";
 import { SearchMode } from "@/lib/mode";
@@ -19,6 +20,7 @@ const DiscordResultsAll = () => {
   const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const channelId =
     searchParams.get("channelId") || discord.CHANNELS[0].channelId;
+  useDocumentTitle(richQuery || null);
   // Find the channel name based on the channelId
   const channel =
     discord.CHANNELS.find((ch) => ch.channelId === channelId) ||

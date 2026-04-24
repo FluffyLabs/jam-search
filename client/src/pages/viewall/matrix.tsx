@@ -7,6 +7,7 @@ import { Paging } from "@/components/Paging";
 import { MatrixResultList } from "@/components/results/MatrixResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchMatrix } from "@/hooks/useSearchMatrix";
 import { SearchMode } from "@/lib/mode";
@@ -18,6 +19,7 @@ const MatrixResultsAll = () => {
   const richQuery = searchParams.get("q") || "";
   const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const channelId = searchParams.get("channelId") || matrix.ROOMS[0].id;
+  useDocumentTitle(richQuery || null);
   // Find the channel name based on the channelId
   const channel =
     matrix.ROOMS.find((ch) => ch.id === channelId) || matrix.ROOMS[0];

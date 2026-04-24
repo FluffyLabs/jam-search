@@ -9,6 +9,7 @@ import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
 import { useAskConversation } from "@/hooks/useAskConversation";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useSessions } from "@/hooks/useSessions";
 import { askStream } from "@/lib/askClient";
 import { requestTitle } from "@/lib/askTitleClient";
@@ -286,6 +287,15 @@ export function AskPage() {
   const activeSession = sessionId
     ? sessions.sessions?.find((s) => s.id === sessionId)
     : undefined;
+
+  const askTitle = (() => {
+    if (!sessionId) return null;
+    if (activeSession?.title) return activeSession.title;
+    const fallback = deriveTitle(state);
+    if (fallback) return fallback;
+    return "Bamboozling…";
+  })();
+  useDocumentTitle(askTitle);
 
   return (
     <div className="flex flex-col h-full bg-background">
