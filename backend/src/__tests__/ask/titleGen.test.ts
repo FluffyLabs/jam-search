@@ -42,6 +42,16 @@ describe("generateTitle", () => {
     ).rejects.toThrow(/empty/i);
   });
 
+  it("throws when output reduces to empty after stripping", async () => {
+    await expect(
+      generateTitle({
+        openai: fakeOpenAI('"."'),
+        model: "x",
+        question: "q",
+      })
+    ).rejects.toThrow(/empty/i);
+  });
+
   it("truncates to 80 chars max", async () => {
     const title = await generateTitle({
       openai: fakeOpenAI("A".repeat(200)),

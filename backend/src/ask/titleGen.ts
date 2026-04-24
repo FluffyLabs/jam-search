@@ -26,5 +26,6 @@ export async function generateTitle(args: {
     .replace(/^["'`]|["'`]$/g, "")
     .replace(/[.!?]+$/g, "")
     .trim();
+  if (!stripped) throw new Error("Title generation returned empty output");
   return stripped.slice(0, 80);
 }

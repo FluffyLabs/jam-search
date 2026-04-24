@@ -57,6 +57,11 @@ export function createUseSessions(deps: {
     // supabase and userId are captured from the factory closure; they are
     // stable for the lifetime of this hook instance, so they are omitted from
     // the dep arrays below (the linter cannot tell).
+    //
+    // Mutating callbacks (create/update/remove) throw on failure in addition to
+    // setting the hook's `error` state. This lets callers choose: await with
+    // try/catch for operation-level handling, or read `sessions.error` for
+    // surfaced UI state.
     const list = useCallback(async () => {
       const { data, error } = await supabase
         .from("ask_sessions")
@@ -65,21 +70,24 @@ export function createUseSessions(deps: {
         .order("updated_at", { ascending: false });
       if (error) {
         setError(error.message);
-        return;
+        throw new Error(error.message);
       }
       setSessions((data as AskSessionRow[]).map(rowToSummary));
     }, []);
 
+    // Uses maybeSingle so that a missing row returns null rather than erroring,
+    // letting callers distinguish "not found" from real query failures.
     const get = useCallback(async (id: string) => {
       const { data, error } = await supabase
         .from("ask_sessions")
         .select("*")
         .eq("id", id)
-        .single();
+        .maybeSingle();
       if (error) {
         setError(error.message);
-        return null;
+        throw new Error(error.message);
       }
+      if (!data) return null;
       return fromRow(data as AskSessionRow);
     }, []);
 
@@ -95,7 +103,7 @@ export function createUseSessions(deps: {
         const { error } = await supabase.from("ask_sessions").insert(row);
         if (error) {
           setError(error.message);
-          return;
+          throw new Error(error.message);
         }
         await list();
       },
@@ -123,8 +131,11 @@ export function createUseSessions(deps: {
           .from("ask_sessions")
           .update(dbPatch)
           .eq("id", id);
-        if (error) setError(error.message);
-        else await list();
+        if (error) {
+          setError(error.message);
+          throw new Error(error.message);
+        }
+        await list();
       },
       [list]
     );
@@ -135,8 +146,11 @@ export function createUseSessions(deps: {
           .from("ask_sessions")
           .delete()
           .eq("id", id);
-        if (error) setError(error.message);
-        else await list();
+        if (error) {
+          setError(error.message);
+          throw new Error(error.message);
+        }
+        await list();
       },
       [list]
     );

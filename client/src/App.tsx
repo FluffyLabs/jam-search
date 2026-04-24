@@ -50,6 +50,43 @@ function AuthCallbackCatchAll({
   return <div className="p-4">Page not found.</div>;
 }
 
+/** Resolves the post-auth destination:
+ *  1. pending fork (if any) → the shared-view route to complete the fork
+ *  2. `location.state.from` passed through by AuthGate
+ *  3. fallback to `/`
+ */
+function usePostAuthRedirect(): () => string {
+  const location = useLocation();
+  return () => {
+    const pending = peekForkPending();
+    if (pending) return `/ask/s/${pending}`;
+    const from = (location.state as { from?: string } | null)?.from;
+    return from || "/";
+  };
+}
+
+function LoginRoute() {
+  const navigate = useNavigate();
+  const resolve = usePostAuthRedirect();
+  return (
+    <AuthFlow
+      onSuccess={() => navigate(resolve())}
+      redirectTo={`${window.location.origin}${window.location.pathname}`}
+    />
+  );
+}
+
+function AuthCallbackRoute() {
+  const navigate = useNavigate();
+  const resolve = usePostAuthRedirect();
+  return (
+    <AuthCallback
+      onSuccess={() => navigate(resolve())}
+      onError={() => navigate("/login")}
+    />
+  );
+}
+
 function App() {
   const isUsingEmbeddedViewer = useEmbeddedViewer().isVisible;
   const navigate = useNavigate();
@@ -100,30 +137,8 @@ function App() {
                   path="/results/discord"
                   element={<DiscordResultsAll />}
                 />
-                <Route
-                  path="/login"
-                  element={
-                    <AuthFlow
-                      onSuccess={() => {
-                        const pending = peekForkPending();
-                        navigate(pending ? `/ask/s/${pending}` : "/");
-                      }}
-                      redirectTo={`${window.location.origin}${window.location.pathname}`}
-                    />
-                  }
-                />
-                <Route
-                  path="/auth/callback"
-                  element={
-                    <AuthCallback
-                      onSuccess={() => {
-                        const pending = peekForkPending();
-                        navigate(pending ? `/ask/s/${pending}` : "/");
-                      }}
-                      onError={() => navigate("/login")}
-                    />
-                  }
-                />
+                <Route path="/login" element={<LoginRoute />} />
+                <Route path="/auth/callback" element={<AuthCallbackRoute />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/ask" element={<AskLayout />}>
                   <Route index element={<AskPage />} />
