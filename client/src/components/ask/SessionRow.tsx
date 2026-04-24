@@ -4,6 +4,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { AskSessionSummary } from "@/lib/sessionTypes";
@@ -43,15 +45,26 @@ export function SessionRow({
         >
           <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => onRename(session.id)}>
+        <DropdownMenuContent align="end" className="min-w-[12rem]">
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            Session
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onRename(session.id)}
+          >
             Rename
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onShare(session.id)}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onShare(session.id)}
+          >
             Share…
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="text-destructive focus:text-destructive"
+            className="cursor-pointer text-destructive focus:text-destructive"
             onClick={() => onDelete(session.id)}
           >
             Delete
