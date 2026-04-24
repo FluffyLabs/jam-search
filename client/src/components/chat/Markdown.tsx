@@ -34,12 +34,13 @@ export function Markdown({ content, onCitationClick }: MarkdownProps) {
 // Base styles for all block/inline markdown elements. Scoped via a single
 // wrapper div so we don't pollute other prose in the app.
 const markdownStyles = cn(
-  "text-[15px] leading-7 text-foreground",
-  // Headings
-  "[&_h1]:text-xl [&_h1]:font-semibold [&_h1]:mt-5 [&_h1]:mb-3",
-  "[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mt-5 [&_h2]:mb-2",
-  "[&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2",
-  "[&_h4]:text-sm [&_h4]:font-semibold [&_h4]:mt-3 [&_h4]:mb-1.5",
+  "text-[15px] leading-7 text-foreground font-light",
+  // Headings — one step heavier than the font-light body so they still read
+  // as headings without jumping to a semibold contrast.
+  "[&_h1]:text-xl [&_h1]:font-normal [&_h1]:mt-5 [&_h1]:mb-3",
+  "[&_h2]:text-lg [&_h2]:font-normal [&_h2]:mt-5 [&_h2]:mb-2",
+  "[&_h3]:text-base [&_h3]:font-normal [&_h3]:mt-4 [&_h3]:mb-2",
+  "[&_h4]:text-sm [&_h4]:font-normal [&_h4]:mt-3 [&_h4]:mb-1.5",
   // Paragraphs and spacing
   "[&_p]:my-3 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0",
   // Lists
@@ -48,7 +49,7 @@ const markdownStyles = cn(
   "[&_li]:my-1",
   "[&_li>ul]:my-1 [&_li>ol]:my-1",
   // Inline text
-  "[&_strong]:font-semibold [&_em]:italic",
+  "[&_strong]:font-normal [&_em]:italic",
   "[&_a]:text-brand-dark [&_a]:underline [&_a]:underline-offset-2 hover:[&_a]:opacity-80",
   // Code
   "[&_code]:font-mono [&_code]:text-[0.9em] [&_:not(pre)>code]:bg-muted [&_:not(pre)>code]:px-1 [&_:not(pre)>code]:py-0.5 [&_:not(pre)>code]:rounded",
@@ -59,7 +60,7 @@ const markdownStyles = cn(
   // Tables (via remark-gfm)
   "[&_table]:w-full [&_table]:my-4 [&_table]:border-collapse [&_table]:text-sm",
   "[&_thead]:border-b [&_thead]:border-border",
-  "[&_th]:text-left [&_th]:font-semibold [&_th]:px-3 [&_th]:py-2 [&_th]:align-top",
+  "[&_th]:text-left [&_th]:font-normal [&_th]:px-3 [&_th]:py-2 [&_th]:align-top",
   "[&_td]:px-3 [&_td]:py-2 [&_td]:align-top [&_td]:border-t [&_td]:border-border/60",
   // Horizontal rule
   "[&_hr]:my-4 [&_hr]:border-border",
@@ -89,7 +90,7 @@ function makeComponents(onCitationClick: (n: number) => void): Components {
           onClick={() => onCitationClick(n)}
           className={cn(
             "inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1 mx-0.5",
-            "rounded text-[11px] font-medium tabular-nums align-middle",
+            "rounded text-[11px] tabular-nums align-middle",
             "bg-brand-light text-brand-dark",
             "hover:bg-brand hover:text-white transition-colors"
           )}

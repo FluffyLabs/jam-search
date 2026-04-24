@@ -332,7 +332,7 @@ export function AskPage() {
   useDocumentTitle(askTitle);
 
   return (
-    <div className="flex flex-col h-full bg-background text-foreground">
+    <div className="flex flex-col h-full bg-background text-foreground font-light">
       {saveError && (
         <div
           role="alert"
@@ -413,9 +413,7 @@ export function AskPage() {
 
         <aside className="hidden lg:flex flex-col border-l-1 border-l-white dark:border-l-[#353535] bg-card/20 text-foreground overflow-hidden">
           <div className="h-12 shrink-0 border-b-1 border-b-[#D4D4D4] dark:border-b-[#181818] px-5 flex items-center gap-2">
-            <span className="text-sm font-semibold text-foreground">
-              Sources
-            </span>
+            <span className="text-sm text-foreground">Sources</span>
             <span className="text-xs text-muted-foreground tabular-nums">
               {lastAssistant?.citations?.length ?? 0}
             </span>
@@ -456,15 +454,13 @@ function SessionSectionHeader({
 }) {
   return (
     <div className="h-12 shrink-0 border-b-1 border-b-[#D4D4D4] dark:border-b-[#181818] px-6 flex items-center gap-3">
-      <div className="flex-1 min-w-0 truncate text-sm font-medium text-foreground">
+      <div className="flex-1 min-w-0 truncate text-sm text-foreground">
         {sessionId ? (
           (activeSession?.title ?? (
             <Skeleton className="h-4 w-48 inline-block align-middle" />
           ))
         ) : (
-          <span className="text-muted-foreground font-normal">
-            New conversation
-          </span>
+          <span className="text-muted-foreground">New conversation</span>
         )}
       </div>
       {sessionId && activeSession && !isHydrating && (
@@ -516,9 +512,7 @@ function EmptyState({ showApiKeyCta, onOpenSettings }: EmptyStateProps) {
       <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-light text-brand-dark dark:bg-brand-dark dark:text-brand mb-5">
         <Sparkles className="h-5 w-5" />
       </div>
-      <h2 className="text-2xl font-semibold text-foreground mb-3">
-        Ask anything about JAM
-      </h2>
+      <h2 className="text-2xl text-foreground mb-3">Ask anything about JAM</h2>
       <p className="text-sm text-muted-foreground leading-relaxed max-w-[28rem] mx-auto">
         An agent will search the Graypaper, Discord and Matrix discussions, and
         indexed pages, then answer with cited sources.

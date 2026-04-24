@@ -33,10 +33,7 @@ export function SessionRow({
     >
       <Link
         to={`/ask/${session.id}`}
-        className={cn(
-          "flex-1 min-w-0 truncate",
-          active ? "font-medium" : "font-light"
-        )}
+        className="flex-1 min-w-0 truncate"
         title={session.title ?? "Untitled"}
       >
         {session.title ?? "Untitled"}
@@ -48,8 +45,8 @@ export function SessionRow({
         >
           <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-[12rem]">
-          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+        <DropdownMenuContent align="end" className="min-w-[12rem] font-light">
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
             Session
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

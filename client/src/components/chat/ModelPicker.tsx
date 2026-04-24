@@ -33,18 +33,14 @@ export function ModelPicker({ value, onChange }: ModelPickerProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5">
-          <span className="text-xs text-muted-foreground font-normal">
-            Model
-          </span>
-          <span className="text-xs text-muted-foreground font-normal">
-            {current.label}
-          </span>
+        <Button variant="outline" size="sm" className="gap-1.5 font-light">
+          <span className="text-xs text-muted-foreground">Model</span>
+          <span className="text-xs text-muted-foreground">{current.label}</span>
           <span className="text-muted-foreground">▾</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-[18rem]">
-        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+      <DropdownMenuContent align="start" className="min-w-[18rem] font-light">
+        <DropdownMenuLabel className="text-xs text-muted-foreground">
           OpenRouter model
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -52,7 +48,7 @@ export function ModelPicker({ value, onChange }: ModelPickerProps) {
           <Fragment key={group.tier ?? "untagged"}>
             {idx > 0 && <DropdownMenuSeparator />}
             {group.tier && (
-              <DropdownMenuLabel className="text-[10px] uppercase tracking-wide font-normal text-muted-foreground/70">
+              <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground/70">
                 {TIER_LABEL[group.tier]}
               </DropdownMenuLabel>
             )}
@@ -62,8 +58,7 @@ export function ModelPicker({ value, onChange }: ModelPickerProps) {
                 onSelect={() => onChange(m.id)}
                 className={cn(
                   "cursor-pointer",
-                  m.id === value &&
-                    "font-medium text-brand-dark dark:text-brand"
+                  m.id === value && "text-brand-dark dark:text-brand"
                 )}
               >
                 <span className="w-3 text-brand-dark dark:text-brand">

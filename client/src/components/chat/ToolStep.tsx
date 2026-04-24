@@ -37,9 +37,7 @@ export function ToolStep({ step, isActive = false }: ToolStepProps) {
                 : "bg-brand-dark/50"
           )}
         />
-        <span className="font-medium text-foreground/80 shrink-0">
-          {step.toolName}
-        </span>
+        <span className="text-foreground/80 shrink-0">{step.toolName}</span>
         {preview && (
           <span className="truncate text-muted-foreground">{preview}</span>
         )}
