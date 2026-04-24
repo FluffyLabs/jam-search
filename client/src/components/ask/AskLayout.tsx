@@ -41,17 +41,29 @@ function LayoutInner() {
         onShare={async (id) => {
           const session = sessions.sessions?.find((s) => s.id === id);
           const wasPublic = session?.isPublic === true;
+          let madePublic = false;
           try {
             if (!wasPublic) {
               await sessions.update(id, { isPublic: true });
+              madePublic = true;
             }
-            await navigator.clipboard.writeText(shareUrlFor(id));
-            toast.success(
-              wasPublic ? "Link copied" : "Link copied. Session is public now"
-            );
           } catch (err) {
             toast.error(
               `Couldn't share: ${(err as Error).message ?? "unknown error"}`
+            );
+            return;
+          }
+          try {
+            await navigator.clipboard.writeText(shareUrlFor(id));
+            toast.success(
+              madePublic ? "Link copied. Session is public now" : "Link copied"
+            );
+          } catch (err) {
+            const reason = (err as Error).message ?? "unknown error";
+            toast.error(
+              madePublic
+                ? `Couldn't copy link — session is public now: ${reason}`
+                : `Couldn't copy link: ${reason}`
             );
           }
         }}

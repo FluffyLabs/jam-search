@@ -46,7 +46,7 @@ if (createdRef.current.has(sessionId)) {
 
 **Fix:** Rewrite `useSessions` on top of `@tanstack/react-query` (already installed, already used by `useResults`, etc.). All consumers share the cache via `queryKey: ["ask_sessions", userId]`; mutations call `queryClient.invalidateQueries`.
 
-Side effect: removes the `createUseSessions(deps)()` factory, which was a workaround for needing `supabase`/`userId` in callbacks; react-query mutations close over those naturally.
+The existing `createUseSessions(deps)()` factory stays exported — tests inject a stub Supabase client and userId through it, so `useSessions()` (the default export) keeps delegating to it. The factory's hook body is what gets rewritten.
 
 API surface stays shape-compatible with the existing consumers:
 
