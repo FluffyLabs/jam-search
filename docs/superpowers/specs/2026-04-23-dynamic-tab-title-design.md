@@ -1,50 +1,54 @@
 # Dynamic Tab Title
 
-**Date:** 2026-04-23
+**Date:** 2026-04-24
 **Issue:** [#64 — Feature: Dynamic Tab Title in JAM Search](https://github.com/fluffylabs/jam-search/issues/64)
-**Scope:** `client/` (search results pages, ask page) and `backend/` (new `/summarize` endpoint).
+**Scope:** `client/` only — search results pages, ask page, shared-ask page.
 
 ## Goal
 
 Make the browser tab title reflect what the user is actually doing, so that
 multiple JAM Search tabs can be distinguished at a glance. Today every tab
-shows the same `JAM Search` regardless of route or query.
+shows the same `JAM Search` regardless of route or content.
 
 ## Non-Goals
 
-- Re-summarizing the conversation on every follow-up turn (we summarize once,
-  after the first assistant response).
-- A session list UI (this spec only builds the summary primitive that a
-  future session list will reuse).
-- Changing the favicon.
-- Touching SEO / OpenGraph metadata.
+- Building any LLM-summarization infrastructure. PR #248 already shipped a
+  backend `POST /ask/title` endpoint, a `requestTitle` client helper, and
+  the `deriveTitle` first-message-fallback used to populate
+  `ask_sessions.title` on every new chat. This spec only consumes those.
+- Re-titling on every follow-up. Title generation already happens once,
+  on the first user message, with an explicit "Regenerate Title" action
+  in the sidebar.
+- Changing the favicon, OpenGraph, or any SEO metadata.
 
 ## Title Format
 
 `<topic> — JAM Search` (em-dash separator).
 
-Rationale: when many tabs are open, browsers truncate from the right.
-Putting the most-distinguishing part (the topic) on the left keeps it
-visible even on narrow tabs. The default fallback when no topic is known
-remains `JAM Search`.
+Rationale: when many tabs are open, browsers truncate titles from the
+right. Putting the most-distinguishing part (the topic) on the left keeps
+it visible even on narrow tabs. The default fallback when no topic is
+known remains `JAM Search`.
 
 ## Affected Routes & Their Title Source
 
-| Route                     | Title source                                         |
-|---------------------------|------------------------------------------------------|
-| `/results`                | `?q=` URL param                                      |
-| `/results/graypaper`      | `?q=` URL param                                      |
-| `/results/matrix`         | `?q=` URL param                                      |
-| `/results/pages`          | `?q=` URL param                                      |
-| `/results/discord`        | `?q=` URL param                                      |
-| `/ask`                    | LLM-generated summary (with placeholder fallback)    |
-| Everything else           | Default (`JAM Search`)                               |
+| Route                   | Title source                                      |
+|-------------------------|---------------------------------------------------|
+| `/results`              | `?q=` URL param                                   |
+| `/results/graypaper`    | `?q=` URL param                                   |
+| `/results/matrix`       | `?q=` URL param                                   |
+| `/results/pages`        | `?q=` URL param                                   |
+| `/results/discord`      | `?q=` URL param                                   |
+| `/ask` (no session)     | Default — empty state, no conversation yet        |
+| `/ask/:sessionId`       | `activeSession.title` → `deriveTitle(state)` → `Bamboozling…` |
+| `/ask/s/:sessionId`     | `record.title` → `deriveTitle(record.state)` → `Bamboozling…` |
+| Everything else         | Default (`JAM Search`)                            |
 
 ## Architecture
 
 ### 1. `useDocumentTitle` hook
 
-New file `client/src/hooks/useDocumentTitle.ts`. A small generic hook:
+New file `client/src/hooks/useDocumentTitle.ts`:
 
 ```ts
 export function useDocumentTitle(title: string | null): void;
@@ -52,230 +56,129 @@ export function useDocumentTitle(title: string | null): void;
 
 Behavior:
 
-- On mount/update with a non-null `title`, sets `document.title` to
+- When `title` is a non-empty string: set `document.title` to
   `\`${title} — JAM Search\``.
-- On mount/update with `null`, restores `document.title` to `"JAM Search"`.
-- On unmount, restores `document.title` to `"JAM Search"`.
+- When `title` is `null` or empty: set `document.title` to `"JAM Search"`.
+- On unmount, restore `document.title` to `"JAM Search"`.
 
-The suffix is appended inside the hook so call sites pass only the topic.
-This keeps the format in one place.
+The format and suffix live entirely inside the hook so call sites only
+pass the topic.
 
 ### 2. Search results pages
 
-Each of the five pages becomes a one-line change:
+Each of the five pages gets a one-line addition reading the existing
+query variable:
 
 ```ts
 useDocumentTitle(query || null);
 ```
 
-Where `query` is the existing variable read from `?q=`.
+Files touched:
 
-### 3. Conversation summary state
+- `client/src/pages/results.tsx` — uses `richQuery`.
+- `client/src/pages/viewall/graypaper.tsx`
+- `client/src/pages/viewall/matrix.tsx`
+- `client/src/pages/viewall/pages.tsx`
+- `client/src/pages/viewall/discord.tsx`
 
-Extend `AskConversationState` in `client/src/lib/askTypes.ts`:
+### 3. Ask page (`/ask` and `/ask/:sessionId`)
 
-```ts
-export interface AskConversationState {
-  messages: ChatMessage[];
-  cards: Record<string, CitationCardData>;
-  model: string;
-  summary: string | null;       // NEW
-}
-```
+`client/src/pages/ask.tsx` already exposes everything we need:
 
-Reducer changes in `client/src/lib/askReducer.ts`:
+- `sessionId` from `useParams`
+- `state` from `useAskConversation`
+- `sessions.sessions` from `useSessions`
+- An `activeSession` lookup is already computed as
+  `sessions.sessions?.find((s) => s.id === sessionId)`.
 
-- New action: `{ type: "setSummary"; summary: string }`
-- `reset` clears `summary` to `null` (alongside clearing `messages`/`cards`).
-- `initialState.summary = null`.
-
-`useAskConversation` already serializes the whole state to `sessionStorage`,
-so the summary persists across reloads with no extra code beyond a defensive
-default in `hydrate`.
-
-### 4. Summary trigger on `/ask`
-
-A new effect in `AskPage` watches the conversation. It fires the summary
-request exactly once, when *all* of the following hold:
-
-- `state.summary` is `null`
-- The last message is an assistant message that just stopped streaming
-  (`isStreaming` is `false` and there is no `error`)
-- There has been at least one user message and one assistant turn
-- No summary request is currently in flight (tracked by a ref)
-
-Implementation outline:
-
-```ts
-const summaryAbortRef = useRef<AbortController | null>(null);
-
-useEffect(() => {
-  if (state.summary !== null) return;
-  if (!hasApiKey) return;
-  const last = state.messages[state.messages.length - 1];
-  if (!last || last.role !== "assistant") return;
-  if (last.isStreaming || last.error) return;
-  if (summaryAbortRef.current) return;
-
-  const controller = new AbortController();
-  summaryAbortRef.current = controller;
-
-  summarizeAsk({
-    messages: state.messages,
-    openrouterKey: trimmedApiKey,
-    signal: controller.signal,
-  })
-    .then((summary) => {
-      if (summary) dispatch({ type: "setSummary", summary });
-    })
-    .catch((err) => {
-      if (!(err instanceof DOMException && err.name === "AbortError")) {
-        console.warn("Summary failed:", err);
-      }
-    })
-    .finally(() => {
-      if (summaryAbortRef.current === controller) {
-        summaryAbortRef.current = null;
-      }
-    });
-}, [state.messages, state.summary, hasApiKey, trimmedApiKey]);
-
-useEffect(() => () => summaryAbortRef.current?.abort(), []);
-```
-
-### 5. Title resolution on `/ask`
+Add (next to the existing `activeSession` line):
 
 ```ts
 const askTitle = (() => {
-  if (state.messages.length === 0) return null;
-  if (state.summary) return state.summary;
-  return "Bamboozling…";
+  if (!sessionId) return null;                       // empty /ask
+  if (activeSession?.title) return activeSession.title;
+  const fallback = deriveTitle(state);               // truncated first msg
+  if (fallback) return fallback;
+  return "Bamboozling…";                             // brief loading window
 })();
 useDocumentTitle(askTitle);
 ```
 
 State machine:
 
-| Conversation state                                  | Tab title                       |
-|-----------------------------------------------------|---------------------------------|
-| Empty                                               | `JAM Search`                    |
-| User sent first message, awaiting/streaming         | `Bamboozling… — JAM Search`     |
-| First assistant turn done, summary pending          | `Bamboozling… — JAM Search`     |
-| Summary returned                                    | `<summary> — JAM Search`        |
-| User clicked "New chat" → reset                     | `JAM Search`                    |
-| Reload mid-conversation (summary already in state)  | `<summary> — JAM Search`        |
+| Conversation state                                       | Tab title                       |
+|----------------------------------------------------------|---------------------------------|
+| `/ask` with no `sessionId` (new chat / empty state)      | `JAM Search`                    |
+| `/ask/:id` immediately after creation, before sessions.list refresh, no messages yet | `Bamboozling… — JAM Search` |
+| `/ask/:id` with a first user message in `state` but no DB title yet | `<first 60 chars> — JAM Search` |
+| `/ask/:id` with `activeSession.title` populated (provisional from `deriveTitle`) | `<first 60 chars> — JAM Search` |
+| `/ask/:id` with `activeSession.title` populated (LLM-generated) | `<llm title> — JAM Search`      |
+| `/ask/:id` after "New chat" navigates to `/ask`          | `JAM Search`                    |
 
-### 6. Client-side `summarizeAsk` helper
+`Bamboozling…` is intentionally only visible during the brief window
+between session-row creation and the first list refresh. In practice
+users may never see it; that's fine — `deriveTitle` already provides an
+instant fallback derived from in-memory state.
 
-New file `client/src/lib/summarizeAsk.ts`:
+### 4. Shared ask page (`/ask/s/:sessionId`)
 
-```ts
-export interface SummarizeAskParams {
-  messages: ChatMessage[];
-  openrouterKey: string;
-  signal?: AbortSignal;
-}
-
-export async function summarizeAsk(
-  params: SummarizeAskParams
-): Promise<string | null>;
-```
-
-Behavior:
-
-- POSTs to `${API_URL}/summarize` with
-  `{ messages: toApiMessages(...), openrouterKey }` (reusing the same
-  message-stripping helper as `askClient.ts`; extract it to a shared
-  location if it isn't already exported).
-- Returns the trimmed `summary` string on success, or `null` on any
-  non-2xx / parse failure (we already log internally).
-- Forwards the abort signal to `fetch`.
-
-### 7. Backend `POST /summarize`
-
-New file `backend/src/api/summarize.ts`:
-
-- Request schema (zod):
-  ```ts
-  z.object({
-    messages: z.array(chatMessageSchema).min(1).max(100),
-    openrouterKey: z.string().trim().min(1).max(512),
-  });
-  ```
-- Implementation:
-  1. Build an OpenRouter client via the existing `createOpenRouterClient`.
-  2. Call `chat.completions.create` (non-streaming) with:
-     - `model: "anthropic/claude-haiku-4.5"` — fixed; this is a server-
-       owned choice, the user's selected chat model is irrelevant for
-       titling.
-     - `max_tokens: 32`
-     - `temperature: 0.2`
-     - `messages: [{ role: "system", content: SUMMARY_PROMPT }, ...userMessages]`
-  3. Take `choices[0].message.content`, trim, strip surrounding quotes
-     and any trailing period, collapse whitespace, cap at 60 chars.
-  4. Respond with `{ summary: string }`.
-- Errors (network, non-OK from OpenRouter, empty content) → respond with
-  HTTP 502 and `{ error: string }`. The client treats any failure as a
-  silent no-op.
-
-System prompt (constant in `backend/src/ask/`):
-
-> Reply with a 3-5 word title summarizing the conversation topic. No
-> quotes, no punctuation, no trailing period. Plain text only.
-
-Wire the route in `backend/src/api.ts`:
+`client/src/pages/askShared.tsx` already loads a full `AskSessionRecord`
+into local state. Add:
 
 ```ts
-app.post("/summarize", handleSummarize());
+const sharedTitle = (() => {
+  if (record === null || record === "notfound") return null;
+  if (record.title) return record.title;
+  const fallback = deriveTitle(record.state);
+  return fallback ?? "Bamboozling…";
+})();
+useDocumentTitle(sharedTitle);
 ```
 
-(No `db`/`dataDir` dependency — summarization doesn't read indexed data.)
+The `null` (still loading) and `"notfound"` cases fall back to the default
+`JAM Search` rather than showing `Bamboozling…`, since shared links may
+be opened by users who don't have a session at all.
 
 ## Error Handling
 
-- **Summary request fails** (network, OpenRouter error, malformed response):
-  state stays at `summary: null`, tab keeps showing `Bamboozling… — JAM Search`.
-  Logged via `console.warn`. Not surfaced in UI; tab title is best-effort.
-- **No OpenRouter API key**: summary effect short-circuits before firing.
-  The user already sees a settings CTA in the empty state for missing key;
-  there is no separate UX needed for "summary unavailable."
-- **User aborts (navigate away, "New chat", reload mid-stream)**: the
-  `AbortController` cancels the in-flight request. Resurrected mid-stream
-  assistant messages (which have `error` set by `resurrectMessages`) do
-  not satisfy the trigger condition, so we don't fire summary on a
-  half-broken turn after reload.
-- **Race**: the `summaryAbortRef` guard prevents double-fire if the effect
-  re-runs while a request is in flight.
+There is no new failure mode introduced by this change. Title resolution
+is purely reactive over state that already exists; no network calls are
+added.
+
+If the existing title-generation path fails (handled in PR #248: the
+provisional `deriveTitle` value remains the session title), the tab
+shows that provisional title. Same outcome as the sidebar.
 
 ## Testing
 
 ### Unit tests (Vitest)
 
 - `client/src/hooks/__tests__/useDocumentTitle.test.tsx` — covers:
-  - sets `document.title` to `\`${title} — JAM Search\`` when given a string
-  - sets to `JAM Search` when given `null`
+  - sets `document.title` to `\`${title} — JAM Search\`` for non-empty input
+  - sets to `JAM Search` for `null` or empty string
   - restores `JAM Search` on unmount
   - re-renders update the title
-- `client/src/lib/__tests__/askReducer.test.ts` — extend with:
-  - `setSummary` updates `summary`
-  - `reset` clears `summary`
-- `backend/src/__tests__/summarize.test.ts` — exercises the endpoint
-  with a mocked OpenRouter client; covers happy path, malformed
-  response, OpenRouter error, schema validation.
+
+No new tests are needed for the page wiring — the hook itself is the
+behavioral contract; page integration is one-liners that React Testing
+Library would only re-verify the hook for. Manual smoke covers the
+real-world flow end-to-end.
 
 ### Manual smoke test
 
 1. Open `/results?q=safrole` — tab shows `safrole — JAM Search`.
 2. Open `/results/graypaper?q=safrole` — same.
-3. Open `/ask` (empty) — tab shows `JAM Search`.
-4. Type "How does safrole VRF rotation work?" and submit — tab shows
-   `Bamboozling… — JAM Search` immediately.
-5. Wait for assistant to finish — tab updates to a topic summary like
-   `Safrole VRF rotation — JAM Search`.
-6. Click "New chat" — tab returns to `JAM Search`.
-7. Reload mid-conversation — tab restores from persisted state.
-8. Open three tabs with different queries — each tab shows its own
-   distinguishing topic on the left of the truncated label.
+3. Open `/ask` (no session) — tab shows `JAM Search`.
+4. Type "How does safrole VRF rotation work?" and submit. Within ~1s
+   the URL becomes `/ask/<uuid>` and the tab shows
+   `How does safrole VRF rotation work? — JAM Search` (provisional).
+5. After the assistant turn completes and the LLM title arrives, the
+   tab updates to something like `Safrole VRF rotation — JAM Search`.
+6. Click "New chat" — URL returns to `/ask`, tab shows `JAM Search`.
+7. Open `/ask/s/<public-id>` (a shared link) — tab shows the shared
+   conversation's title.
+8. Open three tabs with different queries / sessions — each shows its
+   own distinguishing topic on the left of the truncated label.
 
 ## File Summary
 
@@ -283,23 +186,20 @@ app.post("/summarize", handleSummarize());
 
 - `client/src/hooks/useDocumentTitle.ts`
 - `client/src/hooks/__tests__/useDocumentTitle.test.tsx`
-- `client/src/lib/summarizeAsk.ts`
-- `backend/src/api/summarize.ts`
-- `backend/src/__tests__/summarize.test.ts`
 
 ### Modified files
 
-- `client/src/lib/askTypes.ts` — add `summary` to `AskConversationState`.
-- `client/src/lib/askReducer.ts` — add `setSummary` action; clear in `reset`.
-- `client/src/hooks/useAskConversation.ts` — defensive default in `hydrate`.
-- `client/src/pages/ask.tsx` — call `useDocumentTitle`; add summary effect.
 - `client/src/pages/results.tsx` — call `useDocumentTitle(richQuery || null)`.
 - `client/src/pages/viewall/{graypaper,matrix,pages,discord}.tsx` — call
   `useDocumentTitle(query || null)`.
-- `backend/src/api.ts` — register the new route.
+- `client/src/pages/ask.tsx` — compute `askTitle`, call `useDocumentTitle`.
+- `client/src/pages/askShared.tsx` — compute `sharedTitle`, call
+  `useDocumentTitle`.
+
+No backend changes. No state-shape changes. No new dependencies.
 
 ## Open Questions
 
-None at design time. Model choice (`anthropic/claude-haiku-4.5`) and
-placeholder text (`Bamboozling…`) are intentionally hard-coded; both are
-trivial to change in a follow-up if they don't feel right in practice.
+None. The placeholder text (`Bamboozling…`) and format (`<topic> — JAM Search`)
+are confirmed; both are trivial to change in a follow-up if they don't
+feel right in practice.
