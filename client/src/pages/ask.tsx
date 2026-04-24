@@ -294,7 +294,7 @@ export function AskPage() {
   useDocumentTitle(askTitle);
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-background text-foreground">
       {saveError && (
         <div
           role="alert"
@@ -369,7 +369,7 @@ export function AskPage() {
           </div>
         </section>
 
-        <aside className="hidden lg:block border-l-1 border-l-white dark:border-l-1 dark:border-l-[#353535] overflow-y-auto bg-card/20 px-5 py-6">
+        <aside className="hidden lg:block border-l-1 border-l-white dark:border-l-1 dark:border-l-[#353535] overflow-y-auto bg-card/20 px-5 py-6 text-foreground">
           <CitationsPanel assistant={lastAssistant} cards={state.cards} />
         </aside>
       </div>
