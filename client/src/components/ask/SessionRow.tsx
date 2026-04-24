@@ -27,13 +27,16 @@ export function SessionRow({
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-accent",
-        active && "bg-accent"
+        "group flex items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-accent",
+        active ? "text-foreground bg-accent" : "text-muted-foreground"
       )}
     >
       <Link
         to={`/ask/${session.id}`}
-        className="flex-1 min-w-0 truncate text-foreground"
+        className={cn(
+          "flex-1 min-w-0 truncate",
+          active ? "font-medium" : "font-light"
+        )}
         title={session.title ?? "Untitled"}
       >
         {session.title ?? "Untitled"}

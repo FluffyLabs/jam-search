@@ -22,9 +22,9 @@ export function SharePopover({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="gap-1.5">
           <Share2 className="size-4" />
-          {isPublic ? "Shared" : "Share"}
+          {isPublic ? "Public" : "Share"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">

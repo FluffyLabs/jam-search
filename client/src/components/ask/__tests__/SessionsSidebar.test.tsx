@@ -48,7 +48,7 @@ describe("SessionsSidebar", () => {
 
   it("filter input narrows the list case-insensitively", async () => {
     renderSidebar(sessions);
-    await userEvent.type(screen.getByLabelText(/filter/i), "yesterday");
+    await userEvent.type(screen.getByLabelText(/search/i), "yesterday");
     expect(screen.queryByText("Today session")).not.toBeInTheDocument();
     expect(screen.getByText("Yesterday session")).toBeInTheDocument();
   });

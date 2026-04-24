@@ -365,40 +365,28 @@ export function AskPage() {
       )}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
         <section className="flex flex-col overflow-hidden border-r-1 border-r-[#D4D4D4] dark:border-r-1 dark:border-r-[#181818]">
+          <SessionSectionHeader
+            sessionId={sessionId}
+            activeSession={activeSession}
+            isHydrating={isHydrating}
+            onToggleShare={(next) => {
+              if (sessionId) sessions.update(sessionId, { isPublic: next });
+            }}
+          />
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
             {isHydrating ? (
-              <>
-                <SessionStickyHeader
-                  sessionId={sessionId}
-                  activeSession={activeSession}
-                  onToggleShare={(next) => {
-                    if (sessionId)
-                      sessions.update(sessionId, { isPublic: next });
-                  }}
-                />
-                <SessionLoadingSkeleton />
-              </>
+              <SessionLoadingSkeleton />
             ) : isEmpty ? (
               <EmptyState
                 showApiKeyCta={isReady && !hasApiKey}
                 onOpenSettings={() => navigate("/settings")}
               />
             ) : (
-              <>
-                <SessionStickyHeader
-                  sessionId={sessionId}
-                  activeSession={activeSession}
-                  onToggleShare={(next) => {
-                    if (sessionId)
-                      sessions.update(sessionId, { isPublic: next });
-                  }}
-                />
-                <div className="max-w-[52rem] mx-auto px-6 py-8 flex flex-col gap-6">
-                  {state.messages.map((m) => (
-                    <Message key={m.id} message={m} />
-                  ))}
-                </div>
-              </>
+              <div className="max-w-[52rem] mx-auto px-6 py-8 flex flex-col gap-6">
+                {state.messages.map((m) => (
+                  <Message key={m.id} message={m} />
+                ))}
+              </div>
             )}
           </div>
 
@@ -420,54 +408,69 @@ export function AskPage() {
           </div>
         </section>
 
-        <aside className="hidden lg:block border-l-1 border-l-white dark:border-l-1 dark:border-l-[#353535] overflow-y-auto bg-card/20 px-5 py-6 text-foreground">
-          {isHydrating ? (
-            <div
-              className="flex flex-col gap-3"
-              role="status"
-              aria-label="Loading sources"
-            >
-              <Skeleton className="h-20 w-full rounded-md" />
-              <Skeleton className="h-20 w-full rounded-md" />
-              <Skeleton className="h-20 w-full rounded-md" />
-            </div>
-          ) : (
-            <CitationsPanel assistant={lastAssistant} cards={state.cards} />
-          )}
+        <aside className="hidden lg:flex flex-col border-l-1 border-l-white dark:border-l-1 dark:border-l-[#353535] bg-card/20 text-foreground overflow-hidden">
+          <div className="h-12 shrink-0 border-b border-border/60 px-5 flex items-center gap-2">
+            <span className="text-sm font-semibold text-foreground">
+              Sources
+            </span>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {lastAssistant?.citations?.length ?? 0}
+            </span>
+          </div>
+          <div className="flex-1 overflow-y-auto px-5 py-4">
+            {isHydrating ? (
+              <div
+                className="flex flex-col gap-3"
+                role="status"
+                aria-label="Loading sources"
+              >
+                <Skeleton className="h-20 w-full rounded-md" />
+                <Skeleton className="h-20 w-full rounded-md" />
+                <Skeleton className="h-20 w-full rounded-md" />
+              </div>
+            ) : (
+              <CitationsPanel assistant={lastAssistant} cards={state.cards} />
+            )}
+          </div>
         </aside>
       </div>
     </div>
   );
 }
 
-function SessionStickyHeader({
+function SessionSectionHeader({
   sessionId,
   activeSession,
+  isHydrating,
   onToggleShare,
 }: {
   sessionId: string | undefined;
   activeSession:
     | { id: string; title: string | null; isPublic: boolean }
     | undefined;
+  isHydrating: boolean;
   onToggleShare: (next: boolean) => void;
 }) {
-  if (!sessionId) return null;
   return (
-    <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
-      <div className="max-w-[52rem] mx-auto px-6 py-2 flex items-center gap-3">
-        <div className="flex-1 min-w-0 truncate text-sm font-medium text-foreground">
-          {activeSession?.title ?? (
+    <div className="h-12 shrink-0 border-b border-border/60 px-6 flex items-center gap-3">
+      <div className="flex-1 min-w-0 truncate text-sm font-medium text-foreground">
+        {sessionId ? (
+          (activeSession?.title ?? (
             <Skeleton className="h-4 w-48 inline-block align-middle" />
-          )}
-        </div>
-        {activeSession && (
-          <SharePopover
-            sessionId={sessionId}
-            isPublic={activeSession.isPublic}
-            onToggle={onToggleShare}
-          />
+          ))
+        ) : (
+          <span className="text-muted-foreground font-normal">
+            New conversation
+          </span>
         )}
       </div>
+      {sessionId && activeSession && !isHydrating && (
+        <SharePopover
+          sessionId={sessionId}
+          isPublic={activeSession.isPublic}
+          onToggle={onToggleShare}
+        />
+      )}
     </div>
   );
 }
