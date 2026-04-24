@@ -156,7 +156,9 @@ export function createUseSessions(deps: {
     );
 
     useEffect(() => {
-      list();
+      // Errors are surfaced via `error` state; swallow the rejection here to
+      // avoid unhandled-promise warnings.
+      list().catch(() => {});
     }, [list]);
 
     return { sessions, error, list, get, create, update, remove };
