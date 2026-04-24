@@ -100,19 +100,27 @@ export function AskPage() {
     setIsHydrating(true);
     let cancelled = false;
     (async () => {
-      const record = await sessionsRef.current.get(sessionId);
-      if (cancelled) return;
-      if (!record) {
+      try {
+        const record = await sessionsRef.current.get(sessionId);
+        if (cancelled) return;
+        if (!record) {
+          setIsHydrating(false);
+          navigate("/ask", { replace: true });
+          return;
+        }
+        dispatch({ type: "hydrate", state: record.state });
+        hydratedRef.current = sessionId;
+        // The hydrated state is by definition what's in the DB; mark it so
+        // the save effect doesn't immediately re-save it on the next render.
+        lastSavedStateRef.current = record.state;
         setIsHydrating(false);
-        navigate("/ask", { replace: true });
-        return;
+      } catch (err) {
+        if (cancelled) return;
+        // Surface the failure so the user sees the save-error bar and can
+        // retry; clear the skeleton so the UI isn't stuck indefinitely.
+        setIsHydrating(false);
+        setSaveError((err as Error).message);
       }
-      dispatch({ type: "hydrate", state: record.state });
-      hydratedRef.current = sessionId;
-      // The hydrated state is by definition what's in the DB; mark it so
-      // the save effect doesn't immediately re-save it on the next render.
-      lastSavedStateRef.current = record.state;
-      setIsHydrating(false);
     })();
     return () => {
       cancelled = true;
@@ -370,7 +378,10 @@ export function AskPage() {
             activeSession={activeSession}
             isHydrating={isHydrating}
             onToggleShare={(next) => {
-              if (sessionId) sessions.update(sessionId, { isPublic: next });
+              if (!sessionId) return;
+              sessions
+                .update(sessionId, { isPublic: next })
+                .catch((err) => setSaveError((err as Error).message));
             }}
           />
           <div
