@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ViewEmbedded } from "@/components/ViewEmbedded";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { SearchMode } from "@/lib/mode";
@@ -20,6 +21,7 @@ const GraypaperResultsAll = () => {
   const query = searchParams.get("q") || "";
   const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const topRef = useRef(null);
+  useDocumentTitle(query || null);
 
   const embedding = useEmbedding(query, searchMode !== SearchMode.Regular).data;
   const queryResult = useSearchGraypaper({

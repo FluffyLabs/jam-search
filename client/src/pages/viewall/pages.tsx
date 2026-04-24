@@ -6,6 +6,7 @@ import { Paging } from "@/components/Paging";
 import { PageResultList } from "@/components/results/PageResultList";
 import { ResultHeader } from "@/components/results/ResultHeader";
 import { Button } from "@/components/ui/button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useEmbedding } from "@/hooks/useEmbedding";
 import { useSearchPages } from "@/hooks/useSearchPages";
 import { SearchMode } from "@/lib/mode";
@@ -17,6 +18,7 @@ const PagesResultsAll = () => {
   const richQuery = searchParams.get("q") || "";
   const searchMode = searchParams.get("searchMode") || SearchMode.Regular;
   const site = searchParams.get("site") || undefined;
+  useDocumentTitle(richQuery || null);
 
   const topRef = useRef(null);
 

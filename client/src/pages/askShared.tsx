@@ -6,11 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { AssistantMessage } from "@/lib/askTypes";
 import { consumeForkPending, markForkPending } from "@/lib/forkPending";
 import {
   type AskSessionRecord,
   type AskSessionRow,
+  deriveTitle,
   fromRow,
   toRow,
 } from "@/lib/sessionTypes";
@@ -77,6 +79,13 @@ export function AskSharedPage() {
       );
     }
   }, [user, sessionId, record, client, navigate]);
+
+  const sharedTitle = (() => {
+    if (record === null || record === "notfound") return null;
+    if (record.title) return record.title;
+    return deriveTitle(record.state) ?? "Bamboozling…";
+  })();
+  useDocumentTitle(sharedTitle);
 
   if (record === null) {
     return <div className="p-4">Loading…</div>;
