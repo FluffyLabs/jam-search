@@ -200,6 +200,6 @@ No backend changes. No state-shape changes. No new dependencies.
 
 ## Open Questions
 
-None. The placeholder text (`Bamboozling…`) and format (`<topic> — JAM Search`)
+None. The placeholder text (`Bamboozling…`) and format (`<topic> - JAM Search`)
 are confirmed; both are trivial to change in a follow-up if they don't
 feel right in practice.
