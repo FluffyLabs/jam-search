@@ -37,7 +37,9 @@ export function ModelPicker({ value, onChange }: ModelPickerProps) {
           <span className="text-xs text-muted-foreground font-normal">
             Model
           </span>
-          <span className="font-medium">{current.label}</span>
+          <span className="text-xs text-muted-foreground font-normal">
+            {current.label}
+          </span>
           <span className="text-muted-foreground">▾</span>
         </Button>
       </DropdownMenuTrigger>
