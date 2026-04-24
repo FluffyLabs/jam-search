@@ -455,7 +455,7 @@ function SessionSectionHeader({
   onToggleShare: (next: boolean) => void;
 }) {
   return (
-    <div className="h-12 shrink-0 border-b-1 border-b-[#D4D4D4] dark:border-b-[#181818] px-6 flex items-center gap-3">
+    <div className="h-12 shrink-0 px-6 flex items-center gap-3">
       <div className="flex-1 min-w-0 truncate text-sm text-foreground">
         {sessionId ? (
           (activeSession?.title ?? (
