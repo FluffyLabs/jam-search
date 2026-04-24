@@ -43,11 +43,7 @@ function wrapperFactory() {
     },
   });
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
-    React.createElement(
-      QueryClientProvider,
-      { client: queryClient },
-      children
-    );
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
   return { wrapper: Wrapper, queryClient };
 }
 

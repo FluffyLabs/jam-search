@@ -1,11 +1,11 @@
 import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   type QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useMemo } from "react";
 import type { AskConversationState } from "@/lib/askTypes";
 import {
@@ -236,4 +236,3 @@ export function invalidateSessions(
 ): void {
   void queryClient.invalidateQueries({ queryKey: sessionsKey(userId) });
 }
-

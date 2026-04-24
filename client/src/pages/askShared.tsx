@@ -1,6 +1,6 @@
 import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { useQueryClient, type QueryClient } from "@tanstack/react-query";
+import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
@@ -8,9 +8,9 @@ import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { invalidateSessions } from "@/hooks/useSessions";
 import type { AssistantMessage } from "@/lib/askTypes";
 import { consumeForkPending, markForkPending } from "@/lib/forkPending";
-import { invalidateSessions } from "@/hooks/useSessions";
 import {
   type AskSessionRecord,
   type AskSessionRow,
@@ -79,11 +79,15 @@ export function AskSharedPage() {
     if (!user || !sessionId || !(record && record !== "notfound")) return;
     const pending = consumeForkPending();
     if (pending === sessionId) {
-      forkAndGo({ client, userId: user.id, source: record, navigate, queryClient }).catch(
-        (err) => setForkError((err as Error).message)
-      );
+      forkAndGo({
+        client,
+        userId: user.id,
+        source: record,
+        navigate,
+        queryClient,
+      }).catch((err) => setForkError((err as Error).message));
     }
-  }, [user, sessionId, record, client, navigate]);
+  }, [user, sessionId, record, client, navigate, queryClient]);
 
   const sharedTitle = (() => {
     if (record === null || record === "notfound") return null;
@@ -114,7 +118,13 @@ export function AskSharedPage() {
       return;
     }
     try {
-      await forkAndGo({ client, userId: user.id, source: record, navigate, queryClient });
+      await forkAndGo({
+        client,
+        userId: user.id,
+        source: record,
+        navigate,
+        queryClient,
+      });
     } catch (err) {
       setForkError((err as Error).message);
     }
