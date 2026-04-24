@@ -45,27 +45,28 @@ export function SharePopover({
             }}
           />
         </div>
-        <div className="mt-3 flex items-center gap-2">
-          <Input
-            readOnly
-            value={url}
-            onFocus={(e) => e.currentTarget.select()}
-            className={isPublic ? "" : "opacity-60"}
-          />
-          <Button
-            size="icon"
-            variant="outline"
-            aria-label="Copy link"
-            onClick={async () => {
-              await navigator.clipboard.writeText(url);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1500);
-            }}
-          >
-            <Copy className="size-4" />
-          </Button>
-        </div>
-        {!isPublic && (
+        {isPublic ? (
+          <div className="mt-3 flex items-center gap-2">
+            <Input
+              readOnly
+              value={url}
+              onFocus={(e) => e.currentTarget.select()}
+              className="text-xs"
+            />
+            <Button
+              size="icon"
+              variant="outline"
+              aria-label="Copy link"
+              onClick={async () => {
+                await navigator.clipboard.writeText(url);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              }}
+            >
+              <Copy className="size-4" />
+            </Button>
+          </div>
+        ) : (
           <p className="mt-2 text-xs text-muted-foreground">
             Off — anyone with the link will see it as unavailable.
           </p>
