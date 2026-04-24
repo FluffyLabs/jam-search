@@ -5,6 +5,7 @@ title: Jampy
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-22T07:53:23.000Z'
 last_modified: '2025-08-22T07:53:23.000Z'
+content_kind: issue
 ---
 
 # Jampy
@@ -468,3 +469,108 @@ I tried the target in a clean debian inside a vbox and I'm getting the illegal i
 
 @davxy should be fixed now; the builder script was embedding a version of openssl optimized for my cpu; now I modified the build script in order to perform the build inside a docker env, so it embeds portable versions of openssl. It was tricky to discover because it was working on my machine and also on docker inside my machine.
 Let me know if it works also on your side.
+
+
+## Comment by @davxy
+
+Hey. I'd like to help fixing a bug I noticed in your impl which prevents you from correctly process mutations.
+In practice you are too eager to remove the prior state (i.e. you remove prior state as soon as a block is imported). But you need to wait for something to be constructed on top of it...
+
+---
+
+Example:
+
+🟢 imported / accepted
+🟥 import fails.
+
+```
++ ab9dda96bbfa4da8f5c70b786f8cc085b319af43a44638582961581b23cd2fd9 (root=2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842) 🟢
++--+ 055a95b78cfa324b5c054f154fc86ba6e0ca2882bc0d0995ed9707965590b0fa (root=9ecf74ac7ea6e569efe013a7094aaaccd7fffbd7bdfd244585435669426901b3) 🟢
+   + b302caea722c1d7293c5453797f55022933f2a0af6422a523d38c86c5827b9a8 (root=2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842) 🟥
+   + 21246652a697daae66bdfcc9031033a2ab8781f37f5120a21f52e8cf827bf204 (root=2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842) 🟥
+   + 0a45873d61c64525a44fb83d4abef0a1f29c99adbbe39a1f79b2b37968af9bdb (root=2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842) 🟥
+   + 7a60aa64cfd8802e0a58490c831f04a7e3dac4f5b9156d155b669d4fe4252a73 (root=d5f18dd9aefd823757e4376f15cd3f1e202c25e9eae9e96976325c5ec8fe7e96) 🟢
+```
+
+The three 🟥 blocks and the last 🟢 block are siblings of `0x055a...`, all built on top of `0xab9d...` (prev state root `0x2de9...`).
+
+Your implementation imports only:
+
+```
++ ab9dda96bbfa4da8f5c70b786f8cc085b319af43a44638582961581b23cd2fd9 (root=2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842) 🟢
++--+ 055a95b78cfa324b5c054f154fc86ba6e0ca2882bc0d0995ed9707965590b0fa (root=9ecf74ac7ea6e569efe013a7094aaaccd7fffbd7bdfd244585435669426901b3) 🟢
+```
+
+Only the first two blocks import. The siblings of `0x055a...` (which all reference prev state root `0x2de9...`) fail.
+
+Your logs:
+
+```
+2026-04-22 13:47:36 INFO     jampy.chainstate 🏆 Block imported, current height is: 381 (0xab9dda96bbfa4da8f5c70b786f8cc085b319af43a44638582961581b23cd2fd9)
+2026-04-22 13:47:36 INFO     jampy.chainstate 🏆 State root: 0x2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842
+2026-04-22 13:47:36 INFO     jampy.grandpa  Deleting state 0x4dec9a45bc86d2ec9a723ea53512283c141b56137fd78fe0bd778206583aee0b with height 380 (best is 4294967295)
+2026-04-22 13:47:36 DEBUG    jampy.grandpa  Memory: 62.3 MB
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ⏩ Processing block: 0x055a95b78cfa324b5c054f154fc86ba6e0ca2882bc0d0995ed9707965590b0fa
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ✅ SAFROLE transition
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ✅ DISPUTES transition
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ✅ REPORTS transition
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ✅ ACCUMULATION transition
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ✅ BLOCK_HISTORY transition
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ✅ AUTHORIZATION transition
+2026-04-22 13:47:36 DEBUG    jampy.chainstate ✅ STATISTICS transition
+2026-04-22 13:47:36 INFO     jampy.chainstate 🏆 Block imported, current height is: 382 (0x055a95b78cfa324b5c054f154fc86ba6e0ca2882bc0d0995ed9707965590b0fa)
+2026-04-22 13:47:36 INFO     jampy.chainstate 🏆 State root: 0x9ecf74ac7ea6e569efe013a7094aaaccd7fffbd7bdfd244585435669426901b3
+2026-04-22 13:47:36 INFO     jampy.grandpa  Deleting state 0x2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842 with height 381 (best is 4294967295)
+2026-04-22 13:47:36 DEBUG    jampy.grandpa  Memory: 62.3 MB
+2026-04-22 13:47:36 INFO     jampy.grandpa  Invalid prev_state_root 0x2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842
+2026-04-22 13:47:36 INFO     jampy.grandpa  Invalid prev_state_root 0x2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842
+2026-04-22 13:47:36 INFO     jampy.grandpa  Invalid prev_state_root 0x2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842
+2026-04-22 13:47:36 INFO     jampy.grandpa  Invalid prev_state_root 0x2de980dde03aab6734f6fa2669c8bf2c325e37d0453e02d7b158837776361842
+```
+
+From the log sequence:
+
+1. `0xab9d...` is imported, producing state root `0x2de9...`.
+2. `0x055a...` is imported on top of it, producing state root `0x9ecf...`
+3. Immediately after importing `0x055a...`, state `0x2de9...` is deleted.
+4. The siblings of `0x055a...` then fail to import with `Invalid prev_state_root 0x2de9...`, because the state they need as their base has just been removed.
+
+The prior state is being pruned too eagerly. A parent state should not be discarded as soon as one child block is imported on top of it, since other siblings may still need it as their prev state.
+
+You know that parent state is no longer required as soon as something is imported on top of one of the children.
+(e.g. if something is imported on top of `7a60aa64...`)
+
+
+## Comment by @dakk
+
+Hey davxy, thank you for analyzing the behavior of jampy; the issue was that I used the timeslot in order to detect when a state is not necessary anymore, while I need to check if a state has nephews in order to remove it. (Hope this time I get it correctly)
+
+This opens a new question; if I have different children from a parent, and the chain continue on one of these child, from what I understand I have to keep all the unused children since no block is imported on top of it, is it correct? 
+
+I uploaded a new version addressing this correctly (🤞)
+
+
+## Comment by @davxy
+
+> This opens a new question; if I have different children from a parent, and the chain continue on one of these child, from what I understand I have to keep all the unused children since no block is imported on top of it, is it correct?
+
+If the chain continues on one of these children, you **DO NOT** need to retain the unused ones, since no block is imported on top of it.
+
+Concretely, consider a block $B_0$ with posterior state $S_0'$. You need $S_0'$ to import any children of $B_0$. Suppose $B_0$ has three children: $B_{11}$, $B_{12}$, and $B_{13}$. You must keep $S_0'$ around in order to **attempt** to import each of these children. However, as soon as a new block $B_{2}$ is built on top of some $B_{1i}$, you can discard any $B_{1i}$ sibling) as well as $S_0'$ (as you don't need it anymore).
+
+This behavior is somehow described here: https://github.com/davxy/jam-conformance/tree/main/fuzz-proto#forking-m1. If any part of the description is unclear or could be improved, feel free to open a PR.
+
+> I uploaded a new version addressing this correctly (🤞)
+
+Looks fine
+
+
+
+## Comment by @dakk
+
+Ok, I was missing this piece, now I also remove unused sibling and I think I'm ready to handle these situations correctly. Thank you for the help davxy
+
+
+## Comment by @davxy
+
+Just in case: the predictable behavior that I've described applies only to blocks generated by the fuzzer. In a real-world scenario, you must be prepared to receive a block on top of any other block that comes after the last finalized one. The behavior outlined above reflects how the fuzzer constructs the chain, which is intentionally simplified for M1.

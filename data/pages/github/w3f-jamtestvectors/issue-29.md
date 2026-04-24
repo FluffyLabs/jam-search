@@ -5,6 +5,7 @@ title: Potential wrong data in safrol tests
 site: github.com/w3f/jamtestvectors
 created_at: '2024-12-12T16:23:33.000Z'
 last_modified: '2024-12-12T16:23:33.000Z'
+content_kind: issue
 ---
 
 # Potential wrong data in safrol tests

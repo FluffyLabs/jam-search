@@ -1,0 +1,129 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/registers.ts#L1-L111
+title: packages/core/pvm-interpreter/registers.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 21bec38828b88200890f11eb13172d7f772f0f6bd91870886c9201b9e4d30f68
+language: typescript
+---
+`packages/core/pvm-interpreter/registers.ts` (lines 1–111)
+
+```typescript
+import { type IRegisters, NO_OF_REGISTERS } from "@typeberry/pvm-interface";
+import { asOpaqueType, check, type Opaque, safeAllocUint8Array } from "@typeberry/utils";
+
+const REGISTER_SIZE_SHIFT = 3; // x << 3 === x * 8
+
+export type RegisterIndex = Opaque<number, "register index">;
+
+export const tryAsRegisterIndex = (index: number): RegisterIndex => {
+  check`${index >= 0 && index < NO_OF_REGISTERS} Incorrect register index: ${index}!`;
+  return asOpaqueType(index);
+};
+
+export class Registers implements IRegisters {
+  private asSigned: BigInt64Array;
+  private asUnsigned: BigUint64Array;
+
+  /** Creates an empty registers object backed by a freshly allocated buffer. */
+  static empty() {
+    return new Registers(safeAllocUint8Array(NO_OF_REGISTERS << REGISTER_SIZE_SHIFT));
+  }
+
+  /** Wraps an existing byte buffer, validating its size. */
+  static fromBytes(bytes: Uint8Array) {
+    check`${bytes.length === NO_OF_REGISTERS << REGISTER_SIZE_SHIFT} Invalid size of registers array.`;
+    return new Registers(bytes);
+  }
+
+  private constructor(private readonly bytes: Uint8Array) {
+    this.asSigned = new BigInt64Array(bytes.buffer, bytes.byteOffset);
+    this.asUnsigned = new BigUint64Array(bytes.buffer, bytes.byteOffset);
+  }
+
+  getAllEncoded(): Uint8Array {
+    return this.bytes;
+  }
+
+  setAllEncoded(bytes: Uint8Array): void {
+    check`${bytes.length === this.bytes.length} Incorrect size of input registers. Got: ${bytes.length}, need: ${this.bytes.length}`;
+    this.bytes.set(bytes, 0);
+  }
+
+  getBytesAsLittleEndian(index: number, len: number) {
+    const offset = index << REGISTER_SIZE_SHIFT;
+    return this.bytes.subarray(offset, offset + len);
+  }
+
+  copyFrom(regs: Registers | BigUint64Array) {
+    const array = regs instanceof BigUint64Array ? regs : regs.asUnsigned;
+    this.asUnsigned.set(array);
+  }
+
+  reset() {
+    for (let i = 0; i < NO_OF_REGISTERS; i++) {
+      this.asUnsigned[i] = 0n;
+    }
+  }
+
+  getLowerU32(registerIndex: number) {
+    return Number(this.asUnsigned[registerIndex] & 0xff_ff_ff_ffn);
+  }
+
+  getLowerI32(registerIndex: number) {
+    return Number(this.getLowerU32(registerIndex)) >> 0;
+  }
+
+  setU32(registerIndex: number, value: number) {
+    this.asUnsigned[registerIndex] = signExtend32To64(value);
+  }
+
+  setI32(registerIndex: number, value: number) {
+    this.asSigned[registerIndex] = signExtend32To64(value);
+  }
+
+  getU64(registerIndex: number) {
+    return this.asUnsigned[registerIndex];
+  }
+
+  getI64(registerIndex: number) {
+    return this.asSigned[registerIndex];
+  }
+
+  setU64(registerIndex: number, value: bigint) {
+    this.asUnsigned[registerIndex] = value;
+  }
+
+  setI64(registerIndex: number, value: bigint) {
+    this.asSigned[registerIndex] = value;
+  }
+
+  getAllU64() {
+    return this.asUnsigned;
+  }
+}
+
+export function signExtend32To64(value: number | bigint): bigint {
+  // Convert to BigInt if the value is a number
+  const bigValue = typeof value === "number" ? BigInt(value) : value;
+
+  // Ensure the value is treated as a 32-bit integer
+  const mask32 = BigInt(0xffffffff);
+  const signBit = BigInt(0x80000000);
+  const maskedValue = bigValue & mask32;
+
+  // Check the sign bit and extend the sign if necessary
+  if ((maskedValue & signBit) !== BigInt(0)) {
+    // If the sign bit is set, extend with ones
+    return maskedValue | ~mask32;
+  }
+  // If the sign bit is not set, return as is
+  return maskedValue;
+}
+```

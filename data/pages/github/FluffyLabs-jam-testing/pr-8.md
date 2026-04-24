@@ -5,6 +5,7 @@ title: 'feat: add new-jamneration team'
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-15T14:10:48.000Z'
 last_modified: '2026-03-15T14:10:48.000Z'
+content_kind: pr
 ---
 
 # feat: add new-jamneration team

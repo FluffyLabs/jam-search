@@ -1,0 +1,31 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/bin.ts#L1-L13
+title: packages/core/pvm-interpreter/bin.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 8b60bd736d9ccba42b79dea15d0aac5b0b094adce543bfa51bd1baf5300f4db0
+language: typescript
+---
+`packages/core/pvm-interpreter/bin.ts` (lines 1–13)
+
+```typescript
+import { tryAsGas } from "@typeberry/pvm-interface";
+import { Interpreter } from "./index.js";
+
+const program = new Uint8Array([
+  0, 0, 33, 51, 8, 1, 51, 9, 1, 40, 3, 0, 149, 119, 255, 81, 7, 12, 100, 138, 200, 152, 8, 100, 169, 40, 243, 100, 135,
+  51, 8, 51, 9, 1, 50, 0, 73, 147, 82, 213, 0,
+]);
+
+const pvm = Interpreter.new();
+pvm.resetGeneric(program, 0, tryAsGas(1000));
+// biome-ignore lint/suspicious/noConsole: We do want to print that.
+console.table(pvm.dumpProgram());
+pvm.runProgram();
+```

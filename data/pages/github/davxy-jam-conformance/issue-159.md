@@ -5,6 +5,7 @@ title: Minifuzz unexpected close reason
 site: github.com/davxy/jam-conformance
 created_at: '2026-01-22T21:10:48.000Z'
 last_modified: '2026-01-22T21:10:48.000Z'
+content_kind: issue
 ---
 
 # Minifuzz unexpected close reason

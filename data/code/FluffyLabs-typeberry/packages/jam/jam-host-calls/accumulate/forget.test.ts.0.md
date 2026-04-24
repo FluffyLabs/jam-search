@@ -1,0 +1,113 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/forget.test.ts#L1-L95
+title: packages/jam/jam-host-calls/accumulate/forget.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: b9fd3acace7b4aa6fdd51236867218fd58e1dab4d09b1c25c91ba6d06d7998cb
+language: typescript
+---
+`packages/jam/jam-host-calls/accumulate/forget.test.ts` (lines 1–95)
+
+```typescript
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import { type CodeHash, tryAsServiceId } from "@typeberry/block";
+import { Bytes } from "@typeberry/bytes";
+import { HASH_SIZE } from "@typeberry/hash";
+import { tryAsU64, type U64 } from "@typeberry/numbers";
+import { HostCallMemory, HostCallRegisters, PvmExecution } from "@typeberry/pvm-host-calls";
+import { tryAsGas } from "@typeberry/pvm-interface";
+import { gasCounter } from "@typeberry/pvm-interpreter/gas.js";
+import { MemoryBuilder, tryAsMemoryIndex } from "@typeberry/pvm-interpreter/memory/index.js";
+import { tryAsSbrkIndex } from "@typeberry/pvm-interpreter/memory/memory-index.js";
+import { PAGE_SIZE } from "@typeberry/pvm-interpreter/spi-decoder/memory-conts.js";
+import { Result } from "@typeberry/utils";
+import { ForgetPreimageError } from "../externalities/partial-state.js";
+import { PartialStateMock } from "../externalities/partial-state-mock.js";
+import { HostCallResult } from "../general/results.js";
+import { Forget } from "./forget.js";
+
+const gas = gasCounter(tryAsGas(0));
+const RESULT_REG = 7;
+const HASH_START_REG = 7;
+const LENGTH_REG = 8;
+
+function prepareRegsAndMemory(
+  preimageHash: CodeHash,
+  preimageLength: U64,
+  { skipPreimageHash = false }: { skipPreimageHash?: boolean } = {},
+) {
+  const memStart = 2 ** 16;
+  const registers = HostCallRegisters.empty();
+  registers.set(HASH_START_REG, tryAsU64(memStart));
+  registers.set(LENGTH_REG, preimageLength);
+
+  const builder = new MemoryBuilder();
+
+  if (!skipPreimageHash) {
+    builder.setReadablePages(tryAsMemoryIndex(memStart), tryAsMemoryIndex(memStart + PAGE_SIZE), preimageHash.raw);
+  }
+  const memory = HostCallMemory.new(builder.finalize(tryAsMemoryIndex(0), tryAsSbrkIndex(0)));
+  return {
+    registers,
+    memory,
+  };
+}
+
+describe("HostCalls: Solicit", () => {
+  it("should request a preimage hash", async () => {
+    const accumulate = new PartialStateMock();
+    const serviceId = tryAsServiceId(10_000);
+    const forget = Forget.new(serviceId, accumulate);
+    const { registers, memory } = prepareRegsAndMemory(Bytes.fill(HASH_SIZE, 0x69).asOpaque(), tryAsU64(4_096));
+
+    // when
+    await forget.execute(gas, registers, memory);
+
+    // then
+    assert.deepStrictEqual(registers.get(RESULT_REG), HostCallResult.OK);
+    assert.deepStrictEqual(accumulate.forgetPreimageData, [[Bytes.fill(HASH_SIZE, 0x69), 4_096n]]);
+  });
+
+  it("should fail if hash not available", async () => {
+    const accumulate = new PartialStateMock();
+    const serviceId = tryAsServiceId(10_000);
+    const forget = Forget.new(serviceId, accumulate);
+    const { registers, memory } = prepareRegsAndMemory(Bytes.fill(HASH_SIZE, 0x69).asOpaque(), tryAsU64(4_096), {
+      skipPreimageHash: true,
+    });
+
+    // when
+    const result = await forget.execute(gas, registers, memory);
+
+    // then
+    assert.deepStrictEqual(result, PvmExecution.Panic);
+    assert.deepStrictEqual(accumulate.forgetPreimageData, []);
+  });
+
+  it("should fail if preimage not available", async () => {
+    const accumulate = new PartialStateMock();
+    const serviceId = tryAsServiceId(10_000);
+    const forget = Forget.new(serviceId, accumulate);
+
+    accumulate.forgetPreimageResponse = Result.error(
+      ForgetPreimageError.NotFound,
+      () => "Test: preimage not found for forget",
+    );
+    const { registers, memory } = prepareRegsAndMemory(Bytes.fill(HASH_SIZE, 0x69).asOpaque(), tryAsU64(4_096));
+
+    // when
+    await forget.execute(gas, registers, memory);
+
+    // then
+    assert.deepStrictEqual(registers.get(RESULT_REG), HostCallResult.HUH);
+    assert.deepStrictEqual(accumulate.forgetPreimageData, [[Bytes.fill(HASH_SIZE, 0x69), 4_096n]]);
+  });
+});
+```

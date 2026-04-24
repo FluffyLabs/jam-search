@@ -5,6 +5,7 @@ title: Project-side reproduction of published fuzz-reports
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-03T21:16:07.000Z'
 last_modified: '2025-08-03T21:16:07.000Z'
+content_kind: issue
 ---
 
 # Project-side reproduction of published fuzz-reports

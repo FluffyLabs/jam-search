@@ -1,0 +1,133 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block/work-report.ts#L1-L115
+title: packages/jam/block/work-report.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: b710a90dee4b9111313f69b57a157315c079e9af651bd9bac4f3e7579e38a672
+language: typescript
+---
+`packages/jam/block/work-report.ts` (lines 1–115)
+
+```typescript
+import type { BytesBlob } from "@typeberry/bytes";
+import { type CodecRecord, codec } from "@typeberry/codec";
+import { FixedSizeArray } from "@typeberry/collections";
+import { HASH_SIZE, type OpaqueHash } from "@typeberry/hash";
+import { isU16, tryAsU32, type U16, type U32 } from "@typeberry/numbers";
+import { WithDebug } from "@typeberry/utils";
+import { type CoreIndex, type ServiceGas, tryAsCoreIndex } from "./common.js";
+import {
+  type AuthorizerHash,
+  type ExportsRootHash,
+  RefineContext,
+  type WorkPackageHash,
+  WorkPackageInfo,
+} from "./refine-context.js";
+import { tryAsWorkItemsCount, type WorkItemsCount } from "./work-package.js";
+import { WorkResult } from "./work-result.js";
+
+/**
+ * Details about the work package being reported on.
+ *
+ * https://graypaper.fluffylabs.dev/#/5f542d7/130e01130e01?v=0.6.2
+ */
+export class WorkPackageSpec extends WithDebug {
+  static Codec = codec.Class(WorkPackageSpec, {
+    hash: codec.bytes(HASH_SIZE).asOpaque<WorkPackageHash>(),
+    length: codec.u32,
+    erasureRoot: codec.bytes(HASH_SIZE),
+    exportsRoot: codec.bytes(HASH_SIZE).asOpaque<ExportsRootHash>(),
+    exportsCount: codec.u16,
+  });
+
+  static create({ hash, length, erasureRoot, exportsRoot, exportsCount }: CodecRecord<WorkPackageSpec>) {
+    return new WorkPackageSpec(hash, length, erasureRoot, exportsRoot, exportsCount);
+  }
+
+  private constructor(
+    /** `h`: The hash of the work package. */
+    public readonly hash: WorkPackageHash,
+    /** `l`: Auditable work-bundle length. */
+    public readonly length: U32,
+    /** `u`: The root hash of the erasure coding merkle tree of that work package. */
+    public readonly erasureRoot: OpaqueHash,
+    /** `e`: The root hash of all data segments exported by this work package. */
+    public readonly exportsRoot: ExportsRootHash,
+    /** `n`: Number of segments exported by this work package. */
+    public readonly exportsCount: U16,
+  ) {
+    super();
+  }
+}
+
+/**
+ * A report of execution of some work package.
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/13bb0113c301?v=0.7.2
+ */
+export class WorkReport extends WithDebug {
+  static Codec = codec.Class(WorkReport, {
+    workPackageSpec: WorkPackageSpec.Codec,
+    context: RefineContext.Codec,
+    coreIndex: codec.varU32.convert(
+      (o) => tryAsU32(o),
+      (i) => {
+        if (!isU16(i)) {
+          throw new Error(`Core index exceeds U16: ${i}`);
+        }
+        return tryAsCoreIndex(i);
+      },
+    ),
+    authorizerHash: codec.bytes(HASH_SIZE).asOpaque<AuthorizerHash>(),
+    authorizationGasUsed: codec.varU64.asOpaque<ServiceGas>(),
+    authorizationOutput: codec.blob,
+    segmentRootLookup: codec.readonlyArray(codec.sequenceVarLen(WorkPackageInfo.Codec)),
+    results: codec.sequenceVarLen(WorkResult.Codec).convert(
+      (x) => x,
+      (items) => FixedSizeArray.new(items, tryAsWorkItemsCount(items.length)),
+    ),
+  });
+
+  static create({
+    workPackageSpec,
+    context,
+    coreIndex,
+    authorizerHash,
+    authorizationOutput,
+    segmentRootLookup,
+    results,
+    authorizationGasUsed,
+  }: CodecRecord<WorkReport>) {
+    return new WorkReport(
+      workPackageSpec,
+      context,
+      coreIndex,
+      authorizerHash,
+      authorizationOutput,
+      segmentRootLookup,
+      results,
+      authorizationGasUsed,
+    );
+  }
+
+  protected constructor(
+    /** `s`: Work package specification. */
+    public readonly workPackageSpec: WorkPackageSpec,
+    /** `c`: Refinement context. */
+    public readonly context: RefineContext,
+    /** *`c`*: Core index on which the work is done. */
+    public readonly coreIndex: CoreIndex,
+    /** *`a`*: Hash of the authorizer. */
+    public readonly authorizerHash: AuthorizerHash,
+    /** `o`: Authorization output. */
+    public readonly authorizationOutput: BytesBlob,
+    /** `l`: Segment-root lookup
+     * In GP segment-root lookup is a dictionary but dictionary and var-len sequence are equal from codec perspective
+     * https://graypaper.fluffylabs.dev/#/579bd12/13ab0013ad00
+```

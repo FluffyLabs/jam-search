@@ -5,6 +5,7 @@ title: Add Known Packages to the Reports STF Input
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-17T10:46:25.000Z'
 last_modified: '2024-12-17T10:46:25.000Z'
+content_kind: pr
 ---
 
 # Add Known Packages to the Reports STF Input

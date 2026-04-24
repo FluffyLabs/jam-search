@@ -5,6 +5,7 @@ title: 1757861618 | heap or region check?
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-14T20:11:00.000Z'
 last_modified: '2025-09-14T20:11:00.000Z'
+content_kind: discussion
 ---
 
 # 1757861618 | heap or region check?

@@ -5,6 +5,7 @@ title: 'm_jampy/fuzz-reports/0.7.2/traces/1773227511/00000048: state root mismat
 site: github.com/davxy/jam-conformance
 created_at: '2026-03-11T13:21:08.000Z'
 last_modified: '2026-03-11T13:21:08.000Z'
+content_kind: discussion
 ---
 
 # m_jampy/fuzz-reports/0.7.2/traces/1773227511/00000048: state root mismatch

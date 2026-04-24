@@ -1,5 +1,6 @@
 import { getByID } from "@orama/orama";
 import OpenAI from "openai";
+import { z } from "zod";
 import * as matrix from "../../../shared/matrix.js";
 import { searchDiscords } from "../api/searchDiscords.js";
 import { searchGraypaper } from "../api/searchGraypapers.js";
@@ -82,13 +83,19 @@ function truncate(text: string, max = 500): string {
 export async function executeSearchAll(
   args: { query: string; limit?: number },
   db: SearchDB,
-  dataDir: string
+  dataDir: string,
+  options: { useEmbeddings?: boolean } = {}
 ): Promise<UnifiedSearchResult[]> {
   const limit = args.limit ?? 10;
 
   // Attempt to compute a query embedding for hybrid (text + vector) search.
   // Falls back to fulltext-only if the API key is absent or the call fails.
-  const embedding = await computeQueryEmbedding(args.query);
+  // MCP callers pass useEmbeddings: false to avoid spending the server's
+  // OpenAI quota on anonymous traffic.
+  const embedding =
+    options.useEmbeddings === false
+      ? null
+      : await computeQueryEmbedding(args.query);
   const embeddingKey = embedding ? embeddingCache.store(embedding) : "";
 
   const [pages, discord, matrixRes, graypaper] = await Promise.all([
@@ -230,51 +237,48 @@ export async function executeGetFullDocument(
 }
 
 /**
- * Tool definitions in OpenAI chat-completions tool format. OpenRouter accepts
- * these unchanged. Only two tools: unified search + full-doc fetch.
+ * Single source of truth for the two tools exposed by both /ask (OpenAI
+ * tool-call format) and /mcp (MCP tools/list format). Each surface derives its
+ * wire format from these specs.
  */
-export const TOOL_DEFINITIONS = [
+export const TOOL_SPECS = [
   {
-    type: "function" as const,
-    function: {
-      name: "search_all",
-      description:
-        "Search across all indexed knowledge sources (graypaper, discord, matrix, pages). Returns up to `limit` result chunks with a stable `id`, a `sourceType`, and a short preview of the content. Use this first to discover relevant material; follow up with get_full_document if a preview is insufficient.",
-      parameters: {
-        type: "object",
-        properties: {
-          query: {
-            type: "string",
-            description: "Natural-language or keyword query.",
-          },
-          limit: {
-            type: "integer",
-            minimum: 1,
-            maximum: 20,
-            default: 10,
-            description: "Max results per source (so up to 4 × limit total).",
-          },
-        },
-        required: ["query"],
-      },
-    },
+    name: "search_all",
+    description:
+      "Search across all indexed knowledge sources (graypaper, discord, matrix, pages). Returns up to `limit` result chunks with a stable `id`, a `sourceType`, and a short preview of the content. Use this first to discover relevant material; follow up with get_full_document if a preview is insufficient.",
+    schema: z.object({
+      query: z.string().describe("Natural-language or keyword query."),
+      // `.optional()` after `.default()` keeps limit out of JSON-schema
+      // `required`, so strict clients don't have to pass a tunable.
+      limit: z
+        .number()
+        .int()
+        .min(1)
+        .max(20)
+        .default(10)
+        .optional()
+        .describe("Max results per source (so up to 4 × limit total)."),
+    }),
   },
   {
-    type: "function" as const,
-    function: {
-      name: "get_full_document",
-      description:
-        "Fetch the full markdown of a single document by the `id` returned from search_all. Use when a search preview is insufficient to answer the question.",
-      parameters: {
-        type: "object",
-        properties: {
-          id: {
-            type: "string",
-            description: "The `id` from a search_all result.",
-          },
-        },
-        required: ["id"],
-      },
-    },
+    name: "get_full_document",
+    description:
+      "Fetch the full markdown of a single document by the `id` returned from search_all. Use when a search preview is insufficient to answer the question.",
+    schema: z.object({
+      id: z.string().describe("The `id` from a search_all result."),
+    }),
   },
-];
+] as const;
+
+/**
+ * OpenAI chat-completions tool format, used by the /ask agent loop.
+ * OpenRouter accepts this unchanged.
+ */
+export const TOOL_DEFINITIONS = TOOL_SPECS.map((spec) => ({
+  type: "function" as const,
+  function: {
+    name: spec.name,
+    description: spec.description,
+    parameters: z.toJSONSchema(spec.schema),
+  },
+}));

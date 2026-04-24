@@ -5,6 +5,7 @@ title: erasure coding test vectors
 site: github.com/w3f/jamtestvectors
 created_at: '2024-06-24T15:10:17.000Z'
 last_modified: '2024-06-24T15:10:17.000Z'
+content_kind: pr
 ---
 
 # erasure coding test vectors

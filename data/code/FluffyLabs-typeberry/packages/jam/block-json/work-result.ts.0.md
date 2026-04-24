@@ -1,0 +1,130 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block-json/work-result.ts#L1-L112
+title: packages/jam/block-json/work-result.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 0415fd04d9d4325c19414be08b85a80619053c52f7fc6a4585506d0569c92cb6
+language: typescript
+---
+`packages/jam/block-json/work-result.ts` (lines 1–112)
+
+```typescript
+import type { ServiceGas, ServiceId } from "@typeberry/block";
+import { type CodeHash, tryAsServiceGas } from "@typeberry/block";
+import { WorkExecResult, WorkExecResultKind, WorkRefineLoad, WorkResult } from "@typeberry/block/work-result.js";
+import { BytesBlob } from "@typeberry/bytes";
+import type { OpaqueHash } from "@typeberry/hash";
+import { json } from "@typeberry/json-parser";
+import { tryAsU32, type U32 } from "@typeberry/numbers";
+import { fromJson } from "./common.js";
+
+// TODO [ToDr] Introduce fromJson.union?
+const workExecResultFromJson = json.object<JsonWorkExecResult, WorkExecResult>(
+  {
+    ok: json.optional(json.fromString(BytesBlob.parseBlob)),
+    out_of_gas: json.optional(json.fromAny(() => null)),
+    panic: json.optional(json.fromAny(() => null)),
+    bad_code: json.optional(json.fromAny(() => null)),
+    code_oversize: json.optional(json.fromAny(() => null)),
+    output_oversize: json.optional(json.fromAny(() => null)),
+  },
+  (val) => {
+    const { ok, out_of_gas, panic, bad_code, code_oversize, output_oversize } = val;
+    if (ok !== undefined) {
+      return WorkExecResult.ok(ok);
+    }
+
+    if (out_of_gas === null) {
+      return WorkExecResult.error(WorkExecResultKind.outOfGas);
+    }
+
+    if (panic === null) {
+      return WorkExecResult.error(WorkExecResultKind.panic);
+    }
+
+    if (bad_code === null) {
+      return WorkExecResult.error(WorkExecResultKind.badCode);
+    }
+
+    if (code_oversize === null) {
+      return WorkExecResult.error(WorkExecResultKind.codeOversize);
+    }
+
+    if (output_oversize === null) {
+      return WorkExecResult.error(WorkExecResultKind.digestTooBig);
+    }
+
+    throw new Error("Invalid WorkExecResult");
+  },
+);
+
+type JsonWorkExecResult = {
+  ok?: BytesBlob;
+  out_of_gas?: null;
+  panic?: null;
+  bad_code?: null;
+  code_oversize?: null;
+  output_oversize?: null;
+};
+
+const workRefineLoadFromJson = json.object<JsonWorkRefineLoad, WorkRefineLoad>(
+  {
+    gas_used: json.fromBigInt((x) => tryAsServiceGas(x)),
+    imports: "number",
+    extrinsic_count: "number",
+    extrinsic_size: "number",
+    exports: "number",
+  },
+  ({ gas_used, imports, extrinsic_count, extrinsic_size, exports }) =>
+    WorkRefineLoad.create({
+      gasUsed: gas_used,
+      importedSegments: tryAsU32(imports),
+      extrinsicCount: tryAsU32(extrinsic_count),
+      extrinsicSize: tryAsU32(extrinsic_size),
+      exportedSegments: tryAsU32(exports),
+    }),
+);
+
+type JsonWorkRefineLoad = {
+  gas_used: ServiceGas;
+  imports: U32;
+  extrinsic_count: U32;
+  extrinsic_size: U32;
+  exports: U32;
+};
+
+export const workResultFromJson = json.object<JsonWorkResult, WorkResult>(
+  {
+    service_id: "number",
+    code_hash: fromJson.bytes32(),
+    payload_hash: fromJson.bytes32(),
+    accumulate_gas: json.fromBigInt((x) => tryAsServiceGas(x)),
+    result: workExecResultFromJson,
+    refine_load: workRefineLoadFromJson,
+  },
+  ({ service_id, code_hash, payload_hash, accumulate_gas, result, refine_load }) =>
+    WorkResult.create({
+      serviceId: service_id,
+      codeHash: code_hash,
+      payloadHash: payload_hash,
+      gas: accumulate_gas,
+      result,
+      load: refine_load,
+    }),
+);
+
+type JsonWorkResult = {
+  service_id: ServiceId;
+  code_hash: CodeHash;
+  payload_hash: OpaqueHash;
+  accumulate_gas: ServiceGas;
+  result: WorkExecResult;
+  refine_load: WorkRefineLoad;
+};
+```

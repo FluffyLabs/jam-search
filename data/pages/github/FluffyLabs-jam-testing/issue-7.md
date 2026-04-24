@@ -5,6 +5,7 @@ title: Standardize docker memory limit for all performance targets
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-15T12:55:25.000Z'
 last_modified: '2026-03-15T12:55:25.000Z'
+content_kind: issue
 ---
 
 # Standardize docker memory limit for all performance targets

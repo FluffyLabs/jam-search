@@ -5,6 +5,7 @@ title: fuzzy_trace ...008 (and possibly others) do wrongly some service statisti
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-10-27T16:41:05.000Z'
 last_modified: '2025-10-27T16:41:05.000Z'
+content_kind: issue
 ---
 
 # fuzzy_trace ...008 (and possibly others) do wrongly some service statistics

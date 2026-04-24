@@ -5,6 +5,7 @@ title: 'Accumulation: Same code different services unexpected output'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-05T17:31:06.000Z'
 last_modified: '2025-05-05T17:31:06.000Z'
+content_kind: issue
 ---
 
 # Accumulation: Same code different services unexpected output

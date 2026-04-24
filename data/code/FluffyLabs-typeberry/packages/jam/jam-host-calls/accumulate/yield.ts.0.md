@@ -1,0 +1,72 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/yield.ts#L1-L54
+title: packages/jam/jam-host-calls/accumulate/yield.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: ea3bf802427f4f1e36e027ec6ea01bb6e76a0a0e2e92c87d222583a938214286
+language: typescript
+---
+`packages/jam/jam-host-calls/accumulate/yield.ts` (lines 1–54)
+
+```typescript
+import type { ServiceId } from "@typeberry/block";
+import { Bytes } from "@typeberry/bytes";
+import { HASH_SIZE } from "@typeberry/hash";
+import {
+  type HostCallHandler,
+  type HostCallMemory,
+  type HostCallRegisters,
+  PvmExecution,
+  traceRegisters,
+  tryAsHostCallIndex,
+} from "@typeberry/pvm-host-calls";
+import { type IGasCounter, tryAsSmallGas } from "@typeberry/pvm-interface";
+import type { PartialState } from "../externalities/partial-state.js";
+import { HostCallResult } from "../general/results.js";
+import { logger } from "../logger.js";
+
+const IN_OUT_REG = 7;
+
+/**
+ * Yield accumulation trie result.
+ *
+ * https://graypaper.fluffylabs.dev/#/7e6ff6a/381c02381c02?v=0.6.7
+ */
+export class Yield implements HostCallHandler {
+  index = tryAsHostCallIndex(25);
+  basicGasCost = tryAsSmallGas(10);
+  tracedRegisters = traceRegisters(IN_OUT_REG);
+
+  static new(currentServiceId: ServiceId, partialState: PartialState) {
+    return new Yield(currentServiceId, partialState);
+  }
+
+  private constructor(
+    public readonly currentServiceId: ServiceId,
+    private readonly partialState: PartialState,
+  ) {}
+
+  async execute(_gas: IGasCounter, regs: HostCallRegisters, memory: HostCallMemory): Promise<PvmExecution | undefined> {
+    // `o`
+    const hashStart = regs.get(IN_OUT_REG);
+
+    const hash = Bytes.zero(HASH_SIZE);
+    const memoryReadResult = memory.loadInto(hash.raw, hashStart);
+    if (memoryReadResult.isError) {
+      logger.trace`[${this.currentServiceId}] YIELD() <- PANIC`;
+      return PvmExecution.Panic;
+    }
+
+    this.partialState.yield(hash);
+    logger.trace`[${this.currentServiceId}] YIELD(${hash})`;
+
+    regs.set(IN_OUT_REG, HostCallResult.OK);
+  }
+}
+```

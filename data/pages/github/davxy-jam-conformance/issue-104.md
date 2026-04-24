@@ -5,6 +5,7 @@ title: '"jam_types" module not found'
 site: github.com/davxy/jam-conformance
 created_at: '2025-10-13T07:05:00.000Z'
 last_modified: '2025-10-13T07:05:00.000Z'
+content_kind: issue
 ---
 
 # "jam_types" module not found

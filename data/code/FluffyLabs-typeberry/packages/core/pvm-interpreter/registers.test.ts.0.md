@@ -1,0 +1,135 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/registers.test.ts#L1-L117
+title: packages/core/pvm-interpreter/registers.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: cccb70fd792f7949bf837842e88edb205fe5ef15ae225d3101f207e1fa78938b
+language: typescript
+---
+`packages/core/pvm-interpreter/registers.test.ts` (lines 1–117)
+
+```typescript
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import { Registers } from "./registers.js";
+
+const U32_BYTES = 4;
+const U64_BYTES = 8;
+
+describe("Registers", () => {
+  describe("loading values", () => {
+    it("should return 0xff_ff_ff_ff correctly loaded into register", () => {
+      const registers = Registers.empty();
+      const expectedSignedNumber = -1;
+      const expectedUnsignedNumber = 2 ** 32 - 1;
+
+      registers.setU32(0, 0xff_ff_ff_ff);
+
+      assert.strictEqual(registers.getLowerI32(0), expectedSignedNumber);
+      assert.strictEqual(registers.getLowerU32(0), expectedUnsignedNumber);
+    });
+
+    it("should return 0x00_00_00_01 correctly loaded into register", () => {
+      const registers = Registers.empty();
+      const expectedSignedNumber = 1;
+      const expectedUnsignedNumber = 1;
+
+      registers.setU32(0, 0x00_00_00_01);
+
+      assert.strictEqual(registers.getLowerI32(0), expectedSignedNumber);
+      assert.strictEqual(registers.getLowerU32(0), expectedUnsignedNumber);
+    });
+
+    it("should return 0x80_00_00_00 correctly loaded into register", () => {
+      const registers = Registers.empty();
+      const expectedSignedNumber = -(2 ** 31);
+      const expectedUnsignedNumber = 2 ** 31;
+
+      registers.setU32(0, 0x80_00_00_00);
+
+      assert.strictEqual(registers.getLowerI32(0), expectedSignedNumber);
+      assert.strictEqual(registers.getLowerU32(0), expectedUnsignedNumber);
+    });
+  });
+
+  describe("getBytesAsLittleEndian", () => {
+    it("should return empty bytes array", () => {
+      const regs = Registers.empty();
+
+      const num = 0;
+      const expectedBytes = new Uint8Array([0, 0, 0, 0]);
+
+      regs.setU32(1, num);
+
+      assert.deepStrictEqual(regs.getBytesAsLittleEndian(1, U32_BYTES), expectedBytes);
+    });
+
+    it("should return u8 number correctly encoded as little endian", () => {
+      const regs = Registers.empty();
+
+      const num = 0xff;
+      const expectedBytes = new Uint8Array([0xff, 0, 0, 0]);
+
+      regs.setU32(1, num);
+
+      assert.deepStrictEqual(regs.getBytesAsLittleEndian(1, U32_BYTES), expectedBytes);
+    });
+
+    it("should return u16 number correctly encoded as little endian", () => {
+      const regs = Registers.empty();
+
+      const num = 0xff_ee;
+      const expectedBytes = new Uint8Array([0xee, 0xff, 0, 0]);
+
+      regs.setU32(1, num);
+
+      assert.deepStrictEqual(regs.getBytesAsLittleEndian(1, U32_BYTES), expectedBytes);
+    });
+
+    it("should return u32 number correctly encoded as little endian", () => {
+      const regs = Registers.empty();
+
+      const num = 0xff_ee_dd_cc;
+      const expectedBytes = new Uint8Array([0xcc, 0xdd, 0xee, 0xff]);
+
+      regs.setU32(1, num);
+
+      assert.deepStrictEqual(regs.getBytesAsLittleEndian(1, U32_BYTES), expectedBytes);
+    });
+  });
+
+  describe("Implemented IRegister", () => {
+    it("should correctly get all registers into bytes encoded", () => {
+      const regs = Registers.empty();
+
+      const num = 0xef_cd_ab_89_67_45_23_01n;
+      const bytesReg = new Uint8Array([0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]);
+      const fill = new Uint8Array(12 * U64_BYTES).fill(0); // we set 1st register so we fill remaining 12 with 0
+      const expected = new Uint8Array([...bytesReg, ...fill]);
+
+      regs.setU64(0, num);
+
+      // when
+      const encodedAllRegisters = regs.getAllEncoded();
+
+      // then
+      assert.deepStrictEqual(encodedAllRegisters.length, expected.length);
+      assert.deepStrictEqual(encodedAllRegisters, expected);
+    });
+
+    it("should correctly set all registers from bytes encoded", () => {
+      const regs = Registers.empty();
+
+      const bytesReg = new Uint8Array([0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]);
+      const fill = new Uint8Array(12 * U64_BYTES).fill(0); // we set 1st register so we fill remaining 12 with 0
+      const bytes = new Uint8Array([...bytesReg, ...fill]);
+
+      const expected = 0xef_cd_ab_89_67_45_23_01n;
+
+```

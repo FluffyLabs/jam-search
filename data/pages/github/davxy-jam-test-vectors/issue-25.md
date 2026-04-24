@@ -5,6 +5,7 @@ title: 'bandersnatch::Public::deserialize_compressed Fails to Deserialize Test V
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-26T09:04:54.000Z'
 last_modified: '2025-02-26T09:04:54.000Z'
+content_kind: issue
 ---
 
 # bandersnatch::Public::deserialize_compressed Fails to Deserialize Test Vector

@@ -5,6 +5,7 @@ title: WorkResult Codec Problem
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-23T05:19:27.000Z'
 last_modified: '2025-03-23T05:19:27.000Z'
+content_kind: issue
 ---
 
 # WorkResult Codec Problem

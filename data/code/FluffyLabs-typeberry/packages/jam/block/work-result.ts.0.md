@@ -1,0 +1,125 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block/work-result.ts#L1-L107
+title: packages/jam/block/work-result.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: f0092aa22f42cfc6398ec16a7902b668c2e48bb9736a828e08eb53a3afbf9a12
+language: typescript
+---
+`packages/jam/block/work-result.ts` (lines 1–107)
+
+```typescript
+import { BytesBlob } from "@typeberry/bytes";
+import { type CodecRecord, codec } from "@typeberry/codec";
+import { HASH_SIZE, type OpaqueHash } from "@typeberry/hash";
+import type { U32 } from "@typeberry/numbers";
+import { WithDebug } from "@typeberry/utils";
+import type { ServiceGas, ServiceId } from "./common.js";
+import type { CodeHash } from "./hash.js";
+
+/** The tag to describe the [`WorkExecResult`] union. */
+export enum WorkExecResultKind {
+  /** Execution succesful. The result will be followed by an octet sequence. */
+  ok = 0,
+  /** `∞`: the machine went out-of-gas during execution. */
+  outOfGas = 1,
+  /** `☇`: unexpected program termination. */
+  panic = 2,
+  /** `⊚`: the number of exports made was invalidly reported. */
+  incorrectNumberOfExports = 3,
+  /** `⊖`: the size of the digest (refinement output) would cross the acceptable limit. */
+  digestTooBig = 4,
+  /** `BAD`: service code was not available for lookup in state. */
+  badCode = 5,
+  /** `BIG`: the code was too big (beyond the maximum allowed size `W_C`) */
+  codeOversize = 6,
+}
+
+type WorkExecResultUnion =
+  | { kind: WorkExecResultKind.ok; okBlob: BytesBlob }
+  | { kind: WorkExecResultKind.outOfGas }
+  | { kind: WorkExecResultKind.panic }
+  | { kind: WorkExecResultKind.incorrectNumberOfExports }
+  | { kind: WorkExecResultKind.digestTooBig }
+  | { kind: WorkExecResultKind.badCode }
+  | { kind: WorkExecResultKind.codeOversize };
+
+/** The execution result of some work-package. */
+export class WorkExecResult extends WithDebug {
+  static Codec = codec
+    .union<WorkExecResultKind, WorkExecResultUnion>("WorkExecResult", {
+      [WorkExecResultKind.ok]: codec.object({ okBlob: codec.blob }),
+      [WorkExecResultKind.outOfGas]: codec.object({}),
+      [WorkExecResultKind.panic]: codec.object({}),
+      [WorkExecResultKind.incorrectNumberOfExports]: codec.object({}),
+      [WorkExecResultKind.digestTooBig]: codec.object({}),
+      [WorkExecResultKind.badCode]: codec.object({}),
+      [WorkExecResultKind.codeOversize]: codec.object({}),
+    })
+    .convert<WorkExecResult>(
+      (x) => {
+        if (x.kind === WorkExecResultKind.ok) {
+          return { kind: WorkExecResultKind.ok, okBlob: x.okBlob ?? BytesBlob.empty() };
+        }
+        return { kind: x.kind };
+      },
+      (x) => new WorkExecResult(x.kind, x.kind === WorkExecResultKind.ok ? x.okBlob : null),
+    );
+
+  static ok(blob: BytesBlob) {
+    return new WorkExecResult(WorkExecResultKind.ok, blob);
+  }
+
+  static error(kind: Exclude<WorkExecResultKind, WorkExecResultKind.ok>) {
+    return new WorkExecResult(kind, null);
+  }
+
+  private constructor(
+    /** The execution result tag. */
+    public readonly kind: WorkExecResultKind,
+    /** Optional octet sequence - available only if `kind === ok` */
+    public readonly okBlob: BytesBlob | null = null,
+  ) {
+    super();
+  }
+}
+
+/**
+ * Five fields describing the level of activity which this workload
+ * imposed on the core in bringing the output datum to bear.
+ *
+ * https://graypaper.fluffylabs.dev/#/68eaa1f/141300141b00?v=0.6.4
+ * https://graypaper.fluffylabs.dev/#/68eaa1f/1a50001a5000?v=0.6.4
+ */
+export class WorkRefineLoad extends WithDebug {
+  static Codec = codec.Class(WorkRefineLoad, {
+    gasUsed: codec.varU64.asOpaque<ServiceGas>(),
+    importedSegments: codec.varU32,
+    extrinsicCount: codec.varU32,
+    extrinsicSize: codec.varU32,
+    exportedSegments: codec.varU32,
+  });
+
+  static create({
+    gasUsed,
+    importedSegments,
+    extrinsicCount,
+    extrinsicSize,
+    exportedSegments,
+  }: CodecRecord<WorkRefineLoad>) {
+    return new WorkRefineLoad(gasUsed, importedSegments, extrinsicCount, extrinsicSize, exportedSegments);
+  }
+
+  private constructor(
+    /** `u`:  actual amount of gas used during refinement */
+    public readonly gasUsed: ServiceGas,
+    /** `i`: number of segments imported from */
+    public readonly importedSegments: U32,
+    /** `x`: number of extrinsics used in computing the workload */
+```

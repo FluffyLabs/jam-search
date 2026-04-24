@@ -5,6 +5,7 @@ title: Requesting test vectors for Page-Proof Fn
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-21T12:17:08.000Z'
 last_modified: '2025-04-21T12:17:08.000Z'
+content_kind: issue
 ---
 
 # Requesting test vectors for Page-Proof Fn

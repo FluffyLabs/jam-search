@@ -5,6 +5,7 @@ title: Add graymatter fuzz source workflow
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-15T17:04:44.000Z'
 last_modified: '2026-03-15T17:04:44.000Z'
+content_kind: pr
 ---
 
 # Add graymatter fuzz source workflow

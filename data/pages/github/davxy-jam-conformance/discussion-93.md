@@ -5,6 +5,7 @@ title: March 2026 In-person JAM Meetup @ PBA Lisbon
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-18T19:04:05.000Z'
 last_modified: '2025-09-18T19:04:05.000Z'
+content_kind: discussion
 ---
 
 # March 2026 In-person JAM Meetup @ PBA Lisbon

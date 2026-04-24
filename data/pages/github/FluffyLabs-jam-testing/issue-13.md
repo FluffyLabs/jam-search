@@ -5,6 +5,7 @@ title: PBNJAM container needs 4GB RAM for long term block imports
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-17T08:58:38.000Z'
 last_modified: '2026-03-17T08:58:38.000Z'
+content_kind: issue
 ---
 
 # PBNJAM container needs 4GB RAM for long term block imports

@@ -5,6 +5,7 @@ title: Provide JAM codec test vectors
 site: github.com/w3f/jamtestvectors
 created_at: '2024-08-21T07:21:33.000Z'
 last_modified: '2024-08-21T07:21:33.000Z'
+content_kind: issue
 ---
 
 # Provide JAM codec test vectors

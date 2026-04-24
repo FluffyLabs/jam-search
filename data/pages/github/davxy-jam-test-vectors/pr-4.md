@@ -5,6 +5,7 @@ title: Constant tickets_per_validator
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-13T08:33:57.000Z'
 last_modified: '2024-12-13T08:33:57.000Z'
+content_kind: pr
 ---
 
 # Constant tickets_per_validator

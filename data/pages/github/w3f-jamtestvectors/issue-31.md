@@ -5,6 +5,7 @@ title: BitSequence Encoding Mismatch with Test Vectors
 site: github.com/w3f/jamtestvectors
 created_at: '2025-01-12T12:09:28.000Z'
 last_modified: '2025-01-12T12:09:28.000Z'
+content_kind: issue
 ---
 
 # BitSequence Encoding Mismatch with Test Vectors

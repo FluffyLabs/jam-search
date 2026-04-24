@@ -5,6 +5,7 @@ title: Service item is not synced between `accumulate` and `reports`
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-29T15:34:15.000Z'
 last_modified: '2025-03-29T15:34:15.000Z'
+content_kind: issue
 ---
 
 # Service item is not synced between `accumulate` and `reports`

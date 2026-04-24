@@ -5,6 +5,7 @@ title: Jambda
 site: github.com/davxy/jam-conformance
 created_at: '2026-03-30T03:37:22.000Z'
 last_modified: '2026-03-30T03:37:22.000Z'
+content_kind: issue
 ---
 
 # Jambda

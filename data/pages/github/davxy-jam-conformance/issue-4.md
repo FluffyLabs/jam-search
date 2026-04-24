@@ -5,6 +5,7 @@ title: JamZig⚡
 site: github.com/davxy/jam-conformance
 created_at: '2025-07-30T22:27:04.000Z'
 last_modified: '2025-07-30T22:27:04.000Z'
+content_kind: issue
 ---
 
 # JamZig⚡
@@ -517,3 +518,22 @@ Thank you for the wonderful Christmas gift 🎁, @davxy. In the meantime, I have
 ## Comment by @boymaas
 
 Good evening @davxy, new years batch traces are all passing, updated same place: https://github.com/jamzig/conformance-releases. Went with the "implementers consensus" but have some questions on this one: https://github.com/davxy/jam-conformance/discussions/153
+
+
+## Comment by @boymaas
+
+Good evening @davxy, I had a frame limit of 10 MB, which caused two traces to fail in the latest batch. I have now set a new frame limit of 256 MB, which should be sufficient. Also made significant performance improvements on the implementation. 
+
+
+## Comment by @davxy
+
+> Good evening [@davxy](https://github.com/davxy), I had a frame limit of 10 MB, which caused two traces to fail in the latest batch. I have now set a new frame limit of 256 MB, which should be sufficient. Also made significant performance improvements on the implementation.
+
+Interesting. Can you tell me more about this?
+
+
+## Comment by @boymaas
+
+Sure, I had **MAX_MESSAGE_SIZE** = 10 MiB hard cap in jam_comformance_target frame codec. Arbitrary guard from June scaffolding. Not from fuzz-v1.asn — spec's u32 length, no ceiling.
+
+Fine till now. Latest batch pushed preimage blobs to boundary. Failing traces: 1766244251_1244 step 4 (~11 MB) + 1776702160_6273 step 2 (~13 MB). Fuzzer probing my large-preimage edge config.

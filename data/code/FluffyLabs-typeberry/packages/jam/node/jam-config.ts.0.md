@@ -1,0 +1,132 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/jam-config.ts#L1-L114
+title: packages/jam/node/jam-config.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 60b043522e3a60a518245430b500e019e2c634ba85ac75b4f3083a86f5eac013
+language: typescript
+---
+`packages/jam/node/jam-config.ts` (lines 1–114)
+
+```typescript
+import {
+  type HeaderHash,
+  type TimeSlot,
+  tryAsTimeSlot,
+  tryAsValidatorIndex,
+  type ValidatorIndex,
+} from "@typeberry/block";
+import type { Bootnode, PvmBackend } from "@typeberry/config";
+import type { NodeConfiguration } from "@typeberry/config-node";
+import type { Ed25519SecretSeed, KeySeed } from "@typeberry/crypto/key-derivation.js";
+import type { U16 } from "@typeberry/numbers";
+
+export const DEFAULT_DEV_CONFIG = {
+  genesisPath: "",
+  timeSlot: tryAsTimeSlot(0),
+  validatorIndex: tryAsValidatorIndex(0),
+};
+
+/**
+ * Configuration object for jam node.
+ */
+export class JamConfig {
+  static new({
+    isAuthoring,
+    isFastForward,
+    nodeName,
+    nodeConfig,
+    pvmBackend,
+    devConfig = null,
+    networkConfig = null,
+    ancestry = [],
+    devValidatorIndex = null,
+  }: {
+    isAuthoring?: boolean;
+    isFastForward?: boolean;
+    nodeName: string;
+    nodeConfig: NodeConfiguration;
+    pvmBackend: PvmBackend;
+    devConfig?: DevConfig | null;
+    networkConfig?: NetworkConfig | null;
+    ancestry?: [HeaderHash, TimeSlot][];
+    /** Validator index for dev mode authorship. Use "all" to author as all validators. */
+    devValidatorIndex?: U16 | "all" | null;
+  }) {
+    return new JamConfig(
+      isAuthoring ?? false,
+      isFastForward ?? false,
+      nodeName,
+      nodeConfig,
+      pvmBackend,
+      devConfig,
+      networkConfig,
+      ancestry,
+      devValidatorIndex,
+    );
+  }
+
+  private constructor(
+    /** Whether we should be authoring blocks. */
+    public readonly isAuthoring: boolean,
+    /** Fast forward mode - generate blocks as fast as possible without waiting for real time. */
+    public readonly isFastForward: boolean,
+    /** Node name. */
+    public readonly nodeName: string,
+    /** Node starting configuration. */
+    public readonly node: NodeConfiguration,
+    /** PVM execution engine. */
+    public readonly pvmBackend: PvmBackend,
+    /** Developer specific configuration. */
+    public readonly dev: DevConfig | null,
+    /** Networking options. */
+    public readonly network: NetworkConfig | null,
+    /** Optional pre-genesis ancestry information. */
+    public readonly ancestry: [HeaderHash, TimeSlot][],
+    /** Validator index for dev mode authorship. Use "all" to author as all validators. */
+    public readonly devValidatorIndex: U16 | "all" | null,
+  ) {}
+}
+
+/** Validator key seeds in developer mode. */
+export type SeedDevConfig = {
+  /** Bandersnatch seed to derive key. */
+  bandersnatchSeed: KeySeed;
+  /** Bls seed to derive key. */
+  blsSeed: KeySeed;
+  /** Ed25519 seed to derive key. */
+  ed25519Seed: KeySeed;
+};
+
+/** Developer mode configuration. */
+export type DevConfig = {
+  // TODO [ToDr] This should be removed. genesis should be loaded into JIP4 ChainSpec in TCI
+  // and passed as `NodeConfiguration`.
+  /** Path to genesis state JSON description file. */
+  genesisPath: string;
+  /** Genesis time slot. */
+  timeSlot: TimeSlot;
+  /** Validator index for current node. */
+  validatorIndex: ValidatorIndex;
+  /** Validator seeds in development mode. */
+  seed?: SeedDevConfig;
+};
+
+/** Networking configuration. */
+export type NetworkConfig = {
+  /** Networking key seed. */
+  key: Ed25519SecretSeed;
+  /** Interface to bind networking socket to. */
+  host: string;
+  /** Port to bind networking socket to. */
+  port: number;
+  /** Bootnodes to connect to. */
+  bootnodes: Bootnode[];
+};
+```

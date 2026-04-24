@@ -1,0 +1,103 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block/work-package.ts#L1-L85
+title: packages/jam/block/work-package.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 4cb8d5df8d2705942109aca29c2c08b26be7bc39b4d4b57c4d673934cacbced6
+language: typescript
+---
+`packages/jam/block/work-package.ts` (lines 1–85)
+
+```typescript
+import type { BytesBlob } from "@typeberry/bytes";
+import { type CodecRecord, codec, type DescribedBy } from "@typeberry/codec";
+import { FixedSizeArray } from "@typeberry/collections";
+import { HASH_SIZE } from "@typeberry/hash";
+import { tryAsU8, type U8 } from "@typeberry/numbers";
+import { WithDebug } from "@typeberry/utils";
+import type { ServiceId } from "./common.js";
+import type { CodeHash } from "./hash.js";
+import { RefineContext } from "./refine-context.js";
+import { WorkItem } from "./work-item.js";
+
+/** Possible number of work items in the package or results in the report. */
+/** Constrained by I=16 https://graypaper.fluffylabs.dev/#/68eaa1f/417a00417a00?v=0.6.4 */
+export type WorkItemsCount = U8;
+
+/** Convert the value to `WorkItemsCount`. Validation is done at runtime by `isWorkItemsCount`. */
+export function tryAsWorkItemsCount(len: number): WorkItemsCount {
+  return tryAsU8(len);
+}
+
+/** Verify the value is within the `WorkItemsCount` bounds. */
+export function isWorkItemsCount(len: number): len is WorkItemsCount {
+  return len >= MIN_NUMBER_OF_WORK_ITEMS && len <= MAX_NUMBER_OF_WORK_ITEMS;
+}
+
+/** Minimal number of work items in the work package or results in work report. */
+export const MIN_NUMBER_OF_WORK_ITEMS = 1;
+/** `I`: Maximal number of work items in the work package or results in work report. */
+export const MAX_NUMBER_OF_WORK_ITEMS = 16;
+
+/**
+ * A piece of work done within a core.
+ *
+ * `P = (j ∈ Y, h ∈ NS, u ∈ H, f ∈ Y, x ∈ X, w ∈ ⟦I⟧1∶I)
+ *
+ * https://graypaper.fluffylabs.dev/#/579bd12/197000197200
+ */
+export class WorkPackage extends WithDebug {
+  static Codec = codec.Class(WorkPackage, {
+    authCodeHost: codec.u32.asOpaque<ServiceId>(),
+    authCodeHash: codec.bytes(HASH_SIZE).asOpaque<CodeHash>(),
+    context: RefineContext.Codec,
+    authToken: codec.blob,
+    authConfiguration: codec.blob,
+    items: codec.sequenceVarLen(WorkItem.Codec).convert(
+      (x) => x,
+      (items) => FixedSizeArray.new(items, tryAsWorkItemsCount(items.length)),
+    ),
+  });
+
+  static create({
+    authToken,
+    authCodeHost,
+    authCodeHash,
+    authConfiguration,
+    context,
+    items,
+  }: CodecRecord<WorkPackage>) {
+    return new WorkPackage(authToken, authCodeHost, authCodeHash, authConfiguration, context, items);
+  }
+
+  private constructor(
+    /** `j`: simple blob acting as an authorization token */
+    public readonly authToken: BytesBlob,
+    /** `h`: index of the service that hosts the authorization code */
+    public readonly authCodeHost: ServiceId,
+    /** `u`: authorization code hash */
+    public readonly authCodeHash: CodeHash,
+    /** `f`: authorization configuration blob */
+    public readonly authConfiguration: BytesBlob,
+    /** `x`: context in which the refine function should run */
+    public readonly context: RefineContext,
+    /**
+     * `w`: sequence of work items.
+     *
+     * Constrained by `I=16`:
+     * https://graypaper.fluffylabs.dev/#/579bd12/416600416800
+     */
+    public readonly items: FixedSizeArray<WorkItem, WorkItemsCount>,
+  ) {
+    super();
+  }
+}
+
+export type WorkPackageView = DescribedBy<typeof WorkPackage.Codec.View>;
+```

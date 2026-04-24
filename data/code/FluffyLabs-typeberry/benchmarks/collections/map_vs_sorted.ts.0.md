@@ -1,0 +1,122 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/collections/map_vs_sorted.ts#L1-L104
+title: benchmarks/collections/map_vs_sorted.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 48da3de52ae4f42ac128a9c83e654147a2e1f1ec51896e9489ef4a9e095a4f28
+language: typescript
+---
+`benchmarks/collections/map_vs_sorted.ts` (lines 1–104)
+
+```typescript
+import { pathToFileURL } from "node:url";
+import { add, complete, configure, cycle, save, suite } from "@typeberry/benchmark/setup.js";
+import { SortedArray } from "@typeberry/collections";
+import { Ordering } from "@typeberry/ordering";
+
+const READS = 100;
+const keys = ["xyz", "abc", "123", "def", "Abb"];
+const converted = keys.map((key) => ({ key }));
+
+export default function run() {
+  return suite(
+    "Map vs SortedArray for small element count",
+
+    add("Map", () => {
+      const map = new Map();
+      map.set(keys[0], { key: keys[0], value: true });
+      map.set(keys[1], { key: keys[1], value: false });
+      map.set(keys[2], { key: keys[2], value: true });
+
+      return () => {
+        for (let k = 0; k < READS; k += 1) {
+          for (const field of converted) {
+            const v = map.get(field.key);
+            if (v !== undefined) {
+              dataCmp(v, field).isEqual();
+            }
+          }
+        }
+      };
+    }),
+
+    add("Map-array", () => {
+      const map = new Map();
+      map.set(0, { key: keys[0], value: true });
+      map.set(1, { key: keys[1], value: false });
+      map.set(2, { key: keys[2], value: true });
+      const len = map.size;
+      return () => {
+        for (let k = 0; k < READS; k += 1) {
+          for (const field of converted) {
+            for (let i = 0; i < len; i += 1) {
+              const v = map.get(i);
+              if (dataCmp(v, field).isEqual()) {
+                break;
+              }
+            }
+          }
+        }
+      };
+    }),
+
+    add("Array", () => {
+      const map: Data[] = [];
+      map.push({ key: keys[0], value: true });
+      map.push({ key: keys[1], value: false });
+      map.push({ key: keys[2], value: true });
+
+      return () => {
+        for (let k = 0; k < READS; k += 1) {
+          for (const field of converted) {
+            map.findIndex((v) => dataCmp(v, field).isEqual());
+          }
+        }
+      };
+    }),
+
+    add("SortedArray", () => {
+      const map = SortedArray.fromArray<Data>(dataCmp);
+      map.insert({ key: keys[0], value: true });
+      map.insert({ key: keys[1], value: false });
+      map.insert({ key: keys[2], value: true });
+
+      return () => {
+        for (let k = 0; k < READS; k += 1) {
+          for (const field of converted) {
+            map.findIndex(field);
+          }
+        }
+      };
+    }),
+
+    cycle(),
+    complete(),
+    configure({}),
+    ...save(import.meta.filename),
+  );
+}
+
+type Data = { key: string; value?: boolean };
+function dataCmp(a: Data, b: Data) {
+  if (a.key < b.key) {
+    return Ordering.Less;
+  }
+
+  if (a.key > b.key) {
+    return Ordering.Greater;
+  }
+
+  return Ordering.Equal;
+}
+
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  run();
+}
+```

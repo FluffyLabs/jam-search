@@ -5,6 +5,7 @@ title: Add jamzilla and jamzilla-int performance workflows
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-13T23:49:05.000Z'
 last_modified: '2026-03-13T23:49:05.000Z'
+content_kind: pr
 ---
 
 # Add jamzilla and jamzilla-int performance workflows

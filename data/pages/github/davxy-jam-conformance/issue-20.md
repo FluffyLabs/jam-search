@@ -5,6 +5,7 @@ title: PyJAMaz
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-19T11:54:31.000Z'
 last_modified: '2025-08-19T11:54:31.000Z'
+content_kind: issue
 ---
 
 # PyJAMaz

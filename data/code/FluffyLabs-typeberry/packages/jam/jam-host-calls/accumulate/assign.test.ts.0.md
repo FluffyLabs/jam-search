@@ -1,0 +1,113 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/assign.test.ts#L1-L95
+title: packages/jam/jam-host-calls/accumulate/assign.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: 68aab8f429b9f41d94627ef7747f62709653623d3bf0a0e24cfc669587768e07
+language: typescript
+---
+`packages/jam/jam-host-calls/accumulate/assign.test.ts` (lines 1–95)
+
+```typescript
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import { type CoreIndex, tryAsCoreIndex, tryAsServiceId } from "@typeberry/block";
+import { Bytes } from "@typeberry/bytes";
+import { codec, Encoder } from "@typeberry/codec";
+import { FixedSizeArray } from "@typeberry/collections";
+import { tinyChainSpec } from "@typeberry/config";
+import { type Blake2bHash, HASH_SIZE } from "@typeberry/hash";
+import { tryAsU64 } from "@typeberry/numbers";
+import { HostCallMemory, HostCallRegisters, PvmExecution } from "@typeberry/pvm-host-calls";
+import { tryAsGas } from "@typeberry/pvm-interface";
+import { gasCounter } from "@typeberry/pvm-interpreter/gas.js";
+import { MemoryBuilder, tryAsMemoryIndex } from "@typeberry/pvm-interpreter/memory/index.js";
+import { tryAsSbrkIndex } from "@typeberry/pvm-interpreter/memory/memory-index.js";
+import { PAGE_SIZE } from "@typeberry/pvm-interpreter/spi-decoder/memory-conts.js";
+import { AUTHORIZATION_QUEUE_SIZE } from "@typeberry/state";
+import { Result } from "@typeberry/utils";
+import { UpdatePrivilegesError } from "../externalities/partial-state.js";
+import { PartialStateMock } from "../externalities/partial-state-mock.js";
+import { HostCallResult } from "../general/results.js";
+import { Assign } from "./assign.js";
+
+const gas = gasCounter(tryAsGas(0));
+const RESULT_REG = 7;
+const CORE_INDEX_REG = 7;
+const AUTH_QUEUE_START_REG = 8;
+const AUTH_MANAGER_REG = 9;
+
+function prepareRegsAndMemory(
+  coreIndex: CoreIndex,
+  authQueue: Blake2bHash[],
+  { skipAuthQueue = false, assigners = null }: { skipAuthQueue?: boolean; assigners?: bigint | number | null } = {},
+) {
+  const memStart = 2 ** 16;
+  const registers = HostCallRegisters.empty();
+  registers.set(CORE_INDEX_REG, tryAsU64(coreIndex));
+  registers.set(AUTH_QUEUE_START_REG, tryAsU64(memStart));
+  if (assigners !== null) {
+    registers.set(AUTH_MANAGER_REG, tryAsU64(assigners));
+  }
+
+  const builder = new MemoryBuilder();
+
+  while (authQueue.length < AUTHORIZATION_QUEUE_SIZE) {
+    authQueue.push(Bytes.zero(HASH_SIZE));
+  }
+
+  const encoder = Encoder.create();
+  encoder.sequenceFixLen(codec.bytes(HASH_SIZE), authQueue);
+  const data = encoder.viewResult();
+
+  if (!skipAuthQueue) {
+    builder.setReadablePages(tryAsMemoryIndex(memStart), tryAsMemoryIndex(memStart + PAGE_SIZE), data.raw);
+  }
+  const memory = HostCallMemory.new(builder.finalize(tryAsMemoryIndex(0), tryAsSbrkIndex(0)));
+  return {
+    registers,
+    memory,
+  };
+}
+
+describe("HostCalls: Assign", () => {
+  it("should assign authorization queue to a core", async () => {
+    const accumulate = new PartialStateMock();
+    const serviceId = tryAsServiceId(10_000);
+    const assign = Assign.new(serviceId, accumulate, tinyChainSpec);
+    const { registers, memory } = prepareRegsAndMemory(tryAsCoreIndex(0), [
+      Bytes.fill(HASH_SIZE, 1),
+      Bytes.fill(HASH_SIZE, 2),
+      Bytes.fill(HASH_SIZE, 3),
+    ]);
+
+    // when
+    const result = await assign.execute(gas, registers, memory);
+
+    // then
+    assert.deepStrictEqual(result, undefined);
+    assert.deepStrictEqual(registers.get(RESULT_REG), HostCallResult.OK);
+    assert.deepStrictEqual(accumulate.authQueue[0][0], tryAsCoreIndex(0));
+    const expected = new Array(AUTHORIZATION_QUEUE_SIZE);
+    expected[0] = Bytes.fill(HASH_SIZE, 1);
+    expected[1] = Bytes.fill(HASH_SIZE, 2);
+    expected[2] = Bytes.fill(HASH_SIZE, 3);
+    for (let i = 3; i < AUTHORIZATION_QUEUE_SIZE; i += 1) {
+      expected[i] = Bytes.zero(HASH_SIZE);
+    }
+    const expectedAuthQueue = FixedSizeArray.new(expected, AUTHORIZATION_QUEUE_SIZE);
+    assert.deepStrictEqual(accumulate.authQueue[0][1], expectedAuthQueue);
+    assert.deepStrictEqual(accumulate.authQueue.length, 1);
+  });
+
+  it("should return an error if core index is too large", async () => {
+    const accumulate = new PartialStateMock();
+    const serviceId = tryAsServiceId(10_000);
+    const assign = Assign.new(serviceId, accumulate, tinyChainSpec);
+```

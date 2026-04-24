@@ -7,6 +7,7 @@ title: >-
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-12T10:42:41.000Z'
 last_modified: '2025-02-12T10:42:41.000Z'
+content_kind: issue
 ---
 
 # Verifying Shuffle and Rotate => assigning validators to cores in Reports => WRONG_ASSIGNMENT check.

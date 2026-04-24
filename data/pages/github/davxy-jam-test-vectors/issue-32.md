@@ -5,6 +5,7 @@ title: 'jam-types.asn: Inconsistent use of  the Gas type'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-27T13:03:16.000Z'
 last_modified: '2025-03-27T13:03:16.000Z'
+content_kind: issue
 ---
 
 # jam-types.asn: Inconsistent use of  the Gas type

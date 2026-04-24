@@ -5,6 +5,7 @@ title: Strict encoding of k
 site: github.com/w3f/jamtestvectors
 created_at: '2024-09-12T07:26:00.000Z'
 last_modified: '2024-09-12T07:26:00.000Z'
+content_kind: issue
 ---
 
 # Strict encoding of k

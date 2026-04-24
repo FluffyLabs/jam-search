@@ -1,0 +1,75 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/extensions/ipc/jamnp/stream.ts#L1-L57
+title: packages/extensions/ipc/jamnp/stream.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 3c91058d884922a9dc8ef83f47b692655b8efd333066b6434f90e634fd483878
+language: typescript
+---
+`packages/extensions/ipc/jamnp/stream.ts` (lines 1–57)
+
+```typescript
+import type { BytesBlob } from "@typeberry/bytes";
+import { type CodecRecord, codec } from "@typeberry/codec";
+import type { StreamKind } from "@typeberry/jamnp-s";
+import { tryAsU8, type U8, type U32 } from "@typeberry/numbers";
+
+/** IPC-level stream identifier (u32), used for multiplexing streams over a single socket. */
+export type IpcStreamId = U32;
+
+export enum StreamEnvelopeType {
+  Msg = 0,
+  Open = 1,
+  Close = 2,
+}
+
+export class StreamEnvelope {
+  static Codec = codec.Class(StreamEnvelope, {
+    streamId: codec.u32,
+    type: codec.u8.convert<StreamEnvelopeType>(
+      (i) => tryAsU8(i),
+      (o: U8) => {
+        switch (o) {
+          case StreamEnvelopeType.Msg:
+            return StreamEnvelopeType.Msg;
+          case StreamEnvelopeType.Open:
+            return StreamEnvelopeType.Open;
+          case StreamEnvelopeType.Close:
+            return StreamEnvelopeType.Close;
+          default:
+            throw new Error(`Invalid 'StreamEnvelopeType' value: ${o}`);
+        }
+      },
+    ),
+    data: codec.blob,
+  });
+
+  static create({ streamId, type, data }: CodecRecord<StreamEnvelope>) {
+    return new StreamEnvelope(streamId, type, data);
+  }
+
+  private constructor(
+    public readonly streamId: IpcStreamId,
+    public readonly type: StreamEnvelopeType,
+    public readonly data: BytesBlob,
+  ) {}
+}
+
+export class NewStream {
+  static Codec = codec.Class(NewStream, {
+    streamByte: codec.u8,
+  });
+
+  static create({ streamByte }: CodecRecord<NewStream>) {
+    return new NewStream(streamByte);
+  }
+
+  private constructor(public readonly streamByte: StreamKind) {}
+}
+```

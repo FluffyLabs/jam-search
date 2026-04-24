@@ -5,6 +5,7 @@ title: Add jampy target to workflows
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-15T10:40:19.000Z'
 last_modified: '2026-03-15T10:40:19.000Z'
+content_kind: pr
 ---
 
 # Add jampy target to workflows

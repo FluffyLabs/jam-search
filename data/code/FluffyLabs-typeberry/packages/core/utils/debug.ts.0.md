@@ -1,0 +1,157 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.ts#L1-L139
+title: packages/core/utils/debug.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: 127a088d1dbb6a6b4a8ad134db3da02a34b57deb39a24a8673a261ed81a6017f
+language: typescript
+---
+`packages/core/utils/debug.ts` (lines 1–139)
+
+```typescript
+export function isBrowser() {
+  return typeof process === "undefined" || typeof process.abort === "undefined";
+}
+
+/**
+ * Get current time in milliseconds (works in both Node and browser).
+ *
+ * Node.js implementation converts hrtime bigint nanoseconds to milliseconds.
+ * This is safe because dividing nanoseconds by 1_000_000 yields milliseconds,
+ * which remain well below Number.MAX_SAFE_INTEGER for practical runtimes
+ * (would take ~285 years to overflow).
+ */
+export const now = isBrowser() ? () => performance.now() : () => Number(process.hrtime.bigint() / 1_000_000n);
+
+/**
+ * A function to perform runtime assertions.
+ *
+ * We avoid using `node:assert` to keep compatibility with a browser environment.
+ * Note the checks should not have any side effects, since we might decide
+ * to remove all of them in a post-processing step.
+ *
+ * NOTE the function is intended to be used as tagged template string for the performance
+ * reasons.
+ */
+export function check(
+  strings: TemplateStringsArray,
+  condition: boolean,
+  ...data: unknown[]
+): asserts condition is true {
+  if (!condition) {
+    // add an empty value so that `data.length === strings.length`
+    data.unshift("");
+    const message = strings.map((v, index) => `${v}${data[index] ?? ""}`);
+    throw new Error(`Assertion failure:${message.join("")}`);
+  }
+}
+
+/**
+ * The function can be used to make sure that a particular type is `never`
+ * at some point in the code.
+ *
+ * Basically that means that all other options are exhaustively handled
+ * earlier and the assertion should make sure that an unhandled case
+ * is not introduced in the future.
+ */
+export function assertNever(value: never): never {
+  throw new Error(`Unexpected value: ${value}`);
+}
+
+/**
+ * The function can be used to make sure that a particular object type
+ * has no keys at a certain point in the code.
+ *
+ * Basically that means that all other possible keys are exhaustively
+ * handled earlier and the assertion should make sure that no unexpected
+ * keys are introduced in the future.
+ */
+export function assertEmpty<T extends Record<string, never>>(value: T) {
+  const keys = Object.keys(value);
+  if (keys.length > 0) {
+    throw new Error(`Unexpected keys: ${keys.join(", ")}`);
+  }
+}
+
+/** Debug print an object. */
+export function inspect<T>(val: T): string {
+  return inspectInternal(val, new WeakSet());
+}
+
+/**
+ * Internal implementation of inspect with circular reference detection.
+ */
+function inspectInternal<T>(val: T, seen: WeakSet<object>): string {
+  const nest = (v: string) =>
+    v
+      .split("\n")
+      .map((x) => `  ${x}`)
+      .join("\n")
+      .trim();
+
+  if (val === null) {
+    return "<null>";
+  }
+
+  if (val === undefined) {
+    return "<undefined>";
+  }
+
+  if (Array.isArray(val)) {
+    return `[${val.map((x) => inspectInternal(x, seen))}]`;
+  }
+
+  if (val instanceof Map) {
+    return inspectInternal(Array.from(val.entries()), seen);
+  }
+
+  if (typeof val === "number") {
+    return `${val} (0x${val.toString(16)})`;
+  }
+
+  if (typeof val !== "object") {
+    return `${val}`;
+  }
+
+  // Check for circular references
+  if (seen.has(val)) {
+    return "<circular>";
+  }
+  seen.add(val);
+
+  if (
+    "toString" in val &&
+    Object.prototype.toString !== val.toString &&
+    WithDebug.prototype.toString !== val.toString
+  ) {
+    return `${val}`;
+  }
+
+  const name = val.constructor.name;
+  let v = name !== "Object" ? `${name} {` : "{";
+  const keys = Object.keys(val);
+  const oneLine = keys.length < 3;
+  for (const k of keys) {
+    if (typeof k === "string") {
+      v += oneLine ? "" : "\n  ";
+      v += `${k}: ${nest(inspectInternal(val[k as keyof T], seen))}`;
+      v += oneLine ? "," : "";
+    }
+  }
+  v += oneLine ? "}" : "\n}";
+  return v;
+}
+
+/** Utility function to measure time taken for some operation [ms]. */
+export function measure(id: string) {
+  const start = now();
+  return () => `${id} took ${(now() - start).toFixed(2)}ms`;
+}
+
+```

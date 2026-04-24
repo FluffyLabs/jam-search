@@ -1,0 +1,123 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L1-L105
+title: packages/jam/node/main-fuzz.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: c2a6db4a011911aed9cfd5f1ccf68a268daecc9135a04c58a77a972837c238fd
+language: typescript
+---
+`packages/jam/node/main-fuzz.ts` (lines 1–105)
+
+```typescript
+import { type BlockView, Header, type HeaderHash, type StateRootHash, type TimeSlot } from "@typeberry/block";
+import { Bytes } from "@typeberry/bytes";
+import { Encoder } from "@typeberry/codec";
+import { PvmBackend } from "@typeberry/config";
+import { type FuzzVersion, startFuzzTarget } from "@typeberry/ext-ipc";
+import { v1 as fuzzV1 } from "@typeberry/fuzz-proto";
+import { HASH_SIZE } from "@typeberry/hash";
+import { Logger } from "@typeberry/logger";
+import type { StateEntries } from "@typeberry/state-merkleization";
+import { CURRENT_VERSION, Result, version } from "@typeberry/utils";
+import { getChainSpec } from "./common.js";
+import type { JamConfig } from "./jam-config.js";
+import type { NodeApi } from "./main.js";
+import { mainImporter } from "./main-importer.js";
+
+export type FuzzConfig = {
+  version: FuzzVersion;
+  jamNodeConfig: JamConfig;
+  socket: string | null;
+  initGenesisFromAncestry: boolean;
+};
+
+const logger = Logger.new(import.meta.filename, "fuzztarget");
+
+export function getFuzzDetails() {
+  return {
+    nodeName: "@typeberry/jam",
+    nodeVersion: fuzzV1.Version.tryFromString(version),
+    gpVersion: fuzzV1.Version.tryFromString(CURRENT_VERSION.split("-")[0]),
+  };
+}
+
+export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) => string) {
+  logger.info`💨 Fuzzer V${fuzzConfig.version} starting up.`;
+  logger.info`🖥️ PVM Backend: ${PvmBackend[fuzzConfig.jamNodeConfig.pvmBackend]}.`;
+
+  const { jamNodeConfig: config } = fuzzConfig;
+
+  let runningNode: NodeApi | null = null;
+
+  const chainSpec = getChainSpec(config.node.flavor);
+
+  const closeFuzzTarget = startFuzzTarget(fuzzConfig.version, fuzzConfig.socket, {
+    ...getFuzzDetails(),
+    chainSpec,
+    importBlock: async (blockView: BlockView): Promise<Result<StateRootHash, string>> => {
+      if (runningNode === null) {
+        return Result.error("node not running", () => "Fuzzer: node not running when importing block");
+      }
+      const importResult = await runningNode.importBlock(blockView);
+      return importResult;
+    },
+    getBestStateRootHash: async (): Promise<StateRootHash> => {
+      if (runningNode === null) {
+        return Bytes.zero(HASH_SIZE).asOpaque();
+      }
+      return runningNode.getBestStateRootHash();
+    },
+    getPostSerializedState: async (hash: HeaderHash): Promise<StateEntries | null> => {
+      if (runningNode === null) {
+        return null;
+      }
+      return runningNode.getStateEntries(hash);
+    },
+    resetState: async (
+      header: Header,
+      state: StateEntries,
+      ancestry: [HeaderHash, TimeSlot][],
+    ): Promise<StateRootHash> => {
+      if (runningNode !== null) {
+        const finish = runningNode.close();
+        runningNode = null;
+        await finish;
+      }
+      // update the chainspec
+      const newNode = await mainImporter(
+        {
+          ...config,
+          node: {
+            ...config.node,
+            // use in-memory db
+            databaseBasePath: undefined,
+            chainSpec: {
+              ...config.node.chainSpec,
+              genesisHeader: Encoder.encodeObject(Header.Codec, header, chainSpec),
+              genesisState: new Map(state),
+            },
+          },
+          ancestry,
+          network: null,
+        },
+        withRelPath,
+        {
+          initGenesisFromAncestry: fuzzConfig.initGenesisFromAncestry,
+          dummyFinalityDepth: 10_000,
+          pruneBlocks: true,
+        },
+      );
+      runningNode = newNode;
+      return await newNode.getBestStateRootHash();
+    },
+  });
+
+  return closeFuzzTarget;
+}
+```

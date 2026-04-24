@@ -5,6 +5,7 @@ title: Update link to Fellowship website
 site: github.com/w3f/jam-milestone-delivery
 created_at: '2024-09-25T02:17:18.000Z'
 last_modified: '2024-09-25T02:17:18.000Z'
+content_kind: pr
 ---
 
 # Update link to Fellowship website

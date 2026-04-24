@@ -1,0 +1,50 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/reports/verify-order.ts#L1-L32
+title: packages/jam/transition/reports/verify-order.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: b8b608ee7ffebabdd7acf531139c9053322da5029b0e621aa0b6ed72daa264a7
+language: typescript
+---
+`packages/jam/transition/reports/verify-order.ts` (lines 1–32)
+
+```typescript
+import type { GuaranteesExtrinsicView } from "@typeberry/block/guarantees.js";
+import type { ChainSpec } from "@typeberry/config";
+import { OK, Result } from "@typeberry/utils";
+import { ReportsError } from "./error.js";
+
+export function verifyReportsOrder(input: GuaranteesExtrinsicView, chainSpec: ChainSpec): Result<OK, ReportsError> {
+  /**
+   * The core index of each guarantee must be unique and
+   * guarantees must be in ascending order of this.
+   *
+   * https://graypaper.fluffylabs.dev/#/ab2cdbd/15d60015d700?v=0.7.2
+   */
+  const noOfCores = chainSpec.coresCount;
+  let lastCoreIndex = -1;
+  for (const guarantee of input) {
+    const reportView = guarantee.view().report.view();
+    const coreIndex = reportView.coreIndex.materialize();
+    if (lastCoreIndex >= coreIndex) {
+      return Result.error(
+        ReportsError.OutOfOrderGuarantee,
+        () =>
+          `Core indices of work reports are not unique or in order. Got: ${coreIndex}, expected at least: ${lastCoreIndex + 1}`,
+      );
+    }
+    if (coreIndex >= noOfCores) {
+      return Result.error(ReportsError.BadCoreIndex, () => `Invalid core index. Got: ${coreIndex}, max: ${noOfCores}`);
+    }
+    lastCoreIndex = coreIndex;
+  }
+
+  return Result.ok(OK);
+}
+```

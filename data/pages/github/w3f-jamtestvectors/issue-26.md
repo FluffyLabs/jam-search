@@ -5,6 +5,7 @@ title: 'StateTransition JSON/Codec '
 site: github.com/w3f/jamtestvectors
 created_at: '2024-12-06T01:09:56.000Z'
 last_modified: '2024-12-06T01:09:56.000Z'
+content_kind: issue
 ---
 
 # StateTransition JSON/Codec 

@@ -5,6 +5,7 @@ title: JamForge
 site: github.com/davxy/jam-conformance
 created_at: '2025-12-12T01:16:36.000Z'
 last_modified: '2025-12-12T01:16:36.000Z'
+content_kind: issue
 ---
 
 # JamForge

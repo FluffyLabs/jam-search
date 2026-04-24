@@ -5,6 +5,7 @@ title: Accumulate test vector storage keys should be consistent with traces
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-03T11:43:29.000Z'
 last_modified: '2025-06-03T11:43:29.000Z'
+content_kind: issue
 ---
 
 # Accumulate test vector storage keys should be consistent with traces

@@ -1,0 +1,89 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/refine/peek.ts#L1-L71
+title: packages/jam/jam-host-calls/refine/peek.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: b914b9aa035981eb827b88ebf95d1dae911d5a79bd43c06f0dd69a5a7138587b
+language: typescript
+---
+`packages/jam/jam-host-calls/refine/peek.ts` (lines 1–71)
+
+```typescript
+import {
+  type HostCallHandler,
+  type HostCallMemory,
+  type HostCallRegisters,
+  PvmExecution,
+  traceRegisters,
+  tryAsHostCallIndex,
+} from "@typeberry/pvm-host-calls";
+import { type IGasCounter, tryAsSmallGas } from "@typeberry/pvm-interface";
+import { assertNever, resultToString } from "@typeberry/utils";
+import { PeekPokeError, type RefineExternalities, tryAsMachineId } from "../externalities/refine-externalities.js";
+import { HostCallResult } from "../general/results.js";
+import { logger } from "../logger.js";
+import { CURRENT_SERVICE_ID } from "../utils.js";
+
+const IN_OUT_REG = 7;
+
+/**
+ * Peek into a piece of nested machine memory.
+ *
+ * https://graypaper.fluffylabs.dev/#/7e6ff6a/347402347402?v=0.6.7
+ */
+export class Peek implements HostCallHandler {
+  index = tryAsHostCallIndex(9);
+  basicGasCost = tryAsSmallGas(10);
+  currentServiceId = CURRENT_SERVICE_ID;
+  tracedRegisters = traceRegisters(IN_OUT_REG, 8, 9, 10);
+
+  static new(refine: RefineExternalities) {
+    return new Peek(refine);
+  }
+
+  private constructor(private readonly refine: RefineExternalities) {}
+
+  async execute(_gas: IGasCounter, regs: HostCallRegisters, memory: HostCallMemory): Promise<PvmExecution | undefined> {
+    // `n`: machine index
+    const machineIndex = tryAsMachineId(regs.get(IN_OUT_REG));
+    // `o`: destination memory start (local)
+    const destinationStart = regs.get(8);
+    // `s`: source memory start (nested vm)
+    const sourceStart = regs.get(9);
+    // `z`: memory length
+    const length = regs.get(10);
+
+    const peekResult = await this.refine.machinePeekFrom(machineIndex, destinationStart, sourceStart, length, memory);
+    logger.trace`[${this.currentServiceId}] PEEK(${machineIndex}, ${destinationStart}, ${sourceStart}, ${length}) <- ${resultToString(peekResult)}`;
+
+    if (peekResult.isOk) {
+      regs.set(IN_OUT_REG, HostCallResult.OK);
+      return;
+    }
+
+    const e = peekResult.error;
+
+    if (e === PeekPokeError.NoMachine) {
+      regs.set(IN_OUT_REG, HostCallResult.WHO);
+      return;
+    }
+
+    if (e === PeekPokeError.SourcePageFault) {
+      return PvmExecution.Panic;
+    }
+
+    if (e === PeekPokeError.DestinationPageFault) {
+      regs.set(IN_OUT_REG, HostCallResult.OOB);
+      return;
+    }
+
+    assertNever(e);
+  }
+}
+```

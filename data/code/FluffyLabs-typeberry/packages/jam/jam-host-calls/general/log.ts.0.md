@@ -1,0 +1,79 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/general/log.ts#L1-L61
+title: packages/jam/jam-host-calls/general/log.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: e1f3744e38fc56c176e8d7ed8dda5df4807bdf74be0115e32f1b181b2955ed0e
+language: typescript
+---
+`packages/jam/jam-host-calls/general/log.ts` (lines 1–61)
+
+```typescript
+import type { ServiceId } from "@typeberry/block";
+import type { HostCallHandler, HostCallMemory, HostCallRegisters } from "@typeberry/pvm-host-calls";
+import { traceRegisters, tryAsHostCallIndex } from "@typeberry/pvm-host-calls";
+import { type IGasCounter, tryAsSmallGas } from "@typeberry/pvm-interface";
+import { Compatibility, GpVersion, safeAllocUint8Array } from "@typeberry/utils";
+import { logger } from "../logger.js";
+import { clampU64ToU32 } from "../utils.js";
+import { HostCallResult } from "./results.js";
+
+const decoder = new TextDecoder("utf8");
+
+enum Levels {
+  ERROR = 0,
+  WARNING = 1,
+  INFO = 2,
+  DEBUG = 3,
+  NIT = 4,
+  UNKNOWN = 5,
+}
+
+const IN_OUT_REG = 7;
+
+/**
+ * Log message to the console
+ *
+ * https://docs.jamcha.in/knowledge/testing/pvm/host-call-log
+ */
+export class LogHostCall implements HostCallHandler {
+  index = tryAsHostCallIndex(100);
+  basicGasCost = Compatibility.isGreaterOrEqual(GpVersion.V0_7_2) ? tryAsSmallGas(10) : tryAsSmallGas(0);
+  // intentionally not tracing anything here, since the message will be printed anyway.
+  tracedRegisters = traceRegisters();
+
+  static new(currentServiceId: ServiceId) {
+    return new LogHostCall(currentServiceId);
+  }
+
+  private constructor(public readonly currentServiceId: ServiceId) {}
+
+  async execute(_gas: IGasCounter, regs: HostCallRegisters, memory: HostCallMemory): Promise<undefined> {
+    const lvl = regs.get(7);
+    const targetStart = regs.get(8);
+    const targetLength = regs.get(9);
+    const msgStart = regs.get(10);
+    const msgLength = regs.get(11);
+
+    const target = safeAllocUint8Array(clampU64ToU32(targetLength));
+    const message = safeAllocUint8Array(clampU64ToU32(msgLength));
+    if (targetStart !== 0n) {
+      memory.loadInto(target, targetStart);
+    }
+    memory.loadInto(message, msgStart);
+
+    const level = clampU64ToU32(lvl);
+    logger.trace`[${this.currentServiceId}] LOG(${this.currentServiceId}, ${level < Levels.UNKNOWN ? Levels[level] : Levels[Levels.UNKNOWN]}(${lvl}), ${decoder.decode(target)}, ${decoder.decode(message)})`;
+
+    if (Compatibility.isGreaterOrEqual(GpVersion.V0_7_2)) {
+      regs.set(IN_OUT_REG, HostCallResult.WHAT);
+    }
+  }
+}
+```

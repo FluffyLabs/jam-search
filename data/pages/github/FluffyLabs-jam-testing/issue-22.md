@@ -5,6 +5,7 @@ title: 'Fuzz failure: graymatter → typeberry'
 site: github.com/FluffyLabs/jam-testing
 created_at: '2026-03-24T18:32:44.000Z'
 last_modified: '2026-03-24T18:32:44.000Z'
+content_kind: issue
 ---
 
 # Fuzz failure: graymatter → typeberry

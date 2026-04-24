@@ -1,0 +1,124 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/leaf-db.test.ts#L1-L106
+title: packages/jam/database/leaf-db.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: 273e53c9fdd95c86c578bdb0ceba973c7b9ba45678b864722feee93f42bda44f
+language: typescript
+---
+`packages/jam/database/leaf-db.test.ts` (lines 1–106)
+
+```typescript
+import assert, { deepEqual } from "node:assert";
+import { before, describe, it } from "node:test";
+import { Bytes, BytesBlob } from "@typeberry/bytes";
+import { Blake2b, HASH_SIZE, TRUNCATED_HASH_SIZE } from "@typeberry/hash";
+import { InMemoryTrie, type InputKey, type ValueHash } from "@typeberry/trie";
+import { getBlake2bTrieHasher } from "@typeberry/trie/hasher.js";
+import type { TrieHasher } from "@typeberry/trie/nodesDb.js";
+import { type Result, resultToString } from "@typeberry/utils";
+import { LeafDb, type LeafDbError, type ValuesDb } from "./leaf-db.js";
+
+let blake2bTrieHasher: TrieHasher;
+let blake2b: Blake2b;
+
+before(async () => {
+  blake2b = await Blake2b.createHasher();
+  blake2bTrieHasher = getBlake2bTrieHasher(blake2b);
+});
+
+describe("LeafDb", () => {
+  it("should construct a LeafDb", () => {
+    const leafDbRes = constructLeafDb([
+      [Bytes.fill(HASH_SIZE, 1).asOpaque(), BytesBlob.blobFromString("val1")],
+      [Bytes.fill(HASH_SIZE, 2).asOpaque(), BytesBlob.blobFromString("val2")],
+    ]);
+    const leafDb = assertOk(leafDbRes);
+
+    // when
+    const val1 = leafDb.get(Bytes.fill(HASH_SIZE, 1).asOpaque());
+    const val2 = leafDb.get(Bytes.fill(HASH_SIZE, 2).asOpaque());
+    const val3 = leafDb.get(Bytes.fill(HASH_SIZE, 3).asOpaque());
+
+    assert.strictEqual(`${val1}`, `${BytesBlob.blobFromString("val1")}`);
+    assert.strictEqual(`${val2}`, "0x76616c32");
+    assert.strictEqual(val3, null);
+  });
+
+  it("should retrieve value from a DB", () => {
+    const raw: [InputKey, BytesBlob][] = [
+      [Bytes.fill(HASH_SIZE, 1).asOpaque(), Bytes.fill(128, 0xff)],
+      [Bytes.fill(HASH_SIZE, 2).asOpaque(), Bytes.fill(129, 0xee)],
+      [Bytes.fill(HASH_SIZE, 3).asOpaque(), BytesBlob.blobFromString("val1")],
+      [Bytes.fill(HASH_SIZE, 4).asOpaque(), BytesBlob.blobFromString("val2")],
+    ];
+    const leafDbRes = constructLeafDb(raw);
+    const leafDb = assertOk(leafDbRes);
+
+    // when
+    const entries = leafDb.intoStateEntries();
+
+    // then
+    deepEqual(
+      Array.from(entries),
+      raw.map(([a, b]) => [Bytes.fromBlob(a.raw.subarray(0, TRUNCATED_HASH_SIZE), TRUNCATED_HASH_SIZE).asOpaque(), b]),
+    );
+  });
+
+  it("should convert into state entries", () => {
+    const leafDbRes = constructLeafDb([
+      [Bytes.fill(HASH_SIZE, 1).asOpaque(), Bytes.fill(128, 0xff)],
+      [Bytes.fill(HASH_SIZE, 2).asOpaque(), Bytes.fill(129, 0xee)],
+    ]);
+    const leafDb = assertOk(leafDbRes);
+
+    // when
+    const val1 = leafDb.get(Bytes.fill(HASH_SIZE, 1).asOpaque());
+    const val2 = leafDb.get(Bytes.fill(HASH_SIZE, 2).asOpaque());
+    const val3 = leafDb.get(Bytes.fill(HASH_SIZE, 3).asOpaque());
+
+    assert.strictEqual(`${val1}`, `${Bytes.fill(128, 0xff)}`);
+    assert.strictEqual(`${val2}`, `${Bytes.fill(129, 0xee)}`);
+    assert.strictEqual(val3, null);
+  });
+
+  it("should fail on invalid blob data", () => {
+    const res = LeafDb.fromLeavesBlob(BytesBlob.blobFromNumbers([1, 2, 3]), dbFromRaw(new Map()));
+
+    assert.strictEqual(`${resultToString(res)}`, "3 is not a multiply of 64: 0x010203\nError: 0");
+  });
+});
+
+function assertOk(res: ReturnType<typeof constructLeafDb>) {
+  if (res.isError) {
+    assert.fail(`Expected LeafDb to be created correctly, got: ${resultToString(res)}`);
+  }
+  return res.ok;
+}
+
+function constructLeafDb(entries: [InputKey, BytesBlob][]): Result<LeafDb, LeafDbError> {
+  const rawDb = new Map<string, BytesBlob>();
+  const trie = InMemoryTrie.empty(blake2bTrieHasher);
+  for (const [key, value] of entries) {
+    const leafNode = trie.set(key, value);
+    if (!leafNode.hasEmbeddedValue()) {
+      // we need to put it to the DB, since it didn't fit into the leaf.
+      rawDb.set(`${leafNode.getValueHash()}`, value);
+    }
+  }
+
+  const leafNodes = Array.from(trie.nodes.leaves());
+  const db = dbFromRaw(rawDb);
+
+  return LeafDb.fromLeavesBlob(BytesBlob.blobFromParts(leafNodes.map((x) => x.node.raw)), db);
+}
+
+function dbFromRaw(rawDb: Map<string, BytesBlob>): ValuesDb {
+  return {
+```

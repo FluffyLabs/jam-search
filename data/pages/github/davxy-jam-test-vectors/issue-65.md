@@ -5,6 +5,7 @@ title: issue with account storage key
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-29T13:58:16.000Z'
 last_modified: '2025-05-29T13:58:16.000Z'
+content_kind: issue
 ---
 
 # issue with account storage key

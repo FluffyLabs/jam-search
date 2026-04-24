@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import type { AssistantPart, ChatMessage, TextPart } from "@/lib/askTypes";
+import { modelLabel } from "@/lib/models";
 import { cn } from "@/lib/utils";
 import { Markdown } from "./Markdown";
 import { ToolStep } from "./ToolStep";
@@ -8,6 +11,8 @@ interface MessageProps {
 }
 
 export function Message({ message }: MessageProps) {
+  const navigate = useNavigate();
+
   if (message.role === "user") {
     return (
       <div className="flex justify-end">
@@ -47,8 +52,24 @@ export function Message({ message }: MessageProps) {
       )}
 
       {message.error && (
-        <div className="rounded-md border border-destructive/40 bg-destructive/10 text-destructive text-sm px-3 py-2">
-          {message.error}
+        <div className="rounded-md border border-destructive/40 bg-destructive/10 text-destructive text-sm px-3 py-2 flex items-start justify-between gap-3">
+          <span className="flex-1">{message.error}</span>
+          {message.errorKind === "missingApiKey" && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="shrink-0 border-destructive/40 text-destructive hover:bg-destructive/20"
+              onClick={() => navigate("/settings")}
+            >
+              Go to Settings
+            </Button>
+          )}
+        </div>
+      )}
+
+      {message.model && (
+        <div className="text-[11px] text-muted-foreground/80">
+          via {modelLabel(message.model)}
         </div>
       )}
     </div>

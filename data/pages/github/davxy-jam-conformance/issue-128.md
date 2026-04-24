@@ -5,6 +5,7 @@ title: Jam4s
 site: github.com/davxy/jam-conformance
 created_at: '2025-12-12T04:07:43.000Z'
 last_modified: '2025-12-12T04:07:43.000Z'
+content_kind: issue
 ---
 
 # Jam4s

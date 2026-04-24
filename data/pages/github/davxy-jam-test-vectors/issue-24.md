@@ -5,6 +5,7 @@ title: 'Disputes: bad_signature-2 test vector also has other errors.'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-17T15:35:59.000Z'
 last_modified: '2025-02-17T15:35:59.000Z'
+content_kind: issue
 ---
 
 # Disputes: bad_signature-2 test vector also has other errors.

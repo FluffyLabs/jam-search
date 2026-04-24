@@ -5,6 +5,7 @@ title: introduce field threshold for service info in accumulate tests
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-10T07:52:07.000Z'
 last_modified: '2025-06-10T07:52:07.000Z'
+content_kind: issue
 ---
 
 # introduce field threshold for service info in accumulate tests

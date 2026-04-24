@@ -1,0 +1,80 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/keys.test.ts#L1-L62
+title: packages/jam/state-merkleization/keys.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 02d27332ab81175f49036f0bf66ca0b8548005de73a3c70f4baa5c08c68ec3d9
+language: typescript
+---
+`packages/jam/state-merkleization/keys.test.ts` (lines 1–62)
+
+```typescript
+import assert from "node:assert";
+import { before, describe, it } from "node:test";
+import { tryAsServiceId } from "@typeberry/block";
+import { Bytes } from "@typeberry/bytes";
+import { Blake2b, HASH_SIZE } from "@typeberry/hash";
+import { tryAsU32 } from "@typeberry/numbers";
+import { StateKeyIdx, stateKeys } from "./keys.js";
+
+let blake2b: Blake2b;
+
+before(async () => {
+  blake2b = await Blake2b.createHasher();
+});
+
+describe("State Serialization / keys", () => {
+  it("should construct index key", () => {
+    const alpha = stateKeys.index(StateKeyIdx.Alpha);
+    const delta = stateKeys.index(StateKeyIdx.Delta);
+    const xi = stateKeys.index(StateKeyIdx.Xi);
+
+    assert.strictEqual(`${alpha}`, "0x0100000000000000000000000000000000000000000000000000000000000000");
+    assert.strictEqual(`${delta}`, "0xff00000000000000000000000000000000000000000000000000000000000000");
+    assert.strictEqual(`${xi}`, "0x0f00000000000000000000000000000000000000000000000000000000000000");
+  });
+
+  it("should construct key for service info", () => {
+    const a = stateKeys.serviceInfo(tryAsServiceId(2 ** 32 - 1));
+    const b = stateKeys.serviceInfo(tryAsServiceId(2));
+    const c = stateKeys.serviceInfo(tryAsServiceId(2 ** 16));
+    const d = stateKeys.serviceInfo(tryAsServiceId(2 ** 16 - 1));
+
+    assert.strictEqual(`${a}`, "0xffff00ff00ff00ff000000000000000000000000000000000000000000000000");
+    assert.strictEqual(`${b}`, "0xff02000000000000000000000000000000000000000000000000000000000000");
+    assert.strictEqual(`${c}`, "0xff00000000010000000000000000000000000000000000000000000000000000");
+    assert.strictEqual(`${d}`, "0xffff00ff00000000000000000000000000000000000000000000000000000000");
+  });
+
+  it("should construct a key for service state", () => {
+    const a = stateKeys.serviceStorage(blake2b, tryAsServiceId(0xbbbb_bbbb), EXAMPLE_HASH.asOpaque());
+    const expectedKey = "0xbb98bb4bbb5bbbf04624e8575cf0ddc40ad4d73ae8dcbd527b3143b76e6689f6";
+    assert.strictEqual(`${a}`, expectedKey);
+  });
+
+  it("should construct a key for service preimage", () => {
+    const a = stateKeys.servicePreimage(blake2b, tryAsServiceId(0xbbbb_bbbb), EXAMPLE_HASH.asOpaque());
+    const expectedKey = "0xbb9ebbb1bb8dbb02b980a74e4be74b55435d6030e74652c9cc6fe523b4c866f5";
+    assert.strictEqual(`${a}`, expectedKey);
+  });
+
+  it("should construct a key for service lookup history", () => {
+    const a = stateKeys.serviceLookupHistory(
+      blake2b,
+      tryAsServiceId(0xbbbb_bbbb),
+      EXAMPLE_HASH.asOpaque(),
+      tryAsU32(0xdeadbeef),
+    );
+    const expectedKey = "0xbb48bb92bbc3bb5ff7692d2e8e65b37d5df58917217dbb72b1d2c0cdf75079e9";
+    assert.strictEqual(`${a}`, expectedKey);
+  });
+});
+
+const EXAMPLE_HASH = Bytes.parseBytes("0x00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff", HASH_SIZE);
+```

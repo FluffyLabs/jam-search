@@ -1,0 +1,95 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/errors.ts#L1-L77
+title: packages/core/pvm-interpreter/memory/errors.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 3a9e1fc8307a7dfc12c0ed861524f7c6066517022fdbad3b836fa11a1dfe3328
+language: typescript
+---
+`packages/core/pvm-interpreter/memory/errors.ts` (lines 1–77)
+
+```typescript
+import { tryAsU32, type U32 } from "@typeberry/numbers";
+import { type PageFault as InterpreterPageFault, MEMORY_SIZE } from "@typeberry/pvm-interface";
+import { tryAsMemoryIndex } from "./memory-index.js";
+import { getStartPageIndex, getStartPageIndexFromPageNumber } from "./memory-utils.js";
+import { tryAsPageNumber } from "./pages/page-utils.js";
+
+export class PageFault implements InterpreterPageFault {
+  private constructor(
+    public address: U32,
+    public isAccessFault = true,
+  ) {}
+
+  static fromPageNumber(maybePageNumber: number, isAccessFault = false) {
+    const pageNumber = tryAsPageNumber(maybePageNumber);
+    const startPageIndex = getStartPageIndexFromPageNumber(pageNumber);
+    return new PageFault(tryAsU32(startPageIndex), isAccessFault);
+  }
+
+  static fromMemoryIndex(maybeMemoryIndex: number, isAccessFault = false) {
+    const memoryIndex = tryAsMemoryIndex(maybeMemoryIndex % MEMORY_SIZE);
+    const startPageIndex = getStartPageIndex(memoryIndex);
+    return new PageFault(tryAsU32(startPageIndex), isAccessFault);
+  }
+}
+
+export class OutOfBounds extends Error {
+  constructor() {
+    super("Out of bounds");
+  }
+}
+
+export class ChunkOverlap extends Error {
+  constructor() {
+    super("Memory chunks cannot overlap each other!");
+  }
+}
+
+export class ChunkTooLong extends Error {
+  constructor() {
+    super("Memory chunk is longer than the address range!");
+  }
+}
+
+export class IncorrectSbrkIndex extends Error {
+  constructor() {
+    super("Space between sbrk index and max heap index should be empty!");
+  }
+}
+
+export class FinalizedBuilderModification extends Error {
+  constructor() {
+    super("MemoryBuilder was finalized and cannot be changed!");
+  }
+}
+
+export class ReservedMemoryFault extends Error {
+  constructor() {
+    super("You are trying to access reserved memory!");
+  }
+}
+
+export class PageNotExist extends Error {
+  constructor() {
+    super("You try to fill data on memory page that does not exist!");
+  }
+}
+
+export class ChunkNotFound extends Error {
+  constructor() {
+    super("Chunk does not exist or is too short");
+  }
+}
+export class OutOfMemory extends Error {
+  constructor() {
+    super("Out of memory");
+  }
+}
+```

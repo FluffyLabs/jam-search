@@ -5,6 +5,7 @@ title: merkle "trie" tests not compatible with the state roots from "traces" tes
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-18T17:42:26.000Z'
 last_modified: '2025-06-18T17:42:26.000Z'
+content_kind: issue
 ---
 
 # merkle "trie" tests not compatible with the state roots from "traces" tests

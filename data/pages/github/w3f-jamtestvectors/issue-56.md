@@ -5,6 +5,7 @@ title: Trace test vectors Preimage accumulation invocation.
 site: github.com/w3f/jamtestvectors
 created_at: '2025-11-16T13:31:07.000Z'
 last_modified: '2025-11-16T13:31:07.000Z'
+content_kind: issue
 ---
 
 # Trace test vectors Preimage accumulation invocation.

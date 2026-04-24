@@ -5,6 +5,7 @@ title: Maybe header encoding data is wrong
 site: github.com/w3f/jamtestvectors
 created_at: '2025-01-27T04:43:38.000Z'
 last_modified: '2025-01-27T04:43:38.000Z'
+content_kind: issue
 ---
 
 # Maybe header encoding data is wrong

@@ -5,6 +5,7 @@ title: fuzzy/00000037.json
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-11-04T11:35:36.000Z'
 last_modified: '2025-11-04T11:35:36.000Z'
+content_kind: issue
 ---
 
 # fuzzy/00000037.json

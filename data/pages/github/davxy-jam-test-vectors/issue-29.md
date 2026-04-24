@@ -5,6 +5,7 @@ title: Safrole Markers Placement
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-17T21:27:41.000Z'
 last_modified: '2025-03-17T21:27:41.000Z'
+content_kind: issue
 ---
 
 # Safrole Markers Placement

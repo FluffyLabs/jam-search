@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/advanced/rpc/jam-duna-prop'
 title: JSON RPC | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-03-30T12:40:03.554Z'
-last_modified: '2026-03-30T12:40:03.554Z'
+created_at: '2026-04-24T04:03:26.263Z'
+last_modified: '2026-04-24T04:03:26.263Z'
 ---
 warning
 

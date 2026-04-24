@@ -5,6 +5,7 @@ title: Dictionaries key encoding
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-19T08:22:49.000Z'
 last_modified: '2025-05-19T08:22:49.000Z'
+content_kind: issue
 ---
 
 # Dictionaries key encoding

@@ -1,0 +1,118 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/common.ts#L1-L100
+title: packages/jam/node/common.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 2
+content_sha: 20ad30952c2801d1c2c51332e0707d8a290e4bf9b6e548bca72556f9fa469a87
+language: typescript
+---
+`packages/jam/node/common.ts` (lines 1–100)
+
+```typescript
+import { Block, emptyBlock, Header, type HeaderHash, reencodeAsView, type TimeSlot } from "@typeberry/block";
+import { Bytes, type BytesBlob } from "@typeberry/bytes";
+import { Decoder } from "@typeberry/codec";
+import { type ChainSpec, fullChainSpec, tinyChainSpec } from "@typeberry/config";
+import { type JipChainSpec, KnownChainSpec } from "@typeberry/config-node";
+import type { BlocksDb, RootDb, SerializedStatesDb } from "@typeberry/database";
+import { type Blake2b, HASH_SIZE, WithHash } from "@typeberry/hash";
+import { Logger } from "@typeberry/logger";
+import { SerializedState, StateEntries } from "@typeberry/state-merkleization";
+
+export const logger = Logger.new(import.meta.filename, "jam");
+
+export function getChainSpec(name: KnownChainSpec) {
+  if (name === KnownChainSpec.Full) {
+    return fullChainSpec;
+  }
+
+  if (name === KnownChainSpec.Tiny) {
+    return tinyChainSpec;
+  }
+
+  throw new Error(`Unknown chain spec: ${name}. Possible options: ${[KnownChainSpec.Full, KnownChainSpec.Tiny]}`);
+}
+
+export function getDatabasePath(
+  blake2b: Blake2b,
+  nodeName: string,
+  genesisHeader: BytesBlob,
+  databaseBasePath: string,
+) {
+  const nodeNameHash = blake2b.hashString(nodeName).toString().substring(2, 10);
+  const genesisHeaderHash = blake2b.hashBytes(genesisHeader).asOpaque<HeaderHash>();
+  const genesisHeaderHashNibbles = genesisHeaderHash.toString().substring(2, 10);
+
+  const dbPath = `${databaseBasePath}/${nodeNameHash}/${genesisHeaderHashNibbles}`;
+  return {
+    dbPath,
+    genesisHeaderHash,
+  };
+}
+
+/**
+ * Initialize the database unless it's already initialized.
+ *
+ * The function checks the genesis header
+ */
+export type InitDbOptions = {
+  initGenesisFromAncestry?: boolean;
+};
+
+export async function initializeDatabase(
+  spec: ChainSpec,
+  blake2b: Blake2b,
+  genesisHeaderHash: HeaderHash,
+  rootDb: RootDb<BlocksDb, SerializedStatesDb>,
+  config: JipChainSpec,
+  ancestry: [HeaderHash, TimeSlot][],
+  options: InitDbOptions = {},
+): Promise<void> {
+  const blocks = rootDb.getBlocksDb();
+  const states = rootDb.getStatesDb();
+
+  const header = blocks.getBestHeaderHash();
+  const state = blocks.getPostStateRoot(header);
+  logger.log`🛢️ Best header hash: ${header}`;
+  logger.log`🛢️ Best state root: ${state}`;
+
+  // DB seems already initialized, just go with what we have.
+  const isDbInitialized =
+    state !== null && !state.isEqualTo(Bytes.zero(HASH_SIZE)) && !header.isEqualTo(Bytes.zero(HASH_SIZE));
+
+  if (isDbInitialized) {
+    return;
+  }
+
+  logger.log`🛢️ Database looks fresh. Initializing.`;
+  // looks like a fresh db, initialize the state.
+  const genesisHeader = Decoder.decodeObject(Header.Codec, config.genesisHeader, spec);
+  const genesisExtrinsic = emptyBlock().extrinsic;
+  const genesisBlock = Block.create({ header: genesisHeader, extrinsic: genesisExtrinsic });
+  const blockView = reencodeAsView(Block.Codec, genesisBlock, spec);
+  logger.log`🧬 Writing genesis block #${genesisHeader.timeSlotIndex}: ${genesisHeaderHash}`;
+
+  const { genesisStateSerialized, genesisStateRootHash } = loadGenesisState(spec, blake2b, config.genesisState);
+
+  // write to db
+  // When initGenesisFromAncestry is set, use ancestry[0][0] as the initial block hash (for fuzz-target mode)
+  const initialBlockHash =
+    (options.initGenesisFromAncestry ?? false) && ancestry.length > 0 ? ancestry[0][0] : genesisHeaderHash;
+  await blocks.insertBlock(WithHash.new(initialBlockHash, blockView));
+  // insert fake blocks for ancestry data
+  for (const [hash, slot] of ancestry) {
+    await blocks.insertBlock(WithHash.new(hash, reencodeAsView(Block.Codec, emptyBlock(slot), spec)));
+  }
+  await states.insertInitialState(initialBlockHash, genesisStateSerialized);
+  await blocks.setPostStateRoot(initialBlockHash, genesisStateRootHash);
+  await blocks.setBestHeaderHash(initialBlockHash);
+}
+
+function loadGenesisState(spec: ChainSpec, blake2b: Blake2b, data: JipChainSpec["genesisState"]) {
+```

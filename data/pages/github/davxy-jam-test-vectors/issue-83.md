@@ -5,6 +5,7 @@ title: PVM logs for "traces" v0.6.6 tests
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-26T00:23:13.000Z'
 last_modified: '2025-06-26T00:23:13.000Z'
+content_kind: issue
 ---
 
 # PVM logs for "traces" v0.6.6 tests

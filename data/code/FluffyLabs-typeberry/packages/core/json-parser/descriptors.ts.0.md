@@ -1,0 +1,112 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/json-parser/descriptors.ts#L1-L94
+title: packages/core/json-parser/descriptors.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 0fb19a5cdd604663d4bef30fe2abef514354075b3e1655c11e5654f542dc738d
+language: typescript
+---
+`packages/core/json-parser/descriptors.ts` (lines 1–94)
+
+```typescript
+import { parseFromJson } from "./parse.js";
+import type { Builder, FromJson, FromJsonWithParser, Parser } from "./types.js";
+
+export namespace json {
+  /** Parse a JSON string into the expected type. */
+  export function fromString<TInto>(parser: Parser<string, TInto>): FromJsonWithParser<string, TInto> {
+    return ["string", parser];
+  }
+
+  /** Parse a JSON number into the expected type. */
+  export function fromNumber<TInto>(parser: Parser<number, TInto>): FromJsonWithParser<number, TInto> {
+    return ["number", parser];
+  }
+
+  /** Parse a JSON bigint or number into the expected type. */
+  export function fromBigInt<TInto>(parser: Parser<bigint, TInto>): FromJsonWithParser<unknown, TInto> {
+    return [
+      "object",
+      (x) => {
+        if (typeof x === "number" || typeof x === "bigint") {
+          return parser(BigInt(x));
+        }
+        throw new Error(`Expected number or bigint got: ${typeof x} (${x})`);
+      },
+    ];
+  }
+
+  /** Cast the JSON number into the expected type. */
+  export function castNumber<TInto extends number>() {
+    return fromNumber((v) => v as TInto);
+  }
+
+  /** Parse any (`unknown`) JSON value into the expected type. */
+  export function fromAny<TInto>(parser: Parser<unknown, TInto>): FromJsonWithParser<unknown, TInto> {
+    return ["object", parser];
+  }
+
+  /** Handle a potentially optional value. Can be either `undefined` or `null` in JSON. */
+  export function optional<T>(from: FromJson<T>): FromJson<T | undefined> {
+    return ["optional", from] as FromJson<T | undefined>;
+  }
+
+  /** Handle a potentially optional value that can be `null` in JSON. */
+  export function nullable<T>(from: FromJson<T>): FromJson<T | null> {
+    return ["optional", from] as FromJson<T | null>;
+  }
+
+  /** Expect an array of given type in JSON. */
+  export function array<TInto>(from: FromJson<TInto>): FromJson<TInto[]> {
+    return ["array", from];
+  }
+
+  /** Parse an object record with the given type. */
+  export function record<TInto>(from: FromJson<TInto>): FromJson<Record<string, TInto>> {
+    return fromAny<Record<string, TInto>>((inJson, context) => {
+      if (typeof inJson !== "object" || inJson === null) {
+        throw new Error("Expected object record for parsing");
+      }
+      const result: Record<string, TInto> = {};
+      for (const [key, value] of Object.entries(inJson)) {
+        result[key] = parseFromJson(value, from, `${context}.${key}`);
+      }
+      return result;
+    });
+  }
+
+  /** Parse a map with the given type. */
+  export function map<TKey, TValue>(K: FromJson<TKey>, V: FromJson<TValue>): FromJson<Map<TKey, TValue>> {
+    return fromAny<Map<TKey, TValue>>((inJson, context) => {
+      if (typeof inJson !== "object" || inJson === null) {
+        throw new Error("Expected map for parsing");
+      }
+      if (Array.isArray(inJson)) {
+        throw new Error("Expected map, got array");
+      }
+      const result = new Map<TKey, TValue>();
+      for (const [key, value] of Object.entries(inJson)) {
+        result.set(parseFromJson(key, K, `${context}.key`), parseFromJson(value, V, `${context}.value`));
+      }
+      return result;
+    });
+  }
+
+  /** Parse an object and create a class instance of given type using `builder` function. */
+  export function object<TFrom, TInto = TFrom>(
+    from: FromJson<TFrom>,
+    builder: Builder<TFrom, TInto>,
+  ): FromJsonWithParser<unknown, TInto> {
+    return fromAny<TInto>((inJson, context) => {
+      const parsed = parseFromJson(inJson, from, context);
+      return builder(parsed);
+    });
+  }
+}
+```

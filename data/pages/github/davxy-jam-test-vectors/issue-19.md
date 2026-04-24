@@ -5,6 +5,7 @@ title: Preimages input ordering
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-12T12:44:12.000Z'
 last_modified: '2025-02-12T12:44:12.000Z'
+content_kind: issue
 ---
 
 # Preimages input ordering

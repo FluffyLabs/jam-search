@@ -1,0 +1,122 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block/guarantees.ts#L1-L104
+title: packages/jam/block/guarantees.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: a04d0d40ca5d5500232a2c64091eee547c2d843e4ee47dd90187141c0a8285fa
+language: typescript
+---
+`packages/jam/block/guarantees.ts` (lines 1–104)
+
+```typescript
+import { type CodecRecord, codec, type DescribedBy } from "@typeberry/codec";
+import type { KnownSizeArray } from "@typeberry/collections";
+import { ED25519_SIGNATURE_BYTES, type Ed25519Signature } from "@typeberry/crypto";
+import { WithDebug } from "@typeberry/utils";
+import { codecKnownSizeArray, codecWithContext } from "./codec-utils.js";
+import type { TimeSlot, ValidatorIndex } from "./common.js";
+import { WorkReport } from "./work-report.js";
+
+/**
+ * Required number of credentials for each work report.
+ * The maximal value is `NoOfValidators / NoOfCores`
+ * (i.e. signatures from ALL validators assigned to the core)
+ * however 2/3rds is sufficent.
+ * Since GP defines that value explicitly as "two or three",
+ * we do that as well.
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/152b01152d01?v=0.7.2
+ */
+export type REQUIRED_CREDENTIALS = 2 | 3;
+export const REQUIRED_CREDENTIALS_RANGE = [2, 3];
+
+/** Unique validator index & signature. */
+export class Credential extends WithDebug {
+  static Codec = codec.Class(Credential, {
+    validatorIndex: codec.u16.asOpaque<ValidatorIndex>(),
+    signature: codec.bytes(ED25519_SIGNATURE_BYTES).asOpaque<Ed25519Signature>(),
+  });
+
+  static create({ validatorIndex, signature }: CodecRecord<Credential>) {
+    return new Credential(validatorIndex, signature);
+  }
+
+  private constructor(
+    /** Validator index signing the guarantee. */
+    public readonly validatorIndex: ValidatorIndex,
+    /** Signature over hash of the work-report. */
+    public readonly signature: Ed25519Signature,
+  ) {
+    super();
+  }
+}
+
+/**
+ * Tuple of work-report, a credential and it's corresponding timeslot.
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/15df00150301?v=0.7.2
+ */
+export class ReportGuarantee extends WithDebug {
+  static Codec = codec.Class(ReportGuarantee, {
+    report: WorkReport.Codec,
+    slot: codec.u32.asOpaque<TimeSlot>(),
+    credentials: codecKnownSizeArray(Credential.Codec, {
+      minLength: REQUIRED_CREDENTIALS_RANGE[0],
+      maxLength: REQUIRED_CREDENTIALS_RANGE[1],
+      typicalLength: REQUIRED_CREDENTIALS_RANGE[1],
+    }),
+  });
+
+  static create({ report, slot, credentials }: CodecRecord<ReportGuarantee>) {
+    return new ReportGuarantee(report, slot, credentials);
+  }
+
+  private constructor(
+    /** The work-report being guaranteed. */
+    public readonly report: WorkReport,
+    /** Timeslot of the report. */
+    public readonly slot: TimeSlot,
+    /**
+     * The credential is a sequence of two or three tuples of a unique
+     * validator index and a signature.
+     * Credentials must be ordered by their validator index.
+     *
+     * https://graypaper.fluffylabs.dev/#/ab2cdbd/152b01152d01?v=0.7.2
+     */
+    public readonly credentials: KnownSizeArray<Credential, `${REQUIRED_CREDENTIALS}`>,
+  ) {
+    super();
+  }
+}
+
+export const GuaranteesExtrinsicBounds = "[0..CoresCount)";
+/**
+ * `E_G`: Series of guarantees, at most one for each core.
+ *
+ * Each core index (within work-report) must be unique and guarantees
+ * must be in ascending order of this.
+ *
+ * https://graypaper.fluffylabs.dev/#/ab2cdbd/15d10015d400?v=0.7.2
+ */
+export type GuaranteesExtrinsic = KnownSizeArray<ReportGuarantee, typeof GuaranteesExtrinsicBounds>;
+
+export const guaranteesExtrinsicCodec = codecWithContext((context) =>
+  codecKnownSizeArray(
+    ReportGuarantee.Codec,
+    {
+      minLength: 0,
+      maxLength: context.coresCount,
+      typicalLength: context.coresCount,
+    },
+    GuaranteesExtrinsicBounds,
+  ),
+);
+
+export type GuaranteesExtrinsicView = DescribedBy<typeof guaranteesExtrinsicCodec.View>;
+```

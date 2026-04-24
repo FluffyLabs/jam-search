@@ -5,6 +5,7 @@ title: modify progress_with_bad_signatures-2.json
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-12T07:41:34.000Z'
 last_modified: '2024-12-12T07:41:34.000Z'
+content_kind: pr
 ---
 
 # modify progress_with_bad_signatures-2.json

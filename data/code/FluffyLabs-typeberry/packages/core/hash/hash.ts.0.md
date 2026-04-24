@@ -1,0 +1,83 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/hash/hash.ts#L1-L65
+title: packages/core/hash/hash.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: fb115f889a597d3898a94b9c405ba4c96bbcee41b5ec9adef71ec9959fa5c18d
+language: typescript
+---
+`packages/core/hash/hash.ts` (lines 1–65)
+
+```typescript
+import { Bytes, type BytesBlob } from "@typeberry/bytes";
+import { WithDebug } from "@typeberry/utils";
+
+/**
+ * Size of the output of the hash functions.
+ *
+ * https://graypaper.fluffylabs.dev/#/579bd12/073101073c01
+ *
+ */
+export const HASH_SIZE = 32;
+export type HASH_SIZE = typeof HASH_SIZE;
+
+/** A hash without last byte (useful for trie representation). */
+export const TRUNCATED_HASH_SIZE = 31;
+export type TRUNCATED_HASH_SIZE = typeof TRUNCATED_HASH_SIZE;
+
+/** Opaque, unknown hash. */
+export type OpaqueHash = Bytes<HASH_SIZE>;
+
+/** Opaque Blake2B. */
+export type Blake2bHash = Bytes<HASH_SIZE>;
+
+/** Opaque KeccakHash. */
+export type KeccakHash = Bytes<HASH_SIZE>;
+
+/** Truncated hash. */
+export type TruncatedHash = Bytes<TRUNCATED_HASH_SIZE>;
+
+export const ZERO_HASH = Bytes.zero(HASH_SIZE);
+
+/**
+ * Container for some object with a hash that is related to this object.
+ *
+ * After calculating the hash these two should be passed together to avoid
+ * unnecessary re-hashing of the data.
+ */
+export class WithHash<THash extends OpaqueHash, TData> extends WithDebug {
+  static new<THash extends OpaqueHash, TData>(hash: THash, data: TData) {
+    return new WithHash(hash, data);
+  }
+
+  protected constructor(
+    public readonly hash: THash,
+    public readonly data: TData,
+  ) {
+    super();
+  }
+}
+
+/**
+ * Extension of [`WithHash`] additionally containing an encoded version of the object.
+ */
+export class WithHashAndBytes<THash extends OpaqueHash, TData> extends WithHash<THash, TData> {
+  static create<THash extends OpaqueHash, TData>(hash: THash, data: TData, encoded: BytesBlob) {
+    return new WithHashAndBytes(hash, data, encoded);
+  }
+
+  protected constructor(
+    hash: THash,
+    data: TData,
+    public readonly encoded: BytesBlob,
+  ) {
+    super(hash, data);
+  }
+}
+```

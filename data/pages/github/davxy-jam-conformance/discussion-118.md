@@ -5,6 +5,7 @@ title: min items for `extrinsic.guarantees.report.results`
 site: github.com/davxy/jam-conformance
 created_at: '2025-11-18T01:21:13.000Z'
 last_modified: '2025-11-18T01:21:13.000Z'
+content_kind: discussion
 ---
 
 # min items for `extrinsic.guarantees.report.results`

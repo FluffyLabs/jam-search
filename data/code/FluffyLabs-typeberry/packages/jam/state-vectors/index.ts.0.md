@@ -1,0 +1,87 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-vectors/index.ts#L1-L69
+title: packages/jam/state-vectors/index.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 3e3028d301ebd12408966dd506bddefdf0cfa6d45e4b608985f6608489233e58
+language: typescript
+---
+`packages/jam/state-vectors/index.ts` (lines 1–69)
+
+```typescript
+import { Block, type BlockView, Header, type StateRootHash } from "@typeberry/block";
+import { blockViewFromJson, fromJson, headerFromJson } from "@typeberry/block-json";
+import type { BytesBlob } from "@typeberry/bytes";
+import { codec } from "@typeberry/codec";
+import { tinyChainSpec } from "@typeberry/config";
+import { HASH_SIZE, TRUNCATED_HASH_SIZE, type TruncatedHash } from "@typeberry/hash";
+import { type FromJson, json } from "@typeberry/json-parser";
+
+export class StateKeyVal {
+  static fromJson: FromJson<StateKeyVal> = {
+    key: fromJson.bytesN(TRUNCATED_HASH_SIZE),
+    value: fromJson.bytesBlob,
+  };
+  key!: TruncatedHash;
+  value!: BytesBlob;
+}
+
+export class TestState {
+  static fromJson: FromJson<TestState> = {
+    state_root: fromJson.bytes32(),
+    keyvals: json.array(StateKeyVal.fromJson),
+  };
+
+  static Codec = codec.object({
+    state_root: codec.bytes(HASH_SIZE).asOpaque<StateRootHash>(),
+    keyvals: codec.sequenceVarLen(
+      codec.object({
+        key: codec.bytes(TRUNCATED_HASH_SIZE),
+        value: codec.blob,
+      }),
+    ),
+  });
+
+  state_root!: StateRootHash;
+  keyvals!: StateKeyVal[];
+}
+
+export class StateTransitionGenesis {
+  static fromJson: FromJson<StateTransitionGenesis> = {
+    header: headerFromJson,
+    state: TestState.fromJson,
+  };
+
+  static Codec = codec.object({
+    header: Header.Codec,
+    state: TestState.Codec,
+  });
+
+  header!: Header;
+  state!: TestState;
+}
+
+export class StateTransition {
+  static fromJson: FromJson<StateTransition> = {
+    pre_state: TestState.fromJson,
+    post_state: TestState.fromJson,
+    block: blockViewFromJson(tinyChainSpec),
+  };
+
+  static Codec = codec.object({
+    pre_state: TestState.Codec,
+    block: Block.Codec.View,
+    post_state: TestState.Codec,
+  });
+
+  pre_state!: TestState;
+  post_state!: TestState;
+  block!: BlockView;
+}
+```

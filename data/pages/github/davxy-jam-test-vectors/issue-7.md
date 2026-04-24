@@ -5,6 +5,7 @@ title: 'Reports STF: detect duplicate packages'
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-17T18:34:17.000Z'
 last_modified: '2024-12-17T18:34:17.000Z'
+content_kind: issue
 ---
 
 # Reports STF: detect duplicate packages

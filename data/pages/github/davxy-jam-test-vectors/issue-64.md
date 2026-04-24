@@ -7,6 +7,7 @@ title: >-
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-29T12:48:51.000Z'
 last_modified: '2025-05-29T12:48:51.000Z'
+content_kind: issue
 ---
 
 # The invocation arguments for is-authorized do not appear to conform to GP 0.6.5.

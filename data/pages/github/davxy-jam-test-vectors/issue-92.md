@@ -5,6 +5,7 @@ title: PVM logs for 0.7.0 preimages light?
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-08-25T06:17:03.000Z'
 last_modified: '2025-08-25T06:17:03.000Z'
+content_kind: issue
 ---
 
 # PVM logs for 0.7.0 preimages light?

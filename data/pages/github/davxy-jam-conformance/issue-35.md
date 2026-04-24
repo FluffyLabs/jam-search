@@ -5,6 +5,7 @@ title: TSJam
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-27T15:48:00.000Z'
 last_modified: '2025-08-27T15:48:00.000Z'
+content_kind: issue
 ---
 
 # TSJam

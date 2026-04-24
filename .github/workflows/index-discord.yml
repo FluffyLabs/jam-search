@@ -16,8 +16,6 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.GH_INDEX_TOKEN }}
 
       - name: Setup Node.js with cache
         uses: actions/setup-node@v6

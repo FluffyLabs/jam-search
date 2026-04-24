@@ -5,6 +5,7 @@ title: v0.6.6
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-13T11:00:56.000Z'
 last_modified: '2025-05-13T11:00:56.000Z'
+content_kind: issue
 ---
 
 # v0.6.6

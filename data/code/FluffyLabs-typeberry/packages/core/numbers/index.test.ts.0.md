@@ -1,0 +1,98 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/numbers/index.test.ts#L1-L80
+title: packages/core/numbers/index.test.ts
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 9a8970e40173229a6e3e528eaf83ed378e2817cea5973e8b476cadb11e0829b6
+language: typescript
+---
+`packages/core/numbers/index.test.ts` (lines 1–80)
+
+```typescript
+import assert from "node:assert";
+import { describe, it } from "node:test";
+import { maxU64, minU64, sumU32, sumU64, tryAsU32, tryAsU64, u32AsLeBytes } from "./index.js";
+
+describe("sumU32", () => {
+  it("should sum and handle overflow", () => {
+    const res1 = sumU32(tryAsU32(3), tryAsU32(5), tryAsU32(10));
+    const res2 = sumU32(tryAsU32(2 ** 32 - 1), tryAsU32(1));
+    const res3 = sumU32(tryAsU32(2 ** 32 - 1), tryAsU32(2 ** 32 - 1));
+    const res4 = sumU32(tryAsU32(2 ** 32 - 1), tryAsU32(2 ** 32 - 1), tryAsU32(2 ** 32 - 1));
+
+    assert.deepStrictEqual(res1, { overflow: false, value: tryAsU32(18) });
+    assert.deepStrictEqual(res2, { overflow: true, value: tryAsU32(0) });
+    assert.deepStrictEqual(res3, { overflow: true, value: tryAsU32(2 ** 32 - 2) });
+    assert.deepStrictEqual(res4, { overflow: true, value: tryAsU32(2 ** 32 - 3) });
+  });
+});
+
+describe("sumU64", () => {
+  it("should sum and handle overflow", () => {
+    const res1 = sumU64(tryAsU64(3), tryAsU64(5), tryAsU64(10));
+    const res2 = sumU64(tryAsU64(2n ** 64n - 1n), tryAsU64(1n));
+    const res3 = sumU64(tryAsU64(2n ** 64n - 1n), tryAsU64(2n ** 64n - 1n));
+    const res4 = sumU64(tryAsU64(2n ** 64n - 1n), tryAsU64(2n ** 64n - 1n), tryAsU64(2n ** 64n - 1n));
+
+    assert.deepStrictEqual(res1, { overflow: false, value: tryAsU64(18) });
+    assert.deepStrictEqual(res2, { overflow: true, value: tryAsU64(0) });
+    assert.deepStrictEqual(res3, { overflow: true, value: tryAsU64(2n ** 64n - 2n) });
+    assert.deepStrictEqual(res4, { overflow: true, value: tryAsU64(2n ** 64n - 3n) });
+  });
+});
+
+describe("u32AsLittleEndian", () => {
+  const createTestCase = (value: number, expectedResult: Uint8Array) => ({ value: tryAsU32(value), expectedResult });
+
+  const testCases = [
+    createTestCase(2 ** 32 - 1, new Uint8Array([0xff, 0xff, 0xff, 0xff])),
+    createTestCase(2147483647, new Uint8Array([0xff, 0xff, 0xff, 0x7f])),
+    createTestCase(5, new Uint8Array([5, 0, 0, 0])),
+    createTestCase(0, new Uint8Array([0, 0, 0, 0])),
+  ];
+
+  for (const { value, expectedResult } of testCases) {
+    it(`should return little endian representation of ${value}`, () => {
+      const result = u32AsLeBytes(value);
+
+      assert.deepStrictEqual(result, expectedResult);
+    });
+  }
+});
+
+describe("tryAsU32", () => {
+  it("should cast numbers", () => {
+    const v = 1234;
+    assert.deepStrictEqual(tryAsU32(v), 1234);
+  });
+
+  it("should throw if value exceeds u32", () => {
+    const v = 2 ** 32;
+    assert.throws(() => tryAsU32(v), `input must have four-byte representation, got ${v}`);
+  });
+});
+
+describe("minU64", () => {
+  it("should return minimal value", () => {
+    const minimal = tryAsU64(1n);
+    const middle = tryAsU64(2n ** 16n + 48n);
+    const maximal = tryAsU64(2n ** 64n - 1n);
+    assert.deepStrictEqual(minU64(middle, maximal, minimal), minimal);
+  });
+});
+
+describe("maxU64", () => {
+  it("should return maximal value", () => {
+    const minimal = tryAsU64(1n);
+    const middle = tryAsU64(2n ** 16n + 48n);
+    const maximal = tryAsU64(2n ** 64n - 1n);
+    assert.deepStrictEqual(maxU64(middle, maximal, minimal), maximal);
+  });
+});
+```

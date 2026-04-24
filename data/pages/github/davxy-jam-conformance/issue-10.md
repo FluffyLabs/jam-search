@@ -5,6 +5,7 @@ title: PVM traces log register state
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-06T19:21:12.000Z'
 last_modified: '2025-08-06T19:21:12.000Z'
+content_kind: issue
 ---
 
 # PVM traces log register state

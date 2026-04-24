@@ -5,6 +5,7 @@ title: wrong proof in Tickets Extrinsic
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-07-09T08:45:30.000Z'
 last_modified: '2025-07-09T08:45:30.000Z'
+content_kind: issue
 ---
 
 # wrong proof in Tickets Extrinsic

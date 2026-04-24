@@ -1,5 +1,6 @@
 import { serve } from "@hono/node-server";
 import { createApp } from "./api.js";
+import { fetchData } from "./data/fetcher.js";
 import { loadAllData } from "./data/loader.js";
 import { createSearchDB } from "./data/searchIndex.js";
 import { env } from "./env.js";
@@ -25,10 +26,22 @@ async function main() {
     CACHE_DIR: cacheDir,
     OPENAI_API_KEY: openaiApiKey,
     EMBEDDINGS_ENABLED: embeddingsEnabled,
+    DATA_REPO_URL: dataRepoUrl,
+    DATA_REF: dataRef,
   } = env;
 
   if (!embeddingsEnabled) {
     printEmbeddingsDisabledWarning();
+  }
+
+  if (dataRepoUrl) {
+    console.log(`Fetching data from ${dataRepoUrl}@${dataRef}...`);
+    await fetchData({ repoUrl: dataRepoUrl, ref: dataRef, dataDir });
+    console.log("Fetched data.");
+  } else {
+    console.log(
+      "DATA_REPO_URL not set; using local DATA_DIR as-is (dev mode)."
+    );
   }
 
   // Create and populate the in-memory search index

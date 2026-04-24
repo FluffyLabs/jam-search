@@ -5,6 +5,7 @@ title: Strawberry Milestone 1
 site: github.com/w3f/jam-milestone-delivery
 created_at: '2024-11-20T14:50:27.000Z'
 last_modified: '2024-11-20T14:50:27.000Z'
+content_kind: pr
 ---
 
 # Strawberry Milestone 1

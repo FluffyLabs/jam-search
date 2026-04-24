@@ -1,0 +1,139 @@
+---
+type: page
+content_kind: code
+url: >-
+  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/release-bump-version.yml#L1-L121
+title: .github/workflows/release-bump-version.yml
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: b3bfdbc1da83cd8554482259210e42da6cd6519fd9dca59c7c337febe652522f
+language: yaml
+---
+`.github/workflows/release-bump-version.yml` (lines 1–121)
+
+```yaml
+name: RELEASE - Bump Version
+
+permissions:
+  contents: write       # push branch, create release
+  pull-requests: write  # open PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Bump version (e.g., 0.1.0) - only required in custom'
+        required: false
+        type: string
+      release_type:
+        description: 'Version bump type. patch=0.0.x | minor=0.x.0 | major=x.0.0'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - custom
+        default: patch
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: 24.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Validate inputs
+      if: ${{ inputs.release_type == 'custom' && (inputs.version == '' || inputs.version == null) }}
+      run: |
+        echo "Error: 'version' is required when release_type=custom" >&2
+        exit 1
+
+    - name: Determine version
+      id: version
+      run: |
+        if [ "${{ inputs.release_type }}" = "custom" ]; then
+          VERSION="${{ inputs.version }}"
+        else
+          # Get current version from root package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          # Use npm version to calculate new version
+          VERSION=$(npm version ${{ inputs.release_type }} --no-git-tag-version --no-commit-hooks | sed 's/^v//')
+          # Reset the change since we'll do it properly later
+          git checkout -- package.json package-lock.json
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Release version will be: $VERSION"
+
+    - name: Update root package version
+      run: |
+        npm version ${{ steps.version.outputs.version }} --no-git-tag-version --no-commit-hooks
+
+    - name: Update workspace packages versions
+      run: |
+        VERSION=${{ steps.version.outputs.version }}
+        # Update all workspace package.json files
+        for pkg in $(find . -name "package.json" -not -path "./node_modules/*" -not -path "./dist/*" -not -path "./test-vectors/*" -not -path "./package.json"); do
+          echo "Updating $pkg"
+          # Update version
+          node -e "const fs = require('fs'); const p = require('$pkg'); p.version = '$VERSION'; fs.writeFileSync('$pkg', JSON.stringify(p, null, 2) + '\n');"
+        done
+
+    - name: Update lock file
+      run: |
+        npm install --package-lock-only
+
+    - name: Generate GitHub App Token
+      id: app-token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.PR_APP_ID }}
+        private-key: ${{ secrets.PR_APP_PRIVATE_KEY }}
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v7
+      id: pr
+      with:
+        token: ${{ steps.app-token.outputs.token }}
+        base: 'main'
+        branch: version/v${{ steps.version.outputs.version }}
+        title: "Update Version v${{ steps.version.outputs.version }}"
+        commit-message: "Bump version to v${{ steps.version.outputs.version }}"
+        body: |
+          Update Version to v${{ steps.version.outputs.version }}
+
+
+    - name: Create Draft Release
+      uses: softprops/action-gh-release@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag_name: v${{ steps.version.outputs.version }}
+        name: Release v${{ steps.version.outputs.version }}
+        body: |
+          🐲 DRAFT RELEASE, please auto-generate release notes on github.
+
+          ---
+          ⚠️ **This is a draft release. It should be published after the version bump PR is merged.**
+        draft: true
+        prerelease: false
+```

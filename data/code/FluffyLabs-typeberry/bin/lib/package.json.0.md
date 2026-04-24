@@ -1,0 +1,112 @@
+---
+type: page
+content_kind: code
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/package.json#L1-L95'
+title: bin/lib/package.json
+site: github.com/FluffyLabs/typeberry
+created_at: '2026-04-22T14:38:44+02:00'
+last_modified: '2026-04-22T14:38:44+02:00'
+chunk_index: 0
+chunk_total: 1
+content_sha: 278ae49e9bbfcb7e33d2884b76c19fac48b3a7c8f40cf542a19547cff74e0b24
+language: json
+---
+`bin/lib/package.json` (lines 1–95)
+
+```json
+{
+  "name": "@typeberry/lib",
+  "version": "0.5.11",
+  "description": "Typeberry Library",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FluffyLabs/typeberry"
+  },
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./block": "./exports/block.js",
+    "./block-json": "./exports/block-json.js",
+    "./bytes": "./exports/bytes.js",
+    "./codec": "./exports/codec.js",
+    "./collections": "./exports/collections.js",
+    "./config": "./exports/config.js",
+    "./config-node": "./exports/config-node.js",
+    "./crypto": "./exports/crypto.js",
+    "./database": "./exports/database.js",
+    "./erasure-coding": "./exports/erasure-coding.js",
+    "./fuzz-proto": "./exports/fuzz-proto.js",
+    "./hash": "./exports/hash.js",
+    "./importer": "./exports/importer.js",
+    "./jam-host-calls": "./exports/jam-host-calls.js",
+    "./json-parser": "./exports/json-parser.js",
+    "./logger": "./exports/logger.js",
+    "./mmr": "./exports/mmr.js",
+    "./numbers": "./exports/numbers.js",
+    "./ordering": "./exports/ordering.js",
+    "./package.json": "./package.json",
+    "./pvm-host-calls": "./exports/pvm-host-calls.js",
+    "./pvm-interface": "./exports/pvm-interface.js",
+    "./pvm-interpreter": "./exports/pvm-interpreter.js",
+    "./shuffling": "./exports/shuffling.js",
+    "./state": "./exports/state.js",
+    "./state-json": "./exports/state-json.js",
+    "./state-merkleization": "./exports/state-merkleization.js",
+    "./state-vectors": "./exports/state-vectors.js",
+    "./transition": "./exports/transition.js",
+    "./trie": "./exports/trie.js",
+    "./utils": "./exports/utils.js",
+    "./workers-api": "./exports/workers-api.js"
+  },
+  "dependencies": {
+    "@fluffylabs/anan-as": "^1.3.0",
+    "@noble/ed25519": "2.2.3",
+    "hash-wasm": "4.12.0",
+    "@typeberry/native": "0.2.0-74dd7d7",
+    "eventemitter3": "^5.0.1",
+    "@opentelemetry/api": "1.9.0",
+    "@typeberry/block": "*",
+    "@typeberry/block-json": "*",
+    "@typeberry/bytes": "*",
+    "@typeberry/codec": "*",
+    "@typeberry/collections": "*",
+    "@typeberry/config": "*",
+    "@typeberry/config-node": "*",
+    "@typeberry/crypto": "*",
+    "@typeberry/database": "*",
+    "@typeberry/erasure-coding": "*",
+    "@typeberry/fuzz-proto": "*",
+    "@typeberry/hash": "*",
+    "@typeberry/importer": "*",
+    "@typeberry/jam-host-calls": "*",
+    "@typeberry/json-parser": "*",
+    "@typeberry/logger": "*",
+    "@typeberry/mmr": "*",
+    "@typeberry/numbers": "*",
+    "@typeberry/ordering": "*",
+    "@typeberry/pvm-host-calls": "*",
+    "@typeberry/pvm-interface": "*",
+    "@typeberry/pvm-interpreter": "*",
+    "@typeberry/shuffling": "*",
+    "@typeberry/state": "*",
+    "@typeberry/state-json": "*",
+    "@typeberry/state-merkleization": "*",
+    "@typeberry/state-vectors": "*",
+    "@typeberry/transition": "*",
+    "@typeberry/trie": "*",
+    "@typeberry/utils": "*",
+    "@typeberry/workers-api": "*"
+  },
+  "scripts": {
+    "docs": "npm run docs:examples",
+    "test": "tsx --test $(find . -type f -name '*.test.ts' | tr '\\n' ' ')",
+    "test:examples": "tsx --test examples/*.test.ts",
+    "build": "tsc -p ../../tsconfig.lib.json && tsx scripts/build-lib.ts",
+    "docs:examples": "tsx scripts/extract-examples.ts",
+    "prebuild": "npm run docs:examples"
+  },
+  "author": "Fluffy Labs",
+  "license": "MPL-2.0",
+  "type": "module"
+}
+```
