@@ -64,6 +64,8 @@ export function AskPage() {
     if (createdRef.current.has(sessionId)) {
       // We just created this row locally; avoid an immediate round-trip
       // that would overwrite our in-memory state with the freshly-written one.
+      // Consume the flag so that navigating away and back re-hydrates from DB.
+      createdRef.current.delete(sessionId);
       hydratedRef.current = sessionId;
       return;
     }
