@@ -1,4 +1,5 @@
 import { Outlet, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import { AuthGate } from "@/components/ask/AuthGate";
 import { SessionsSidebar } from "@/components/ask/SessionsSidebar";
 import { useSessions } from "@/hooks/useSessions";
@@ -9,6 +10,10 @@ export function AskLayout() {
       <LayoutInner />
     </AuthGate>
   );
+}
+
+function shareUrlFor(sessionId: string): string {
+  return `${window.location.origin}${window.location.pathname}#/ask/s/${sessionId}`;
 }
 
 function LayoutInner() {
@@ -33,8 +38,22 @@ function LayoutInner() {
             sessions.remove(id);
           }
         }}
-        onShare={() => {
-          // Implemented in Task 10 (flip public + copy + toast).
+        onShare={async (id) => {
+          const session = sessions.sessions?.find((s) => s.id === id);
+          const wasPublic = session?.isPublic === true;
+          try {
+            if (!wasPublic) {
+              await sessions.update(id, { isPublic: true });
+            }
+            await navigator.clipboard.writeText(shareUrlFor(id));
+            toast.success(
+              wasPublic ? "Link copied" : "Link copied. Session is public now"
+            );
+          } catch (err) {
+            toast.error(
+              `Couldn't share: ${(err as Error).message ?? "unknown error"}`
+            );
+          }
         }}
       />
       <div className="flex-1 min-w-0">
