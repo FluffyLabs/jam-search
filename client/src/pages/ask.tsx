@@ -280,12 +280,6 @@ export function AskPage() {
   const streaming = lastAssistant?.isStreaming === true;
   const isEmpty = state.messages.length === 0;
 
-  const handleNewChat = () => {
-    streamHandleRef.current?.abort();
-    streamHandleRef.current = null;
-    navigate("/ask");
-  };
-
   const activeSession = sessionId
     ? sessions.sessions?.find((s) => s.id === sessionId)
     : undefined;
@@ -337,9 +331,9 @@ export function AskPage() {
               />
             ) : (
               <>
-                <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
-                  <div className="max-w-[52rem] mx-auto px-6 py-2 flex items-center justify-end gap-1">
-                    {activeSession && sessionId && (
+                {activeSession && sessionId && (
+                  <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
+                    <div className="max-w-[52rem] mx-auto px-6 py-2 flex items-center justify-end gap-1">
                       <SharePopover
                         sessionId={sessionId}
                         isPublic={activeSession.isPublic}
@@ -347,12 +341,9 @@ export function AskPage() {
                           sessions.update(sessionId, { isPublic: next })
                         }
                       />
-                    )}
-                    <Button variant="ghost" size="sm" onClick={handleNewChat}>
-                      New chat
-                    </Button>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="max-w-[52rem] mx-auto px-6 py-8 flex flex-col gap-6">
                   {state.messages.map((m) => (
                     <Message key={m.id} message={m} />
