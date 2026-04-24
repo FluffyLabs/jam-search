@@ -23,7 +23,7 @@ shows the same `JAM Search` regardless of route or content.
 
 ## Title Format
 
-`<topic> — JAM Search` (em-dash separator).
+`<topic> - JAM Search` (hyphen separator).
 
 Rationale: when many tabs are open, browsers truncate titles from the
 right. Putting the most-distinguishing part (the topic) on the left keeps
@@ -57,7 +57,7 @@ export function useDocumentTitle(title: string | null): void;
 Behavior:
 
 - When `title` is a non-empty string: set `document.title` to
-  `\`${title} — JAM Search\``.
+  `\`${title} - JAM Search\``.
 - When `title` is `null` or empty: set `document.title` to `"JAM Search"`.
 - On unmount, restore `document.title` to `"JAM Search"`.
 
@@ -109,10 +109,10 @@ State machine:
 | Conversation state                                       | Tab title                       |
 |----------------------------------------------------------|---------------------------------|
 | `/ask` with no `sessionId` (new chat / empty state)      | `JAM Search`                    |
-| `/ask/:id` immediately after creation, before sessions.list refresh, no messages yet | `Bamboozling… — JAM Search` |
-| `/ask/:id` with a first user message in `state` but no DB title yet | `<first 60 chars> — JAM Search` |
-| `/ask/:id` with `activeSession.title` populated (provisional from `deriveTitle`) | `<first 60 chars> — JAM Search` |
-| `/ask/:id` with `activeSession.title` populated (LLM-generated) | `<llm title> — JAM Search`      |
+| `/ask/:id` immediately after creation, before sessions.list refresh, no messages yet | `Bamboozling… - JAM Search` |
+| `/ask/:id` with a first user message in `state` but no DB title yet | `<first 60 chars> - JAM Search` |
+| `/ask/:id` with `activeSession.title` populated (provisional from `deriveTitle`) | `<first 60 chars> - JAM Search` |
+| `/ask/:id` with `activeSession.title` populated (LLM-generated) | `<llm title> - JAM Search`      |
 | `/ask/:id` after "New chat" navigates to `/ask`          | `JAM Search`                    |
 
 `Bamboozling…` is intentionally only visible during the brief window
@@ -154,7 +154,7 @@ shows that provisional title. Same outcome as the sidebar.
 ### Unit tests (Vitest)
 
 - `client/src/hooks/__tests__/useDocumentTitle.test.tsx` — covers:
-  - sets `document.title` to `\`${title} — JAM Search\`` for non-empty input
+  - sets `document.title` to `\`${title} - JAM Search\`` for non-empty input
   - sets to `JAM Search` for `null` or empty string
   - restores `JAM Search` on unmount
   - re-renders update the title
@@ -166,14 +166,14 @@ real-world flow end-to-end.
 
 ### Manual smoke test
 
-1. Open `/results?q=safrole` — tab shows `safrole — JAM Search`.
+1. Open `/results?q=safrole` — tab shows `safrole - JAM Search`.
 2. Open `/results/graypaper?q=safrole` — same.
 3. Open `/ask` (no session) — tab shows `JAM Search`.
 4. Type "How does safrole VRF rotation work?" and submit. Within ~1s
    the URL becomes `/ask/<uuid>` and the tab shows
-   `How does safrole VRF rotation work? — JAM Search` (provisional).
+   `How does safrole VRF rotation work? - JAM Search` (provisional).
 5. After the assistant turn completes and the LLM title arrives, the
-   tab updates to something like `Safrole VRF rotation — JAM Search`.
+   tab updates to something like `Safrole VRF rotation - JAM Search`.
 6. Click "New chat" — URL returns to `/ask`, tab shows `JAM Search`.
 7. Open `/ask/s/<public-id>` (a shared link) — tab shows the shared
    conversation's title.
