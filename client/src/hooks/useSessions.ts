@@ -1,4 +1,4 @@
-import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase";
+import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 import type { AskConversationState } from "@/lib/askTypes";
@@ -54,6 +54,9 @@ export function createUseSessions(deps: {
     );
     const [error, setError] = useState<string | null>(null);
 
+    // supabase and userId are captured from the factory closure; they are
+    // stable for the lifetime of this hook instance, so they are omitted from
+    // the dep arrays below (the linter cannot tell).
     const list = useCallback(async () => {
       const { data, error } = await supabase
         .from("ask_sessions")
@@ -65,23 +68,20 @@ export function createUseSessions(deps: {
         return;
       }
       setSessions((data as AskSessionRow[]).map(rowToSummary));
-    }, [supabase, userId]);
+    }, []);
 
-    const get = useCallback(
-      async (id: string) => {
-        const { data, error } = await supabase
-          .from("ask_sessions")
-          .select("*")
-          .eq("id", id)
-          .single();
-        if (error) {
-          setError(error.message);
-          return null;
-        }
-        return fromRow(data as AskSessionRow);
-      },
-      [supabase],
-    );
+    const get = useCallback(async (id: string) => {
+      const { data, error } = await supabase
+        .from("ask_sessions")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) {
+        setError(error.message);
+        return null;
+      }
+      return fromRow(data as AskSessionRow);
+    }, []);
 
     const create = useCallback<UseSessionsApi["create"]>(
       async ({ id, title, state }) => {
@@ -99,7 +99,7 @@ export function createUseSessions(deps: {
         }
         await list();
       },
-      [list, supabase, userId],
+      [list],
     );
 
     const update = useCallback<UseSessionsApi["update"]>(
@@ -126,7 +126,7 @@ export function createUseSessions(deps: {
         if (error) setError(error.message);
         else await list();
       },
-      [list, supabase, userId],
+      [list],
     );
 
     const remove = useCallback(
@@ -138,7 +138,7 @@ export function createUseSessions(deps: {
         if (error) setError(error.message);
         else await list();
       },
-      [list, supabase],
+      [list],
     );
 
     useEffect(() => {

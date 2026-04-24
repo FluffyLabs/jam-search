@@ -206,7 +206,7 @@ export function AskPage() {
   };
 
   // Auto-submit once if ?q is set and ?autoSubmit=1.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: send changes every render; hasAutoSubmittedRef guards against re-firing
+  // send changes every render; hasAutoSubmittedRef guards against re-firing.
   useEffect(() => {
     if (
       autoSubmit &&
@@ -218,6 +218,8 @@ export function AskPage() {
       streamHandleRef.current?.abort();
       send(initialQuery, { startFresh: true });
     }
+    // biome-ignore lint/correctness/useExhaustiveDependencies: see comment above
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSubmit, initialQuery, keyLoading]);
 
   useEffect(() => {
