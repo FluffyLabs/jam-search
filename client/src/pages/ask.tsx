@@ -8,6 +8,7 @@ import { ChatInput } from "@/components/chat/ChatInput";
 import { CitationsPanel } from "@/components/chat/CitationsPanel";
 import { Message } from "@/components/chat/Message";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAskConversation } from "@/hooks/useAskConversation";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { type UseSessionsApi, useSessions } from "@/hooks/useSessions";
@@ -59,6 +60,10 @@ export function AskPage() {
     sessionsRef.current = sessions;
   }, [sessions]);
   const [saveError, setSaveError] = useState<string | null>(null);
+  // Set while fetching a session's full record from the DB on navigation.
+  // Controls the loading skeleton so the UI changes immediately instead of
+  // showing the previous session's messages during the network round-trip.
+  const [isHydrating, setIsHydrating] = useState(false);
 
   // Hydrate when sessionId changes. Abort any running stream first.
   // Intentionally NOT depending on `sessions` — see sessionsRef above.
@@ -92,11 +97,13 @@ export function AskPage() {
     if (hydratedRef.current === sessionId) return;
     streamHandleRef.current?.abort();
     streamHandleRef.current = null;
+    setIsHydrating(true);
     let cancelled = false;
     (async () => {
       const record = await sessionsRef.current.get(sessionId);
       if (cancelled) return;
       if (!record) {
+        setIsHydrating(false);
         navigate("/ask", { replace: true });
         return;
       }
@@ -105,6 +112,7 @@ export function AskPage() {
       // The hydrated state is by definition what's in the DB; mark it so
       // the save effect doesn't immediately re-save it on the next render.
       lastSavedStateRef.current = record.state;
+      setIsHydrating(false);
     })();
     return () => {
       cancelled = true;
@@ -358,26 +366,33 @@ export function AskPage() {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_22rem] overflow-hidden">
         <section className="flex flex-col overflow-hidden border-r-1 border-r-[#D4D4D4] dark:border-r-1 dark:border-r-[#181818]">
           <div ref={scrollRef} className="flex-1 overflow-y-auto">
-            {isEmpty ? (
+            {isHydrating ? (
+              <>
+                <SessionStickyHeader
+                  sessionId={sessionId}
+                  activeSession={activeSession}
+                  onToggleShare={(next) => {
+                    if (sessionId)
+                      sessions.update(sessionId, { isPublic: next });
+                  }}
+                />
+                <SessionLoadingSkeleton />
+              </>
+            ) : isEmpty ? (
               <EmptyState
                 showApiKeyCta={isReady && !hasApiKey}
                 onOpenSettings={() => navigate("/settings")}
               />
             ) : (
               <>
-                {activeSession && sessionId && (
-                  <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
-                    <div className="max-w-[52rem] mx-auto px-6 py-2 flex items-center justify-end gap-1">
-                      <SharePopover
-                        sessionId={sessionId}
-                        isPublic={activeSession.isPublic}
-                        onToggle={(next) =>
-                          sessions.update(sessionId, { isPublic: next })
-                        }
-                      />
-                    </div>
-                  </div>
-                )}
+                <SessionStickyHeader
+                  sessionId={sessionId}
+                  activeSession={activeSession}
+                  onToggleShare={(next) => {
+                    if (sessionId)
+                      sessions.update(sessionId, { isPublic: next });
+                  }}
+                />
                 <div className="max-w-[52rem] mx-auto px-6 py-8 flex flex-col gap-6">
                   {state.messages.map((m) => (
                     <Message key={m.id} message={m} />
@@ -390,22 +405,95 @@ export function AskPage() {
           <div className="max-w-[52rem] w-full mx-auto px-6 pb-6">
             <ChatInput
               initialValue={autoSubmit ? "" : initialQuery}
-              disabled={streaming || !isReady}
+              disabled={streaming || !isReady || isHydrating}
               onSubmit={send}
               model={state.model}
               onModelChange={(m) => dispatch({ type: "setModel", model: m })}
               placeholder={
                 isEmpty
                   ? "What would you like to know about JAM?"
-                  : "Ask a follow-up…"
+                  : isHydrating
+                    ? "Loading conversation…"
+                    : "Ask a follow-up…"
               }
             />
           </div>
         </section>
 
         <aside className="hidden lg:block border-l-1 border-l-white dark:border-l-1 dark:border-l-[#353535] overflow-y-auto bg-card/20 px-5 py-6 text-foreground">
-          <CitationsPanel assistant={lastAssistant} cards={state.cards} />
+          {isHydrating ? (
+            <div
+              className="flex flex-col gap-3"
+              role="status"
+              aria-label="Loading sources"
+            >
+              <Skeleton className="h-20 w-full rounded-md" />
+              <Skeleton className="h-20 w-full rounded-md" />
+              <Skeleton className="h-20 w-full rounded-md" />
+            </div>
+          ) : (
+            <CitationsPanel assistant={lastAssistant} cards={state.cards} />
+          )}
         </aside>
+      </div>
+    </div>
+  );
+}
+
+function SessionStickyHeader({
+  sessionId,
+  activeSession,
+  onToggleShare,
+}: {
+  sessionId: string | undefined;
+  activeSession:
+    | { id: string; title: string | null; isPublic: boolean }
+    | undefined;
+  onToggleShare: (next: boolean) => void;
+}) {
+  if (!sessionId) return null;
+  return (
+    <div className="sticky top-0 z-10 backdrop-blur bg-background/80 border-b border-border/60">
+      <div className="max-w-[52rem] mx-auto px-6 py-2 flex items-center gap-3">
+        <div className="flex-1 min-w-0 truncate text-sm font-medium text-foreground">
+          {activeSession?.title ?? (
+            <Skeleton className="h-4 w-48 inline-block align-middle" />
+          )}
+        </div>
+        {activeSession && (
+          <SharePopover
+            sessionId={sessionId}
+            isPublic={activeSession.isPublic}
+            onToggle={onToggleShare}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SessionLoadingSkeleton() {
+  return (
+    <div
+      className="max-w-[52rem] mx-auto px-6 py-8 flex flex-col gap-6"
+      role="status"
+      aria-label="Loading conversation"
+    >
+      <div className="flex justify-end">
+        <Skeleton className="h-10 w-56 rounded-xl" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-11/12" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+      <div className="flex justify-end">
+        <Skeleton className="h-10 w-40 rounded-xl" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+        <Skeleton className="h-4 w-2/3" />
       </div>
     </div>
   );
