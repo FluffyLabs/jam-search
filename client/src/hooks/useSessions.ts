@@ -1,6 +1,5 @@
 import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
 import {
-  type QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
@@ -92,6 +91,9 @@ export function createUseSessions(deps: {
   const { supabase, userId } = deps;
   return function useSessions(): UseSessionsApi {
     const queryClient = useQueryClient();
+    // `supabase` and `userId` are captured from the factory closure; they are
+    // stable for the lifetime of this hook instance, so they are omitted from
+    // the dep arrays below (the linter cannot tell).
     const key = useMemo(() => sessionsKey(userId), []);
 
     const query = useQuery<AskSessionSummary[], Error>({
@@ -181,26 +183,17 @@ export function createUseSessions(deps: {
       return fetchSessionById(supabase, id);
     }, []);
 
-    const create = useCallback<UseSessionsApi["create"]>(
-      async (args) => {
-        await createMutation.mutateAsync(args);
-      },
-      [createMutation]
-    );
+    const create: UseSessionsApi["create"] = async (args) => {
+      await createMutation.mutateAsync(args);
+    };
 
-    const update = useCallback<UseSessionsApi["update"]>(
-      async (id, patch) => {
-        await updateMutation.mutateAsync({ id, patch });
-      },
-      [updateMutation]
-    );
+    const update: UseSessionsApi["update"] = async (id, patch) => {
+      await updateMutation.mutateAsync({ id, patch });
+    };
 
-    const remove = useCallback(
-      async (id: string) => {
-        await removeMutation.mutateAsync(id);
-      },
-      [removeMutation]
-    );
+    const remove: UseSessionsApi["remove"] = async (id) => {
+      await removeMutation.mutateAsync(id);
+    };
 
     const mutationError =
       createMutation.error?.message ??
@@ -229,13 +222,3 @@ export function useSessions(): UseSessionsApi {
   return createUseSessions({ supabase: ctx.client, userId: ctx.user.id })();
 }
 
-/**
- * Helper for forcibly refreshing the sessions cache outside the hook (e.g.
- * after a fork from the shared-view page). Rarely needed.
- */
-export function invalidateSessions(
-  queryClient: QueryClient,
-  userId: string
-): void {
-  void queryClient.invalidateQueries({ queryKey: sessionsKey(userId) });
-}

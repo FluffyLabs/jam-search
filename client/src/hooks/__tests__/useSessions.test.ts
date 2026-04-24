@@ -151,6 +151,10 @@ describe("useSessions", () => {
     });
 
     // Both hooks should have triggered a refetch via the shared cache.
-    await waitFor(() => expect(builder.order).toHaveBeenCalled());
+    await waitFor(() => {
+      expect(a.result.current.sessions).toBeDefined();
+      expect(b.result.current.sessions).toBeDefined();
+      expect(builder.order).toHaveBeenCalled();
+    });
   });
 });
