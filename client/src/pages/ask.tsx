@@ -412,7 +412,9 @@ export function AskPage() {
         </section>
 
         <aside className="hidden lg:flex flex-col border-l-1 border-l-white dark:border-l-[#353535] bg-card/20 text-foreground overflow-hidden">
-          <div className="h-12 shrink-0 border-b-1 border-b-[#D4D4D4] dark:border-b-[#181818] px-5 flex items-center gap-2">
+          {/* Muted horizontal divider: only the light highlight line on the
+              content, no dark shadow on this header. */}
+          <div className="h-12 shrink-0 px-5 flex items-center gap-2">
             <span className="text-sm text-foreground">Sources</span>
             <span className="text-xs text-muted-foreground tabular-nums">
               {lastAssistant?.citations?.length ?? 0}
