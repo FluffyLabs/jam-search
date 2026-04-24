@@ -33,7 +33,9 @@ function LayoutInner() {
         }}
         onDelete={(id) => {
           if (
-            window.confirm("Delete this session? Any public link will 404.")
+            window.confirm(
+              "Delete this session? Any public link will become unavailable."
+            )
           ) {
             sessions.remove(id);
           }

@@ -67,7 +67,7 @@ export function SharePopover({
         </div>
         {!isPublic && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Off — anyone with the link will see a 404.
+            Off — anyone with the link will see it as unavailable.
           </p>
         )}
         {copied && (
