@@ -4,6 +4,7 @@ import { AppsSidebar } from "@fluffylabs/shared-ui";
 import { AuthCallback, AuthFlow } from "@fluffylabs/shared-ui/supabase";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "sonner";
 import { AskLayout } from "@/components/ask/AskLayout";
 import { peekForkPending } from "@/lib/forkPending";
 import { EmbeddedViewer } from "./components/EmbeddedViewer";
@@ -159,6 +160,7 @@ function App() {
           </div>
         </div>
       </div>
+      <Toaster position="bottom-right" richColors closeButton />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
