@@ -303,3 +303,13 @@ Can you share updates on our latest release?
 
 I re-run your target for the traces we have in this repo
 https://github.com/davxy/jam-conformance/commit/f39c1ac85b50e36b7eae47ab82ac181a11b189bb
+
+
+## Comment by @harsh-csl
+
+Hi @davxy ,
+
+We have released a new version, we are now locally passing all the traces including easter batch along with forks / no_forks fuzz examples. 
+Please give it a run and let us know if any issue arises.
+
+Latest release: [v0.7.2.4](https://github.com/Chainscore/tessera-releases/releases)
