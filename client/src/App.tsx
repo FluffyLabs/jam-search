@@ -4,6 +4,7 @@ import { AppsSidebar } from "@fluffylabs/shared-ui";
 import { AuthCallback, AuthFlow } from "@fluffylabs/shared-ui/supabase";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "sonner";
 import { AskLayout } from "@/components/ask/AskLayout";
 import { peekForkPending } from "@/lib/forkPending";
 import { EmbeddedViewer } from "./components/EmbeddedViewer";
@@ -91,9 +92,10 @@ function App() {
   const isUsingEmbeddedViewer = useEmbeddedViewer().isVisible;
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  // /ask manages its own scroll/padding so the section/aside border can
-  // span the full available height.
-  const fullBleed = pathname === "/ask";
+  // /ask (and its nested session routes + shared view) manages its own
+  // scroll/padding so the section/aside border can span the full height
+  // and the shared page doesn't double-pad.
+  const fullBleed = pathname === "/ask" || pathname.startsWith("/ask/");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -159,6 +161,7 @@ function App() {
           </div>
         </div>
       </div>
+      <Toaster position="bottom-right" richColors closeButton />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

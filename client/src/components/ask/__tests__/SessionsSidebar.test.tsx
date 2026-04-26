@@ -26,8 +26,7 @@ function renderSidebar(sessions: AskSessionSummary[]) {
         now={new Date("2026-04-23T12:00:00Z")}
         onRename={vi.fn()}
         onDelete={vi.fn()}
-        onToggleShare={vi.fn()}
-        onRegenerateTitle={vi.fn()}
+        onShare={vi.fn()}
       />
     </MemoryRouter>
   );
@@ -49,7 +48,7 @@ describe("SessionsSidebar", () => {
 
   it("filter input narrows the list case-insensitively", async () => {
     renderSidebar(sessions);
-    await userEvent.type(screen.getByLabelText(/filter/i), "yesterday");
+    await userEvent.type(screen.getByLabelText(/search/i), "yesterday");
     expect(screen.queryByText("Today session")).not.toBeInTheDocument();
     expect(screen.getByText("Yesterday session")).toBeInTheDocument();
   });

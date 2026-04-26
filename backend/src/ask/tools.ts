@@ -47,9 +47,14 @@ function buildMatrixUrl(
   return `${room.archiveUrl}#${messageId}`;
 }
 
-function buildGraypaperUrl(title: string | undefined): string | undefined {
+function buildGraypaperUrl(
+  title: string | undefined,
+  query: string
+): string | undefined {
   if (!title) return undefined;
-  return `https://graypaper.fluffylabs.dev/#/?section=${encodeURIComponent(title)}`;
+  // Match the search-results URL format byte-for-byte (no URL encoding).
+  // The Graypaper reader's hash router expects this exact shape.
+  return `https://graypaper.fluffylabs.dev/#/?search=${query}&section=${title}`;
 }
 
 /**
@@ -165,7 +170,7 @@ export async function executeSearchAll(
       sourceType: "graypaper",
       preview: truncate(r.text ?? ""),
       title: r.title,
-      url: buildGraypaperUrl(r.title),
+      url: buildGraypaperUrl(r.title, args.query),
       score: r.score,
     });
   }
@@ -213,7 +218,9 @@ function resolveDocUrl(doc: SearchDoc): string | undefined {
       return buildMatrixUrl(doc.roomId, doc.messageId);
     case "graypaper_section":
     case "graypaper_version":
-      return buildGraypaperUrl(doc.title);
+      // No search query context here; fall back to empty query so the
+      // reader still routes to the section.
+      return buildGraypaperUrl(doc.title, "");
   }
 }
 

@@ -1,9 +1,8 @@
-import { useUserData } from "@fluffylabs/shared-ui/supabase";
 import { Outlet, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import { AuthGate } from "@/components/ask/AuthGate";
 import { SessionsSidebar } from "@/components/ask/SessionsSidebar";
 import { useSessions } from "@/hooks/useSessions";
-import { requestTitle } from "@/lib/askTitleClient";
 
 export function AskLayout() {
   return (
@@ -13,13 +12,13 @@ export function AskLayout() {
   );
 }
 
+function shareUrlFor(sessionId: string): string {
+  return `${window.location.origin}${window.location.pathname}#/ask/s/${sessionId}`;
+}
+
 function LayoutInner() {
   const { sessionId } = useParams<{ sessionId?: string }>();
   const sessions = useSessions();
-  const { data: keyData } = useUserData("openrouter-api-key", {
-    appScoped: true,
-  });
-  const apiKey = typeof keyData === "string" ? keyData : null;
 
   return (
     <div className="flex h-full">
@@ -34,27 +33,41 @@ function LayoutInner() {
         }}
         onDelete={(id) => {
           if (
-            window.confirm("Delete this session? Any public link will 404.")
+            window.confirm(
+              "Delete this session? Any public link will become unavailable."
+            )
           ) {
             sessions.remove(id);
           }
         }}
-        onToggleShare={(id, next) => sessions.update(id, { isPublic: next })}
-        onRegenerateTitle={async (id) => {
-          if (!apiKey) {
-            window.alert(
-              "Add an OpenRouter API key in Settings before regenerating titles."
+        onShare={async (id) => {
+          const session = sessions.sessions?.find((s) => s.id === id);
+          const wasPublic = session?.isPublic === true;
+          let madePublic = false;
+          try {
+            if (!wasPublic) {
+              await sessions.update(id, { isPublic: true });
+              madePublic = true;
+            }
+          } catch (err) {
+            toast.error(
+              `Couldn't share: ${(err as Error).message ?? "unknown error"}`
             );
             return;
           }
-          const record = await sessions.get(id);
-          const first = record?.state.messages.find((m) => m.role === "user");
-          if (!first || first.role !== "user") return;
-          const title = await requestTitle({
-            question: first.content,
-            openrouterKey: apiKey,
-          });
-          if (title) await sessions.update(id, { title });
+          try {
+            await navigator.clipboard.writeText(shareUrlFor(id));
+            toast.success(
+              madePublic ? "Link copied. Session is public now" : "Link copied"
+            );
+          } catch (err) {
+            const reason = (err as Error).message ?? "unknown error";
+            toast.error(
+              madePublic
+                ? `Couldn't copy link — session is public now: ${reason}`
+                : `Couldn't copy link: ${reason}`
+            );
+          }
         }}
       />
       <div className="flex-1 min-w-0">

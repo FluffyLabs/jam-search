@@ -1,5 +1,8 @@
-import { Sparkles, Star, Target } from "lucide-react";
+import { useSupabaseContext } from "@fluffylabs/shared-ui/supabase/context";
+import { MessageSquareText, Sparkles, Star, Target } from "lucide-react";
+import { Link } from "react-router-dom";
 import { SearchForm } from "@/components/SearchForm";
+import { useSessions } from "@/hooks/useSessions";
 
 const Header = () => {
   return (
@@ -18,6 +21,33 @@ const Header = () => {
     </>
   );
 };
+/**
+ * Inner component that queries `useSessions` — safe to render only when we
+ * know the user is authenticated (the hook throws otherwise). Shows a subtle
+ * link to `/ask` when the user has at least one previous conversation.
+ */
+const PreviousConversationsLinkInner = () => {
+  const sessions = useSessions();
+  const count = sessions.sessions?.length ?? 0;
+  if (count === 0) return null;
+  return (
+    <Link
+      to="/ask"
+      className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+    >
+      <MessageSquareText className="size-3.5" />
+      Continue a previous conversation
+      <span className="text-muted-foreground/70 tabular-nums">({count})</span>
+    </Link>
+  );
+};
+
+const PreviousConversationsLink = () => {
+  const { user } = useSupabaseContext();
+  if (!user) return null;
+  return <PreviousConversationsLinkInner />;
+};
+
 const Features = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-8">
@@ -65,6 +95,8 @@ export const IndexPage = () => {
           instantSearch={false}
           showSearchOptions={false}
         />
+
+        <PreviousConversationsLink />
 
         <Features />
       </div>

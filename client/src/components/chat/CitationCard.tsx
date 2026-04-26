@@ -15,7 +15,7 @@ export function CitationCard({ citation, card }: CitationCardProps) {
 
   const header = (
     <div className="flex items-center gap-2 min-w-0 w-full">
-      <span className="inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded bg-brand-light text-brand-dark text-[11px] font-medium tabular-nums shrink-0">
+      <span className="inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded bg-brand-light text-brand-dark text-[11px] tabular-nums shrink-0">
         {citation.n}
       </span>
       <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-muted-foreground shrink-0">
@@ -25,7 +25,7 @@ export function CitationCard({ citation, card }: CitationCardProps) {
         />
         {sourceLabel(citation.sourceType)}
       </span>
-      <span className="flex-1 min-w-0 truncate font-medium text-foreground text-xs">
+      <span className="flex-1 min-w-0 truncate text-foreground text-xs">
         {renderTitle(citation, card)}
       </span>
       {iso && (

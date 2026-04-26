@@ -4,6 +4,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { AskSessionSummary } from "@/lib/sessionTypes";
@@ -14,21 +16,19 @@ export function SessionRow({
   active,
   onRename,
   onDelete,
-  onToggleShare,
-  onRegenerateTitle,
+  onShare,
 }: {
   session: AskSessionSummary;
   active: boolean;
   onRename: (id: string) => void;
   onDelete: (id: string) => void;
-  onToggleShare: (id: string, next: boolean) => void;
-  onRegenerateTitle: (id: string) => void;
+  onShare: (id: string) => void;
 }) {
   return (
     <div
       className={cn(
-        "group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent",
-        active && "bg-accent"
+        "group flex items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-accent",
+        active ? "text-foreground bg-accent" : "text-muted-foreground"
       )}
     >
       <Link
@@ -40,25 +40,31 @@ export function SessionRow({
       </Link>
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="opacity-0 group-hover:opacity-100 focus:opacity-100"
+          className="opacity-0 group-hover:opacity-100 focus:opacity-100 text-muted-foreground hover:text-foreground"
           aria-label="Session actions"
         >
           <MoreHorizontal className="size-4" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => onRename(session.id)}>
+        <DropdownMenuContent align="end" className="min-w-[12rem] font-light">
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            Session
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onRename(session.id)}
+          >
             Rename
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onRegenerateTitle(session.id)}>
-            Regenerate title
-          </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => onToggleShare(session.id, !session.isPublic)}
+            className="cursor-pointer"
+            onClick={() => onShare(session.id)}
           >
-            {session.isPublic ? "Unshare" : "Share…"}
+            Share…
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="text-destructive"
+            className="cursor-pointer text-destructive focus:text-destructive"
             onClick={() => onDelete(session.id)}
           >
             Delete
