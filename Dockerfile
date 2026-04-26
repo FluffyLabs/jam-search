@@ -5,8 +5,9 @@ WORKDIR /app
 EXPOSE 3000
 
 # git is required for on-start data fetching (see backend/src/data/fetcher.ts).
+# ca-certificates is required for git's HTTPS clone to verify the GitHub cert.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends git \
+  && apt-get install -y --no-install-recommends git ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
 # Copy all source files and install dependencies
