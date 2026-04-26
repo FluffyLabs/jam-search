@@ -57,9 +57,21 @@ export async function fetchData(opts: FetchDataOptions): Promise<void> {
   const resolvedDataDir = assertSafeDataDir(opts.dataDir);
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
+  // Stage everything *inside* resolvedDataDir so all rename(2) calls stay on
+  // the same filesystem. Required when resolvedDataDir is a mount point
+  // (Docker volume / bind mount): the mount itself can't be renamed, and
+  // crossing the mount boundary fails with EXDEV.
   const parentDir = path.dirname(resolvedDataDir);
   await fsp.mkdir(parentDir, { recursive: true });
-  const tmp = await fsp.mkdtemp(path.join(parentDir, ".data-fetch-"));
+  let createdDataDir = false;
+  try {
+    await fsp.mkdir(resolvedDataDir);
+    createdDataDir = true;
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "EEXIST") throw err;
+  }
+  const tmp = await fsp.mkdtemp(path.join(resolvedDataDir, ".data-fetch-"));
+  let succeeded = false;
 
   try {
     await git(["init", "-q"], tmp, timeoutMs);
@@ -76,24 +88,50 @@ export async function fetchData(opts: FetchDataOptions): Promise<void> {
       );
     }
 
-    // Atomic swap
-    const backup = `${resolvedDataDir}.old-${process.pid}`;
-    const hadExisting = fs.existsSync(resolvedDataDir);
-    if (hadExisting) {
-      await fsp.rename(resolvedDataDir, backup);
+    await swapDirContents(resolvedDataDir, fetchedData, path.basename(tmp));
+    succeeded = true;
+  } finally {
+    await fsp.rm(tmp, { recursive: true, force: true });
+    if (!succeeded && createdDataDir) {
+      await fsp.rmdir(resolvedDataDir).catch(() => {});
+    }
+  }
+}
+
+// Replace the top-level entries of `target` with the top-level entries of
+// `source`. Operates only on `target`'s children — never on `target` itself —
+// so it works when `target` is a mount point. `excludeFromTarget` is the
+// basename of an entry in `target` that must be left in place (the staging
+// dir holding the new data).
+async function swapDirContents(
+  target: string,
+  source: string,
+  excludeFromTarget: string
+): Promise<void> {
+  const backupDir = await fsp.mkdtemp(path.join(target, ".data-backup-"));
+  const backupName = path.basename(backupDir);
+  try {
+    const existing = (await fsp.readdir(target)).filter(
+      (e) => e !== excludeFromTarget && e !== backupName
+    );
+    for (const entry of existing) {
+      await fsp.rename(path.join(target, entry), path.join(backupDir, entry));
     }
     try {
-      await fsp.rename(fetchedData, resolvedDataDir);
+      const newEntries = await fsp.readdir(source);
+      for (const entry of newEntries) {
+        await fsp.rename(path.join(source, entry), path.join(target, entry));
+      }
     } catch (err) {
-      if (hadExisting) {
-        await fsp.rename(backup, resolvedDataDir).catch(() => {});
+      const restored = await fsp.readdir(backupDir);
+      for (const entry of restored) {
+        await fsp
+          .rename(path.join(backupDir, entry), path.join(target, entry))
+          .catch(() => {});
       }
       throw err;
     }
-    if (hadExisting) {
-      await fsp.rm(backup, { recursive: true, force: true });
-    }
   } finally {
-    await fsp.rm(tmp, { recursive: true, force: true });
+    await fsp.rm(backupDir, { recursive: true, force: true });
   }
 }
