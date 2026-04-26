@@ -177,6 +177,47 @@ describe("fetchData — happy path", () => {
   });
 });
 
+describe("fetchData — Docker volume mount semantics", () => {
+  // Regression for EXDEV crash in Docker: when /app/data is a bind/volume
+  // mount, fetcher cannot create siblings of dataDir (different filesystem
+  // and/or unwritable parent). It must do all rename work *inside* dataDir.
+  // chmod-ing the parent read-only is a portable analogue of that constraint.
+  const skip =
+    process.platform === "win32" ||
+    (typeof process.getuid === "function" && process.getuid() === 0);
+  it.skipIf(skip)(
+    "succeeds when the parent of dataDir is unwritable (mount-point analogue)",
+    async () => {
+      const fixture = await makeFixtureRepo({
+        dataFiles: { "a.md": "hello", "sub/b.md": "world" },
+      });
+      const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "fetcher-mount-"));
+      const dataDir = path.join(workDir, "data");
+      fs.mkdirSync(dataDir, { recursive: true });
+      fs.writeFileSync(path.join(dataDir, "stale.md"), "stale");
+      fs.chmodSync(workDir, 0o555);
+      try {
+        await fetchData({
+          repoUrl: fixture.bareUrl,
+          ref: "main",
+          dataDir,
+        });
+        expect(fs.readFileSync(path.join(dataDir, "a.md"), "utf-8")).toBe(
+          "hello"
+        );
+        expect(fs.readFileSync(path.join(dataDir, "sub/b.md"), "utf-8")).toBe(
+          "world"
+        );
+        expect(fs.existsSync(path.join(dataDir, "stale.md"))).toBe(false);
+      } finally {
+        fs.chmodSync(workDir, 0o755);
+        fs.rmSync(workDir, { recursive: true, force: true });
+        fixture.cleanup();
+      }
+    }
+  );
+});
+
 describe("fetchData — errors", () => {
   it("throws with git stderr when the ref does not exist", async () => {
     const fixture = await makeFixtureRepo({
