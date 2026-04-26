@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/README.md#L1-L51'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/README.md#L1-L67'
 title: README.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: d1a667007103c4003e25701cacd156f60881ab18a2193afd5d4c4a88a308db88
+content_sha: f4e5c6a14263d17184ed0b6a47555a6e0f267308e5c53dce23bb84debe0fbc5b
 language: markdown
 ---
-`README.md` (lines 1–51)
+`README.md` (lines 1–67)
 
 ```markdown
 # 🦁 as-lan
@@ -61,6 +61,22 @@ npm run qa-fix
 ```
 
 The build produces both `.wasm` and `.pvm` (PolkaVM/JAM SPI binary) files in the `build/` directory of each service. The `.pvm` file is what gets deployed to JAM.
+
+## Releases
+
+Published packages on npm:
+
+- [`@fluffylabs/as-lan`](https://www.npmjs.com/package/@fluffylabs/as-lan) — the AssemblyScript SDK.
+- [`@fluffylabs/as-lan-ecalli-mocks`](https://www.npmjs.com/package/@fluffylabs/as-lan-ecalli-mocks) — JS ecalli host-call mocks for testing.
+
+Both ship from the same commit and share a version.
+
+### Releasing a new version (maintainers)
+
+1. In GitHub Actions, run **Release: Prepare** and enter the new version (e.g. `0.1.0`).
+2. Review and merge the `release/vX.Y.Z` PR it opens.
+3. Open the draft release `vX.Y.Z`, edit the auto-generated notes, and click **Publish release**.
+4. The **Release: Publish** workflow runs automatically, asserts versions match, builds, tests, and publishes both packages to npm with provenance.
 
 ## License
 

@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/nested-pvm-spi/assembly/refine.ts#L1-L94
 title: examples/nested-pvm-spi/assembly/refine.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: dbf2df84d27d81310782b3dcb3952f9b8a6bed6c847f653b31048502ee9dac6a
+content_sha: 3cc01016055d6bb3ff5ba913fddbd0e39fe0130dc573cd0d3cfef2e36c4cb53a
 language: typescript
 ---
 `examples/nested-pvm-spi/assembly/refine.ts` (lines 1–94)
@@ -81,7 +81,7 @@ export function refine(ptr: u32, len: u32): u64 {
     logger.warn(`refine: SPI setup failed error=${vmR.error}`);
     return ctx.respond(-1);
   }
-  const vm = vmR.okay!;
+  const vm = vmR.okay;
 
   // One invoke is enough for a smoke test — a real service would loop on
   // ExitReason.Host and dispatch host calls by index via vm.getExitArg().

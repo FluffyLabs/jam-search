@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/bench/run.ts#L130-L262'
 title: bench/run.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-22T10:07:05+01:00'
-last_modified: '2026-04-22T10:07:05+01:00'
+created_at: '2026-04-24T09:46:09+02:00'
+last_modified: '2026-04-24T09:46:09+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: e46f837596293c78a4dbc6066de3dd1b23717687d59b780da4735967a19d90ba

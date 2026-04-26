@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/docs/src/getting-started.md#L1-L102
 title: docs/src/getting-started.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 50ee37d591e5e327ffc4a6a58c405e9ca93a10c5e125854cc6492f6004499a1a

@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L209-L251'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L209-L254'
 title: CLAUDE.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 4
 chunk_total: 6
-content_sha: adf7218d4f769fff6b48ea4190af1053bc120ce187917e4705d2a56a7db8f460
+content_sha: d2b15a5c4d7c5f5e591b685dbccf3edcc79bcd1ca051f3746e854c223ac5e8a3
 language: markdown
 ---
-`CLAUDE.md` (lines 209–251)
+`CLAUDE.md` (lines 209–254)
 
 ```markdown
   └── AccumulatePreimages (composes Preimages, adds ecalli 22-26: query, solicit, forget, provide)
@@ -39,6 +39,14 @@ npm run build    # Build mocks + example (includes wasm-pvm compile)
 npm test         # Build mocks + run SDK tests + example tests
 ```
 
+## Releases
+
+`@fluffylabs/as-lan` (from `sdk/`) and `@fluffylabs/as-lan-ecalli-mocks` (from `sdk-ecalli-mocks/`) publish to npm with a shared version. The root `package.json` is `@fluffylabs/as-lan-workspace` (private) and carries the same version as a consistency sentinel.
+
+**Never hand-bump versions.** Use the `Release: Prepare` GitHub Actions workflow — it bumps all three `package.json` files, opens a release PR, and creates a draft GitHub release. Publishing that release triggers `Release: Publish`, which asserts version consistency and publishes both packages. See `README.md` → *Releases* for the full flow.
+
+`pvm-adapter.wat` lives at repo root for local dev; a `prepack`/`postpack` hook in `sdk/package.json` copies it into the tarball at publish time.
+
 ## Conventions
 
 - SDK files are AssemblyScript (`.ts` with AS-specific types like `u32`, `i64`, `usize`).
@@ -52,9 +60,4 @@ npm test         # Build mocks + run SDK tests + example tests
 - **Use `BytesBlob` by default, not raw `Uint8Array`. This is not optional.** Code review rejects `Uint8Array` every time it appears in a public or test-helper API, so stop introducing it.
   - **Function parameters**: if a function accepts bytes, the parameter type is `BytesBlob` (not `Uint8Array`). This includes SDK code, examples, AND test helpers under `sdk/test/`, `sdk/**/*.test.ts`, `examples/**/assembly/**`.
   - **Function returns**: same — return `BytesBlob`. If the returned bytes need to cross into JS (e.g. `writeToMem`), unwrap with `.raw` at the callsite, not inside the helper.
-  - **Construction**: `BytesBlob.zero(n)` for zeroed buffers, `BytesBlob.wrap(uint8Array)` when you already have a `Uint8Array` from a lower layer, `BytesBlob.parseBlob("0x...")` in tests.
-  - **Ecalli / host-call args**: `BytesBlob.ptr()` and `.length` (both are already `u32` / `i32`).
-  - **Decoder input**: `Decoder.fromBytesBlob(blob)`. Never `Decoder.fromBlob(blob.raw)` from a `BytesBlob` — that's the anti-pattern.
-  - **Only acceptable `Uint8Array` use**: low-level code doing `load<T>`/`store<T>` on a backing buffer. Comment each such occurrence with justification. Anywhere else (including *test fixtures*) use `BytesBlob`.
-- **Use existing codec helpers instead of hand-encoding bytes.** The `Encoder` already has `u8`/`u16`/`u24`/`u32`/`u64`/`varU64`/`bytesFixLen`/`bytesVarLen`. `Decoder` mirrors them. Anti-patterns to avoid:
 ```

@@ -1,23 +1,24 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/package.json#L1-L26'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/package.json#L1-L27'
 title: package.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: a4085a2036d07d727061416cff8efe8aadc3233913aec554034c7302ff66ff35
+content_sha: 6d99c7bb21d5d8ec0c08011b39aedba430d44fc4418b078d9962739ac18c32ea
 language: json
 ---
-`package.json` (lines 1–26)
+`package.json` (lines 1–27)
 
 ```json
 {
-  "name": "@fluffylabs/as-lan",
-  "version": "0.0.1",
-  "description": "AssemblyScript SDK for JAM services",
+  "name": "@fluffylabs/as-lan-workspace",
+  "version": "0.0.2",
+  "private": true,
+  "description": "Workspace for developing @fluffylabs/as-lan and @fluffylabs/as-lan-ecalli-mocks",
   "main": "index.ts",
   "scripts": {
     "format": "biome format --write",
@@ -35,8 +36,8 @@ language: json
   "author": "Fluffy Labs",
   "license": "MPL-2.0",
   "devDependencies": {
-    "@biomejs/biome": "^2.4.12",
-    "assemblyscript": "^0.28.14"
+    "@biomejs/biome": "^2.4.13",
+    "assemblyscript": "^0.28.15"
   },
   "type": "module"
 }

@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/docs/src/sdk-api/accumulate.md#L106-L172
 title: docs/src/sdk-api/accumulate.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 547e2e0b00f746f6a8a2a140c47d6cd9a1ef72c16d8c471a1e767135a92a8ddc

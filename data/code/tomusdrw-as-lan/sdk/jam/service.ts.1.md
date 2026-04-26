@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/service.ts#L116-L182'
 title: sdk/jam/service.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 7de1a9f89b823fc26b345e4715f6ee4828711e7715042998c92f026af65fd469

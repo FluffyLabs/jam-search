@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/refine/nested-pvm.ts#L1-L92
 title: sdk/jam/refine/nested-pvm.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 55616367ca8cb30689c37dcccb629b54045cb1be0eda6d725575161dbea8f72f
+content_sha: f0f3274584ddc56386a51196435e7397c1197a9f779b506450b6d069035933c1
 language: typescript
 ---
 `sdk/jam/refine/nested-pvm.ts` (lines 1–92)
@@ -93,7 +93,7 @@ export class NestedPvm {
     if (machineResult.isError) {
       return ResultN.err<NestedPvm, SpiError>(SpiError.InvalidEntryPoint);
     }
-    const machine = machineResult.okay!;
+    const machine = machineResult.okay;
 
     const io = InvokeIo.create(gas);
     io.setRegister(0, R0_INITIAL);

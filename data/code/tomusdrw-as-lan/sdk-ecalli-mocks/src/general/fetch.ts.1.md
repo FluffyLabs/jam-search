@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk-ecalli-mocks/src/general/fetch.ts#L122-L219
 title: sdk-ecalli-mocks/src/general/fetch.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: ee5a9863705232b6c64909119e419d2c51df12c9ab899be89e3b2c1a76931199

@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/sizes.yml#L1-L128
 title: .github/workflows/sizes.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 35c0184d51f1dc30435b6b375d07c247aaee5d22a5144facd91e6871dfe6d1a5
+content_sha: 4f48dae2e6122d5aedcf2210c489d5a68bc667c5188b549ebf427aac4944be89
 language: yaml
 ---
 `.github/workflows/sizes.yml` (lines 1–128)
@@ -31,13 +31,13 @@ jobs:
   report-sizes:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         ref: ${{ github.event.pull_request.head.sha }}
         fetch-depth: 0
 
     - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
@@ -49,7 +49,7 @@ jobs:
 
     - name: Cache wasm-pvm binary
       id: cache-wasm-pvm
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.cargo/bin/wasm-pvm
         key: wasm-pvm-cli-0.8.0
@@ -120,7 +120,7 @@ jobs:
 
     - name: Generate PR comment
       id: comment
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       with:
         script: |
           const fs = require('fs');

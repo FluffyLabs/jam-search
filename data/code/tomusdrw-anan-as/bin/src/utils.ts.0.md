@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/bin/src/utils.ts#L1-L29'
 title: bin/src/utils.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-22T10:07:05+01:00'
-last_modified: '2026-04-22T10:07:05+01:00'
+created_at: '2026-04-24T09:46:09+02:00'
+last_modified: '2026-04-24T09:46:09+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 6a16e5bb717f4b6966bb1371d301b67ac697ee5d11fa30619ba382f15f345184

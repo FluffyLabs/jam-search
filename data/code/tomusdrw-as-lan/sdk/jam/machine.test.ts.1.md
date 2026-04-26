@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/machine.test.ts#L121-L235'
 title: sdk/jam/machine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: e1aa9c9d3001eb152f14ece375cc33fb19efcd0a3964707eff7c549d3b558492

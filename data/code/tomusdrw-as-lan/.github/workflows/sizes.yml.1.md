@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/sizes.yml#L121-L181
 title: .github/workflows/sizes.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-21T20:48:10+01:00'
-last_modified: '2026-04-21T20:48:10+01:00'
+created_at: '2026-04-24T22:53:46+01:00'
+last_modified: '2026-04-24T22:53:46+01:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 5b5e619e44d038a57e769af3c4137959ad765e108facefec76840e75e585db21
+content_sha: a0445db759311f61a0eba6a07b7f35ba7c85367189185d32c9fc499c42cd40b4
 language: yaml
 ---
 `.github/workflows/sizes.yml` (lines 121–181)
@@ -62,7 +62,7 @@ language: yaml
           core.setOutput('body', body);
 
     - name: Find existing comment
-      uses: peter-evans/find-comment@v3
+      uses: peter-evans/find-comment@v4
       id: find_comment
       with:
         issue-number: ${{ github.event.pull_request.number }}
@@ -70,7 +70,7 @@ language: yaml
         body-includes: '## Artifact Sizes Report'
 
     - name: Create or update PR comment
-      uses: peter-evans/create-or-update-comment@v4
+      uses: peter-evans/create-or-update-comment@v5
       with:
         comment-id: ${{ steps.find_comment.outputs.comment-id }}
         issue-number: ${{ github.event.pull_request.number }}

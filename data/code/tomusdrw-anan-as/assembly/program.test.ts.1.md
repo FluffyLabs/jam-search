@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/program.test.ts#L102-L185
 title: assembly/program.test.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-22T10:07:05+01:00'
-last_modified: '2026-04-22T10:07:05+01:00'
+created_at: '2026-04-24T09:46:09+02:00'
+last_modified: '2026-04-24T09:46:09+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 25b3e4db9e536d30649b77d9ad251f3c0387a3415d9f22cffb0ba56ee0e36c3e
