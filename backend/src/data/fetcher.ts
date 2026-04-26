@@ -103,35 +103,27 @@ export async function fetchData(opts: FetchDataOptions): Promise<void> {
 // so it works when `target` is a mount point. `excludeFromTarget` is the
 // basename of an entry in `target` that must be left in place (the staging
 // dir holding the new data).
+//
+// Uses delete-then-copy at file level: rename(2) of a directory can fail with
+// EXDEV in Docker even between siblings (overlayfs directory-rename
+// limitation), so we avoid renaming directories entirely. No backup/rollback —
+// data is reproducible from git, and a partial swap on failure just gets
+// re-fetched on the next start.
 async function swapDirContents(
   target: string,
   source: string,
   excludeFromTarget: string
 ): Promise<void> {
-  const backupDir = await fsp.mkdtemp(path.join(target, ".data-backup-"));
-  const backupName = path.basename(backupDir);
-  try {
-    const existing = (await fsp.readdir(target)).filter(
-      (e) => e !== excludeFromTarget && e !== backupName
-    );
-    for (const entry of existing) {
-      await fsp.rename(path.join(target, entry), path.join(backupDir, entry));
-    }
-    try {
-      const newEntries = await fsp.readdir(source);
-      for (const entry of newEntries) {
-        await fsp.rename(path.join(source, entry), path.join(target, entry));
-      }
-    } catch (err) {
-      const restored = await fsp.readdir(backupDir);
-      for (const entry of restored) {
-        await fsp
-          .rename(path.join(backupDir, entry), path.join(target, entry))
-          .catch(() => {});
-      }
-      throw err;
-    }
-  } finally {
-    await fsp.rm(backupDir, { recursive: true, force: true });
+  const existing = (await fsp.readdir(target)).filter(
+    (e) => e !== excludeFromTarget
+  );
+  for (const entry of existing) {
+    await fsp.rm(path.join(target, entry), { recursive: true, force: true });
+  }
+  const newEntries = await fsp.readdir(source);
+  for (const entry of newEntries) {
+    await fsp.cp(path.join(source, entry), path.join(target, entry), {
+      recursive: true,
+    });
   }
 }
