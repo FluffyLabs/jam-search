@@ -62,9 +62,8 @@ export async function updateGraypaperVersions(
 
   const latest = resolveLatest(metadata);
   const latestChanged =
-    latest !== null &&
-    (latest.hash !== existing.latestHash ||
-      latest.version !== existing.latestVersion);
+    (latest?.hash ?? null) !== existing.latestHash ||
+    (latest?.version ?? null) !== existing.latestVersion;
 
   if (hasNewVersion || latestChanged) {
     writeGraypaperVersions(
@@ -73,7 +72,7 @@ export async function updateGraypaperVersions(
         version: v.version,
         timestamp: new Date(v.timestamp),
       })),
-      latest ?? undefined
+      latest
     );
   }
 

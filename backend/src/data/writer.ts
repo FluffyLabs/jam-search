@@ -258,16 +258,39 @@ export function writeGraypaperSection(
   return relativePath;
 }
 
+/**
+ * Write the graypaper versions index.
+ *
+ * `latest` semantics — important because `matter.stringify` rewrites the
+ * frontmatter from scratch, so omitting a field deletes any persisted value:
+ *   - `undefined`: preserve whatever `latest_hash` / `latest_version` are
+ *     already on disk (used by callers that don't know about the pinned ref,
+ *     e.g. exportToMarkdown).
+ *   - `null`: clear the pinned ref (no metadata.latest available).
+ *   - `{hash, version}`: write the pinned ref.
+ */
 export function writeGraypaperVersions(
   dataDir: string,
   versions: Array<{ version: string; timestamp: Date }>,
-  latest?: { hash: string; version: string }
+  latest?: { hash: string; version: string } | null
 ): string {
   const dir = path.join(dataDir, "graypaper");
   ensureDir(dir);
 
   const filePath = path.join(dir, "versions.md");
   const relativePath = path.relative(dataDir, filePath);
+
+  let resolvedLatest: { hash: string; version: string } | null = null;
+  if (latest === undefined) {
+    if (fs.existsSync(filePath)) {
+      const existing = matter(fs.readFileSync(filePath, "utf-8")).data;
+      const hash = existing.latest_hash as string | undefined;
+      const version = existing.latest_version as string | undefined;
+      if (hash && version) resolvedLatest = { hash, version };
+    }
+  } else {
+    resolvedLatest = latest;
+  }
 
   const frontmatter: Record<string, unknown> = {
     type: "graypaper_versions",
@@ -276,9 +299,9 @@ export function writeGraypaperVersions(
       timestamp: v.timestamp.toISOString(),
     })),
   };
-  if (latest) {
-    frontmatter.latest_hash = latest.hash;
-    frontmatter.latest_version = latest.version;
+  if (resolvedLatest) {
+    frontmatter.latest_hash = resolvedLatest.hash;
+    frontmatter.latest_version = resolvedLatest.version;
   }
 
   const body = versions
