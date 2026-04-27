@@ -1,3 +1,4 @@
+import { buildGraypaperUrl } from "@shared/graypaper";
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -11,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ViewEmbedded } from "@/components/ViewEmbedded";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useEmbedding } from "@/hooks/useEmbedding";
+import { useGraypaperLatest } from "@/hooks/useGraypaperLatest";
 import { useSearchGraypaper } from "@/hooks/useSearchGraypaper";
 import { SearchMode } from "@/lib/mode";
 import { getTextToDisplay } from "@/lib/utils";
@@ -24,6 +26,7 @@ const GraypaperResultsAll = () => {
   useDocumentTitle(query || null);
 
   const embedding = useEmbedding(query, searchMode !== SearchMode.Regular).data;
+  const latest = useGraypaperLatest();
   const queryResult = useSearchGraypaper({
     query,
     embedding,
@@ -87,7 +90,7 @@ const GraypaperResultsAll = () => {
                       title={section.title}
                       text={section.text}
                       query={query}
-                      url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
+                      url={buildGraypaperUrl(section.title, query, latest)}
                     />
                   ))}
                 </div>

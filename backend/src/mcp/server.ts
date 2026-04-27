@@ -66,7 +66,7 @@ export function createMcpServer(db: SearchDB, dataDir: string): Server {
           const spec = specFor("get_full_document");
           if (!spec) throw new Error("get_full_document spec missing");
           const parsed = spec.schema.parse(args) as { id: string };
-          const doc = await executeGetFullDocument(parsed, db);
+          const doc = await executeGetFullDocument(parsed, db, dataDir);
           if (!doc) {
             return {
               content: [

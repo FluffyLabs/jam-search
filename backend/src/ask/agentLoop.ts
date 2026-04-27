@@ -201,7 +201,11 @@ async function executeToolByName(
     return { resultCount: results.length, payload: results };
   }
   if (name === "get_full_document") {
-    const doc = await executeGetFullDocument({ id: String(a.id ?? "") }, db);
+    const doc = await executeGetFullDocument(
+      { id: String(a.id ?? "") },
+      db,
+      dataDir
+    );
     return { resultCount: doc ? 1 : 0, payload: doc ?? { error: "not found" } };
   }
   return {

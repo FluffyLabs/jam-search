@@ -19,6 +19,7 @@ import {
 } from "./api/searchMessages.js";
 import { searchPages, searchPagesRequestSchema } from "./api/searchPages.js";
 import { embeddingCache } from "./cache/embeddingCache.js";
+import { getGraypaperLatest } from "./data/graypaperLatest.js";
 import type { SearchDB } from "./data/searchIndex.js";
 import { createMcpHandler } from "./mcp/handler.js";
 
@@ -82,6 +83,10 @@ export function createApp(db: SearchDB, dataDir: string) {
   app.get("/search/graypaper", async (c) => {
     const data = searchGraypaperRequestSchema.parse(c.req.query());
     return c.json(await searchGraypaper(data, embeddingCache, db, dataDir));
+  });
+
+  app.get("/graypaper/latest", (c) => {
+    return c.json(getGraypaperLatest(dataDir));
   });
 
   app.post("/ask", handleAsk(db, dataDir));

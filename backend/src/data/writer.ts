@@ -260,7 +260,8 @@ export function writeGraypaperSection(
 
 export function writeGraypaperVersions(
   dataDir: string,
-  versions: Array<{ version: string; timestamp: Date }>
+  versions: Array<{ version: string; timestamp: Date }>,
+  latest?: { hash: string; version: string }
 ): string {
   const dir = path.join(dataDir, "graypaper");
   ensureDir(dir);
@@ -268,13 +269,17 @@ export function writeGraypaperVersions(
   const filePath = path.join(dir, "versions.md");
   const relativePath = path.relative(dataDir, filePath);
 
-  const frontmatter = {
+  const frontmatter: Record<string, unknown> = {
     type: "graypaper_versions",
     versions: versions.map((v) => ({
       version: v.version,
       timestamp: v.timestamp.toISOString(),
     })),
   };
+  if (latest) {
+    frontmatter.latest_hash = latest.hash;
+    frontmatter.latest_version = latest.version;
+  }
 
   const body = versions
     .map((v) => `- **${v.version}** — ${v.timestamp.toISOString()}`)
