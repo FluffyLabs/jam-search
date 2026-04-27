@@ -6,7 +6,16 @@ import type { SearchDoc } from "./searchIndex.js";
 
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const EMBEDDING_DIMENSIONS = 1536;
-const BATCH_SIZE = 500; // Keep batches small for faster individual requests
+const MAX_ITEMS_PER_BATCH = 500; // Keep batches small for faster individual requests
+// OpenAI enforces 300k tokens per request for text-embedding-3-*; stay well under
+// to absorb the inaccuracy of the chars/4 token estimate.
+const MAX_TOKENS_PER_BATCH = 250_000;
+// Rough heuristic: ~4 chars per token for English/code. Conservative for safety.
+const CHARS_PER_TOKEN = 4;
+
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / CHARS_PER_TOKEN);
+}
 
 interface EmbeddingsCache {
   [key: string]: number[];
@@ -29,6 +38,44 @@ function embeddingText(doc: SearchDoc): string {
   if (doc.sender) parts.push(`${doc.sender}:`);
   if (doc.content) parts.push(doc.content.slice(0, 20000));
   return parts.join("\n");
+}
+
+interface PendingEmbedding {
+  doc: SearchDoc;
+  key: string;
+  text: string;
+}
+
+export function buildBatches(
+  items: PendingEmbedding[],
+  maxItems: number = MAX_ITEMS_PER_BATCH,
+  maxTokens: number = MAX_TOKENS_PER_BATCH
+): PendingEmbedding[][] {
+  const batches: PendingEmbedding[][] = [];
+  let current: PendingEmbedding[] = [];
+  let currentTokens = 0;
+
+  for (const item of items) {
+    const tokens = estimateTokens(item.text);
+    const wouldExceed =
+      current.length >= maxItems ||
+      (current.length > 0 && currentTokens + tokens > maxTokens);
+
+    if (wouldExceed) {
+      batches.push(current);
+      current = [];
+      currentTokens = 0;
+    }
+
+    current.push(item);
+    currentTokens += tokens;
+  }
+
+  if (current.length > 0) {
+    batches.push(current);
+  }
+
+  return batches;
 }
 
 export function loadEmbeddingsCache(cacheDir: string): EmbeddingsCache {
@@ -96,14 +143,17 @@ export async function generateEmbeddings(
 
   const openai = new OpenAI({ apiKey: openaiApiKey });
 
-  // Process in batches
-  for (let i = 0; i < needsEmbedding.length; i += BATCH_SIZE) {
-    const batch = needsEmbedding.slice(i, i + BATCH_SIZE);
-    const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-    const totalBatches = Math.ceil(needsEmbedding.length / BATCH_SIZE);
+  // Build batches that respect both an item-count cap and an estimated-token
+  // cap. The token cap protects against OpenAI's 300k-tokens-per-request limit,
+  // which a fixed item count cannot — a single 20k-char doc can be ~5k tokens.
+  const batches = buildBatches(needsEmbedding);
+
+  for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
+    const batch = batches[batchIdx];
+    const batchNum = batchIdx + 1;
 
     console.log(
-      `Generating embeddings batch ${batchNum}/${totalBatches} (${batch.length} items)...`
+      `Generating embeddings batch ${batchNum}/${batches.length} (${batch.length} items)...`
     );
 
     try {
