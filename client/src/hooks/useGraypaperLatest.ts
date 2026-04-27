@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import type { GraypaperLatest } from "@shared/graypaper";
+import { useQuery } from "@tanstack/react-query";
 import { fetchGraypaperLatest } from "@/lib/api";
 
 const EMPTY: GraypaperLatest = { hash: null, version: null };
