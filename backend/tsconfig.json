@@ -6,8 +6,9 @@
     "skipLibCheck": true,
     "types": ["node"],
     "outDir": "dist/",
+    "rootDir": "..",
     "noEmit": true
   },
   "exclude": ["node_modules", "src/scripts/exportToMarkdown.ts"],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../shared/**/*"]
 }
