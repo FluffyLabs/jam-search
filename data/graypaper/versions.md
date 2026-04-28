@@ -1,5 +1,7 @@
 ---
 type: graypaper_versions
+latest_hash: ab2cdbd5b070ba2176e8dd830b06401ce05a954d
+latest_version: 0.7.2
 versions:
   - version: 0.3.7
     timestamp: '2024-09-11T04:31:45.000Z'

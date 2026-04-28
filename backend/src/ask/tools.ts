@@ -1,12 +1,14 @@
 import { getByID } from "@orama/orama";
 import OpenAI from "openai";
 import { z } from "zod";
+import { buildGraypaperUrl as composeGraypaperUrl } from "../../../shared/graypaper.js";
 import * as matrix from "../../../shared/matrix.js";
 import { searchDiscords } from "../api/searchDiscords.js";
 import { searchGraypaper } from "../api/searchGraypapers.js";
 import { searchMessages } from "../api/searchMessages.js";
 import { searchPages } from "../api/searchPages.js";
 import { embeddingCache } from "../cache/embeddingCache.js";
+import { getGraypaperLatest } from "../data/graypaperLatest.js";
 import type { DocType, SearchDB, SearchDoc } from "../data/searchIndex.js";
 import type { SourceType } from "./types.js";
 
@@ -49,12 +51,11 @@ function buildMatrixUrl(
 
 function buildGraypaperUrl(
   title: string | undefined,
-  query: string
+  query: string,
+  dataDir: string
 ): string | undefined {
   if (!title) return undefined;
-  // Match the search-results URL format byte-for-byte (no URL encoding).
-  // The Graypaper reader's hash router expects this exact shape.
-  return `https://graypaper.fluffylabs.dev/#/?search=${query}&section=${title}`;
+  return composeGraypaperUrl(title, query, getGraypaperLatest(dataDir));
 }
 
 /**
@@ -170,7 +171,7 @@ export async function executeSearchAll(
       sourceType: "graypaper",
       preview: truncate(r.text ?? ""),
       title: r.title,
-      url: buildGraypaperUrl(r.title, args.query),
+      url: buildGraypaperUrl(r.title, args.query, dataDir),
       score: r.score,
     });
   }
@@ -203,7 +204,7 @@ function docTypeToSourceType(type: DocType): SourceType {
   }
 }
 
-function resolveDocUrl(doc: SearchDoc): string | undefined {
+function resolveDocUrl(doc: SearchDoc, dataDir: string): string | undefined {
   switch (doc.type) {
     case "page":
       return doc.url;
@@ -220,13 +221,14 @@ function resolveDocUrl(doc: SearchDoc): string | undefined {
     case "graypaper_version":
       // No search query context here; fall back to empty query so the
       // reader still routes to the section.
-      return buildGraypaperUrl(doc.title, "");
+      return buildGraypaperUrl(doc.title, "", dataDir);
   }
 }
 
 export async function executeGetFullDocument(
   args: { id: string },
-  db: SearchDB
+  db: SearchDB,
+  dataDir: string
 ): Promise<FullDocument | null> {
   const doc = (await getByID(db, args.id)) as SearchDoc | undefined;
   if (!doc) return null;
@@ -235,7 +237,7 @@ export async function executeGetFullDocument(
     sourceType: docTypeToSourceType(doc.type),
     content: doc.content,
     title: doc.title,
-    url: resolveDocUrl(doc),
+    url: resolveDocUrl(doc, dataDir),
     sender: doc.sender,
     channelName: doc.channelName,
     roomName: doc.roomName,

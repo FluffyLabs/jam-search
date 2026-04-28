@@ -70,7 +70,7 @@ describe("executeGetFullDocument", () => {
       content: "Full body of the accumulate section...",
     });
 
-    const result = await executeGetFullDocument({ id }, db);
+    const result = await executeGetFullDocument({ id }, db, "./data");
 
     expect(result).not.toBeNull();
     expect(result?.sourceType).toBe("graypaper");
@@ -79,7 +79,11 @@ describe("executeGetFullDocument", () => {
 
   it("returns null for an unknown id", async () => {
     const db = createSearchDB();
-    const result = await executeGetFullDocument({ id: "does-not-exist" }, db);
+    const result = await executeGetFullDocument(
+      { id: "does-not-exist" },
+      db,
+      "./data"
+    );
     expect(result).toBeNull();
   });
 });

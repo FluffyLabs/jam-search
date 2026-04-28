@@ -2,6 +2,7 @@
  * API client for making network requests
  */
 
+import type { GraypaperLatest } from "@shared/graypaper";
 import type { ContentKind } from "@shared/pages";
 
 // Base URL for API requests
@@ -187,6 +188,10 @@ export async function searchGraypaper(
   queryParams.append("pageSize", pageSize.toString());
 
   return fetchApi(`/search/graypaper?${queryParams.toString()}`);
+}
+
+export async function fetchGraypaperLatest(): Promise<GraypaperLatest> {
+  return fetchApi<GraypaperLatest>("/graypaper/latest");
 }
 
 export interface PageSearchResponse {

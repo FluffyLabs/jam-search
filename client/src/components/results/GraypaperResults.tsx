@@ -1,6 +1,8 @@
+import { buildGraypaperUrl } from "@shared/graypaper";
 import { BookOpenText } from "lucide-react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import GraypaperReaderLogo from "@/assets/logos/graypaper.png";
+import { useGraypaperLatest } from "@/hooks/useGraypaperLatest";
 import type { useResults } from "@/hooks/useResults";
 import { getTextToDisplay } from "@/lib/utils";
 import { withMathRendering } from "../InlineMath";
@@ -20,6 +22,7 @@ export const GraypaperResults = ({
   query,
 }: GraypaperResultsProps) => {
   const location = useLocation();
+  const latest = useGraypaperLatest();
   const { isLoading, isError, results } = queryResult;
 
   const graypaperReader = {
@@ -74,7 +77,7 @@ export const GraypaperResults = ({
                     <BookOpenText className="h-3 -mr-1" /> Open reader
                   </>
                 }
-                url={`https://graypaper.fluffylabs.dev/#/?search=${query}&section=${section.title}`}
+                url={buildGraypaperUrl(section.title, query, latest)}
                 results={[]}
                 searchQuery={query}
               />
