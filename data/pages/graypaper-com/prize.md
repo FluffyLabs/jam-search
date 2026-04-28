@@ -3,8 +3,8 @@ type: page
 url: 'https://graypaper.com/prize/'
 title: JAM Prize
 site: graypaper.com
-created_at: '2026-04-24T04:03:52.183Z'
-last_modified: '2026-04-24T04:03:52.183Z'
+created_at: '2026-04-28T04:14:22.597Z'
+last_modified: '2026-04-28T04:14:22.597Z'
 ---
 ## 10 Million DOT Prize
 

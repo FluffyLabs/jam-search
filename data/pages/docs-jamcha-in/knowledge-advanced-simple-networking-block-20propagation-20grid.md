@@ -4,8 +4,8 @@ url: >-
   https://docs.jamcha.in/knowledge/advanced/simple-networking/Block%20Propagation%20Grid
 title: Block Propagation Grid | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-04-24T04:03:38.053Z'
-last_modified: '2026-04-24T04:03:38.053Z'
+created_at: '2026-04-28T04:14:09.076Z'
+last_modified: '2026-04-28T04:14:09.076Z'
 ---
 The SNP spec specifies that nodes need to announce their blocks only to specific peers - not to the whole network. Our interpretation of the SNP spec leads to the following grid for block propagation:
 
