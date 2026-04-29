@@ -583,4 +583,35 @@ Just in case: the predictable behavior that I've described applies only to block
 
 ## Comment by @dakk
 
-and I also updated parameters to match the proposed set
+and I also updated parameters / env variables to match the proposed set on https://github.com/davxy/jam-conformance/pull/188
+
+
+## Comment by @davxy
+
+So you already implemented the standard target packaging env vars?
+Two questions:
+- Do you already implement `JAM_FUZZ_SPEC=full`? 
+- Also the session-lifetime: https://github.com/davxy/jam-conformance/blob/standard-target-packaging/fuzz-proto/README.md#session-lifetime
+
+
+## Comment by @dakk
+
+> So you already implemented the standard target packaging env vars? 
+
+Yes, it accepts env_variables as described in the pull request; the current behaviour is:
+1. env vars override default values 
+2. optional args override the value 
+
+so if no env vars or args are provided, it uses some default values
+
+
+>     * Do you already implement `JAM_FUZZ_SPEC=full`?
+
+Yes, but I'm unable to test it since there aren't traces with full specs
+
+> 
+>     * Also the session-lifetime: https://github.com/davxy/jam-conformance/blob/standard-target-packaging/fuzz-proto/README.md#session-lifetime
+
+Yes, it should handle it as described, and I have a CI for testing it
+
+

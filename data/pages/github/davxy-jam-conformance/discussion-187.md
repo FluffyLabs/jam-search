@@ -118,3 +118,12 @@ Just to point out inconsistencies or potential problems with trying to go for si
 For chain spec isn’t it already defined in JIP-4? 
 
 That was the approach I took in JavaJAM (argument to specify chain spec / parameters file).
+
+
+## Comment by @davxy
+
+Proposal https://github.com/davxy/jam-conformance/pull/188
+
+The scripts in this repository will continue to support both binaries and Docker images for a while.
+
+However, the official self-service web app used for the assessment supports only Docker images and the environment variables defined in the PR. Internally, you may map environment variables to CLI arguments or implement additional customizations as needed.
