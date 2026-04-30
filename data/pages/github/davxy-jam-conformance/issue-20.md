@@ -408,3 +408,9 @@ Hi @davxy, we processed the latest round of today. Happy holidays!
 ## Comment by @arjanz
 
 Hi @davxy, our latest release contains fixes for the new year batch
+
+
+## Comment by @emielsebastiaan
+
+Hi @davxy 
+Support for #188 has been implemented in our new release (v0.1.50).

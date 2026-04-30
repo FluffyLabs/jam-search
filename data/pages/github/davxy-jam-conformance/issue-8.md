@@ -783,3 +783,8 @@ https://pastes.io/jj-fails
 > https://pastes.io/jj-fails
 
 Thanks @davxy, have reverted the build back for now. 
+
+
+## Comment by @jaymansfield
+
+@davxy latest JavaJAM build supports the new fuzzer env variables.

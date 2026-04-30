@@ -648,3 +648,8 @@ https://github.com/ascrivener/jam/releases/tag/v0.7.2.6 just made some pretty si
 ## Comment by @ascrivener
 
 Should be fixed now, thanks for that 
+
+
+## Comment by @ascrivener
+
+latest build is conformant with https://github.com/davxy/jam-conformance/blob/main/fuzz-proto/README.md

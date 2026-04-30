@@ -503,3 +503,14 @@ Hi @davxy  , the last release passes all disputed reports of the new year batch.
 `vinwolf-target-0.3.9`
 
 Cheers.
+
+
+## Comment by @bloppan
+
+Hi @davxy I've uploaded the docker image ghcr.io/bloppan/vinwolf-target:latest which implements the standard target packaging env vars.
+
+Let me know if you find any issues.
+
+`vinwolf-target-0.3.14`
+
+Cheers.
