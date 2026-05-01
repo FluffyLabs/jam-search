@@ -3,8 +3,8 @@ type: page
 url: 'https://graypaper.com/lectures/'
 title: JAM Lectures
 site: graypaper.com
-created_at: '2026-04-28T04:14:21.920Z'
-last_modified: '2026-04-28T04:14:21.920Z'
+created_at: '2026-05-01T04:21:20.577Z'
+last_modified: '2026-05-01T04:21:20.577Z'
 ---
 ## Lectures
 
