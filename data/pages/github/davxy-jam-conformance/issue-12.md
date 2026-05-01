@@ -653,3 +653,24 @@ Should be fixed now, thanks for that
 ## Comment by @ascrivener
 
 latest build is conformant with https://github.com/davxy/jam-conformance/blob/main/fuzz-proto/README.md
+
+
+## Comment by @ascrivener
+
+image is now at ghcr.io/ascrivener/jamzilla:edge
+
+
+## Comment by @davxy
+
+@ascrivener 
+```
+Downloading jamzilla for linux...
+Pulling Docker image: ghcr.io/ascrivener/jamzilla:edge
+Error response from daemon: Head "https://ghcr.io/v2/ascrivener/jamzilla/manifests/edge": unauthorized
+Error: Failed to pull Docker image ghcr.io/ascrivener/jamzilla:edge
+```
+
+
+## Comment by @ascrivener
+
+whoops, just made it public

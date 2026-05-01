@@ -314,3 +314,8 @@ doesn't create the `/tmp/foobar.sock`, but it creates `/tmp/jam_target.sock`
 ## Comment by @vekexasia
 
 Sorry @davxy my bad. I introduced a regression and didnt properly forward args. It is fixed now.
+
+
+## Comment by @vekexasia
+
+Hello @davxy not sure if i should open a PR. tsjam should be docker ready: ghcr.io/vekexasia/tsjam-target:0.7.2

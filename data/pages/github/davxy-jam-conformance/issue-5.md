@@ -507,9 +507,9 @@ Cheers.
 
 ## Comment by @bloppan
 
-Hi @davxy I've uploaded the docker image ghcr.io/bloppan/vinwolf-target:latest which implements the standard target packaging env vars.
+Hi @davxy I've published the docker image ghcr.io/bloppan/vinwolf-target:latest which implements the standard target packaging env vars.
 
-Let me know if you find any issues.
+Please let me know if you find any issues.
 
 `vinwolf-target-0.3.14`
 

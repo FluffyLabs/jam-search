@@ -537,3 +537,56 @@ Interesting. Can you tell me more about this?
 Sure, I had **MAX_MESSAGE_SIZE** = 10 MiB hard cap in jam_comformance_target frame codec. Arbitrary guard from June scaffolding. Not from fuzz-v1.asn — spec's u32 length, no ceiling.
 
 Fine till now. Latest batch pushed preimage blobs to boundary. Failing traces: 1766244251_1244 step 4 (~11 MB) + 1776702160_6273 step 2 (~13 MB). Fuzzer probing my large-preimage edge config.
+
+
+## Comment by @boymaas
+
+Goodmornings @davxy,
+
+JamZig target packaged per fuzz-proto Std Target spec.
+
+`docker.io/jamzig/jam-conformance-target:latest`
+Tag: `gp0.7.2-202604291600-ecca72d`
+Digest: `sha256:bb12c2fe...77c`
+
+Strict env entry. Tiny+full binaries, entrypoint dispatch. Session reset on disconnect, dup Initialize rejected.
+
+Tested: 8 jamtestvectors traces, 1000 blocks, 0 mismatch.
+
+```sh
+docker run --rm \
+  -e JAM_FUZZ=1 -e JAM_FUZZ_SPEC=tiny \
+  -e JAM_FUZZ_DATA_PATH=/jam/data -e JAM_FUZZ_SOCK_PATH=/jam/sock/fuzz.sock \
+  -v /tmp/jam/data:/jam/data -v /tmp/jam/sock:/jam/sock \
+  docker.io/jamzig/jam-conformance-target:latest
+```
+
+130 MB, debian-slim.
+
+Docke Hub: https://hub.docker.com/r/jamzig/jam-conformance-target
+
+Please let me know if you need additional information. 
+
+
+## Comment by @davxy
+
+Hey @boymaas . 
+
+```
+docker: Error response from daemon: image with reference jamzig/jam-conformance-target:latest was found but its platform (linux/arm64/v8) does not match the specified platform (linux/amd64)
+```
+
+We need linux/amd64 images
+
+
+## Comment by @boymaas
+
+Goodevening @davxy, linux/amd64 platform meanwhile also pushed.
+
+`docker.io/jamzig/jam-conformance-target:latest`
+Tag: `gp0.7.2-202604291600-ecca72d`
+Index: `sha256:9ed7f6b0e1352e68ea1dbb1f9140fd65e893d3f7914218d12eb5249a50372712`
+Platforms: `linux/amd64`, `linux/arm64`
+
+Cheers ⚡
+

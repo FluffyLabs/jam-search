@@ -65,3 +65,8 @@ Our client is now up to date with GP v0.7.2, the docker image has been updated.
 ## Comment by @philoniare
 
 @davxy Yep done
+
+
+## Comment by @philoniare
+
+@davxy we've also updated our docker image to support docker envs
