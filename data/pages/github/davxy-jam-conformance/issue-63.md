@@ -313,3 +313,13 @@ We have released a new version, we are now locally passing all the traces includ
 Please give it a run and let us know if any issue arises.
 
 Latest release: [v0.7.2.4](https://github.com/Chainscore/tessera-releases/releases)
+
+
+## Comment by @harsh-csl
+
+Hi @davxy ,
+
+We have released a new version that is conformant with [Standard Target Packaging](https://github.com/davxy/jam-conformance/tree/main/fuzz-proto#standard-target-packaging).  As per earlier release, we are able to pass all the traces and forks examples. 
+I hereby request to give our image a run and let us know if any issue arises. Nonetheless, our binaries are also updated in the release. 
+
+Latest release: [v0.7.2.5](https://github.com/Chainscore/tessera-releases/releases)
