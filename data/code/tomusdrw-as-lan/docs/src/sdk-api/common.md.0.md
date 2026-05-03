@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/sdk-api/common.md#L1-L68'
 title: docs/src/sdk-api/common.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 64577461607fb8e4d6ae8d9f57cdc92605c2b41440527397077428c7804e4641

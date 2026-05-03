@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/accumulate.ts#L95-L158
 title: examples/pastebin/assembly/accumulate.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 63a8f14a4d3edf4e000f7b273bbc10ead5285d21f871b4ea0886329a6cc7e2c1

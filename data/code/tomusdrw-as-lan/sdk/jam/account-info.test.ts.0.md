@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/account-info.test.ts#L1-L108
 title: sdk/jam/account-info.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: 1f930740eef3837285a8473e853e6e9a11570f0ffbd9cf5bb6027274c3d59d2c

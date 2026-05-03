@@ -2,61 +2,130 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/docker-jammin.yml#L98-L141
+  https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/docker-jammin.yml#L95-L207
 title: .github/workflows/docker-jammin.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 1
-chunk_total: 2
-content_sha: 8eb21ece9ad4f381e081e47e173c27cfc3d67c235a8f70d5b6f87f6e76aea589
+chunk_total: 3
+content_sha: 720a97b30dec9a2cb2bdcbebe2d3727666b3540d604a5bf4b4616a93bfaf2533
 language: yaml
 ---
-`.github/workflows/docker-jammin.yml` (lines 98–141)
+`.github/workflows/docker-jammin.yml` (lines 95–207)
 
 ```yaml
-          docker run --rm "${{ steps.tags.outputs.primary }}" node --version
+  # Smoke-test build. Runs on every trigger (including PRs). No registry
+  # access — the Dockerfile cargo-installs a crate, whose build script runs
+  # arbitrary code, so we don't want packages:write here.
+  build:
+    needs: tags
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    permissions:
+      contents: read
+    uses: ./.github/workflows/_jammin-platform.yml
+    with:
+      platform: ${{ matrix.platform }}
+      runner: ${{ matrix.runner }}
+      image: ${{ needs.tags.outputs.image }}
+      primary-tag: ${{ needs.tags.outputs.primary }}
+      push: false
 
-      - name: Report uncompressed image size
-        run: |
-          docker image inspect "${{ steps.tags.outputs.primary }}" \
-            --format 'uncompressed size: {{.Size}} bytes'
-
+  # Publish per-platform digests. Skipped on PRs entirely so the
+  # packages:write token never lives in a runner that just ran untrusted PR
+  # code in `build`. Reuses the GHA cache populated by `build`, so the docker
+  # build is effectively a metadata replay.
   push:
-    # Pushes to GHCR. Scoped to trusted triggers only; PRs never reach this
-    # job, so packages:write is structurally unavailable to PR runs.
-    needs: build
+    needs: [tags, build]
+    if: github.event_name != 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/_jammin-platform.yml
+    with:
+      platform: ${{ matrix.platform }}
+      runner: ${{ matrix.runner }}
+      image: ${{ needs.tags.outputs.image }}
+      primary-tag: ${{ needs.tags.outputs.primary }}
+      push: true
+
+  merge:
+    # Combines the per-platform digests pushed by the push matrix into a
+    # single multi-arch manifest list and tags it. Skipped on PRs — they
+    # never push.
+    needs: [tags, push]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
     steps:
-      - name: Checkout (release tag)
-        if: github.event_name == 'release'
-        uses: actions/checkout@v6
+      - name: Download digests
+        uses: actions/download-artifact@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
-
-      - name: Checkout (branch)
-        if: github.event_name != 'release'
-        uses: actions/checkout@v6
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
 
       - uses: docker/setup-buildx-action@v4
 
-      - uses: docker/login-action@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push image
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: docker/jammin-as-lan.Dockerfile
-          push: true
-          tags: ${{ needs.build.outputs.tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE: ${{ needs.tags.outputs.image }}
+          TAGS: ${{ needs.tags.outputs.tags }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          TAG_ARGS=()
+          while IFS= read -r tag; do
+            [[ -z "$tag" ]] && continue
+            TAG_ARGS+=("-t" "$tag")
+          done <<< "$TAGS"
+          SOURCES=()
+          for digest in *; do
+            SOURCES+=("${IMAGE}@sha256:${digest}")
+          done
+          # Must match the build matrix size. Guards against silent partial
+          # manifests if a future refactor breaks upload/download naming.
+          EXPECTED_PLATFORMS=2
+          if [[ "${#SOURCES[@]}" -ne "$EXPECTED_PLATFORMS" ]]; then
+            echo "::error::expected ${EXPECTED_PLATFORMS} platform digests, found ${#SOURCES[@]}"
+            exit 1
+          fi
+          docker buildx imagetools create "${TAG_ARGS[@]}" "${SOURCES[@]}"
+
+      - name: Inspect pushed manifest and assert platform coverage
+        env:
+          IMAGE: ${{ needs.tags.outputs.primary }}
+        run: |
+          set -euo pipefail
+          docker buildx imagetools inspect "$IMAGE"
+          # Belt-and-braces: the digest count check earlier guarantees we
+          # passed the right number of sources to imagetools, but not that
+          # they covered distinct platforms. Read the published manifest
+          # back and assert linux/amd64 + linux/arm64 are both present.
+          # buildx attaches provenance/SBOM as extra `unknown/unknown` entries
 ```

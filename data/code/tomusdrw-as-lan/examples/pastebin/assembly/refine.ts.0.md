@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/refine.ts#L1-L18
 title: examples/pastebin/assembly/refine.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 6ac3cb22fef1a4c7292fc8ddeb2e38ef3f543c34c5712d54280943c510cb96dc

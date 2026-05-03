@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/authorizer/assembly/index.ts#L1-L1
 title: examples/authorizer/assembly/index.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 92a35b29f95fb33da6773bd09697ea4db0e81a418ea2f0242c8a219b3ba40d25

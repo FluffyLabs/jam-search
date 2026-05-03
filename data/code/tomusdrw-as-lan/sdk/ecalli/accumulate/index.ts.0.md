@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/accumulate/index.ts#L1-L14
 title: sdk/ecalli/accumulate/index.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: e8e24cc24c23bfe84b1c4630227d50caedf43d058e431b7b5d9e3a1d5404569c

@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/core/byte-buf.test.ts#L129-L242
 title: sdk/core/byte-buf.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 7522778d4c39999c651de51448d2c59641bd19ca06be86734853c4654a058b36

@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/machine.test.ts#L1-L125'
 title: sdk/jam/machine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 28e557757e63917910c9877c927aebc346229371ac66ac2f7bad72e3e4268768
+content_sha: 25f493d9f0d65c7c692e07aa6478628177cc616a3fda95873def2067d5dfb280
 language: typescript
 ---
 `sdk/jam/machine.test.ts` (lines 1–125)
@@ -100,7 +100,7 @@ export const TESTS: Test[] = [
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     const hash = m.expunge();
     a.isEqual(hash, 0, "expunge result");
     return a;
@@ -112,7 +112,7 @@ export const TESTS: Test[] = [
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     m.pages(0, 1, PageAccess.ReadWrite);
     a.isEqual(true, true, "pages succeeded");
     return a;
@@ -124,7 +124,7 @@ export const TESTS: Test[] = [
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     const data = BytesBlob.zero(4);
     const result = m.poke(0, data);
     a.isEqual(result.isOkay, true, "poke ok");
@@ -135,7 +135,7 @@ export const TESTS: Test[] = [
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     TestMachine.setPokeResult(EcalliResult.OOB);
     const data = BytesBlob.zero(4);
     const result = m.poke(0, data);

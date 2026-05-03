@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/context.ts#L101-L191
 title: sdk/jam/accumulate/context.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 3b107e8832d5bd3892d045194227c4a2acad82a62eaad06658861a03829ed066

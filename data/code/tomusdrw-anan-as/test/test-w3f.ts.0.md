@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/test/test-w3f.ts#L1-L6'
 title: test/test-w3f.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-24T09:46:09+02:00'
-last_modified: '2026-04-24T09:46:09+02:00'
+created_at: '2026-04-27T09:49:56+01:00'
+last_modified: '2026-04-27T09:49:56+01:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: abe01e9e6161c9b75558f93fdf92dee7cec30b70c8c815d83438296505cbd9d4

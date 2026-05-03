@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/program.ts#L113-L247'
 title: assembly/program.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-24T09:46:09+02:00'
-last_modified: '2026-04-24T09:46:09+02:00'
+created_at: '2026-04-27T09:49:56+01:00'
+last_modified: '2026-04-27T09:49:56+01:00'
 chunk_index: 1
 chunk_total: 4
 content_sha: 70cc01c41776893cea1a76890f61da43a9b24a3cb875a101207ca0d71b387ef8

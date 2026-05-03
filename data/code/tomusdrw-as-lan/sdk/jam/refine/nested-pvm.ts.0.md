@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/refine/nested-pvm.ts#L1-L92
 title: sdk/jam/refine/nested-pvm.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: f0f3274584ddc56386a51196435e7397c1197a9f779b506450b6d069035933c1
+content_sha: f790099b22a3352da2fb473cce11f4d7a5e48a7d0570b985e175fb84ab09ec52
 language: typescript
 ---
 `sdk/jam/refine/nested-pvm.ts` (lines 1–92)
@@ -61,7 +61,7 @@ export class NestedPvm {
       if (e === SpiError.InvalidEntryPoint) panic("SPI: invalid entry point");
       panic("SPI: unknown setup error");
     }
-    return r.okay!;
+    return r.okay;
   }
 
   /**

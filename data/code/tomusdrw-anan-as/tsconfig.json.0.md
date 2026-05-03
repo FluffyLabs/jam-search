@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/tsconfig.json#L1-L26'
 title: tsconfig.json
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-24T09:46:09+02:00'
-last_modified: '2026-04-24T09:46:09+02:00'
+created_at: '2026-04-27T09:49:56+01:00'
+last_modified: '2026-04-27T09:49:56+01:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 54965dfefd298adb0d2469f1818d69344b09dff39e9211b9e14c2691ced55ee7

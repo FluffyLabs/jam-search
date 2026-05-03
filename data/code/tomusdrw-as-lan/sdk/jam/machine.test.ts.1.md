@@ -4,18 +4,18 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/machine.test.ts#L121-L235'
 title: sdk/jam/machine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: e1aa9c9d3001eb152f14ece375cc33fb19efcd0a3964707eff7c549d3b558492
+content_sha: 936aabb6805d9c4634b2497479bff09b93ccc0aebbf03e2c8b163f292b07a35d
 language: typescript
 ---
 `sdk/jam/machine.test.ts` (lines 121–235)
 
 ```typescript
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     TestMachine.setPokeResult(EcalliResult.OOB);
     const data = BytesBlob.zero(4);
     const result = m.poke(0, data);
@@ -30,7 +30,7 @@ language: typescript
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     const buf = BytesBlob.zero(4);
     const result = m.peek(0, buf);
     a.isEqual(result.isOkay, true, "peek ok");
@@ -41,7 +41,7 @@ language: typescript
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     TestMachine.setPeekResult(EcalliResult.OOB);
     const buf = BytesBlob.zero(4);
     const result = m.peek(0, buf);
@@ -56,7 +56,7 @@ language: typescript
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     const io = InvokeIo.create(1_000_000);
     const outcome = m.invoke(io);
     a.isEqual(outcome.reason, ExitReason.Halt, "exit reason");
@@ -70,7 +70,7 @@ language: typescript
     const a = Assert.create();
     TestMachine.setInvokeResult(i64(ExitReason.Host), 12);
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     const io = InvokeIo.create(500);
     const outcome = m.invoke(io);
     a.isEqual(outcome.reason, ExitReason.Host, "exit reason");
@@ -83,7 +83,7 @@ language: typescript
     const a = Assert.create();
     TestMachine.setInvokeResult(i64(ExitReason.Oob));
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     const io = InvokeIo.create(1);
     const outcome = m.invoke(io);
     a.isEqual(outcome.reason, ExitReason.Oob, "exit reason");
@@ -95,7 +95,7 @@ language: typescript
     const a = Assert.create();
     TestMachine.setInvokeResult(i64(ExitReason.Fault), 0x1234);
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     const io = InvokeIo.create(100);
     const outcome = m.invoke(io);
     a.isEqual(outcome.reason, ExitReason.Fault, "exit reason");
@@ -107,7 +107,7 @@ language: typescript
     TestEcalli.reset();
     const a = Assert.create();
     const code = BytesBlob.zero(4);
-    const m = Machine.create(code, 0).okay!;
+    const m = Machine.create(code, 0).okay;
     TestMachine.setExpungeResult(0x42);
     const hash = m.expunge();
     a.isEqual(hash, 0x42, "configured expunge result");

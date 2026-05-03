@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/fibonacci/assembly/fibonacci.ts#L1-L46
 title: examples/fibonacci/assembly/fibonacci.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-24T22:53:46+01:00'
-last_modified: '2026-04-24T22:53:46+01:00'
+created_at: '2026-04-28T00:16:09+02:00'
+last_modified: '2026-04-28T00:16:09+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 90d1cd9a680d01c29cebc05900776c4163044e2268242062ba24cab5fad650b8
