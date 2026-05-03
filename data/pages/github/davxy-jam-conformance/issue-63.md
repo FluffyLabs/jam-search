@@ -323,3 +323,62 @@ We have released a new version that is conformant with [Standard Target Packagin
 I hereby request to give our image a run and let us know if any issue arises. Nonetheless, our binaries are also updated in the release. 
 
 Latest release: [v0.7.2.5](https://github.com/Chainscore/tessera-releases/releases)
+
+
+## Comment by @davxy
+
+I get this error:
+
+```
+❯ ./target.py run tessera
+Running 'tessera' on docker image
+Command: 'None'
+Container: 'tessera-vkrmfn'
+Image: ghcr.io/chainscore/tessera:latest
+Image ID: 337d79c7e0f5
+Created: 2026-05-01T08:23:39.869350007Z
+Host data path: /tmp/jam_fuzz
+Ensuring no leftover container with name tessera-vkrmfn...
+Waiting for target termination (pid=39982)
+/usr/local/bin/docker-entrypoint-fuzz.sh: 58: exec: uv: Permission denied
+Target process exited with status: 126
+Cleaning up Docker container tessera-vkrmfn...
+```
+
+
+## Comment by @harsh-csl
+
+Fixed. 
+
+> I get this error:
+
+A re-run will be appreciated. Thank you.
+
+
+
+
+## Comment by @davxy
+
+> Fixed.
+> 
+> > I get this error:
+> 
+> A re-run will be appreciated. Thank you.
+
+Same issue.
+Please try to run the script (scripts/target.py) locally first:
+
+Download the target
+1. `target.py get tessera`
+2. `target.py run tessera`
+
+
+## Comment by @harsh-csl
+
+> Same issue
+
+sure, looking into this. 
+
+
+
+

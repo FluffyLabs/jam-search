@@ -119,3 +119,8 @@ Thank you for your continued help
 
 @davxy We have implemented some new optimizations and would like to see the impact. Could you please re-run the process and update the dsahboard?
 https://paritytech.github.io/jam-conformance-dashboard/
+
+
+## Comment by @yu2C
+
+Hi @davxy — we’ve updated our submission to use a Docker image for the fuzz target
