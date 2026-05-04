@@ -382,3 +382,11 @@ sure, looking into this.
 
 
 
+
+
+## Comment by @harsh-csl
+
+> Same issue.
+> Please try to run the script (scripts/target.py) locally first:
+
+Fixed and tested locally. Give it a try please.
