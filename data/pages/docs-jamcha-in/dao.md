@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/dao/'
 title: JAM Implementers DAO | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-05-01T04:21:04.690Z'
-last_modified: '2026-05-01T04:21:04.690Z'
+created_at: '2026-05-05T04:02:07.738Z'
+last_modified: '2026-05-05T04:02:07.738Z'
 ---
 ## Background[​](#background "Direct link to Background")
 
