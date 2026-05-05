@@ -27,3 +27,10 @@ Please investigate and close this issue once resolved.
 
 Do you plan to add support for such images? I think this would also help jam-testing support all active implementations.
 As of today, 9 implementations already support the new target packaging expectations.
+
+
+## Comment by @tomusdrw
+
+> Do you plan to add support for such images? 
+
+Yes. Will fix that shortly.
