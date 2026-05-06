@@ -272,3 +272,8 @@ Cleaned up container temp dir: /tmp/jam_pbnjam-r7jeai__dgvka96
 ## Comment by @mikirov
 
 @davxy also the docker image should have all dependancies bundled now and they should resolve at runtime
+
+
+## Comment by @mikirov
+
+@davxy we conform to the docker spec now

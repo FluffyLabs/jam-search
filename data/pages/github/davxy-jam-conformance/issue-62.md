@@ -344,3 +344,18 @@ Hi @davxy, we just updated our fuzzer target to GP 0.7.2: https://github.com/Cha
 ## Comment by @aang114
 
 Hi @davxy, we have fixed all the failing traces for GP 0.7.2: https://github.com/ChainSafe/gossamer-jam-releases/releases. It would be great to see the updated results. Thanks
+
+
+## Comment by @aang114
+
+Hi @davxy, our fuzzer target now supports the ancestry feature: https://github.com/ChainSafe/gossamer-jam-releases/releases/tag/v0.7.2.2. It would be great to see the updated results. Thanks 🙂
+
+
+## Comment by @davxy
+
+Hi @aang114, our fuzzer does not currently support the ancestry feature yet, and this is not currently required for M1.
+
+Please align your target with the standard packaging requirements:
+https://github.com/davxy/jam-conformance/tree/main/fuzz-proto#standard-target-packaging
+
+Let me know once you have updated it to give it a try

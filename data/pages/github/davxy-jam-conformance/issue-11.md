@@ -651,3 +651,12 @@ We have updated to ~0.7.2.4~ [0.7.2.5](https://github.com/jam-duna/jamtestnet/re
 @davxy 
 
 We have updated to [0.7.2.6](https://github.com/jam-duna/jamtestnet/releases/tag/v0.7.2.6) which is now passing NYB
+
+
+## Comment by @mkchungs
+
+Hello @davxy,
+
+Can you please check #198? 
+
+We are now transitioning to docker-based with std-entry support. (For now we only support `JAM_FUZZ_SPEC=tiny` but will add `JAM_FUZZ_SPEC =full` network support in next docker release)
