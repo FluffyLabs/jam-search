@@ -605,3 +605,12 @@ Hey @clearloop your latest [0.7.2](https://github.com/spacejamapp/specjam/releas
 > Hey [@clearloop](https://github.com/clearloop) your latest [0.7.2](https://github.com/spacejamapp/specjam/releases/tag/0.7.2) release doesn't contain a binary for amd64 (which is the one I need :)))
 
 sry I missed it while updating my bundle script, just uploaded
+
+
+## Comment by @clearloop
+
+1. aligned to [Standard Target Packaging](https://github.com/davxy/jam-conformance/blob/main/fuzz-proto/README.md#standard-target-packaging), the image is `clearloop/spacejam:latest`, current at version `0.1.1`
+2. the [summary-table][st] says our pass is `264/336`, however for a local processing, I got `328/336`, fixed the rest 8 tests and made it `336/336` with the docker image locally, worth more investigations if remote is still buggy
+
+
+[st]: https://github.com/davxy/jam-conformance/blob/main/fuzz-reports/0.7.2/summaries/summary-table.md

@@ -19,3 +19,13 @@ The demo graymatter fuzz source test against **turbojam** failed.
 **Run:** https://github.com/FluffyLabs/jam-testing/actions/runs/25182835260
 
 Please investigate and close this issue once resolved.
+
+
+## Comment by @sierkov
+
+The recently added support for JAM Standard Target Packaging fixed the issue.
+
+
+## Comment by @sierkov
+
+I don’t have permission to close this myself, so I’m leaving this comment instead.

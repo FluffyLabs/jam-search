@@ -34,3 +34,13 @@ As of today, 9 implementations already support the new target packaging expectat
 > Do you plan to add support for such images? 
 
 Yes. Will fix that shortly.
+
+
+## Comment by @sierkov
+
+The recently added support for JAM Standard Target Packaging fixed the issue.
+
+
+## Comment by @sierkov
+
+I don’t have permission to close this myself, so I’m leaving this comment instead.
