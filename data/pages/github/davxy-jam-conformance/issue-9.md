@@ -707,3 +707,21 @@ Function: #Function<0.71960264/0 in Jamixir.Fuzzer.Service.loop_acceptor/2>
 ## Comment by @danicuki
 
 Hi @davxy  - Thanks for the feedback. We just updated the release with a fix that creates the missing database table.  
+
+
+## Comment by @davxy
+
+Hey @danicuki 
+
+```
+❯ ./target.py get jamixir
+Downloading jamixir...
+Pulling Docker image: ghcr.io/jamixir/jamixir:0.7.2
+Error response from daemon: Head "https://ghcr.io/v2/jamixir/jamixir/manifests/0.7.2": unauthorized
+Error: Failed to pull Docker image ghcr.io/jamixir/jamixir:0.7.2
+```
+
+
+## Comment by @danicuki
+
+Fixed. Made public 

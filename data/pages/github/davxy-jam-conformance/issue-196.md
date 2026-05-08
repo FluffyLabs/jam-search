@@ -41,3 +41,8 @@ docker run --rm \
 Multi-session support enabled.
 
 A PR to add JOTL to `scripts/targets.json` will follow.
+
+
+## Comment by @polykrate
+
+Updated with the fix for compact encoding for the ticket attempts
