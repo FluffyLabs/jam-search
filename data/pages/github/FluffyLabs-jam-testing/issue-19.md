@@ -19,3 +19,8 @@ The demo graymatter fuzz source test against **jotl** failed.
 **Run:** https://github.com/FluffyLabs/jam-testing/actions/runs/23218096873
 
 Please investigate and close this issue once resolved.
+
+
+## Comment by @polykrate
+
+@tomusdrw  Thanks again for your runner it helped me align my implementation.
