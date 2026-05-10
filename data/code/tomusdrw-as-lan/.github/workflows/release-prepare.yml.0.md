@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/release-prepare.yml#L1-L116
 title: .github/workflows/release-prepare.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 04b2107a699f128de72b35235b859cc0de6ee8abf542ebcb8137f0511005cf36
+content_sha: 0ebb86eaf67e7031382372fe632c41f0dcb9fb8c3bf46eef4c6b287c251cd998
 language: yaml
 ---
 `.github/workflows/release-prepare.yml` (lines 1–116)
@@ -60,7 +60,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: "npm"
 
       - name: Bump versions

@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/authorize.ts#L1-L53
 title: examples/ecalli-test/assembly/authorize.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 4eb82a586b747ccc9d843d30e635c8b896423cf93640afc8e04d51f6d1398701

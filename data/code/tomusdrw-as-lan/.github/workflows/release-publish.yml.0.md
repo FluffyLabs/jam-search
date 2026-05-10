@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/release-publish.yml#L1-L111
+  https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/release-publish.yml#L1-L105
 title: .github/workflows/release-publish.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 3df13a413bc9d351761151bb03e079733e32e6625b3ad4f690d06cd592596ae5
+content_sha: 7af3a60dbfb573970deef140a83194faaa4795bc57bf8598358e5c143f747f33
 language: yaml
 ---
-`.github/workflows/release-publish.yml` (lines 1–111)
+`.github/workflows/release-publish.yml` (lines 1–105)
 
 ```yaml
 name: "Release: Publish"
@@ -30,7 +30,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  NODE_VERSION: 22.x
+  NODE_VERSION: 24.x
 
 jobs:
   publish:
@@ -47,12 +47,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: https://registry.npmjs.org
           cache: "npm"
-
-      - name: Upgrade npm for trusted publishing
-        # Pinned: `npm@latest` sometimes ships self-upgrade regressions
-        # (e.g. 11.13.0 crashed with MODULE_NOT_FOUND on `promise-retry`).
-        # Bump manually after confirming a newer version upgrades cleanly.
-        run: npm install -g npm@11.12.1
 
       - name: Install LLVM 18
         run: sudo apt-get update -qq && sudo apt-get install -y -qq llvm-18-dev libpolly-18-dev

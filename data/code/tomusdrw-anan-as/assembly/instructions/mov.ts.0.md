@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/mov.ts#L1-L40
 title: assembly/instructions/mov.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-27T09:49:56+01:00'
-last_modified: '2026-04-27T09:49:56+01:00'
+created_at: '2026-05-08T13:25:50+02:00'
+last_modified: '2026-05-08T13:25:50+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 13b3a5d47d0150c131f2050dac80cca7845e6ddea956dfcfe1da044efb5bd7ab

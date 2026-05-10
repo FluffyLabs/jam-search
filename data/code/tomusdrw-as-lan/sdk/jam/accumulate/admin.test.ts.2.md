@@ -2,19 +2,32 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/admin.test.ts#L218-L245
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/admin.test.ts#L213-L255
 title: sdk/jam/accumulate/admin.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: fbd584bc952e76a84a6cd9d89b9fbae4649f10cbd2e512265335864c086a46e5
+content_sha: 17cad47740508c1560e5c1c46930e6b606aeec688e92d20c42564b2d641dbd6e
 language: typescript
 ---
-`sdk/jam/accumulate/admin.test.ts` (lines 218–245)
+`sdk/jam/accumulate/admin.test.ts` (lines 213–255)
 
 ```typescript
+  // ─── designate ─────────────────────────────────────────────────────
+
+  test("Admin.designate encodes validator keys", () => {
+    TestEcalli.reset();
+    const a = Assert.create();
+    const admin = Admin.create();
+
+    const ed = Bytes32.zero();
+    ed.raw[0] = 0xe0;
+    const band = Bytes32.zero();
+    band.raw[0] = 0xb0;
+    const bls = BytesBlob.zero(144);
+    bls.raw[0] = 0xbb;
     const meta = BytesBlob.zero(128);
     meta.raw[0] = 0xaa;
 
@@ -23,11 +36,13 @@ language: typescript
     a.isEqual(result.isOkay, true, "should be ok");
 
     // Verify validators encoding: Ed25519(32) + Bandersnatch(32) + BLS(144) + metadata(128) = 336 bytes
-    const ptr = TestPrivileged.getLastDesignateValidatorsPtr();
-    a.isEqual(load<u8>(ptr), 0xe0, "ed25519[0] = 0xe0");
-    a.isEqual(load<u8>(ptr + 32), 0xb0, "bandersnatch[0] = 0xb0");
-    a.isEqual(load<u8>(ptr + 64), 0xbb, "bls[0] = 0xbb");
-    a.isEqual(load<u8>(ptr + 64 + 144), 0xaa, "metadata[0] = 0xaa");
+    const validatorsEnc = Encoder.create();
+    validatorsEnc.bytesFixLen(ed.bytes);
+    validatorsEnc.bytesFixLen(band.bytes);
+    validatorsEnc.bytesFixLen(bls);
+    validatorsEnc.bytesFixLen(meta);
+    const validatorsActual = BytesBlob.wrap(readFromMemory(TestPrivileged.getLastDesignateValidatorsPtr(), 336));
+    a.isEqualBytes(validatorsActual, validatorsEnc.finish(), "validators");
     return a;
   }),
 

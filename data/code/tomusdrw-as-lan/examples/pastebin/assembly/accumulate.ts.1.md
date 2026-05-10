@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/accumulate.ts#L95-L158
 title: examples/pastebin/assembly/accumulate.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 63a8f14a4d3edf4e000f7b273bbc10ead5285d21f871b4ea0886329a6cc7e2c1
+content_sha: 4f20f26b99c9771fffb54d235c587ce5cdc43a83c425061ffbe8c1b0a0b6dd11
 language: typescript
 ---
 `examples/pastebin/assembly/accumulate.ts` (lines 95–158)
@@ -44,7 +44,7 @@ function runCleanup(storage: CurrentServiceData, preimages: AccumulatePreimages,
   if (cursorBlob.isSome) {
     const raw = cursorBlob.val!;
     if (raw.length !== 4) panic("cleanup cursor: expected 4 bytes");
-    cursor = Decoder.fromBlob(raw.raw).u32();
+    cursor = Decoder.fromBytesBlob(raw).u32();
   }
 
   // Walk at most CLEANUP_SLOTS_PER_CALL slots forward, bounded by currentSlot.
@@ -57,7 +57,7 @@ function runCleanup(storage: CurrentServiceData, preimages: AccumulatePreimages,
     if (!bucket.isSome) continue;
 
     // Bucket holds a packed list of 32-byte hashes — decode with the standard codec.
-    const d = Decoder.fromBlob(bucket.val!.raw);
+    const d = Decoder.fromBytesBlob(bucket.val!);
     const bucketLen = u32(bucket.val!.length);
     while (u32(d.bytesRead()) + 32 <= bucketLen) {
       const hash = d.bytes32();

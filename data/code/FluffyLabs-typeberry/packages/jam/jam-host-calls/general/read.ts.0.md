@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/general/read.ts#L1-L98
 title: packages/jam/jam-host-calls/general/read.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 55dc5814645497ef66ffb29bed54c009095bc17bbd45ec3d0b2411542c7caa89

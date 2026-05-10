@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/README.md#L1-L67'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/README.md#L1-L100'
 title: README.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: f4e5c6a14263d17184ed0b6a47555a6e0f267308e5c53dce23bb84debe0fbc5b
+content_sha: a14cea475afd39ae9b739f75e79bda34dba442b0a58a0e4424435bd72dd34d2b
 language: markdown
 ---
-`README.md` (lines 1–67)
+`README.md` (lines 1–100)
 
 ```markdown
 # 🦁 as-lan
@@ -61,6 +61,39 @@ npm run qa-fix
 ```
 
 The build produces both `.wasm` and `.pvm` (PolkaVM/JAM SPI binary) files in the `build/` directory of each service. The `.pvm` file is what gets deployed to JAM.
+
+## Docker image (`jammin-as-lan`)
+
+A pre-baked builder image is published to GHCR for use with [jammin]
+(https://github.com/fluffylabs/jammin) or any environment that needs a
+ready-to-run AssemblyScript + PVM toolchain:
+
+```bash
+docker pull ghcr.io/fluffylabs/jammin-as-lan:latest
+```
+
+The image ships with `wasm-pvm`, Node.js, and the following packages
+pre-installed globally — **no `npm install` required** for a service whose
+only `devDependencies` are these three:
+
+- `@fluffylabs/as-lan`
+- `@fluffylabs/as-lan-ecalli-mocks`
+- `assemblyscript`
+
+Mount your service source at `/app` and pass the build/test command:
+
+```bash
+docker run --rm -v "$(pwd):/app" ghcr.io/fluffylabs/jammin-as-lan:latest \
+    npm run build
+```
+
+If your `node_modules/` directory is absent at startup, the image's
+entrypoint symlinks the global install into `/app/node_modules` so `asc`
+can resolve `@fluffylabs/as-lan`. If you bring your own `node_modules`
+(e.g., installed on the host), it wins — the symlink is skipped.
+
+A service that depends on additional npm packages still has to install
+those itself.
 
 ## Releases
 

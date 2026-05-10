@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/ticket-distribution.test.ts#L221-L275
 title: packages/jam/jamnp-s/tasks/ticket-distribution.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 2
 chunk_total: 3
 content_sha: 61905548d892bd80472c6e979b7ab2d19b46ef882ffd9ab7aba010d02c9e6b90

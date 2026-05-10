@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/accumulate.ts#L1-L106
 title: examples/pastebin/assembly/accumulate.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: a20069567379f1ebd8f51b21247b9adacb45da76f71ef313c908569f81d5628f
+content_sha: 07ab223347a6164e5f8d9cdb97c96749e22963fef16641c434c27d640637dd71
 language: typescript
 ---
 `examples/pastebin/assembly/accumulate.ts` (lines 1–106)
@@ -100,7 +100,7 @@ export function accumulate(ptr: u32, len: u32): u64 {
         // Ring buffer of recent pastes: write hash ‖ slot at recent:<head % N>,
         // then bump the head counter.
         const headBlob = storage.read(recentHeadKey());
-        const head: u32 = headBlob.isSome ? Decoder.fromBlob(headBlob.val!.raw).u32() : 0;
+        const head: u32 = headBlob.isSome ? Decoder.fromBytesBlob(headBlob.val!).u32() : 0;
         const entryEnc = Encoder.create(RECENT_ENTRY_LEN);
         entryEnc.bytes32(hash);
         entryEnc.u32(currentSlot);

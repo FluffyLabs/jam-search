@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/shuffling/package.json#L1-L18
 title: packages/core/shuffling/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: f0480bb3b96e0bcccbf603db77e53c36786ac8dcafc207e4527b663918d892ce
+content_sha: e2efb4838a816f5327d84a74d1683cd82ee83aaed2e1cd10a4c15b450a0b706e
 language: json
 ---
 `packages/core/shuffling/package.json` (lines 1–18)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/shuffling",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "The Fisher-Yates shuffle function based on GP",
   "main": "index.ts",
   "dependencies": {

@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/fibonacci/asconfig.json#L1-L30
 title: examples/fibonacci/asconfig.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2244063e2c691912b67d0cc0db4c5014de037b98ba8e10d4f808fa454e244290

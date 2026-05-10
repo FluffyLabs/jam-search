@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/README.md#L113-L228'
 title: README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: b53230f189c5d1fe314df1b456e5b22822531aef7a626f7608194bb7c7b2f06c

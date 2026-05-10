@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config/package.json#L1-L16
 title: packages/jam/config/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 51bb5f2f5aa8c3b7096d85dd107745496c46098d3ce00e55201c2c7551adc1a7
+content_sha: e91f9f08e76a4cf0b3bee8bf014c629c98c7fa8d07beb37c7c4525287791fb7f
 language: json
 ---
 `packages/jam/config/package.json` (lines 1–16)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/config",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "Config for typeberry workers.",
   "main": "index.ts",
   "scripts": {

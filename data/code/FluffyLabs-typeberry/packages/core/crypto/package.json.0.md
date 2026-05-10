@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/crypto/package.json#L1-L20
 title: packages/core/crypto/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 521fded8a93f7392c6865beed5ed8b8ac72406239d730268beb902963552ae2d
+content_sha: 4555bd05878094703a13fc20ed8c10f08c3f41758d4e7eff7182d9b9ade97ec3
 language: json
 ---
 `packages/core/crypto/package.json` (lines 1–20)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/crypto",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "JAM crypto-related utilities.",
   "main": "index.ts",
   "scripts": {

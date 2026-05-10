@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/nested-pvm-spi/assembly/refine.test.ts#L1-L80
 title: examples/nested-pvm-spi/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 312939d2de817953d0db8c3930163d81135d9caf46c312afb220fa822231bff7

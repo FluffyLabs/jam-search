@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.ts#L153-L287
 title: packages/jam/fuzz-proto/v1/types.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: d6175b43e16187316c0073c176dd5a6af94fa6ba83fad5554cd5daa89d087532

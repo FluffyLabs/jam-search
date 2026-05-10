@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/networking/package.json#L1-L26
 title: packages/core/networking/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 5f70590360282424dcf9bc17eafd90142986160977c6496188bdd84263ccd08a
+content_sha: 3fe792624a7fd7238e6c7de36dd7119e8f27c185d76363a22b19e0ef6cec1327
 language: json
 ---
 `packages/core/networking/package.json` (lines 1–26)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/networking",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "QUIC-based p2p networking.",
   "license": "MPL-2.0",
   "author": "Fluffy Labs",

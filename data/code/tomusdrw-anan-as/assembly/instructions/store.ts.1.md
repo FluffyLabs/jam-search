@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/store.ts#L103-L120
 title: assembly/instructions/store.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-27T09:49:56+01:00'
-last_modified: '2026-04-27T09:49:56+01:00'
+created_at: '2026-05-08T13:25:50+02:00'
+last_modified: '2026-05-08T13:25:50+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 0b9a2de1d3ceecd1b1a13b90d92f5c58b3e94d1a3a2bbdfb5d164bdc16348de0

@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/decode.test.ts#L1-L94
 title: sdk/core/codec/decode.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: d8dd360e58dd9f4f17bfb383af36198466731d2cc8f8bce8a3063a8412906fd8
+content_sha: a12d67178f131b86fb07cc7511700fd237bf3b63be056ba079d5ca872c8afbc9
 language: typescript
 ---
 `sdk/core/codec/decode.test.ts` (lines 1–94)
@@ -47,7 +47,7 @@ export const TESTS: Test[] = [
   }),
 
   test("varU32 missing bytes sets error", () => {
-    const d = Decoder.fromBlob(BytesBlob.empty().raw);
+    const d = Decoder.fromBytesBlob(BytesBlob.empty());
     const assert = Assert.create();
     assert.isEqual(d.varU32(), 0, "returns 0");
     assert.isEqual(d.isError, true, "error set");

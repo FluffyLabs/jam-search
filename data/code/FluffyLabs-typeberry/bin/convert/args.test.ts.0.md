@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/convert/args.test.ts#L1-L147
 title: bin/convert/args.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 8855f16d6bb35be3af8931fce965dfdf96f0571aa3743c6fe573da1bbc68e7bb

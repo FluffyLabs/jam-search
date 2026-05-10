@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk-ecalli-mocks/src/accumulate/transfer.ts#L1-L21
 title: sdk-ecalli-mocks/src/accumulate/transfer.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: f5d4a3c6093479fa2de0189959f1fc3d4e977e2d257d3544e69d08277ab4be3a

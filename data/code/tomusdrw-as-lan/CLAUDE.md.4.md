@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L209-L254'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L210-L255'
 title: CLAUDE.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 4
 chunk_total: 6
 content_sha: d2b15a5c4d7c5f5e591b685dbccf3edcc79bcd1ca051f3746e854c223ac5e8a3
 language: markdown
 ---
-`CLAUDE.md` (lines 209–254)
+`CLAUDE.md` (lines 210–255)
 
 ```markdown
   └── AccumulatePreimages (composes Preimages, adds ecalli 22-26: query, solicit, forget, provide)

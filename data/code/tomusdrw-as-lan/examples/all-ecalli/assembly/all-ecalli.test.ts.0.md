@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/all-ecalli/assembly/all-ecalli.test.ts#L1-L116
 title: examples/all-ecalli/assembly/all-ecalli.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: a38468f9ca0e88a1ec04404a06814f38dd55c0b685e20baa38be4c08a8e85664
+content_sha: e3aabe5627a055c2e9c868a12f01e50f51827334831296377d23b0051e432243
 language: typescript
 ---
 `examples/all-ecalli/assembly/all-ecalli.test.ts` (lines 1–116)
@@ -72,7 +72,7 @@ export const TESTS: Test[] = [
     assert.isEqual(resp.result, i64(REFINE_ECALLI_COUNT), "refine ecalli count");
 
     // Decode the count from the data
-    const d = Decoder.fromBlob(resp.data.raw);
+    const d = Decoder.fromBytesBlob(resp.data);
     const count = d.varU32();
     assert.isEqual(count, REFINE_ECALLI_COUNT, "encoded count matches");
 
@@ -115,7 +115,7 @@ export const TESTS: Test[] = [
     assert.isEqual(resp.result, i64(ACCUMULATE_ECALLI_COUNT), "accumulate ecalli count");
 
     // Decode the count from the data
-    const d = Decoder.fromBlob(resp.data.raw);
+    const d = Decoder.fromBytesBlob(resp.data);
     const count = d.varU32();
     assert.isEqual(count, ACCUMULATE_ECALLI_COUNT, "encoded count matches");
 

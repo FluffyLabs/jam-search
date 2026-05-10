@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/refine/invoke.ts#L1-L21
 title: sdk/ecalli/refine/invoke.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 8a6ee8ffce0a27b32ced81961565edfe209190d5fa60b19399a9f85ab4932937

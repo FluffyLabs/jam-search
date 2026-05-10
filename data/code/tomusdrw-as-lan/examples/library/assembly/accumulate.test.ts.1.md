@@ -2,31 +2,35 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/accumulate.test.ts#L93-L133
+  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/accumulate.test.ts#L105-L149
 title: examples/library/assembly/accumulate.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: c09a31a5cc3456612d2ca1cfdf77666f95ef94762abc2d5f9e138c438f9e1d91
+content_sha: 3344276901d5658e1b80beb33db333221ccbf5872378d075f337ba38bde10806
 language: typescript
 ---
-`examples/library/assembly/accumulate.test.ts` (lines 93–133)
+`examples/library/assembly/accumulate.test.ts` (lines 105–149)
 
 ```typescript
+    assert.isEqual(TestPreimages.getSolicitCount(), 1, "good operand still dispatched");
+    return assert;
+  }),
+
+  test("accumulate: operands dispatched in index order", () => {
+    const assert = Assert.create();
+    // Set then Remove → storage ends empty. Reversed order would leave the
     // entry present. Observable side-effect therefore depends on ordering.
     TestStorage.set(libraryKey("ordered"), null);
     const hash = Bytes32.zero();
     hash.raw[0] = 0x55;
     TestAccumulate.setItem(
       0,
-      buildAdminOperand(encodeAdmin(AdminCommand.setMapping(BytesBlob.encodeAscii("ordered"), hash, 16))),
+      adminOperand(encodeAdmin(AdminCommand.setMapping(BytesBlob.encodeAscii("ordered"), hash, 16))),
     );
-    TestAccumulate.setItem(
-      1,
-      buildAdminOperand(encodeAdmin(AdminCommand.removeMapping(BytesBlob.encodeAscii("ordered")))),
-    );
+    TestAccumulate.setItem(1, adminOperand(encodeAdmin(AdminCommand.removeMapping(BytesBlob.encodeAscii("ordered")))));
     callAccumulate(2);
 
     const got = CurrentServiceData.create().read(libraryKey("ordered"));
@@ -41,7 +45,7 @@ language: typescript
     const hash = Bytes32.zero();
     hash.raw[0] = 0xab;
     const cmd = AdminCommand.setMapping(BytesBlob.encodeAscii("ed25519"), hash, 8192);
-    TestAccumulate.setItem(0, buildAdminOperand(encodeAdmin(cmd)));
+    TestAccumulate.setItem(0, adminOperand(encodeAdmin(cmd)));
     callAccumulate(1);
 
     const sd = CurrentServiceData.create();
@@ -50,8 +54,8 @@ language: typescript
       assert.fail("entry not written");
       return assert;
     }
-    const decoded = LibraryEntryCodec.create().decode(Decoder.fromBlob(got.val!.raw)).okay!;
-    assert.isEqual(decoded.hash.raw[0], 0xab, "hash");
+    const decoded = LibraryEntryCodec.create().decode(Decoder.fromBytesBlob(got.val!)).okay!;
+    assert.isEqualBytes(decoded.hash.bytes, hash.bytes, "hash");
     assert.isEqual(decoded.length, 8192, "length");
     return assert;
   }),

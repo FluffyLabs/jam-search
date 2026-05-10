@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/tci/args.ts#L1-L131'
 title: bin/tci/args.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 2a1e67e012a3e565adebf7b22c3cd193a151f5960090ed006f14488ed195baa5

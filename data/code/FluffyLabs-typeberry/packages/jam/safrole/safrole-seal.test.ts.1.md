@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole-seal.test.ts#L87-L186
 title: packages/jam/safrole/safrole-seal.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: 42a7c7232ae95276eb988f8bef5df6e898adecb7c77b3cd05c5192d32070c8b3

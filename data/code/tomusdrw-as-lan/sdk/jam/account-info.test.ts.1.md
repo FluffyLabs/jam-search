@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/account-info.test.ts#L103-L213
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/account-info.test.ts#L104-L215
 title: sdk/jam/account-info.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 3aac7f76058f3ce728a6c9ef9d6b1c2ec4e5b378d4c9419f8dd28fa4ce78ce96
+content_sha: fc188acaafcccefec9d665ee05e2775b58aa303541c9bf890abe5f25e0339808
 language: typescript
 ---
-`sdk/jam/account-info.test.ts` (lines 103–213)
+`sdk/jam/account-info.test.ts` (lines 104–215)
 
 ```typescript
     TestInfo.set(42, encodeInfoBytes(expected));
@@ -21,7 +21,7 @@ language: typescript
     const result = svc.info();
     a.isEqual(result.isSome, true, "should be some");
     const info = result.val!;
-    a.isEqual(info.codeHash.raw[0], 0xcc, "codeHash");
+    a.isEqualBytes(info.codeHash.bytes, codeHash.bytes, "codeHash");
     a.isEqual(info.balance, 5000, "balance");
     a.isEqual(info.thresholdBalance, 2500, "thresholdBalance");
     a.isEqual(info.accumulateMinGas, 200_000, "accumulateMinGas");
@@ -58,12 +58,7 @@ language: typescript
     const key = ByteBuf.create(32).strAscii("testkey").finishBlob();
     const result = svc.read(key);
     a.isEqual(result.isSome, true, "should be some");
-    const data = result.val!;
-    a.isEqual(data.length, 4, "length");
-    a.isEqual(data.raw[0], 0xde, "byte 0");
-    a.isEqual(data.raw[1], 0xad, "byte 1");
-    a.isEqual(data.raw[2], 0xbe, "byte 2");
-    a.isEqual(data.raw[3], 0xef, "byte 3");
+    a.isEqualBytes(result.val!, val, "data");
     return a;
   }),
 
@@ -90,12 +85,7 @@ language: typescript
     const key = ByteBuf.create(32).strAscii("bigkey").finishBlob();
     const result = svc.read(key);
     a.isEqual(result.isSome, true, "should be some");
-    const data = result.val!;
-    a.isEqual(data.length, 2048, "length");
-    a.isEqual(data.raw[0], 0, "byte 0");
-    a.isEqual(data.raw[1], 1, "byte 1");
-    a.isEqual(data.raw[255], 255, "byte 255");
-    a.isEqual(data.raw[256], 0, "byte 256 wraps");
+    a.isEqualBytes(result.val!, largeVal, "data");
     return a;
   }),
 
@@ -126,4 +116,15 @@ language: typescript
     val2.raw.fill(0xbb);
 
     // First write — no previous value
+    svc.write(key, val1);
+
+    // Second write — should return previous length (5)
+    const key2 = ByteBuf.create(32).strAscii("overkey").finishBlob();
+    const result = svc.write(key2, val2);
+    a.isEqual(result.isOkay, true, "should be ok");
+    a.isEqual(result.okay!.isSome, true, "has previous value");
+    a.isEqual(result.okay!.val, 5, "previous length");
+    return a;
+  }),
+
 ```

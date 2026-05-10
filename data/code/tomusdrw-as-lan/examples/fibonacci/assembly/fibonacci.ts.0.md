@@ -5,17 +5,17 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/fibonacci/assembly/fibonacci.ts#L1-L46
 title: examples/fibonacci/assembly/fibonacci.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 90d1cd9a680d01c29cebc05900776c4163044e2268242062ba24cab5fad650b8
+content_sha: de8b02af22777232ccd8ef91e47053a5803958b459e87fabca36d084062f2393
 language: typescript
 ---
 `examples/fibonacci/assembly/fibonacci.ts` (lines 1–46)
 
 ```typescript
-import { AccumulateContext, Bytes32, LogMsg, RefineContext } from "@fluffylabs/as-lan";
+import { AccumulateContext, Bytes32, LogMsg, RefineContext, Response } from "@fluffylabs/as-lan";
 
 // LogMsg is a lightweight buffer-based logger that avoids pulling in
 // AssemblyScript's String machinery (~24% smaller WASM than Logger).
@@ -43,7 +43,7 @@ export function refine(ptr: u32, len: u32): u64 {
   const ctx = RefineContext.create();
   const args = ctx.parseArgs(ptr, len);
   logger.str("Fibonacci Service Refine, ").u32(args.serviceId).info();
-  return args.payload.toPtrAndLen();
+  return Response.with(0, args.payload);
 }
 
 /// Calculate fibonacci number using accumulator pattern (iterative approach)

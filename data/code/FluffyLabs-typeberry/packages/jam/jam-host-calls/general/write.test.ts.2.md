@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/general/write.test.ts#L184-L215
 title: packages/jam/jam-host-calls/general/write.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 2
 chunk_total: 3
 content_sha: 39edfa2eedfb9498c8c63319a7b18b20f5ceede7a94370f9d987928e61611c2e

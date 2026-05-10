@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/encode.ts#L1-L140'
 title: sdk/core/codec/encode.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: bff52e830e6e4914d32280f338ce1c6a87b143c260c7e4784e8d9a6dce5fa441

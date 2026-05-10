@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/accumulate/eject.ts#L1-L17
 title: sdk/ecalli/accumulate/eject.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: f3b9db65501c2f903117ce073fe8df8aaa2af36f8af56d68baaef37acdda114b

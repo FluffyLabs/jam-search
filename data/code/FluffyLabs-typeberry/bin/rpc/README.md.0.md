@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/README.md#L1-L197'
 title: bin/rpc/README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: a7ffdb6a205b205dec8708a8c0b7b28226b53ef032c436fca54d1b48bf2d4115

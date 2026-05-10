@@ -2,19 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L302-L396
+  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L311-L403
 title: examples/library/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 3
 chunk_total: 5
-content_sha: 9839fcd1d2bf8a96ce4e4e3d4136af16669d14674a643cc83e199c19bc3c3775
+content_sha: 9461b6f17e41ed90d172dbdc2ebd8b525d38a3e9f7248ad92ff8cd574468ee60
 language: typescript
 ---
-`examples/library/assembly/refine.test.ts` (lines 302–396)
+`examples/library/assembly/refine.test.ts` (lines 311–403)
 
 ```typescript
+    TestHistoricalLookup.setPreimage(buildMinimalSpi(4).raw);
+    TestMachine.setMachineResult(-9); // HUH sentinel (InvalidEntryPoint)
+
     const resp = callRefine(buildDemoInput("bad", 1000, BytesBlob.empty()));
     assert.isEqual(resp.result, -102, "invalid entrypoint");
     return assert;
@@ -43,7 +46,7 @@ language: typescript
 
     const resp = callRefine(buildDemoInput("panic", 1000, BytesBlob.empty()));
     assert.isEqual(resp.result, -103, "invoke failure");
-    const dec = Decoder.fromBlob(resp.data.raw);
+    const dec = Decoder.fromBytesBlob(resp.data);
     assert.isEqual(dec.u8(), u8(1), "reason = Panic");
     assert.isEqual(dec.u64(), u64(42), "r8 value preserved");
     assert.isEqual(dec.isError, false, "body decodes cleanly");
@@ -105,9 +108,4 @@ language: typescript
     // Clear any error sentinel a prior test may have left in peekResult;
     // the mock now skips the memory write when peekResult is a negative sentinel.
     TestMachine.setPeekResult(0);
-    const payload = BytesBlob.parseBlob("0xdeadbeef").okay!;
-    TestMachine.setPeekData(payload.raw);
-
-    const r = Machine.create(BytesBlob.zero(4), 0);
-    if (r.isError) {
 ```

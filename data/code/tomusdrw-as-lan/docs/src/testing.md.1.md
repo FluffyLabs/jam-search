@@ -1,19 +1,124 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L131-L257'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L115-L230'
 title: docs/src/testing.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 5
-content_sha: e2080c5d487527fbba8a790924809902f3350d0c09fead57ccd0273ff7f683b4
+content_sha: 591d6a562fda0505bfc3bf89ddbdeb185817d45b95f3fa9103e813dac2b37ee3
 language: markdown
 ---
-`docs/src/testing.md` (lines 131–257)
+`docs/src/testing.md` (lines 115–230)
 
 ```markdown
+// the number of items the service should fetch via `fetch(kind=15, i)` —
+// seed each one beforehand with `TestAccumulate.setItem(i, ...)`.
+// Returns raw response bytes (since accumulate response shape varies:
+// `ctx.respond` for Response, `ctx.yieldHash` for an OptionalCodeHash, etc.).
+const result = AccumulateCall.create().withSlot(1).withServiceId(5).call(accumulate, 0);
+```
+
+### Building accumulate items
+
+`OperandItem` and `TransferItem` build the encoded `AccumulateItem` blobs
+that `TestAccumulate.setItem(i, ...)` expects:
+
+```typescript
+import { OperandItem, TestAccumulate, TransferItem } from "@fluffylabs/as-lan/test";
+
+// Operand: defaults all four hashes zeros, gas=100000, result=Ok with empty
+// okBlob. Use `withOkBlob` for the common case; `withResultKind(...)` to
+// drive Panic / OutOfGas / etc. paths.
+TestAccumulate.setItem(0, OperandItem.create().withOkBlob(payload).build());
+
+// Transfer: defaults source=0, dest=0, amount=0, memo=empty (auto-padded to
+// 128 bytes by the codec), gas=10000.
+TestAccumulate.setItem(1, TransferItem.create().withSource(1).withDest(2).withAmount(100).build());
+```
+
+The fibonacci example demonstrates `RefineCall` / `AccumulateCall` with no
+items; `pastebin`, `library`, and `ecalli-test` show the operand/transfer
+builders driving multi-item flows.
+
+### Comparing byte output
+
+When a test verifies byte-shaped output, build the expected blob and compare
+both sides as hex via `Assert.isEqualBytes`. It diffs `actual.toString()` vs
+`expected.toString()`, so a failing assertion shows the full hex of both —
+debug-friendly even for long blobs.
+
+```typescript
+// ✅ One assertion, full hex on failure.
+assert.isEqualBytes(actual, BytesBlob.parseBlob("0xdeadbeef").okay!, "data");
+
+// ❌ Don't reach into .raw[i] / Uint8Array indices in assertions —
+// when one byte is wrong you only see one byte, not the surrounding context.
+assert.isEqual(actual.raw[0], 0xde, "byte 0");
+assert.isEqual(actual.raw[1], 0xad, "byte 1");
+```
+
+For `Bytes32` values, use `.bytes` (already a `BytesBlob`) instead of
+wrapping `.raw` in `BytesBlob.wrap(...)`:
+
+```typescript
+assert.isEqualBytes(decoded.codeHash.bytes, expected.codeHash.bytes, "codeHash");
+```
+
+When the expected bytes are an encoded structure, build the expected with
+`Encoder` so the test verifies the exact wire format:
+
+```typescript
+const expected = Encoder.create();
+expected.u32(2);
+expected.u32(3);
+const actual = BytesBlob.wrap(readFromMemory(somePtr, 8));
+assert.isEqualBytes(actual, expected.finish(), "two u32s");
+```
+
+Length checks (`assert.isEqual(blob.length, 33, ...)`) and numeric-field
+checks on decoded structs (`assert.isEqual(decoded.balance, 1000, ...)`) are
+not byte comparisons — leave those as-is.
+
+## Configuring Ecalli Mocks
+
+By default the stubs provide sensible test values (e.g. `gas()` returns
+`1_000_000`, `lookup()` returns `"test-preimage"`, `read()`/`write()` use an
+in-memory Map). You can override these from within your AS test code.
+
+### TestGas
+
+Set the value returned by the `gas()` ecalli:
+
+```typescript
+import { TestGas } from "@fluffylabs/as-lan/test";
+
+TestGas.set(500);  // gas() will now return 500
+```
+
+### TestFetch
+
+Set fixed data returned by the `fetch()` ecalli (overrides the default
+kind-dependent pattern):
+
+```typescript
+import { TestFetch } from "@fluffylabs/as-lan/test";
+
+const data = new Uint8Array(4);
+data[0] = 0xde; data[1] = 0xad; data[2] = 0xbe; data[3] = 0xef;
+TestFetch.setData(data);
+```
+
+### TestLookup
+
+Set the preimage returned by the `lookup()` ecalli:
+
+```typescript
+import { TestLookup } from "@fluffylabs/as-lan/test";
+
+const preimage = new Uint8Array(3);
 preimage[0] = 1; preimage[1] = 2; preimage[2] = 3;
 TestLookup.setPreimage(preimage);
 
@@ -25,120 +130,4 @@ TestLookup.setNone();
 
 In production, preimages arrive out-of-band via the `xtpreimages` block
 extrinsic and CE 142 gossip — a service that only calls `solicit()` (never
-`provide()`) still sees the preimage become available once the network
-delivers it. To exercise that path in tests without modeling block
-inclusion, attach the preimage directly to the `lookup()` mock:
-
-```typescript
-import { Bytes32, BytesBlob } from "@fluffylabs/as-lan";
-import { TestLookup } from "@fluffylabs/as-lan/test";
-
-// After this call, any lookup(hash) ecalli returns `preimage`.
-TestLookup.setAttachedPreimage(
-  Bytes32.wrapUnchecked(hashBytes),
-  BytesBlob.wrap(preimageBytes),
-);
-
-// Clear all attached preimages (keeps the single-preimage fallback).
-TestLookup.clearAttachedPreimages();
-```
-
-Attached entries take precedence over `setPreimage` / `setNone`. Both
-`TestEcalli.reset()` and any `resetPreimages`/`resetLookup` path clear
-the attached map, so tests starting with `TestEcalli.reset()` never see
-leaked attachments from a prior test.
-
-Good reference: the `pastebin` example's `"paste → solicit → attach → lookup
-retrieves blob"` test exercises the full flow end-to-end.
-
-### TestHistoricalLookup
-
-Set the preimage returned by the `historical_lookup()` ecalli (refine context):
-
-```typescript
-import { TestHistoricalLookup } from "@fluffylabs/as-lan/test";
-
-TestHistoricalLookup.setPreimage(data);
-
-// Make historical_lookup return NONE
-TestHistoricalLookup.setNone();
-```
-
-### TestPreimages
-
-Configure accumulate-context preimage ecalli stubs (query, solicit, forget, provide):
-
-```typescript
-import { TestPreimages } from "@fluffylabs/as-lan/test";
-import { EcalliResult } from "@fluffylabs/as-lan";
-
-// Configure query to return "Available" with slot0=42:
-// r7 = (slot0 << 32) | kind, r8 = (slot2 << 32) | slot1
-TestPreimages.setQueryResult(i64((u64(42) << 32) | 1), 0);
-
-// Configure query to return NONE (not solicited)
-TestPreimages.setQueryResult(-1);
-
-// Configure solicit to return an error
-TestPreimages.setSolicitResult(EcalliResult.HUH);
-
-// Configure forget to return OK
-TestPreimages.setForgetResult(0);
-
-// Configure provide to return WHO error
-TestPreimages.setProvideResult(EcalliResult.WHO);
-```
-
-### TestExportSegment
-
-Override the `export_segment()` ecalli return value (refine context):
-
-```typescript
-import { TestExportSegment } from "@fluffylabs/as-lan/test";
-import { EcalliResult } from "@fluffylabs/as-lan";
-
-// Make export_segment return FULL (segment limit reached)
-TestExportSegment.setResult(EcalliResult.FULL);
-```
-
-By default, `export_segment()` returns an auto-incrementing segment index (0, 1, 2, …).
-Use `TestEcalli.reset()` to restore the default behavior.
-
-### TestMachine
-
-Configure machine ecalli stub return values (refine context, ecalli 8-13):
-
-```typescript
-import { TestMachine } from "@fluffylabs/as-lan/test";
-import { EcalliResult } from "@fluffylabs/as-lan";
-
-// Make machine() return HUH (invalid entrypoint)
-TestMachine.setMachineResult(EcalliResult.HUH);
-
-// Make peek() return OOB
-TestMachine.setPeekResult(EcalliResult.OOB);
-
-// Make poke() return OOB
-TestMachine.setPokeResult(EcalliResult.OOB);
-
-// Make invoke() return Host (3) with host call index 12 in r8
-TestMachine.setInvokeResult(3, 12);
-
-// Make expunge() return a specific hash
-TestMachine.setExpungeResult(0x42);
-```
-
-By default, `machine()` returns incrementing IDs, `invoke()` returns HALT, and
-all other operations return OK. Use `TestEcalli.reset()` to restore defaults.
-
-### TestStorage
-
-Pre-populate or delete entries in the `read()`/`write()` stub storage:
-
-```typescript
-import { BytesBlob } from "@fluffylabs/as-lan";
-import { TestStorage } from "@fluffylabs/as-lan/test";
-
-// Pre-populate a key
-const key = BytesBlob.encodeAscii("counter");
 ```

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block/disputes.ts#L102-L179
 title: packages/jam/block/disputes.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: c6c1db9f3196ca3d723fe15e915485c463d1b23e56f06bdb9442c6171ad8fbf0

@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/package.json#L1-L28
 title: packages/jam/database-lmdb/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 6b3e390fe7a6446d220066b115dc33cb652c465e882ccb9fb5f0caacb6e5a546
+content_sha: 0f2636cc65a46ca44c24a65678bb22e247ed2ac2d8ef80b2a731ae78a2da14e7
 language: json
 ---
 `packages/jam/database-lmdb/package.json` (lines 1–28)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/database-lmdb",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "LMDB-backed database for typeberry.",
   "main": "index.ts",
   "scripts": {

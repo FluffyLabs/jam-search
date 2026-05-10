@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/transfer.test.ts#L1-L107
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/transfer.test.ts#L1-L114
 title: sdk/jam/accumulate/transfer.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 130a426353b37feb36b964dab6c32c31a780dac3153d42a74c5fd77b4cd04f9d
+content_sha: 77a02f8c978b554b06a5ed9fca1cd3375bd50bce533632beb4487e87635f74a2
 language: typescript
 ---
-`sdk/jam/accumulate/transfer.test.ts` (lines 1–107)
+`sdk/jam/accumulate/transfer.test.ts` (lines 1–114)
 
 ```typescript
 import { BytesBlob } from "../../core/bytes";
@@ -29,9 +29,7 @@ export const TESTS: Test[] = [
   test("Memo.empty creates 128 zero bytes", () => {
     const a = Assert.create();
     const memo = Memo.empty();
-    a.isEqual(<u32>memo.data.length, TRANSFER_MEMO_SIZE, "length = 128");
-    a.isEqual(memo.data.raw[0], 0, "first byte = 0");
-    a.isEqual(memo.data.raw[127], 0, "last byte = 0");
+    a.isEqualBytes(memo.data, BytesBlob.zero(TRANSFER_MEMO_SIZE), "memo");
     return a;
   }),
 
@@ -39,13 +37,9 @@ export const TESTS: Test[] = [
     const a = Assert.create();
     const short = BytesBlob.parseBlob("0xdeadbeef").okay!;
     const memo = Memo.create(short);
-    a.isEqual(<u32>memo.data.length, TRANSFER_MEMO_SIZE, "length = 128");
-    a.isEqual(memo.data.raw[0], 0xde, "byte 0 preserved");
-    a.isEqual(memo.data.raw[1], 0xad, "byte 1 preserved");
-    a.isEqual(memo.data.raw[2], 0xbe, "byte 2 preserved");
-    a.isEqual(memo.data.raw[3], 0xef, "byte 3 preserved");
-    a.isEqual(memo.data.raw[4], 0, "byte 4 = 0 (padded)");
-    a.isEqual(memo.data.raw[127], 0, "byte 127 = 0 (padded)");
+    const expected = BytesBlob.zero(TRANSFER_MEMO_SIZE);
+    expected.raw.set(short.raw, 0);
+    a.isEqualBytes(memo.data, expected, "memo");
     return a;
   }),
 
@@ -54,9 +48,9 @@ export const TESTS: Test[] = [
     const long = BytesBlob.zero(200);
     for (let i: u32 = 0; i < 200; i++) long.raw[i] = u8(i & 0xff);
     const memo = Memo.create(long);
-    a.isEqual(<u32>memo.data.length, TRANSFER_MEMO_SIZE, "length = 128");
-    a.isEqual(memo.data.raw[0], 0, "byte 0 preserved");
-    a.isEqual(memo.data.raw[127], 127, "byte 127 preserved");
+    const expected = BytesBlob.zero(TRANSFER_MEMO_SIZE);
+    expected.raw.set(long.raw.subarray(0, TRANSFER_MEMO_SIZE), 0);
+    a.isEqualBytes(memo.data, expected, "memo");
     return a;
   }),
 
@@ -66,9 +60,7 @@ export const TESTS: Test[] = [
     exact.raw[0] = 0xaa;
     exact.raw[127] = 0xbb;
     const memo = Memo.create(exact);
-    a.isEqual(<u32>memo.data.length, TRANSFER_MEMO_SIZE, "length = 128");
-    a.isEqual(memo.data.raw[0], 0xaa, "byte 0");
-    a.isEqual(memo.data.raw[127], 0xbb, "byte 127");
+    a.isEqualBytes(memo.data, exact, "memo");
     return a;
   }),
 
@@ -122,4 +114,19 @@ export const TESTS: Test[] = [
 
   test("scheduleTransfer uses zero memo when none provided", () => {
     TestEcalli.reset();
+    const a = Assert.create();
+    const ctx = AccumulateContext.create();
+
+    // Should succeed with default null memo (128 zero bytes)
+    const result = ctx.scheduleTransfer(100, 5000, 100);
+    a.isEqual(result.isOkay, true, "should be ok with null memo");
+    return a;
+  }),
+
+  test("scheduleTransfer accepts explicit Memo", () => {
+    TestEcalli.reset();
+    const a = Assert.create();
+    const ctx = AccumulateContext.create();
+
+    const memo = Memo.create(BytesBlob.parseBlob("0xdeadbeef").okay!);
 ```

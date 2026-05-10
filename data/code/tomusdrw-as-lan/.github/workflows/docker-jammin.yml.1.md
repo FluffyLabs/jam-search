@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/docker-jammin.yml#L95-L207
 title: .github/workflows/docker-jammin.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 720a97b30dec9a2cb2bdcbebe2d3727666b3540d604a5bf4b4616a93bfaf2533

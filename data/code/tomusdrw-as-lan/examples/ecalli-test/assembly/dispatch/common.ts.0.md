@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/dispatch/common.ts#L1-L11
 title: examples/ecalli-test/assembly/dispatch/common.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 4cbc14a6760d207240d06c10b2647573cc0af682ec07dcd536f77f9c6c09f2d7

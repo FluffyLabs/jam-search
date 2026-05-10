@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/docs/src/sdk-api/refine.md#L117-L208
 title: docs/src/sdk-api/refine.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 09217da07dabc7c12196962e64a791f66b6321aded637b266dbf9ae1100a4159

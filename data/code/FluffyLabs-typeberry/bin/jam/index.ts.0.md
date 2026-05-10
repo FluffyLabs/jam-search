@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L128'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L119'
 title: bin/jam/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: 52db2b31a38bb6d5c38258aebc5c09678c3e78363ca56ef1ba220400214f62ba
+content_sha: 90a5d5aa01c7dcac98544614afb24185deb58b1b0728465371ccff1a096dbe95
 language: typescript
 ---
-`bin/jam/index.ts` (lines 1–128)
+`bin/jam/index.ts` (lines 1–119)
 
 ```typescript
 // biome-ignore-all lint/suspicious/noConsole: bin file
@@ -27,6 +27,7 @@ import { exportBlocks, importBlocks, JamConfig, main, mainFuzz } from "@typeberr
 import { Telemetry } from "@typeberry/telemetry";
 import { asOpaqueType, workspacePathFix } from "@typeberry/utils";
 import { type Arguments, Command, HELP, parseArgs } from "./args.js";
+import { readFuzzEnv, synthesizeFuzzArgs } from "./fuzz-env.js";
 
 export * from "./args.js";
 
@@ -36,12 +37,24 @@ let args: Arguments;
 const withRelPath = workspacePathFix(`${import.meta.dirname}/../..`);
 
 try {
-  const parsed = parseArgs(process.argv.slice(2), withRelPath);
-  if (parsed === null) {
-    console.info(HELP);
-    process.exit(0);
+  const fuzzEnv = readFuzzEnv(process.env);
+  if (fuzzEnv !== null) {
+    if (process.argv.length > 2) {
+      throw new Error("When JAM_FUZZ is set, command-line arguments are not accepted.");
+    }
+    // In fuzz mode, the logger config is determined by JAM_FUZZ_LOG_LEVEL alone;
+    // any JAM_LOG filters configured at module load are discarded so behavior is
+    // deterministic regardless of which env vars happen to be present.
+    Logger.configureAll("", fuzzEnv.logLevel ?? Level.LOG);
+    args = synthesizeFuzzArgs(fuzzEnv);
+  } else {
+    const parsed = parseArgs(process.argv.slice(2), withRelPath);
+    if (parsed === null) {
+      console.info(HELP);
+      process.exit(0);
+    }
+    args = parsed;
   }
-  args = parsed;
 } catch (e) {
   console.error(`\n${e}\n`);
   console.info(HELP);
@@ -120,26 +133,4 @@ async function startNode(args: Arguments, withRelPath: (p: string) => string) {
   const telemetry = Telemetry.initialize({
     isMain: true,
     nodeName: jamNodeConfig.nodeName,
-    worker: "main",
-  });
-
-  // Start fuzz-target
-  if (args.command === Command.FuzzTarget) {
-    const version = args.args.version;
-    const socket = args.args.socket;
-    const initGenesisFromAncestry = args.args.initGenesisFromAncestry;
-    return mainFuzz({ jamNodeConfig, version, socket, initGenesisFromAncestry }, withRelPath);
-  }
-
-  // Just import a bunch of blocks
-  if (args.command === Command.Import) {
-    const node = await main(
-      {
-        ...jamNodeConfig,
-        // disable networking for import, since we close right after.
-        network: null,
-      },
-      withRelPath,
-      telemetry,
-    );
 ```

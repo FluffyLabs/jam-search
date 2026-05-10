@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/memory.test.ts#L286-L306
 title: assembly/memory.test.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-27T09:49:56+01:00'
-last_modified: '2026-04-27T09:49:56+01:00'
+created_at: '2026-05-08T13:25:50+02:00'
+last_modified: '2026-05-08T13:25:50+02:00'
 chunk_index: 3
 chunk_total: 4
 content_sha: 949c72ccfd1678df01ebd104ecd39cf868ab3fa20250d9ea1c9726bb69a56b8c

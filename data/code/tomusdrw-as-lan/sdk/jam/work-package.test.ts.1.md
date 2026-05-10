@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/work-package.test.ts#L112-L208
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/work-package.test.ts#L112-L205
 title: sdk/jam/work-package.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 4
-content_sha: 7a93b4c8b5dc507ba3271458702d17e14efab679436c7e055d6e470d23eca3d0
+content_sha: c032d9ba3b9cd6c2cf8dcf201b585af87194ef3473a336a0eaf3781ca5840510
 language: typescript
 ---
-`sdk/jam/work-package.test.ts` (lines 112–208)
+`sdk/jam/work-package.test.ts` (lines 112–205)
 
 ```typescript
     assert.isEqual(decoded.validatorsCount, 1023, "V");
@@ -46,26 +46,14 @@ language: typescript
     const decoded = roundtrip<RefinementContext>(original, _refinementCtx, _refinementCtx);
 
     const assert = Assert.create();
-    assert.isEqualBytes(BytesBlob.wrap(decoded.anchor.raw), BytesBlob.wrap(bytes32Fill(0x01).raw), "anchor");
-    assert.isEqualBytes(BytesBlob.wrap(decoded.stateRoot.raw), BytesBlob.wrap(bytes32Fill(0x02).raw), "stateRoot");
-    assert.isEqualBytes(BytesBlob.wrap(decoded.beefyRoot.raw), BytesBlob.wrap(bytes32Fill(0x03).raw), "beefyRoot");
-    assert.isEqualBytes(
-      BytesBlob.wrap(decoded.lookupAnchor.raw),
-      BytesBlob.wrap(bytes32Fill(0x04).raw),
-      "lookupAnchor",
-    );
+    assert.isEqualBytes(decoded.anchor.bytes, bytes32Fill(0x01).bytes, "anchor");
+    assert.isEqualBytes(decoded.stateRoot.bytes, bytes32Fill(0x02).bytes, "stateRoot");
+    assert.isEqualBytes(decoded.beefyRoot.bytes, bytes32Fill(0x03).bytes, "beefyRoot");
+    assert.isEqualBytes(decoded.lookupAnchor.bytes, bytes32Fill(0x04).bytes, "lookupAnchor");
     assert.isEqual(decoded.timeslot, 12345, "timeslot");
     assert.isEqual(decoded.prerequisites.length, 2, "prereq count");
-    assert.isEqualBytes(
-      BytesBlob.wrap(decoded.prerequisites[0].raw),
-      BytesBlob.wrap(bytes32Fill(0x11).raw),
-      "prereq[0]",
-    );
-    assert.isEqualBytes(
-      BytesBlob.wrap(decoded.prerequisites[1].raw),
-      BytesBlob.wrap(bytes32Fill(0x22).raw),
-      "prereq[1]",
-    );
+    assert.isEqualBytes(decoded.prerequisites[0].bytes, bytes32Fill(0x11).bytes, "prereq[0]");
+    assert.isEqualBytes(decoded.prerequisites[1].bytes, bytes32Fill(0x22).bytes, "prereq[1]");
     return assert;
   }),
 
@@ -94,7 +82,7 @@ language: typescript
 
     const assert = Assert.create();
     assert.isEqual(decoded.serviceId, 42, "serviceId");
-    assert.isEqualBytes(BytesBlob.wrap(decoded.codeHash.raw), BytesBlob.wrap(bytes32Fill(0xab).raw), "codeHash");
+    assert.isEqualBytes(decoded.codeHash.bytes, bytes32Fill(0xab).bytes, "codeHash");
     assert.isEqual(decoded.gasRefine, 100000, "gasRefine");
     assert.isEqual(decoded.gasAccumulate, 50000, "gasAccumulate");
     assert.isEqual(decoded.exportCount, 3, "exportCount");
@@ -111,5 +99,14 @@ language: typescript
     const decoded = roundtrip<ImportRef>(original, _importRef, _importRef);
 
     const assert = Assert.create();
-    assert.isEqualBytes(BytesBlob.wrap(decoded.hash.raw), BytesBlob.wrap(bytes32Fill(0xcc).raw), "hash");
+    assert.isEqualBytes(decoded.hash.bytes, bytes32Fill(0xcc).bytes, "hash");
+    assert.isEqual(decoded.isWorkPackageHash, false, "isWorkPackageHash");
+    assert.isEqual(decoded.index, 7, "index");
+    return assert;
+  }),
+
+  test("ImportRef roundtrip work-package hash", () => {
+    const original = ImportRef.create(bytes32Fill(0xdd), true, 0);
+    const decoded = roundtrip<ImportRef>(original, _importRef, _importRef);
+
 ```

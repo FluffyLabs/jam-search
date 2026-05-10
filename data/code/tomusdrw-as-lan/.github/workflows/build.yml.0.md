@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/build.yml#L1-L37
 title: .github/workflows/build.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 8760db6f576af49150c1720ecadac4a3e78d46a73a2067248ba60f34d6c40367
+content_sha: 093f53f1cd0b8e7bb0b8e1848a57e07f32ffdb3778afb14e5fa6f1ecd948fc4a
 language: yaml
 ---
 `.github/workflows/build.yml` (lines 1–37)
@@ -24,7 +24,7 @@ on:
     branches: [ "main" ]
 
 env:
-  NODE_VERSION: 22.x
+  NODE_VERSION: 24.x
 
 jobs:
   build-and-test:

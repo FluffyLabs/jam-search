@@ -2,80 +2,38 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/pastebin.test.ts#L210-L308
+  https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/pastebin.test.ts#L192-L263
 title: examples/pastebin/assembly/pastebin.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 2
-chunk_total: 4
-content_sha: 163938e2d4d19b08ff1bfa3e08c363a9cfd423cebe7a05d7ed7d643e628084ed
+chunk_total: 3
+content_sha: 2de7ea9fa23254942406b95425954123af364c87ff7ef957102cb6b5d7052f28
 language: typescript
 ---
-`examples/pastebin/assembly/pastebin.test.ts` (lines 210–308)
+`examples/pastebin/assembly/pastebin.test.ts` (lines 192–263)
 
 ```typescript
-      }
-    }
-
-    return assert;
-  }),
-  test("paste → solicit → attach → lookup retrieves blob", () => {
-    TestEcalli.reset();
-    const assert = Assert.create();
-
-    // 10-byte payload [0xc0..0xc9].
-    const payload = new Uint8Array(10);
-    for (let i: u32 = 0; i < 10; i += 1) payload[i] = u8(0xc0 + i);
-    const hashBytes = blake2b256(payload);
-    const okBlob = buildOkBlob(hashBytes, 10);
-
-    // Accumulate: inserts paste entry + calls solicit.
-    callAccumulateSingle(50, okBlob);
-
-    // Simulate extrinsic delivery (CE 142 gossip + xtpreimages inclusion).
-    TestLookup.setAttachedPreimage(Bytes32.wrapUnchecked(hashBytes), BytesBlob.wrap(payload));
-
-    // Service-visible lookup via the lookup ecalli.
-    const preimages = Preimages.create();
-    const looked = preimages.lookup(Bytes32.wrapUnchecked(hashBytes));
-    assert.isEqual(looked.isSome, true, "preimage looked up");
-    if (!looked.isSome) return assert;
-    assert.isEqualBytes(looked.val!, BytesBlob.wrap(payload), "looked-up blob");
-    return assert;
-  }),
-  test("index.ts dispatch routes len==2 to is_authorized, else to refine", () => {
-    TestEcalli.reset();
-    const assert = Assert.create();
-
-    // len == 2: is_authorized path. Payload is a u16 coreIndex; 0x0000 is fine.
-    const coreIndex = new Uint8Array(2);
-    const authRaw = unpackResult(dispatch(u32(coreIndex.dataStart), coreIndex.byteLength));
+    const authRaw = unpackResult(dispatch(coreIndex.ptr(), coreIndex.length));
     const authResp = RefineContext.create().response.decode(Decoder.fromBlob(authRaw)).okay!;
     assert.isEqual(authResp.result, 0, "is_authorized result");
     assert.isEqual(<u32>authResp.data.length, <u32>0, "is_authorized has no data");
 
     // len > 2: the refine path. Build a proper RefineArgs encoding and verify
     // the dispatch returns the same 36-byte okBlob that calling refine directly would.
-    const payload = new Uint8Array(4);
-    payload[0] = 0xde;
-    payload[1] = 0xad;
-    payload[2] = 0xbe;
-    payload[3] = 0xef;
-    const refResp = callRefine(payload); // goes via refine() directly
+    const payload = BytesBlob.parseBlob("0xdeadbeef").okay!;
+    const refResp = RefineCall.create().withServiceId(SERVICE_ID).call(refine, payload);
 
     // Now call the same bytes via the dispatch function.
-    const refArgs = RefineArgs.create(0, 0, SERVICE_ID, BytesBlob.wrap(payload), ZERO_HASH);
+    const refArgs = RefineArgs.create(0, 0, SERVICE_ID, payload, Bytes32.zero());
     const enc = Encoder.create();
     RefineContext.create().refineArgs.encode(refArgs, enc);
-    const encoded = enc.finishRaw();
-    const buf = new Uint8Array(encoded.length);
-    buf.set(encoded);
-    const dispRaw = unpackResult(dispatch(u32(buf.dataStart), buf.byteLength));
+    const buf = enc.finish();
+    const dispRaw = unpackResult(dispatch(buf.ptr(), buf.length));
     const dispResp = RefineContext.create().response.decode(Decoder.fromBlob(dispRaw)).okay!;
 
     assert.isEqual(dispResp.result, refResp.result, "dispatch result matches direct refine");
-    assert.isEqual(dispResp.data.length, refResp.data.length, "dispatch data length matches");
     assert.isEqualBytes(dispResp.data, refResp.data, "dispatch data matches refine");
     return assert;
   }),
@@ -84,12 +42,8 @@ language: typescript
     TestPreimages.setSolicitResult(EcalliResult.FULL);
     const assert = Assert.create();
 
-    const payload = new Uint8Array(4);
-    payload[0] = 1;
-    payload[1] = 2;
-    payload[2] = 3;
-    payload[3] = 4;
-    const hashBytes = blake2b256(payload);
+    const payload = BytesBlob.parseBlob("0x01020304").okay!;
+    const hashBytes = blake2b256(payload.raw);
     const okBlob = buildOkBlob(hashBytes, 4);
 
     callAccumulateSingle(77, okBlob);
@@ -106,12 +60,31 @@ language: typescript
     const assert = Assert.create();
 
     // Two distinct payloads inserted at the same slot share an expiry bucket.
-    const a = new Uint8Array(3);
-    a[0] = 1;
-    a[1] = 2;
-    a[2] = 3;
-    const b = new Uint8Array(3);
-    b[0] = 9;
-    b[1] = 8;
-    b[2] = 7;
+    const a = BytesBlob.parseBlob("0x010203").okay!;
+    const b = BytesBlob.parseBlob("0x090807").okay!;
+    const hashA = blake2b256(a.raw);
+    const hashB = blake2b256(b.raw);
+    const okA = buildOkBlob(hashA, 3);
+    const okB = buildOkBlob(hashB, 3);
+
+    // Both at slot 5 → expiry bucket at slot 5 + TTL_SLOTS = 1005.
+    callAccumulateSingle(5, okA);
+    callAccumulateSingle(5, okB);
+
+    // Pre-cleanup: expiry bucket holds exactly 2 hashes (64 bytes).
+    const storage = CurrentServiceData.create();
+    const bucket = storage.read(expiryKey(1005));
+    assert.isEqual(bucket.isSome, true, "expiry bucket exists pre-cleanup");
+    if (bucket.isSome) assert.isEqual(<u32>bucket.val!.length, <u32>64, "bucket holds 2 hashes");
+
+    // Advance cursor past 1005 with empty calls (131 × 8 = 1048 ≥ 1005).
+    for (let i: u32 = 0; i < 130; i += 1) callAccumulateEmpty(1005 + i);
+
+    // Both pastes + the bucket itself should be gone.
+    assert.isEqual(storage.read(pasteKey(Bytes32.wrapUnchecked(hashA))).isSome, false, "paste A deleted");
+    assert.isEqual(storage.read(pasteKey(Bytes32.wrapUnchecked(hashB))).isSome, false, "paste B deleted");
+    assert.isEqual(storage.read(expiryKey(1005)).isSome, false, "bucket deleted");
+    return assert;
+  }),
+];
 ```

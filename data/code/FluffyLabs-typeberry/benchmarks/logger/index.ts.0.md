@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/logger/index.ts#L1-L48
 title: benchmarks/logger/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: be7c971b1b2979593c6a87135fb5038f6b017746fa707a8c0ca2c8851995a916

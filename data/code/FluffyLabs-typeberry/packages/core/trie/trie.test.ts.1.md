@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/trie/trie.test.ts#L102-L212
 title: packages/core/trie/trie.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 1
 chunk_total: 5
 content_sha: e83c7aa3e19add0388c7f69a12f77b7a26a37cb9f8b25bb1021ad42cdd1f436f

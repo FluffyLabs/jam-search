@@ -2,19 +2,30 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/admin.test.ts#L104-L224
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/admin.test.ts#L99-L219
 title: sdk/jam/accumulate/admin.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: fd4522ab3624cdb6775ae2df3d7310b94a526fdbc3c0c6b2e6302abeaf6dc862
+content_sha: 7e9d05ee54b577ecf85938fe82019ff9a7fa02e1e3c59b5af48a68e6609cad96
 language: typescript
 ---
-`sdk/jam/accumulate/admin.test.ts` (lines 104–224)
+`sdk/jam/accumulate/admin.test.ts` (lines 99–219)
 
 ```typescript
+    a.isEqual(result.error, BlessError.Huh, "should be Huh");
+    return a;
+  }),
+
+  // ─── blessRegistrar ────────────────────────────────────────────────
+
+  test("Admin.blessRegistrar returns ok on success", () => {
+    TestEcalli.reset();
+    const a = Assert.create();
+    const admin = Admin.create();
+
     const result = admin.blessRegistrar(99);
     a.isEqual(result.isOkay, true, "should be ok");
     return a;
@@ -63,9 +74,11 @@ language: typescript
     a.isEqual(TestPrivileged.getLastAssignNewAssigner(), CURRENT_SERVICE, "default newAssigner = CURRENT_SERVICE");
 
     // Verify auth queue encoding: 2 × Bytes32 = 64 bytes, sequential
-    const ptr = TestPrivileged.getLastAssignAuthQueuePtr();
-    a.isEqual(load<u8>(ptr), 0xaa, "hash1[0] = 0xaa");
-    a.isEqual(load<u8>(ptr + 32), 0xbb, "hash2[0] = 0xbb");
+    const authQueueEnc = Encoder.create();
+    authQueueEnc.bytesFixLen(hash1.bytes);
+    authQueueEnc.bytesFixLen(hash2.bytes);
+    const authQueueActual = BytesBlob.wrap(readFromMemory(TestPrivileged.getLastAssignAuthQueuePtr(), 64));
+    a.isEqualBytes(authQueueActual, authQueueEnc.finish(), "authQueue");
     return a;
   }),
 
@@ -122,18 +135,5 @@ language: typescript
     TestEcalli.reset();
     const a = Assert.create();
     const admin = Admin.create();
-
-    const ed = Bytes32.zero();
-    ed.raw[0] = 0xe0;
-    const band = Bytes32.zero();
-    band.raw[0] = 0xb0;
-    const bls = BytesBlob.zero(144);
-    bls.raw[0] = 0xbb;
-    const meta = BytesBlob.zero(128);
-    meta.raw[0] = 0xaa;
-
-    const key = ValidatorKey.create(ed, band, bls, meta);
-    const result = admin.designate([key]);
-    a.isEqual(result.isOkay, true, "should be ok");
 
 ```

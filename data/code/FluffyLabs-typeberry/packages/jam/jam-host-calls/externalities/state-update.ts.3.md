@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/externalities/state-update.ts#L340-L415
 title: packages/jam/jam-host-calls/externalities/state-update.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 3
 chunk_total: 4
 content_sha: 7cc154871474a1dd2056218b120d4eb053e3982fb1a177a5fd92cd30ea3d8568

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/convert/build-for-npm.sh#L1-L54
 title: bin/convert/build-for-npm.sh
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: d0b0672197e0cabfbc9b6a18115d2ab858e612f1146b388c2f18e814c8d8af6d

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/protocol/index.ts#L1-L8
 title: packages/jam/jamnp-s/protocol/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 449dd0f140aabe77badd0e036b3ca231096fb2e7b1e56b2188285fc1685493cc

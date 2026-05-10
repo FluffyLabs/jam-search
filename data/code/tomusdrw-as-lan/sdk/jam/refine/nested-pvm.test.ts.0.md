@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/refine/nested-pvm.test.ts#L1-L95
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/refine/nested-pvm.test.ts#L1-L96
 title: sdk/jam/refine/nested-pvm.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: c8eb10b6eab2a93055eedb58510af8c20439f339c867a2634551910b42d36241
+content_sha: 746f9b67a37cbe1c7ad89d4fdcc91c8fec3fb719d55400202edd518ff45a20ab
 language: typescript
 ---
-`sdk/jam/refine/nested-pvm.test.ts` (lines 1–95)
+`sdk/jam/refine/nested-pvm.test.ts` (lines 1–96)
 
 ```typescript
 import { BytesBlob } from "../../core/bytes";
@@ -88,7 +88,7 @@ export const TESTS: Test[] = [
     a.isEqual(TestMachine.pokeLogField(0, 2), 10, "poke length = ro length");
     const copied = BytesBlob.zero(10);
     TestMachine.pokeLogData(0, copied);
-    for (let i = 0; i < 10; i++) a.isEqual(copied.raw[i], u8(i + 1), `byte ${i.toString()}`);
+    a.isEqualBytes(copied, ro, "poked bytes");
     return a;
   }),
 
@@ -110,4 +110,5 @@ export const TESTS: Test[] = [
     const argsPage: u32 = 0xfeff_0000 / 4096;
     const n = TestMachine.pagesLogLength();
     a.isEqual(n, 4, "four pages() calls");
+    a.isEqual(TestMachine.pagesLogField(0, 1), rwPage, "rw start page");
 ```

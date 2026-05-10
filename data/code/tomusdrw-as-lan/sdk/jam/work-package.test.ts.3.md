@@ -2,32 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/work-package.test.ts#L307-L342
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/work-package.test.ts#L302-L326
 title: sdk/jam/work-package.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 3
 chunk_total: 4
-content_sha: 27d7477520088a98a48e7781965b9d53e6b67eba2c2078480e97741c2ca14b7d
+content_sha: 10f1834d3a86d4c3271605a615670626ca2ebf14d9faab9514ca3009a651ecd2
 language: typescript
 ---
-`sdk/jam/work-package.test.ts` (lines 307–342)
+`sdk/jam/work-package.test.ts` (lines 302–326)
 
 ```typescript
-    const authToken = BytesBlob.parseBlob("0xaabbccdd").okay!;
-    const authConfig = BytesBlob.parseBlob("0x1234").okay!;
-    const original = WorkPackage.create(authToken, 10, bytes32Fill(0xcc), authConfig, ctx, items);
-    const decoded = roundtrip<WorkPackage>(original, _workPackage, _workPackage);
-
-    const assert = Assert.create();
-    assert.isEqualBytes(decoded.authToken, authToken, "authToken");
     assert.isEqual(decoded.authServiceId, 10, "authServiceId");
-    assert.isEqualBytes(
-      BytesBlob.wrap(decoded.authCodeHash.raw),
-      BytesBlob.wrap(bytes32Fill(0xcc).raw),
-      "authCodeHash",
-    );
+    assert.isEqualBytes(decoded.authCodeHash.bytes, bytes32Fill(0xcc).bytes, "authCodeHash");
     assert.isEqualBytes(decoded.authConfig, authConfig, "authConfig");
     assert.isEqual(decoded.context.timeslot, 7777, "context.timeslot");
     assert.isEqual(decoded.workItems.length, 1, "workItem count");

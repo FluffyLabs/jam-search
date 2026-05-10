@@ -6,8 +6,8 @@ url: >-
 title: >-
   packages/core/pvm-interpreter/ops-dispatchers/one-reg-one-imm-one-offset-dispatcher.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 2
 chunk_total: 3
 content_sha: f17302cebd650f266012c83e1c3f7a535162894a8f37c123bbac8475b451e30e

@@ -1,19 +1,20 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L49-L104'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L49-L99'
 title: CLAUDE.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 6
-content_sha: 3c75629a82e1cbbb4b391a4ba33326b8377be66a133d3d8d432a9f835e37f717
+content_sha: 5c499cb8dacf6a2abfa15f817c36d2c15ce413cb433e04cb408bba02f836dd47
 language: markdown
 ---
-`CLAUDE.md` (lines 49–104)
+`CLAUDE.md` (lines 49–99)
 
 ```markdown
+  all-ecalli/               Smoke-test service invoking every ecalli (refine + accumulate + authorize)
     assembly/
       refine.ts             Refine entry point — invokes general (0-5, 100) + refine (6-13) ecallis
       accumulate.ts         Accumulate entry point — invokes general + accumulate (14-26) ecallis
@@ -64,10 +65,4 @@ language: markdown
       index.ts              Self-authorizing dispatch
       constants.ts          TTL_SLOTS=1000, RECENT_N=32, CLEANUP_SLOTS_PER_CALL=8 + storage key prefixes
       storage.ts            Key builders (pasteKey/recentKey/expiryKey), PasteEntry codec, writeU32LE/readU32LE
-      pastebin.test.ts      Integration tests (refine output, accumulate insert/idempotency/cleanup, solicit→attach→lookup)
-docs/                       Documentation (mdbook)
-```
-
-## Key Concepts
-
 ```

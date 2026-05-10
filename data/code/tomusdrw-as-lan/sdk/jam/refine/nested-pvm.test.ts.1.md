@@ -2,20 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/refine/nested-pvm.test.ts#L92-L178
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/refine/nested-pvm.test.ts#L93-L180
 title: sdk/jam/refine/nested-pvm.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 87119a3fbfab65c99d00230ff40bc745673a0d97526426d46c5342b7cf2688f9
+content_sha: 6048f7ab3759054ae2e67decabdb28c09f43a3854d0d66920fb0662175300149
 language: typescript
 ---
-`sdk/jam/refine/nested-pvm.test.ts` (lines 92–178)
+`sdk/jam/refine/nested-pvm.test.ts` (lines 93–180)
 
 ```typescript
-    const stackPage: u32 = (0xfefe_0000 - stackPages * 4096) / 4096;
     const argsPage: u32 = 0xfeff_0000 / 4096;
     const n = TestMachine.pagesLogLength();
     a.isEqual(n, 4, "four pages() calls");
@@ -102,4 +101,6 @@ language: typescript
   }),
 
   test("NestedPvm.fromSpiChecked returns InvalidEntryPoint when host rejects code", () => {
+    TestEcalli.reset();
+    const a = Assert.create();
 ```

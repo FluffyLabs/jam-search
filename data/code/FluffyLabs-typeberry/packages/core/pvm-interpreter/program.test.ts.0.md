@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/program.test.ts#L1-L17
 title: packages/core/pvm-interpreter/program.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 68945b4c98cc0bbd37bac7c75f20cac7f79ef03f470079fa2fdfdc6c590635f6

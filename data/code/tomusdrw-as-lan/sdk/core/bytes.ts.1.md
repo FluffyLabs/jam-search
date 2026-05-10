@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/core/bytes.ts#L148-L209'
 title: sdk/core/bytes.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 8cfe56243f9ac9ff2511aa33a595a8e3597da3b1846176b9fca5a196da6eecbb

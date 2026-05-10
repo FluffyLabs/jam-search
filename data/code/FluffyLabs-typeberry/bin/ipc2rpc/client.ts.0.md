@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/ipc2rpc/client.ts#L1-L75'
 title: bin/ipc2rpc/client.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: e074ba3f46286020553e5f5d6e02b31789f6b8df53bdb4f23c8ff221ca678dcc

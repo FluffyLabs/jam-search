@@ -2,19 +2,25 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L207-L308
+  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L213-L314
 title: examples/library/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 2
 chunk_total: 5
-content_sha: 264ccc2f33022c29a3ba1405bc9d4e873f827658f2cdae2658438f50f25074aa
+content_sha: 978207749c969df1222f11ebdeeec3578e9c39e677d2739eba610c031b876105
 language: typescript
 ---
-`examples/library/assembly/refine.test.ts` (lines 207–308)
+`examples/library/assembly/refine.test.ts` (lines 213–314)
 
 ```typescript
+    assert.isEqualBytes(resp.data, bodyBlob, "canonical body");
+    return assert;
+  }),
+
+  test("refine: admin path rejects trailing bytes with -105", () => {
+    const assert = Assert.create();
     const hash = Bytes32.zero();
     const codec = AdminCommandCodec.create();
     const body = Encoder.create();
@@ -22,9 +28,9 @@ language: typescript
 
     const input = Encoder.create();
     input.u8(1); // admin tag
-    input.bytesFixLen(BytesBlob.wrap(body.finishRaw()));
+    input.bytesFixLen(body.finish());
     input.u8(0xff); // trailing junk
-    const resp = callRefine(input.finishRaw());
+    const resp = callRefine(input.finish());
     assert.isEqual(resp.result, -105, "trailing bytes rejected");
     return assert;
   }),
@@ -34,7 +40,7 @@ language: typescript
     const input = Encoder.create();
     input.u8(1); // admin tag
     input.u8(0x99); // unknown AdminCommand tag
-    const resp = callRefine(input.finishRaw());
+    const resp = callRefine(input.finish());
     assert.isEqual(resp.result, -105, "malformed");
     return assert;
   }),
@@ -43,9 +49,9 @@ language: typescript
     const assert = Assert.create();
     seedLibraryMapping("ok", 0x01, 16);
     const valid = buildDemoInput("ok", 1000, BytesBlob.empty());
-    const withTrail = new Uint8Array(valid.length + 1);
-    withTrail.set(valid, 0);
-    withTrail[valid.length] = 0xff;
+    const withTrail = BytesBlob.zero(valid.length + 1);
+    withTrail.raw.set(valid.raw, 0);
+    withTrail.raw[valid.length] = 0xff;
     const resp = callRefine(withTrail);
     assert.isEqual(resp.result, -106, "trailing bytes after demo payload rejected");
     return assert;
@@ -111,10 +117,4 @@ language: typescript
     TestMachine.setMachineResult(-9); // HUH sentinel (InvalidEntryPoint)
 
     const resp = callRefine(buildDemoInput("bad", 1000, BytesBlob.empty()));
-    assert.isEqual(resp.result, -102, "invalid entrypoint");
-    return assert;
-  }),
-
-  test("refine demo: malformed SPI preimage returns -107", () => {
-    const assert = Assert.create();
 ```

@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/bench/compare.ts#L133-L254'
 title: bench/compare.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-27T09:49:56+01:00'
-last_modified: '2026-04-27T09:49:56+01:00'
+created_at: '2026-05-08T13:25:50+02:00'
+last_modified: '2026-05-08T13:25:50+02:00'
 chunk_index: 1
 chunk_total: 4
 content_sha: b769beb5e858653b2be889336be3ce9bc91a4850615a28f973a9d2ad05c1eaca

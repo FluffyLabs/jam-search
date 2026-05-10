@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/package.json#L1-L27'
 title: package.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: ad97bb43478785ec070f6d9807445c2cbb9afcd49410a1399859c9a06671b99a
+content_sha: e011b08d4f7950360e17d8e1f79fbccb55da264cf980d664d19654a8cd9c15f5
 language: json
 ---
 `package.json` (lines 1–27)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@fluffylabs/as-lan-workspace",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "description": "Workspace for developing @fluffylabs/as-lan and @fluffylabs/as-lan-ecalli-mocks",
   "main": "index.ts",
@@ -36,8 +36,8 @@ language: json
   "author": "Fluffy Labs",
   "license": "MPL-2.0",
   "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
-    "assemblyscript": "^0.28.16"
+    "@biomejs/biome": "^2.4.14",
+    "assemblyscript": "^0.28.17"
   },
   "type": "module"
 }

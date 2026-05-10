@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/preimages.test.ts#L1-L112'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/preimages.test.ts#L1-L116'
 title: sdk/jam/preimages.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 21a55076c8cdc4c91782fec59f657255d463874f95fb27d814fc3102bd61e1e7
+content_sha: df0559b326664890171c3624be5d6cb6b45b983a9fef3a67045155705498fe41
 language: typescript
 ---
-`sdk/jam/preimages.test.ts` (lines 1–112)
+`sdk/jam/preimages.test.ts` (lines 1–116)
 
 ```typescript
 import { Bytes32, BytesBlob } from "../core/bytes";
@@ -34,9 +34,7 @@ export const TESTS: Test[] = [
     const p = Preimages.create();
     const result = p.lookup(Bytes32.zero());
     a.isEqual(result.isSome, true, "should be some");
-    a.isEqual(result.val!.length, 4, "length");
-    a.isEqual(result.val!.raw[0], 0xde, "byte 0");
-    a.isEqual(result.val!.raw[3], 0xef, "byte 3");
+    a.isEqualBytes(result.val!, data, "data");
     return a;
   }),
 
@@ -62,9 +60,7 @@ export const TESTS: Test[] = [
     const p = Preimages.create(64);
     const result = p.lookup(Bytes32.zero());
     a.isEqual(result.isSome, true, "should be some");
-    a.isEqual(result.val!.length, 2048, "length");
-    a.isEqual(result.val!.raw[0], 0, "byte 0");
-    a.isEqual(result.val!.raw[255], 255, "byte 255");
+    a.isEqualBytes(result.val!, large, "data");
     return a;
   }),
 
@@ -79,8 +75,7 @@ export const TESTS: Test[] = [
     const rp = RefinePreimages.create();
     const result = rp.lookup(Bytes32.zero());
     a.isEqual(result.isSome, true, "should be some");
-    a.isEqual(result.val!.length, 2, "length");
-    a.isEqual(result.val!.raw[0], 0xca, "byte 0");
+    a.isEqualBytes(result.val!, data, "data");
     return a;
   }),
 
@@ -95,9 +90,7 @@ export const TESTS: Test[] = [
     const rp = RefinePreimages.create();
     const result = rp.historicalLookup(Bytes32.zero());
     a.isEqual(result.isSome, true, "should be some");
-    a.isEqual(result.val!.length, 4, "length");
-    a.isEqual(result.val!.raw[0], 0xaa, "byte 0");
-    a.isEqual(result.val!.raw[3], 0xdd, "byte 3");
+    a.isEqualBytes(result.val!, data, "data");
     return a;
   }),
 
@@ -126,4 +119,15 @@ export const TESTS: Test[] = [
 
   test("AccumulatePreimages.query decodes Requested", () => {
     TestEcalli.reset();
+    const a = Assert.create();
+    // Requested: r7 = 0 (kind=0, slot0=0), r8 = 0
+    TestPreimages.setQueryResult(0, 0);
+
+    const ap = AccumulatePreimages.create();
+    const result = ap.query(Bytes32.zero(), 64);
+    a.isEqual(result.isSome, true, "should be some");
+    a.isEqual(result.val!.kind, PreimageStatusKind.Requested, "kind");
+    return a;
+  }),
+
 ```

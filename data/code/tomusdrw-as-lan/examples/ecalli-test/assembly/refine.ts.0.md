@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/refine.ts#L1-L71
 title: examples/ecalli-test/assembly/refine.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 13a4a8bd1c2680e34fe8649eabc89541c164a86db0c6a5ed5087f206d1b954da
+content_sha: b5d2b40e3b16bf08f3150063a9efa69d93dd416d4436a1850b1a2a448703e19d
 language: typescript
 ---
 `examples/ecalli-test/assembly/refine.ts` (lines 1–71)
@@ -56,7 +56,7 @@ export function refine(ptr: u32, len: u32): u64 {
     `refine: core=${args.coreIndex} item=${args.itemIndex} service=${args.serviceId} wpHash=${args.workPackageHash}`,
   );
 
-  const d = Decoder.fromBlob(args.payload.raw);
+  const d = Decoder.fromBytesBlob(args.payload);
   const ecalliIndex = d.varU64();
   if (d.isError) {
     logger.warn("Missing ecalli index in payload");

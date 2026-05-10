@@ -2,28 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/preimages.test.ts#L212-L273
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/preimages.test.ts#L214-L266
 title: sdk/jam/preimages.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: 52d24a448cf8c6b33c9d7ad1dc3277bfb5ea46a403656d848cce7c6e427ca3b5
+content_sha: 882f4a13b3fd61d464b7ba39dc15ce3a4e7eb207d5211bbfeec3aaed34d91534
 language: typescript
 ---
-`sdk/jam/preimages.test.ts` (lines 212–273)
+`sdk/jam/preimages.test.ts` (lines 214–266)
 
 ```typescript
-  // ─── AccumulatePreimages.forget ───────────────────────────────────────
-
-  test("AccumulatePreimages.forget returns ok on success", () => {
-    TestEcalli.reset();
-    const a = Assert.create();
-    TestPreimages.setForgetResult(0); // OK
-
-    const ap = AccumulatePreimages.create();
-    const result = ap.forget(Bytes32.zero(), 64);
     a.isEqual(result.isOkay, true, "should be ok");
     return a;
   }),

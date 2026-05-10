@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/storage.ts#L1-L114
 title: examples/pastebin/assembly/storage.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 294047df405af24ef45d1347a6055809ffba8f84bed04effb749436218c5a212
+content_sha: 158992acd8941aeb4e4225bed3c7dbc01feccca6ec0d432a28118eaf0868c06f
 language: typescript
 ---
 `examples/pastebin/assembly/storage.ts` (lines 1–114)
@@ -92,7 +92,7 @@ export class PasteDigest {
    */
   static decodeOrPanic(raw: BytesBlob): PasteDigest {
     if (raw.length < REFINE_OUTPUT_LEN) panic("PasteDigest: expected at least 36 bytes");
-    const d = Decoder.fromBlob(raw.raw);
+    const d = Decoder.fromBytesBlob(raw);
     const hash = d.bytes32();
     const length = d.u32();
     return new PasteDigest(hash, length);

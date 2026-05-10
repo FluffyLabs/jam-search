@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/sizes.yml#L1-L128
 title: .github/workflows/sizes.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 4f48dae2e6122d5aedcf2210c489d5a68bc667c5188b549ebf427aac4944be89
+content_sha: 330b9687c785629673cdae25ed3575694cc827af192ce81e822c19519b6444b6
 language: yaml
 ---
 `.github/workflows/sizes.yml` (lines 1–128)
@@ -22,7 +22,7 @@ on:
     branches: [ "main" ]
 
 env:
-  NODE_VERSION: 22.x
+  NODE_VERSION: 24.x
 
 permissions:
   pull-requests: write

@@ -1,19 +1,20 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L98-L160'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L98-L158'
 title: CLAUDE.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 2
 chunk_total: 6
-content_sha: 60de2482387e5246b2fea83de692dc667f302da3a21fd14aa483bebe228bd166
+content_sha: a24742bf7f58b48be71a1af56f939cdda5269e4062def6115b19a2cabb7366b4
 language: markdown
 ---
-`CLAUDE.md` (lines 98–160)
+`CLAUDE.md` (lines 98–158)
 
 ```markdown
+      constants.ts          TTL_SLOTS=1000, RECENT_N=32, CLEANUP_SLOTS_PER_CALL=8 + storage key prefixes
       storage.ts            Key builders (pasteKey/recentKey/expiryKey), PasteEntry codec, writeU32LE/readU32LE
       pastebin.test.ts      Integration tests (refine output, accumulate insert/idempotency/cleanup, solicit→attach→lookup)
 docs/                       Documentation (mdbook)
@@ -74,7 +75,4 @@ export function accumulate(ptr: u32, len: u32): u64 {
 ```
 
 All contexts expose `remainingGas(): i64` (ecalli 0) and factory methods for creating
-context-appropriate helpers. **Prefer `ctx.*()` over standalone `*.create()`.**
-
-Contexts:
 ```

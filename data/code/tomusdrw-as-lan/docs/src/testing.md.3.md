@@ -1,19 +1,131 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L368-L484'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L345-L468'
 title: docs/src/testing.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 3
 chunk_total: 5
-content_sha: 4a0734cd1f62dfaa49057e707626d9e91b4eb7e79dd67c7ff2c6d1698ad780bd
+content_sha: b296c2a7903fe3c364092d70c5537288a85f196310fea51092a3cc60de5d9870
 language: markdown
 ---
-`docs/src/testing.md` (lines 368–484)
+`docs/src/testing.md` (lines 345–468)
 
 ```markdown
+// Pre-populate a key
+const key = BytesBlob.encodeAscii("counter");
+const value = BytesBlob.wrap(new Uint8Array(8));
+TestStorage.set(key, value);
+
+// Delete a key
+TestStorage.set(key, null);
+```
+
+### TestPrivileged
+
+Configure the return values of privileged governance ecallis (bless, assign, designate):
+
+```typescript
+import { TestPrivileged } from "@fluffylabs/as-lan/test";
+import { EcalliResult } from "@fluffylabs/as-lan";
+
+TestPrivileged.setBlessResult(EcalliResult.WHO);
+TestPrivileged.setAssignResult(EcalliResult.CORE);
+TestPrivileged.setDesignateResult(EcalliResult.HUH);
+```
+
+### TestServices
+
+Configure the return values of service lifecycle ecallis (new_service, eject):
+
+```typescript
+import { TestServices } from "@fluffylabs/as-lan/test";
+import { EcalliResult } from "@fluffylabs/as-lan";
+
+TestServices.setNewServiceResult(EcalliResult.CASH);
+TestServices.setEjectResult(EcalliResult.WHO);
+```
+
+By default, `new_service()` returns auto-incrementing service IDs (256, 257, ...).
+Setting a result overrides this behavior until reset.
+
+### TestTransfer
+
+Configure the return value of the `transfer()` ecalli:
+
+```typescript
+import { TestTransfer } from "@fluffylabs/as-lan/test";
+import { EcalliResult } from "@fluffylabs/as-lan";
+
+TestTransfer.setTransferResult(EcalliResult.CASH);
+```
+
+### TestEcalli
+
+Reset all configuration to defaults and clear storage:
+
+```typescript
+import { TestEcalli } from "@fluffylabs/as-lan/test";
+
+TestEcalli.reset();
+```
+
+## Default Stub Behavior
+
+**General (0-5, 100):**
+
+| Ecalli | Default |
+|--------|---------|
+| `gas()` | Returns `1_000_000` |
+| `fetch()` | Writes a 16-byte kind-dependent pattern, returns `16` |
+| `lookup()` | Writes `"test-preimage"` (13 bytes), returns `13` |
+| `read()` | Reads from in-memory Map; returns `NONE` (`-1`) if key missing |
+| `write()` | Writes to in-memory Map; returns previous value length or `NONE` |
+| `info()` | Returns a 96-byte structure (code\_hash=`0xAA...`, balance=`1000`) |
+| `log()` | Prints `[LEVEL] target: message` to console |
+
+**Refine (6-13):**
+
+| Ecalli | Default |
+|--------|---------|
+| `historical_lookup()` | Writes `"test-historical"` (15 bytes), returns `15` |
+| `export_segment()` | Returns incrementing segment index (0, 1, 2, ...) |
+| `machine()` | Returns incrementing machine ID (0, 1, 2, ...) |
+| `peek()` | Returns `OK` (0) |
+| `poke()` | Returns `OK` (0) |
+| `pages()` | Returns `OK` (0) |
+| `invoke()` | Returns `HALT` (0), writes `r8 = 0` |
+| `expunge()` | Returns `OK` (0) |
+
+**Accumulate (14-26):**
+
+| Ecalli | Default |
+|--------|---------|
+| `bless()` | Returns `OK` (0) |
+| `assign()` | Returns `OK` (0) |
+| `designate()` | Returns `OK` (0) |
+| `checkpoint()` | Returns remaining gas (delegates to `gas()` mock) |
+| `new_service()` | Returns incrementing service ID (256, 257, ...) |
+| `upgrade()` | Returns `OK` (0) |
+| `transfer()` | Returns `OK` (0) |
+| `eject()` | Returns `OK` (0) |
+| `query()` | Returns `NONE` (-1), writes `r8 = 0` |
+| `solicit()` | Returns `OK` (0) |
+| `forget()` | Returns `OK` (0) |
+| `yield_result()` | Returns `OK` (0) |
+| `provide()` | Returns `OK` (0) |
+
+
+See the [fibonacci](https://github.com/tomusdrw/as-lan/tree/main/examples/fibonacci)
+and [ecalli-test](https://github.com/tomusdrw/as-lan/tree/main/examples/ecalli-test)
+examples for usage examples.
+
+## Authoring new test helpers
+
+Sometimes a test needs to reach past the stub ecalli surface — for example,
+to simulate a block extrinsic (like `TestLookup.setAttachedPreimage`), seed
 state that's not reachable via any host call, or configure mock behavior
 that spans multiple ecallis. The pattern used across this repo has four
 layers.
@@ -26,109 +138,4 @@ Add the state and the mutator function to the relevant file under
 **must take integer pointers**, not Uint8Arrays:
 
 ```typescript
-// sdk-ecalli-mocks/src/general/lookup.ts
-import { readBytes, writeToMem } from "../memory.js";
-
-const attached: Map<string, Uint8Array> = new Map();
-
-/**
- * Simulate a preimage arriving via the `xtpreimages` extrinsic.
- */
-export function setPreimageAttached(
-  hash_ptr: number,
-  preimage_ptr: number,
-  preimage_len: number,
-): void {
-  const hashBytes = readBytes(hash_ptr, 32);
-  if (hashBytes.length !== 32) throw new Error("setPreimageAttached: hash must be 32 bytes");
-  const preimage = readBytes(preimage_ptr, preimage_len);
-  attached.set(toHex(hashBytes), preimage);
-}
-
-// Hook into the existing reset function so TestEcalli.reset() clears it:
-export function resetLookup(): void {
-  // ... existing resets ...
-  attached.clear();
-}
-```
-
-Key rules:
-- **Pointers, not Uint8Arrays.** WASM imports pass integer offsets into
-  WASM memory. Use `readBytes(ptr, len)` to materialize a `Uint8Array`.
-- **Validate lengths.** Throw on wrong-sized inputs — this is a test
-  helper, loud failures are a feature.
-- **Hook into reset.** Extend the module's `resetXxx()` function so
-  `TestEcalli.reset()` clears the new state automatically.
-
-### Layer 2 — JS barrel re-exports
-
-Expose the function at the package root so WASM imports can find it by
-name. Add it to BOTH the sub-barrel (`general/index.ts`, `accumulate/index.ts`,
-or `refine/index.ts`) AND the top-level `src/index.ts`:
-
-```typescript
-// sdk-ecalli-mocks/src/general/index.ts
-export {
-  lookup, setLookupPreimage, setLookupNone, resetLookup,
-  setPreimageAttached, clearPreimageAttachments,
-} from "./lookup.js";
-
-// sdk-ecalli-mocks/src/index.ts
-export {
-  lookup, setLookupPreimage, setLookupNone,
-  setPreimageAttached, clearPreimageAttachments,
-} from "./general/index.js";
-```
-
-The top-level re-export is what satisfies the WASM imports — the name must
-match exactly what you declare as `@external("ecalli", "<name>")` on the
-AS side.
-
-### Layer 3 — AS-side wrapper
-
-Add an `@external` declaration and a static wrapper class in
-`sdk/test/test-ecalli/` (usually alongside the stub of the ecalli it
-augments — `lookup.ts` for lookup-related helpers, `preimages.ts` for
-accumulate preimage stubs, etc.):
-
-```typescript
-// sdk/test/test-ecalli/lookup.ts
-import { Bytes32, BytesBlob } from "../../core/bytes";
-
-// @ts-expect-error: decorator
-@external("ecalli", "setPreimageAttached")
-declare function _setPreimageAttached(
-  hash_ptr: u32,
-  preimage_ptr: u32,
-  preimage_len: u32,
-): void;
-
-export class TestLookup {
-  /**
-   * Simulate a preimage arriving via the `xtpreimages` block extrinsic.
-   */
-  static setAttachedPreimage(hash: Bytes32, preimage: BytesBlob): void {
-    _setPreimageAttached(hash.ptr(), preimage.ptr(), preimage.length);
-  }
-}
-```
-
-Key rules:
-- **Static class + static methods.** Matches the style of every other
-  `Test*` helper (`TestGas`, `TestFetch`, `TestStorage`, ...).
-- **Ergonomic AS types in, pointers to WASM out.** Accept `Bytes32` /
-  `BytesBlob` and pass `.ptr()` + `.length` to the `@external` binding.
-- **Place where it conceptually belongs.** If the helper configures the
-  `lookup()` mock, put it on `TestLookup`, not `TestPreimages` — even if
-  the underlying JS state lives elsewhere.
-
-### Layer 4 — documentation
-
-Document the new helper in the relevant `Test*` subsection of this file
-above. If it captures a production-only mechanism (extrinsic delivery,
-gossip, etc.), explain the mechanism in a short paragraph so future
-readers understand what path the mock is emulating.
-
-### End-to-end example
-
 ```

@@ -2,59 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/pastebin.test.ts#L117-L219
+  https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/pastebin.test.ts#L104-L194
 title: examples/pastebin/assembly/pastebin.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
-chunk_total: 4
-content_sha: 019bed9a2ea8c4fce68dd88753e1f8d3a79600d39e1f0274cb302621ac9d7e8d
+chunk_total: 3
+content_sha: 58dafe8b1e789b2b9edcd97611469dfc0460ac3585461d03e21f2975c33ce780
 language: typescript
 ---
-`examples/pastebin/assembly/pastebin.test.ts` (lines 117–219)
+`examples/pastebin/assembly/pastebin.test.ts` (lines 104–194)
 
 ```typescript
-    assert.isEqualBytes(op.hash.bytes, BytesBlob.wrap(blake2b256(new Uint8Array(0))), "hash");
-    assert.isEqual(op.length, <u32>0, "length_LE");
-    return assert;
-  }),
-  test("accumulate solicits, writes paste entry, pushes recent", () => {
-    TestEcalli.reset();
-    const assert = Assert.create();
-
-    const payload = new Uint8Array(8);
-    for (let i = 0; i < 8; i += 1) payload[i] = u8(i);
-    const hashBytes = blake2b256(payload);
-    const okBlob = buildOkBlob(hashBytes, 8);
-
-    callAccumulateSingle(123, okBlob);
-
-    // Paste entry should be present.
-    const storage = CurrentServiceData.create();
-    const hash = Bytes32.wrapUnchecked(hashBytes);
-    const stored = storage.read(pasteKey(hash));
-    assert.isEqual(stored.isSome, true, "paste entry present");
-    if (!stored.isSome) return assert;
-    const raw = stored.val!;
-    assert.isEqual(<u32>raw.length, <u32>8, "paste entry length");
-    if (raw.length !== 8) return assert;
-
-    const entry = PasteEntry.decodeOrPanic(raw.raw);
-    assert.isEqual(entry.slot, <u32>123, "paste entry slot");
-    assert.isEqual(entry.length, <u32>8, "paste entry payload length");
-    return assert;
-  }),
-  test("accumulate re-submission is idempotent", () => {
-    TestEcalli.reset();
-    const assert = Assert.create();
-
-    const payload = new Uint8Array(4);
-    payload[0] = 1;
-    payload[1] = 2;
-    payload[2] = 3;
-    payload[3] = 4;
-    const hashBytes = blake2b256(payload);
+    const payload = BytesBlob.parseBlob("0x01020304").okay!;
+    const hashBytes = blake2b256(payload.raw);
     const okBlob = buildOkBlob(hashBytes, 4);
 
     callAccumulateSingle(100, okBlob);
@@ -76,10 +38,8 @@ language: typescript
     TestEcalli.reset();
     const assert = Assert.create();
 
-    const payload = new Uint8Array(2);
-    payload[0] = 0xaa;
-    payload[1] = 0xbb;
-    const hashBytes = blake2b256(payload);
+    const payload = BytesBlob.parseBlob("0xaabb").okay!;
+    const hashBytes = blake2b256(payload.raw);
     const okBlob = buildOkBlob(hashBytes, 2);
 
     // Insert at slot 10 → scheduled to expire at slot 10 + TTL_SLOTS = 1010.
@@ -107,7 +67,7 @@ language: typescript
       const cursorVal = cursorStored.val!;
       assert.isEqual(<u32>cursorVal.length, <u32>4, "cursor blob length");
       if (cursorVal.length === 4) {
-        assert.isEqual(Decoder.fromBlob(cursorVal.raw).u32(), <u32>1048, "cursor value");
+        assert.isEqual(Decoder.fromBytesBlob(cursorVal).u32(), <u32>1048, "cursor value");
       }
     }
 
@@ -118,4 +78,32 @@ language: typescript
     const assert = Assert.create();
 
     // 10-byte payload [0xc0..0xc9].
+    const payload = BytesBlob.zero(10);
+    for (let i: u32 = 0; i < 10; i += 1) payload.raw[i] = u8(0xc0 + i);
+    const hashBytes = blake2b256(payload.raw);
+    const okBlob = buildOkBlob(hashBytes, 10);
+
+    // Accumulate: inserts paste entry + calls solicit.
+    callAccumulateSingle(50, okBlob);
+
+    // Simulate extrinsic delivery (CE 142 gossip + xtpreimages inclusion).
+    TestLookup.setAttachedPreimage(Bytes32.wrapUnchecked(hashBytes), payload);
+
+    // Service-visible lookup via the lookup ecalli.
+    const preimages = Preimages.create();
+    const looked = preimages.lookup(Bytes32.wrapUnchecked(hashBytes));
+    assert.isEqual(looked.isSome, true, "preimage looked up");
+    if (!looked.isSome) return assert;
+    assert.isEqualBytes(looked.val!, payload, "looked-up blob");
+    return assert;
+  }),
+  test("index.ts dispatch routes len==2 to is_authorized, else to refine", () => {
+    TestEcalli.reset();
+    const assert = Assert.create();
+
+    // len == 2: is_authorized path. Payload is a u16 coreIndex; 0x0000 is fine.
+    const coreIndex = BytesBlob.zero(2);
+    const authRaw = unpackResult(dispatch(coreIndex.ptr(), coreIndex.length));
+    const authResp = RefineContext.create().response.decode(Decoder.fromBlob(authRaw)).okay!;
+    assert.isEqual(authResp.result, 0, "is_authorized result");
 ```

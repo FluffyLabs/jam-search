@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L380-L471
 title: packages/workers/importer/finality.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 4
 chunk_total: 5
 content_sha: c07df66260ed9b1bb1a110306a715b9f79132523b8535c4512b9e8c410c91393

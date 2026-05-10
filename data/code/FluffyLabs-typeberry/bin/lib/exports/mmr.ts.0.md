@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/exports/mmr.ts#L1-L9'
 title: bin/lib/exports/mmr.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 93b82fdd4659ee47a644d339bdacd5745a4545290221f9295a69a61ab3694c44

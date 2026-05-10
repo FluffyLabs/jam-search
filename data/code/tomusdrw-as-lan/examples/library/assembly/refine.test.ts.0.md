@@ -2,32 +2,44 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L1-L109
+  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L1-L116
 title: examples/library/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 5
-content_sha: 6e444c7a2d8fdc24fecc316f82e1bc7cf04b4b5e698db30c7e282e56d6b9b16e
+content_sha: 80316b9e05d6dfade3e6c2af7ee258c489cf9f26ca71bed37745437203476973
 language: typescript
 ---
-`examples/library/assembly/refine.test.ts` (lines 1–109)
+`examples/library/assembly/refine.test.ts` (lines 1–116)
 
 ```typescript
-import { Bytes32, BytesBlob, Decoder, Encoder, InvokeIo, Machine } from "@fluffylabs/as-lan";
-import { Assert, Test, TestHistoricalLookup, TestMachine, TestStorage, test } from "@fluffylabs/as-lan/test";
+import { Bytes32, BytesBlob, Decoder, Encoder, InvokeIo, Machine, Response } from "@fluffylabs/as-lan";
+import {
+  Assert,
+  RefineCall,
+  Test,
+  TestHistoricalLookup,
+  TestMachine,
+  TestStorage,
+  test,
+} from "@fluffylabs/as-lan/test";
 import { AdminCommand, AdminCommandCodec, AdminCommandKind } from "./admin";
+import { refine } from "./refine";
 import { LibraryEntry, LibraryEntryCodec, libraryKey } from "./storage";
-import { callRefine } from "./test-helpers";
 
-function buildDemoInput(name: string, gas: u64, payload: BytesBlob): Uint8Array {
+function buildDemoInput(name: string, gas: u64, payload: BytesBlob): BytesBlob {
   const enc = Encoder.create();
   enc.u8(0); // demo tag
   enc.bytesVarLen(BytesBlob.encodeAscii(name));
   enc.u64(gas);
   enc.bytesVarLen(payload);
-  return enc.finishRaw();
+  return enc.finish();
+}
+
+function callRefine(payload: BytesBlob): Response {
+  return RefineCall.create().call(refine, payload);
 }
 
 /**
@@ -87,7 +99,7 @@ export const TESTS: Test[] = [
     assert.isEqual(bytes.length, 36, "encoded length");
 
     const decoded = codec.decode(Decoder.fromBlob(bytes)).okay!;
-    assert.isEqual(decoded.hash.raw[0], 0x42, "hash byte 0");
+    assert.isEqualBytes(decoded.hash.bytes, hash.bytes, "hash");
     assert.isEqual(decoded.length, 1024, "length");
     return assert;
   }),
@@ -112,16 +124,11 @@ export const TESTS: Test[] = [
     const decoded = codec.decode(Decoder.fromBlob(enc.finishRaw())).okay!;
     assert.isEqual<u32>(decoded.kind, AdminCommandKind.SetMapping, "kind");
     assert.isEqualBytes(decoded.name!, BytesBlob.encodeAscii("ed25519"), "name");
-    assert.isEqual(decoded.hash!.raw[0], 0xaa, "hash");
+    assert.isEqualBytes(decoded.hash!.bytes, hash.bytes, "hash");
     assert.isEqual(decoded.length, 4096, "length");
     return assert;
   }),
 
   test("admin: RemoveMapping round-trip", () => {
     const assert = Assert.create();
-    const cmd = AdminCommand.removeMapping(BytesBlob.encodeAscii("blake2b"));
-    const codec = AdminCommandCodec.create();
-
-    const enc = Encoder.create();
-    codec.encode(cmd, enc);
 ```

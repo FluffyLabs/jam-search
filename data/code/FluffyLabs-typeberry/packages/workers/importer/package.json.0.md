@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/package.json#L1-L33
 title: packages/workers/importer/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: d69968efb5e7c69757649644c1088671c6e23d312d6f9920e842ee5d4bf4973b
+content_sha: e013a0614b47fd00fc7d91bb75e99ddbf7f110b2ae1a33c73ea7f3dc5d2782b7
 language: json
 ---
 `packages/workers/importer/package.json` (lines 1–33)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/importer",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "A JAM block importer queue.",
   "main": "index.ts",
   "dependencies": {

@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/README.md#L1-L178'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/README.md#L1-L159'
 title: bin/jam/README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: 9fe5d78ff16b2b8898f999a3124039f79e4d68041bd40140accbc2528b321b19
+content_sha: 589db98289942ecda51e8a6bd8a26bca73a9a2427cc22707413bbb2f5126470f
 language: markdown
 ---
-`bin/jam/README.md` (lines 1–178)
+`bin/jam/README.md` (lines 1–159)
 
 ```markdown
 # @typeberry/jam
@@ -148,48 +148,29 @@ JAM_LOG=trace jam dev 1
 JAM_LOG=networking:debug,state:trace jam
 ```
 
-### OpenTelemetry Variables
+### `JAM_FUZZ*` (Standard Target Packaging)
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `OTEL_ENABLED` | Enable/disable OpenTelemetry | `true` |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | URL to push metrics to | `http://localhost:9090/api/v1/otlp` |
+When `JAM_FUZZ` is set, the node starts in fuzz-target mode regardless of any
+command-line arguments (passing CLI args alongside `JAM_FUZZ` is rejected).
+This is the entrypoint expected by the
+[JAM conformance fuzz target packaging](https://github.com/davxy/jam-conformance/tree/main/fuzz-proto#standard-target-packaging)
+contract.
 
-**Example:**
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `JAM_FUZZ` | Yes (any non-empty value) | Activates fuzz mode. |
+| `JAM_FUZZ_SPEC` | Yes | Chain spec: `tiny` or `full`. |
+| `JAM_FUZZ_SOCK_PATH` | Yes | Unix domain socket path the target listens on. |
+| `JAM_FUZZ_DATA_PATH` | Yes | Persistent data directory (currently unused; reserved). |
+| `JAM_FUZZ_LOG_LEVEL` | No | Log verbosity: `error`, `warn`, `info`, `debug`, `trace`. Overrides `JAM_LOG` in fuzz mode. |
 
-```bash
-# Metrics will be pushed to local prometheus with OTLP receiver.
-jam dev 1
+The target stays up across multiple fuzzer sessions; on each `Initialize`
+message it resets the in-memory state to the genesis sent by the fuzzer.
 
-# Disable telemetry
-OTEL_ENABLED=false jam dev 1
-```
-
-### Local Prometheus via Docker
-
-To inspect metrics pushed over OTLP, start a Prometheus container with the OTLP receiver enabled:
-
-```bash
-docker run -d -p 9090:9090 --name=prometheus prom/prometheus \
-  --config.file=/etc/prometheus/prometheus.yml \
-  --web.enable-otlp-receiver
-```
-
-The default `OTEL_EXPORTER_OTLP_ENDPOINT` already points to the local instance, so run the node and open `http://localhost:9090` to explore the collected telemetry.
-
-## Development
-
-The `dev` command is designed for local testing with multiple validators:
+**Docker example:**
 
 ```bash
-# Terminal 1
-jam dev 1
-
-# Terminal 2
-jam dev 2
-
-# Terminal 3
-jam dev 3
-```
-
+docker run --rm \
+  -e JAM_FUZZ=1 \
+  -e JAM_FUZZ_SPEC=tiny \
 ```

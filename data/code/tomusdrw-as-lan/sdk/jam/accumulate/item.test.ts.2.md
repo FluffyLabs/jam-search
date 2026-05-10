@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/item.test.ts#L202-L307
 title: sdk/jam/accumulate/item.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: cad6f4c1bd0d00906eb8b9bf61edeb7a18fde5ccd6eca6b255d511dcf404fe8e
+content_sha: 0ff613ee2c624c6c1a93e9f8abab984643b27bbeeede74a2c2d2ae58f69cdc92
 language: typescript
 ---
 `sdk/jam/accumulate/item.test.ts` (lines 202–307)
@@ -113,7 +113,7 @@ language: typescript
   }),
 
   test("AccumulateItem decode rejects empty input", () => {
-    const d = Decoder.fromBlob(BytesBlob.empty().raw);
+    const d = Decoder.fromBytesBlob(BytesBlob.empty());
     const r = accumulateItemCodec.decode(d);
 
     const assert = Assert.create();

@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/general/info.ts#L1-L26'
 title: sdk/ecalli/general/info.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 73776fb79622d1c06294b6573b7de700307cfcc741f368de37e7900a563176cd

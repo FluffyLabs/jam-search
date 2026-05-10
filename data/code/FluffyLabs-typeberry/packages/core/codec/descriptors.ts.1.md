@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/codec/descriptors.ts#L146-L304
 title: packages/core/codec/descriptors.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 1
 chunk_total: 6
 content_sha: 06547600e0dae49f5f6a76f6e5b13794ab4b56410076b6d6719e225d63596b77

@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L1-L51'
 title: CLAUDE.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 6
-content_sha: 59aaffc1f9e2b91fa7681bed15e13ad6a7416e8434f1a55855ac0eb6ba0898b0
+content_sha: 4b6e21f93eb63bda857b4a12e50c42a88a990677ccfca243d28c4f1add0f43b8
 language: markdown
 ---
 `CLAUDE.md` (lines 1–51)
@@ -50,6 +50,7 @@ sdk/                        AssemblyScript SDK library
     authorize/              Authorize-context fetcher
       fetcher.ts            AuthorizeFetcher (inherits constants + kinds 7-13 from WorkPackageFetcher)
   test/                     Test framework (Assert, TestSuite, strBlob, unpackResult)
+    calls.ts                RefineCall / AccumulateCall (entrypoint invocation) + OperandItem / TransferItem (AccumulateItem builders) — chainable, with* setters, used everywhere
     test-ecalli/            Test helpers for configuring mock stubs from AS
 sdk-ecalli-mocks/           JS-side mock stubs for ecalli host calls (used in tests)
   src/
@@ -64,5 +65,4 @@ examples/
   all-ecalli/               Smoke-test service invoking every ecalli (refine + accumulate + authorize)
     assembly/
       refine.ts             Refine entry point — invokes general (0-5, 100) + refine (6-13) ecallis
-      accumulate.ts         Accumulate entry point — invokes general + accumulate (14-26) ecallis
 ```

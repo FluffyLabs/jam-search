@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/all-ecalli/assembly/refine.ts#L1-L127
 title: examples/all-ecalli/assembly/refine.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: df707e411e3d8be3a074ed48b820488f6a46b01e6fe50aa97f273e71c2df57c9

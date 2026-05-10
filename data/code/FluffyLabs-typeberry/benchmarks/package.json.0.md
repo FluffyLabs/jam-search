@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/package.json#L1-L22
 title: benchmarks/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 417488ea4c9a0eb5cf143a6cc49f65c756161ba5b36c586fa933c6c9d2e25368
+content_sha: 610c954d07668c9407dc947d1f683ba53fa5db8e498ca43f4471696261d130f4
 language: json
 ---
 `benchmarks/package.json` (lines 1–22)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/benchmarks",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "Benchmarks - run using ./tools/benchmark",
   "private": true,
   "main": "index.ts",

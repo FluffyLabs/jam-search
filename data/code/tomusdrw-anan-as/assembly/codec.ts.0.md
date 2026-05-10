@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/codec.ts#L1-L160'
 title: assembly/codec.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-27T09:49:56+01:00'
-last_modified: '2026-04-27T09:49:56+01:00'
+created_at: '2026-05-08T13:25:50+02:00'
+last_modified: '2026-05-08T13:25:50+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: c9230102129b783f33619fb9ada9b4ee17692126588aa64d9b11337942131f3b

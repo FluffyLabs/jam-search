@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk-ecalli-mocks/package.json#L1-L32
 title: sdk-ecalli-mocks/package.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: f73c52a90740c99fe5b6984c167993a80fc5255ffcf04a4153516be9bafe1999
+content_sha: 014a3665009d142ce910119d12f97a097bf864062c21d194756600848658cf1b
 language: json
 ---
 `sdk-ecalli-mocks/package.json` (lines 1–32)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@fluffylabs/as-lan-ecalli-mocks",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Configurable ecalli host call stubs for testing JAM services",
   "type": "module",
   "main": "dist/index.js",

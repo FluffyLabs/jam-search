@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/accumulate.test.ts#L1-L118
+  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/accumulate.test.ts#L1-L121
 title: examples/ecalli-test/assembly/accumulate.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 5e0219dcd3b9d57aebec3af79fe53e9cd173d79680ea4a2afcda981c594b3462
+content_sha: 07fbbd328b37bbf7a2bc3330d02d2c44235ee023d33549591b3fe0f41f3b983e
 language: typescript
 ---
-`examples/ecalli-test/assembly/accumulate.test.ts` (lines 1–118)
+`examples/ecalli-test/assembly/accumulate.test.ts` (lines 1–121)
 
 ```typescript
 import { AccumulateContext, BytesBlob, Decoder, Encoder } from "@fluffylabs/as-lan";
@@ -38,15 +38,16 @@ export const TESTS: Test[] = [
     TestAccumulate.setItem(0, item);
     const raw = callAccumulate(1);
     const accCtx = AccumulateContext.create();
-    const resp = accCtx.response.decode(Decoder.fromBlob(raw)).okay!;
+    const resp = accCtx.response.decode(Decoder.fromBytesBlob(raw)).okay!;
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "transfer result OK");
-    // Transfer data encoded as: source(u32) + dest(u32) + amount(u64) + gas(u64)
-    const d = Decoder.fromBlob(resp.data.raw);
-    assert.isEqual(d.u32(), 99, "transfer source");
-    assert.isEqual(d.u32(), 42, "transfer dest");
-    assert.isEqual(d.u64(), 500, "transfer amount");
-    assert.isEqual(d.u64(), 10000, "transfer gas");
+    // Transfer data is re-encoded as: source(u32) + dest(u32) + amount(u64) + gas(u64).
+    const expected = Encoder.create();
+    expected.u32(99);
+    expected.u32(42);
+    expected.u64(500);
+    expected.u64(10000);
+    assert.isEqualBytes(resp.data, expected.finish(), "transfer payload");
     return assert;
   }),
 
@@ -64,7 +65,7 @@ export const TESTS: Test[] = [
     p.bytesVarLen(BytesBlob.empty()); // auto_accum
     p.varU64(0); // auto_accum_count
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "bless returns OK");
     return assert;
@@ -77,7 +78,7 @@ export const TESTS: Test[] = [
     p.bytesVarLen(BytesBlob.empty()); // auth_queue
     p.varU64(1); // assigners
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "assign returns OK");
     return assert;
@@ -88,7 +89,7 @@ export const TESTS: Test[] = [
     p.varU64(EcalliIndex.Designate);
     p.bytesVarLen(BytesBlob.empty()); // validators
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "designate returns OK");
     return assert;
@@ -98,7 +99,7 @@ export const TESTS: Test[] = [
     const p = Encoder.create();
     p.varU64(EcalliIndex.Checkpoint);
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 1000000, "checkpoint returns gas");
     return assert;
@@ -114,7 +115,7 @@ export const TESTS: Test[] = [
     p.varU64(0); // gratis_storage
     p.varU64(u64(u32.MAX_VALUE)); // requested_id (auto)
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 256, "new_service returns service ID 256");
     return assert;
@@ -127,10 +128,12 @@ export const TESTS: Test[] = [
     p.varU64(100000); // gas
     p.varU64(50000); // allowance
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "upgrade returns OK");
     return assert;
   }),
 
+  test("transfer ecalli: transfers balance", () => {
+    const p = Encoder.create();
 ```

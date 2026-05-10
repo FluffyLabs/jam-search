@@ -1,19 +1,21 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L153-L213'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L152-L213'
 title: CLAUDE.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 3
 chunk_total: 6
-content_sha: 26b34a5b2ee33ff0b449c9f7a133080d73777f6c232e26015f330b038ed1ba59
+content_sha: 759ea5abbabe9a884f511b2c6e0841b61f454b76959ed98da1c8cf962eef9743
 language: markdown
 ---
-`CLAUDE.md` (lines 153–213)
+`CLAUDE.md` (lines 152–213)
 
 ```markdown
+  const storage = ctx.serviceData();   // CurrentServiceData
+  // ... use fetcher, preimages, storage, and ctx ...
   return ctx.respond(result, data);
 }
 ```
@@ -74,5 +76,4 @@ Preimages (ecalli 2: lookup)
 ```
 
 - **Preimages** — `lookup(hash, serviceId?)` → `Optional<BytesBlob>`. Available in all contexts.
-- **RefinePreimages** — adds `historicalLookup(hash, serviceId?)` → `Optional<BytesBlob>`.
 ```

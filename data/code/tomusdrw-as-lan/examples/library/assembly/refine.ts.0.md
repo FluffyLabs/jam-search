@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.ts#L1-L101
 title: examples/library/assembly/refine.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 5dee80cb08a2a8b5ffa2cd65fcc77d983099c0f14c212b1a00c91e80145e5866
+content_sha: 7b0a1a3a082320a4cc396727502cc9667a265c0c8d0e2da2a96a92ebc7b7af10
 language: typescript
 ---
 `examples/library/assembly/refine.ts` (lines 1–101)
@@ -86,7 +86,7 @@ function handleDemo(ctx: RefineContext, rest: BytesBlob): u64 {
     logger.warn(`refine demo: unknown library ${name.toString()}`);
     return ctx.respond(i64(LibraryError.UnknownLib));
   }
-  const entryDecoder = Decoder.fromBlob(stored.val!.raw);
+  const entryDecoder = Decoder.fromBytesBlob(stored.val!);
   const entryR = LibraryEntryCodec.create().decode(entryDecoder);
   if (entryR.isError || !entryDecoder.isFinished()) {
     logger.warn(`refine demo: malformed stored entry for ${name.toString()}`);

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/refine.test.ts#L1-L119
+  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/refine.test.ts#L1-L121
 title: examples/ecalli-test/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 4
-content_sha: d196db664d9591fd97c3e62caa6859ec70b76fc86312585dfcc32d481dea30cd
+content_sha: 7222ef696d278eb600a7e4a7aafa38d70ea3a084522771366150badd821ab738
 language: typescript
 ---
-`examples/ecalli-test/assembly/refine.test.ts` (lines 1–119)
+`examples/ecalli-test/assembly/refine.test.ts` (lines 1–121)
 
 ```typescript
 import { BytesBlob, Encoder } from "@fluffylabs/as-lan";
@@ -36,7 +36,7 @@ export const TESTS: Test[] = [
     const p = Encoder.create();
     p.varU64(EcalliIndex.Gas);
 
-    const resp = callRefine(p.finishRaw());
+    const resp = callRefine(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 1000000, "gas result");
     assert.isEqual(resp.data.raw.length, 0, "no output data");
@@ -52,13 +52,13 @@ export const TESTS: Test[] = [
     p.varU64(0); // offset
     p.varU64(32); // maxLen
 
-    const resp = callRefine(p.finishRaw());
+    const resp = callRefine(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 16, "fetch total length");
-    assert.isEqual(resp.data.raw.length, 16, "fetched data length");
-    // Verify pattern: stub fills with (kind*16 + i) & 0xFF
-    assert.isEqual(resp.data.raw[0], (7 * 16) & 0xff, "data[0]");
-    assert.isEqual(resp.data.raw[1], (7 * 16 + 1) & 0xff, "data[1]");
+    // Stub fills 16 bytes with (kind*16 + i) & 0xFF — for kind=7 that's 0x70..0x7f.
+    const expected = BytesBlob.zero(16);
+    for (let i = 0; i < 16; i++) expected.raw[i] = u8((7 * 16 + i) & 0xff);
+    assert.isEqualBytes(resp.data, expected, "fetched data");
     return assert;
   }),
 
@@ -70,7 +70,7 @@ export const TESTS: Test[] = [
     p.varU64(0); // offset
     p.varU64(256); // maxLen
 
-    const resp = callRefine(p.finishRaw());
+    const resp = callRefine(p.finish());
     const assert = Assert.create();
     // stub returns "test-preimage" (13 bytes)
     assert.isEqual(resp.result, 13, "lookup total length");
@@ -86,7 +86,7 @@ export const TESTS: Test[] = [
     p.varU64(0); // offset
     p.varU64(8); // maxLen
 
-    const resp = callRefine(p.finishRaw());
+    const resp = callRefine(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, -1, "read returns NONE");
     assert.isEqual(resp.data.raw.length, 0, "no data for missing key");
@@ -100,7 +100,7 @@ export const TESTS: Test[] = [
     const val = BytesBlob.parseBlob("0xcafebabe").okay!;
     p.bytesVarLen(val); // value
 
-    const resp = callRefine(p.finishRaw());
+    const resp = callRefine(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, -1, "write returns NONE (no previous value)");
     return assert;
@@ -117,14 +117,10 @@ export const TESTS: Test[] = [
     p.varU64(0); // offset
     p.varU64(8); // maxLen
 
-    const resp = callRefine(p.finishRaw());
+    const resp = callRefine(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 4, "read returns value length");
-    assert.isEqual(resp.data.raw.length, 4, "data length");
-    assert.isEqual(resp.data.raw[0], 0xca, "data[0]");
-    assert.isEqual(resp.data.raw[1], 0xfe, "data[1]");
-    assert.isEqual(resp.data.raw[2], 0xba, "data[2]");
-    assert.isEqual(resp.data.raw[3], 0xbe, "data[3]");
+    assert.isEqualBytes(resp.data, val, "read data");
     return assert;
   }),
 
@@ -134,4 +130,10 @@ export const TESTS: Test[] = [
 
     const p = Encoder.create();
     p.varU64(EcalliIndex.Write);
+    p.bytesVarLen(strBlob("mykey")); // key
+    p.bytesVarLen(strBlob("newval")); // value
+
+    const resp = callRefine(p.finish());
+    const assert = Assert.create();
+    assert.isEqual(resp.result, 4, "write returns previous value length");
 ```

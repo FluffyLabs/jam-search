@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L1-L139'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L1-L117'
 title: docs/src/testing.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 5
-content_sha: a202370eb1d8d592b320e0632c0edcbf3f662f126a58fa0ebc92ec9308b5008f
+content_sha: 9837915beee486dd9ce48c608bb4ffd6208515154b7bfaf0da919249539e5e8e
 language: markdown
 ---
-`docs/src/testing.md` (lines 1–139)
+`docs/src/testing.md` (lines 1–117)
 
 ```markdown
 # Testing
@@ -107,50 +107,28 @@ This compiles your test-run entry point to WASM (with the `test` target from
 `asconfig.json`), then executes it in Node.js with the ecalli stubs providing
 host call implementations.
 
-## Configuring Ecalli Mocks
+### Invoking your service
 
-By default the stubs provide sensible test values (e.g. `gas()` returns
-`1_000_000`, `lookup()` returns `"test-preimage"`, `read()`/`write()` use an
-in-memory Map). You can override these from within your AS test code.
-
-### TestGas
-
-Set the value returned by the `gas()` ecalli:
+`RefineCall` and `AccumulateCall` are chainable builders that encode the
+matching args struct, invoke your service entrypoint, and decode the result.
+Defaults cover the common case; override individual fields with `with*`
+setters as needed.
 
 ```typescript
-import { TestGas } from "@fluffylabs/as-lan/test";
+import { BytesBlob } from "@fluffylabs/as-lan";
+import { AccumulateCall, RefineCall } from "@fluffylabs/as-lan/test";
+import { accumulate, refine } from "./my-service";
 
-TestGas.set(500);  // gas() will now return 500
-```
+// Refine: defaults coreIndex=0, itemIndex=0, serviceId=42, workPackageHash=zeros.
+// Returns the decoded `Response` (assumes the service uses `Response.with(...)`
+// or `ctx.respond(...)`).
+const resp = RefineCall.create()
+  .withServiceId(10)
+  .call(refine, BytesBlob.parseBlob("0xdeadbeef").okay!);
+assert.isEqualBytes(resp.data, expected, "refine output");
 
-### TestFetch
-
-Set fixed data returned by the `fetch()` ecalli (overrides the default
-kind-dependent pattern):
-
-```typescript
-import { TestFetch } from "@fluffylabs/as-lan/test";
-
-const data = new Uint8Array(4);
-data[0] = 0xde; data[1] = 0xad; data[2] = 0xbe; data[3] = 0xef;
-TestFetch.setData(data);
-```
-
-### TestLookup
-
-Set the preimage returned by the `lookup()` ecalli:
-
-```typescript
-import { TestLookup } from "@fluffylabs/as-lan/test";
-
-const preimage = new Uint8Array(3);
-preimage[0] = 1; preimage[1] = 2; preimage[2] = 3;
-TestLookup.setPreimage(preimage);
-
-// Make lookup return NONE (preimage not found)
-TestLookup.setNone();
-```
-
-#### Simulating extrinsic-driven preimage delivery
-
+// Accumulate: defaults slot=7, serviceId=42. The second arg to `.call()` is
+// the number of items the service should fetch via `fetch(kind=15, i)` —
+// seed each one beforehand with `TestAccumulate.setItem(i, ...)`.
+// Returns raw response bytes (since accumulate response shape varies:
 ```

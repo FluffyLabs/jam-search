@@ -2,30 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/preimages.test.ts#L106-L218
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/preimages.test.ts#L110-L222
 title: sdk/jam/preimages.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 91411b3893a80b5f4933dcecab0eda1c94496dbf4c5b531974478327489a5369
+content_sha: d52a53cbfdd1f2dc59d1d6d3a2e08f8fb6bafe887e8fdf33f527a2a08b12dd70
 language: typescript
 ---
-`sdk/jam/preimages.test.ts` (lines 106–218)
+`sdk/jam/preimages.test.ts` (lines 110–222)
 
 ```typescript
-    const result = ap.query(Bytes32.zero(), 64);
-    a.isEqual(result.isSome, false, "should be none");
-    return a;
-  }),
-
-  test("AccumulatePreimages.query decodes Requested", () => {
-    TestEcalli.reset();
-    const a = Assert.create();
-    // Requested: r7 = 0 (kind=0, slot0=0), r8 = 0
-    TestPreimages.setQueryResult(0, 0);
-
     const ap = AccumulatePreimages.create();
     const result = ap.query(Bytes32.zero(), 64);
     a.isEqual(result.isSome, true, "should be some");
@@ -127,5 +116,16 @@ language: typescript
     TestEcalli.reset();
     const a = Assert.create();
     TestPreimages.setForgetResult(0); // OK
+
+    const ap = AccumulatePreimages.create();
+    const result = ap.forget(Bytes32.zero(), 64);
+    a.isEqual(result.isOkay, true, "should be ok");
+    return a;
+  }),
+
+  test("AccumulatePreimages.forget returns Huh error", () => {
+    TestEcalli.reset();
+    const a = Assert.create();
+    TestPreimages.setForgetResult(EcalliResult.HUH);
 
 ```

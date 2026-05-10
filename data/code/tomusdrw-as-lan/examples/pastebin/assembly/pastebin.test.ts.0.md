@@ -2,23 +2,20 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/pastebin.test.ts#L1-L121
+  https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/pastebin.test.ts#L1-L110
 title: examples/pastebin/assembly/pastebin.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
-chunk_total: 4
-content_sha: ab5fcd735bc299486fdca76a9dce43451ae5c1402f5c48f64ad7bf39f7bcb8cc
+chunk_total: 3
+content_sha: f07a14e24d0a11d72f7f396c0bea931a9d89f49909f66aee12d1c7ab85b216a2
 language: typescript
 ---
-`examples/pastebin/assembly/pastebin.test.ts` (lines 1–121)
+`examples/pastebin/assembly/pastebin.test.ts` (lines 1–110)
 
 ```typescript
 import {
-  AccumulateArgs,
-  AccumulateContext,
-  AccumulateItem,
   Bytes32,
   BytesBlob,
   blake2b256,
@@ -26,16 +23,15 @@ import {
   Decoder,
   EcalliResult,
   Encoder,
-  Operand,
   Preimages,
   RefineArgs,
   RefineContext,
-  Response,
-  WorkExecResult,
-  WorkExecResultKind,
 } from "@fluffylabs/as-lan";
 import {
+  AccumulateCall,
   Assert,
+  OperandItem,
+  RefineCall,
   Test,
   TestAccumulate,
   TestEcalli,
@@ -50,82 +46,39 @@ import { refine as dispatch } from "./index";
 import { refine } from "./refine";
 import { cleanupCursorKey, expiryKey, PasteDigest, PasteEntry, pasteKey } from "./storage";
 
-function callRefine(payload: Uint8Array): Response {
-  const ctx = RefineContext.create();
-  const args = RefineArgs.create(0, 0, 42, BytesBlob.wrap(payload), Bytes32.wrapUnchecked(new Uint8Array(32)));
-  const enc = Encoder.create();
-  ctx.refineArgs.encode(args, enc);
-  const encoded = enc.finishRaw();
-  const buf = new Uint8Array(encoded.length);
-  buf.set(encoded);
-  const raw = unpackResult(refine(u32(buf.dataStart), buf.byteLength));
-  return ctx.response.decode(Decoder.fromBlob(raw)).okay!;
-}
-
-const ZERO_HASH: Bytes32 = Bytes32.wrapUnchecked(new Uint8Array(32));
 const SERVICE_ID: u32 = 42;
 
-function buildOperandItem(okBlob: Uint8Array): Uint8Array {
-  const ctx = AccumulateContext.create();
-  const op = Operand.create(
-    ZERO_HASH,
-    ZERO_HASH,
-    ZERO_HASH,
-    ZERO_HASH,
-    100000,
-    WorkExecResult.create(WorkExecResultKind.Ok, BytesBlob.wrap(okBlob)),
-    BytesBlob.empty(),
-  );
-  const enc = Encoder.create();
-  ctx.accumulateItem.encode(AccumulateItem.fromOperand(op), enc);
-  return enc.finishRaw();
+/** Seed a single operand whose okBlob is the given paste digest, then run accumulate at `slot`. */
+function callAccumulateSingle(slot: u32, okBlob: BytesBlob): void {
+  TestAccumulate.setItem(0, OperandItem.create().withOkBlob(okBlob).build());
+  AccumulateCall.create().withSlot(slot).withServiceId(SERVICE_ID).call(accumulate, 1);
 }
 
-function callAccumulateSingle(slot: u32, okBlob: Uint8Array): void {
-  TestAccumulate.setItem(0, buildOperandItem(okBlob));
-
-  const ctx = AccumulateContext.create();
-  const args = AccumulateArgs.create(slot, SERVICE_ID, 1);
-  const enc = Encoder.create();
-  ctx.accumulateArgs.encode(args, enc);
-  const encoded = enc.finishRaw();
-  const buf = BytesBlob.wrap(encoded);
-  unpackResult(accumulate(buf.ptr(), buf.length));
-}
-
+/** Run accumulate at `slot` with no items (drives slot-bucket cleanup). */
 function callAccumulateEmpty(slot: u32): void {
-  const ctx = AccumulateContext.create();
-  const args = AccumulateArgs.create(slot, SERVICE_ID, 0);
-  const enc = Encoder.create();
-  ctx.accumulateArgs.encode(args, enc);
-  const encoded = enc.finishRaw();
-  const buf = BytesBlob.wrap(encoded);
-  unpackResult(accumulate(buf.ptr(), buf.length));
+  AccumulateCall.create().withSlot(slot).withServiceId(SERVICE_ID).call(accumulate, 0);
 }
 
-function buildOkBlob(hash: Uint8Array, length: u32): Uint8Array {
-  return PasteDigest.create(Bytes32.wrapUnchecked(hash), length).encode().raw;
+/** Build an okBlob = PasteDigest(hash, length). */
+function buildOkBlob(hash: Uint8Array, length: u32): BytesBlob {
+  return PasteDigest.create(Bytes32.wrapUnchecked(hash), length).encode();
 }
 
 export const TESTS: Test[] = [
   test("refine hashes payload and emits (hash ‖ length_LE)", () => {
-    const payload = new Uint8Array(4);
-    payload[0] = 0xde;
-    payload[1] = 0xad;
-    payload[2] = 0xbe;
-    payload[3] = 0xef;
-    const resp = callRefine(payload);
+    const payload = BytesBlob.parseBlob("0xdeadbeef").okay!;
+    const resp = RefineCall.create().call(refine, payload);
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "result");
     assert.isEqual(resp.data.length, REFINE_OUTPUT_LEN, "data.length");
     if (resp.data.length !== REFINE_OUTPUT_LEN) return assert;
     const op = PasteDigest.decodeOrPanic(resp.data);
-    assert.isEqualBytes(op.hash.bytes, BytesBlob.wrap(blake2b256(payload)), "hash");
+    assert.isEqualBytes(op.hash.bytes, BytesBlob.wrap(blake2b256(payload.raw)), "hash");
     assert.isEqual(op.length, <u32>4, "length_LE");
     return assert;
   }),
   test("refine handles empty payload", () => {
-    const resp = callRefine(new Uint8Array(0));
+    const resp = RefineCall.create().call(refine, BytesBlob.empty());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "result");
     assert.isEqual(resp.data.length, REFINE_OUTPUT_LEN, "data.length");
@@ -136,4 +89,40 @@ export const TESTS: Test[] = [
     return assert;
   }),
   test("accumulate solicits, writes paste entry, pushes recent", () => {
+    TestEcalli.reset();
+    const assert = Assert.create();
+
+    const payload = BytesBlob.zero(8);
+    for (let i = 0; i < 8; i += 1) payload.raw[i] = u8(i);
+    const hashBytes = blake2b256(payload.raw);
+    const okBlob = buildOkBlob(hashBytes, 8);
+
+    callAccumulateSingle(123, okBlob);
+
+    // Paste entry should be present.
+    const storage = CurrentServiceData.create();
+    const hash = Bytes32.wrapUnchecked(hashBytes);
+    const stored = storage.read(pasteKey(hash));
+    assert.isEqual(stored.isSome, true, "paste entry present");
+    if (!stored.isSome) return assert;
+    const raw = stored.val!;
+    assert.isEqual(<u32>raw.length, <u32>8, "paste entry length");
+    if (raw.length !== 8) return assert;
+
+    const entry = PasteEntry.decodeOrPanic(raw.raw);
+    assert.isEqual(entry.slot, <u32>123, "paste entry slot");
+    assert.isEqual(entry.length, <u32>8, "paste entry payload length");
+    return assert;
+  }),
+  test("accumulate re-submission is idempotent", () => {
+    TestEcalli.reset();
+    const assert = Assert.create();
+
+    const payload = BytesBlob.parseBlob("0x01020304").okay!;
+    const hashBytes = blake2b256(payload.raw);
+    const okBlob = buildOkBlob(hashBytes, 4);
+
+    callAccumulateSingle(100, okBlob);
+    callAccumulateSingle(200, okBlob);
+
 ```

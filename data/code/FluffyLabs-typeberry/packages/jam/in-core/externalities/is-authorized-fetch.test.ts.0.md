@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/externalities/is-authorized-fetch.test.ts#L1-L82
 title: packages/jam/in-core/externalities/is-authorized-fetch.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 13a2b0c5f912895627dd974cc866e7cfb65869510e7d2cd4fb5ad1c71201078b

@@ -2,29 +2,48 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/accumulate.test.ts#L1-L98
+  https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/accumulate.test.ts#L1-L110
 title: examples/library/assembly/accumulate.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 57277fc4c8ef39b3e703601f7e7464451f10b24d6fbc4902e81d481c543f0afc
+content_sha: 01e889396114028d5ef812ec554953d8d2cec15ac1722531cb9bccce08476928
 language: typescript
 ---
-`examples/library/assembly/accumulate.test.ts` (lines 1–98)
+`examples/library/assembly/accumulate.test.ts` (lines 1–110)
 
 ```typescript
 import { AccumulateContext, Bytes32, BytesBlob, CurrentServiceData, Decoder, Encoder } from "@fluffylabs/as-lan";
-import { Assert, Test, TestAccumulate, TestPreimages, TestStorage, test } from "@fluffylabs/as-lan/test";
+import {
+  AccumulateCall,
+  Assert,
+  OperandItem,
+  Test,
+  TestAccumulate,
+  TestPreimages,
+  TestStorage,
+  test,
+} from "@fluffylabs/as-lan/test";
+import { accumulate } from "./accumulate";
 import { AdminCommand, AdminCommandCodec } from "./admin";
 import { LibraryEntry, LibraryEntryCodec, libraryKey } from "./storage";
-import { buildAdminOperand, callAccumulate } from "./test-helpers";
 
-function encodeAdmin(cmd: AdminCommand): Uint8Array {
+function encodeAdmin(cmd: AdminCommand): BytesBlob {
   const enc = Encoder.create();
   AdminCommandCodec.create().encode(cmd, enc);
-  return enc.finishRaw();
+  return enc.finish();
+}
+
+/** Wrap admin command bytes in an Operand item. */
+function adminOperand(bytes: BytesBlob): BytesBlob {
+  return OperandItem.create().withOkBlob(bytes).build();
+}
+
+/** Run accumulate with `argsLength` operands pre-seeded via TestAccumulate.setItem. */
+function callAccumulate(argsLength: u32): BytesBlob {
+  return AccumulateCall.create().call(accumulate, argsLength);
 }
 
 export const TESTS: Test[] = [
@@ -47,10 +66,10 @@ export const TESTS: Test[] = [
     hash.raw[0] = 0x11;
     const entryEnc = Encoder.create();
     LibraryEntryCodec.create().encode(LibraryEntry.create(hash, 32), entryEnc);
-    TestStorage.set(libraryKey("blake2b"), BytesBlob.wrap(entryEnc.finishRaw()));
+    TestStorage.set(libraryKey("blake2b"), entryEnc.finish());
 
     const cmd = AdminCommand.removeMapping(BytesBlob.encodeAscii("blake2b"));
-    TestAccumulate.setItem(0, buildAdminOperand(encodeAdmin(cmd)));
+    TestAccumulate.setItem(0, adminOperand(encodeAdmin(cmd)));
     callAccumulate(1);
 
     const got = CurrentServiceData.create().read(libraryKey("blake2b"));
@@ -64,7 +83,7 @@ export const TESTS: Test[] = [
     const hash = Bytes32.zero();
     hash.raw[0] = 0x22;
     const cmd = AdminCommand.solicit(hash, 1024);
-    TestAccumulate.setItem(0, buildAdminOperand(encodeAdmin(cmd)));
+    TestAccumulate.setItem(0, adminOperand(encodeAdmin(cmd)));
     callAccumulate(1);
     assert.isEqual(TestPreimages.getSolicitCount(), 1, "solicit count");
     return assert;
@@ -76,7 +95,7 @@ export const TESTS: Test[] = [
     const hash = Bytes32.zero();
     hash.raw[0] = 0x33;
     const cmd = AdminCommand.forget(hash, 512);
-    TestAccumulate.setItem(0, buildAdminOperand(encodeAdmin(cmd)));
+    TestAccumulate.setItem(0, adminOperand(encodeAdmin(cmd)));
     callAccumulate(1);
     assert.isEqual(TestPreimages.getForgetCount(), 1, "forget count");
     return assert;
@@ -86,7 +105,7 @@ export const TESTS: Test[] = [
     const assert = Assert.create();
     TestPreimages.resetCounters();
     const cmd = AdminCommand.provide(BytesBlob.parseBlob("0xdeadbeef").okay!);
-    TestAccumulate.setItem(0, buildAdminOperand(encodeAdmin(cmd)));
+    TestAccumulate.setItem(0, adminOperand(encodeAdmin(cmd)));
     callAccumulate(1);
     assert.isEqual(TestPreimages.getProvideCount(), 1, "provide count");
     return assert;
@@ -95,10 +114,10 @@ export const TESTS: Test[] = [
   test("accumulate: malformed operand bytes are skipped silently", () => {
     const assert = Assert.create();
     TestPreimages.resetCounters();
-    TestAccumulate.setItem(0, buildAdminOperand(BytesBlob.parseBlob("0x99ff").okay!.raw));
+    TestAccumulate.setItem(0, adminOperand(BytesBlob.parseBlob("0x99ff").okay!));
     const hash = Bytes32.zero();
     const good = encodeAdmin(AdminCommand.solicit(hash, 1));
-    TestAccumulate.setItem(1, buildAdminOperand(good));
+    TestAccumulate.setItem(1, adminOperand(good));
     callAccumulate(2);
     assert.isEqual(TestPreimages.getSolicitCount(), 1, "good operand still dispatched");
     return assert;
@@ -106,11 +125,4 @@ export const TESTS: Test[] = [
 
   test("accumulate: operands dispatched in index order", () => {
     const assert = Assert.create();
-    // Set then Remove → storage ends empty. Reversed order would leave the
-    // entry present. Observable side-effect therefore depends on ordering.
-    TestStorage.set(libraryKey("ordered"), null);
-    const hash = Bytes32.zero();
-    hash.raw[0] = 0x55;
-    TestAccumulate.setItem(
-      0,
 ```

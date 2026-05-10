@@ -2,33 +2,26 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/accumulate.test.ts#L224-L335
+  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/accumulate.test.ts#L232-L336
 title: examples/ecalli-test/assembly/accumulate.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: de34b60e18c9c7ba674ca1d4b6449905a88c137d8a09001f564ce98a2ab49dc2
+content_sha: f5bbbc792993a62eb57651723c209a7f84a0c3367797c9e9d21ac64dbe732844
 language: typescript
 ---
-`examples/ecalli-test/assembly/accumulate.test.ts` (lines 224–335)
+`examples/ecalli-test/assembly/accumulate.test.ts` (lines 232–336)
 
 ```typescript
-    return assert;
-  }),
-
-  test("new_service: incrementing service IDs", () => {
-    TestEcalli.reset();
-    const p1 = Encoder.create();
-    p1.varU64(EcalliIndex.NewService);
     p1.bytesFixLen(BytesBlob.zero(32));
     p1.varU64(1024);
     p1.varU64(100000);
     p1.varU64(50000);
     p1.varU64(0);
     p1.varU64(u64(u32.MAX_VALUE));
-    const resp1 = callAccumulateWithOperand(p1.finishRaw());
+    const resp1 = callAccumulateWithOperand(p1.finish());
 
     const p2 = Encoder.create();
     p2.varU64(EcalliIndex.NewService);
@@ -38,7 +31,7 @@ language: typescript
     p2.varU64(50000);
     p2.varU64(0);
     p2.varU64(u64(u32.MAX_VALUE));
-    const resp2 = callAccumulateWithOperand(p2.finishRaw());
+    const resp2 = callAccumulateWithOperand(p2.finish());
 
     const assert = Assert.create();
     assert.isEqual(resp1.result, 256, "first new_service returns ID 256");
@@ -57,7 +50,7 @@ language: typescript
     p.bytesVarLen(BytesBlob.empty()); // auto_accum
     p.varU64(5); // auto_accum_count
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "bless returns OK");
     assert.isEqual(TestPrivileged.getLastBlessManager(), 10, "manager");
@@ -75,7 +68,7 @@ language: typescript
     p.bytesVarLen(BytesBlob.empty()); // auth_queue
     p.varU64(42); // new_assigner
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "assign returns OK");
     assert.isEqual(TestPrivileged.getLastAssignCore(), 7, "core");
@@ -91,7 +84,7 @@ language: typescript
     p.varU64(200000); // gas
     p.varU64(100000); // allowance
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "upgrade returns OK");
     assert.isEqual(TestServices.getLastUpgradeGas(), 200000, "gas");
@@ -106,7 +99,7 @@ language: typescript
     p.bytesFixLen(BytesBlob.zero(32));
     p.varU64(64);
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, -9, "solicit returns HUH");
     return assert;
@@ -121,7 +114,7 @@ language: typescript
     p.varU64(1000);
     p.bytesVarLen(BytesBlob.zero(128));
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, -1, "transfer returns LOW");
     return assert;

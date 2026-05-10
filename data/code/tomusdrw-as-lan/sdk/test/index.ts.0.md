@@ -1,19 +1,20 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/test/index.ts#L1-L2'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/test/index.ts#L1-L3'
 title: sdk/test/index.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 4ed41bd17b3f584af6e7f41e53e3ad024e5fe538d25447a3051cbec5a86d4637
+content_sha: 815b898019f75c6761857ab0a5be7acb0eb66363c21ef2f8d0babec83f595257
 language: typescript
 ---
-`sdk/test/index.ts` (lines 1–2)
+`sdk/test/index.ts` (lines 1–3)
 
 ```typescript
+export * from "./calls";
 export * from "./test-ecalli/index";
 export * from "./utils";
 ```

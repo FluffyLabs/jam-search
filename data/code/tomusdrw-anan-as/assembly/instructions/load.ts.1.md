@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/load.ts#L117-L151
 title: assembly/instructions/load.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-04-27T09:49:56+01:00'
-last_modified: '2026-04-27T09:49:56+01:00'
+created_at: '2026-05-08T13:25:50+02:00'
+last_modified: '2026-05-08T13:25:50+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: e063c0f4b7a87ab1385b94e97b2e583406873722efa56cba8a6bde6031e44ba8

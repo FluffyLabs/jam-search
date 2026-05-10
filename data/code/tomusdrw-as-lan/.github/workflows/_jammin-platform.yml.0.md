@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/_jammin-platform.yml#L1-L105
+  https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/_jammin-platform.yml#L1-L101
 title: .github/workflows/_jammin-platform.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: e4b5284e62beba625090e7927380faee2c554d39b78458a8379bd397a8275a1b
+content_sha: e31540a6be95864a9455124b81ae6d45cfd2ca2de2c882161da03da17de60c21
 language: yaml
 ---
-`.github/workflows/_jammin-platform.yml` (lines 1–105)
+`.github/workflows/_jammin-platform.yml` (lines 1–101)
 
 ```yaml
 name: Build one jammin platform
@@ -97,27 +97,23 @@ jobs:
           # dynamic-linker errors (glibc version, missing shared libs, …).
           docker run --rm "${{ inputs.primary-tag }}" wasm-pvm --help
           docker run --rm "${{ inputs.primary-tag }}" node --version
+          # asc must be on PATH from the global assemblyscript install.
+          docker run --rm "${{ inputs.primary-tag }}" asc --version
 
-      - name: Report uncompressed image size
+      - name: Smoke test — no-args run prints help and exits 64
         run: |
-          docker image inspect "${{ inputs.primary-tag }}" \
-            --format 'uncompressed size: {{.Size}} bytes'
-
-      - name: Login to GHCR
-        if: inputs.push
-        uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push by digest
-        if: inputs.push
-        id: push
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: docker/jammin-as-lan.Dockerfile
-          platforms: ${{ inputs.platform }}
-          outputs: type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=true
+          set -eu
+          # Default CMD is a usage message that exits 64 (EX_USAGE). Guards
+          # against a future refactor that accidentally restores an
+          # `npm install`-bearing CMD; jammin always passes its own command,
+          # so this CMD should never run during normal use.
+          set +e
+          out=$(docker run --rm "${{ inputs.primary-tag }}")
+          rc=$?
+          set -e
+          echo "$out"
+          if [ "$rc" -ne 64 ]; then
+            echo "::error::expected exit 64 from no-args run, got $rc"
+            exit 1
+          fi
 ```

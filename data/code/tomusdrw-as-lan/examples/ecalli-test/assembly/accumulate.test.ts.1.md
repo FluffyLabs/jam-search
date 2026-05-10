@@ -2,22 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/accumulate.test.ts#L111-L231
+  https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/accumulate.test.ts#L115-L239
 title: examples/ecalli-test/assembly/accumulate.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 8289fc08612c432d76aa55e469df8969c6373ebaef31b54fd861772cdd61b69d
+content_sha: 7b6a2dcd110cf36a5ad39507497cf1f2fb2667e0ec26e1083ddd128b35f7cef0
 language: typescript
 ---
-`examples/ecalli-test/assembly/accumulate.test.ts` (lines 111–231)
+`examples/ecalli-test/assembly/accumulate.test.ts` (lines 115–239)
 
 ```typescript
-    p.varU64(50000); // allowance
-
-    const resp = callAccumulateWithOperand(p.finishRaw());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "upgrade returns OK");
     return assert;
@@ -31,7 +28,7 @@ language: typescript
     p.varU64(1000); // gas_fee
     p.bytesVarLen(BytesBlob.zero(128)); // memo
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "transfer returns OK");
     return assert;
@@ -43,7 +40,7 @@ language: typescript
     p.varU64(99); // service to eject
     p.bytesFixLen(BytesBlob.zero(32)); // prev_code_hash
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "eject returns OK");
     return assert;
@@ -55,7 +52,7 @@ language: typescript
     p.bytesFixLen(BytesBlob.zero(32)); // hash
     p.varU64(64); // length
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, -1, "query returns NONE");
     assert.isEqual(resp.data.raw.length, 8, "query returns r8");
@@ -68,7 +65,7 @@ language: typescript
     p.bytesFixLen(BytesBlob.zero(32)); // hash
     p.varU64(64); // length
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "solicit returns OK");
     return assert;
@@ -80,7 +77,7 @@ language: typescript
     p.bytesFixLen(BytesBlob.zero(32)); // hash
     p.varU64(64); // length
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "forget returns OK");
     return assert;
@@ -91,7 +88,7 @@ language: typescript
     p.varU64(EcalliIndex.YieldResult);
     p.bytesFixLen(BytesBlob.parseBlob("0xff00000000000000000000000000000000000000000000000000000000000000").okay!);
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "yield_result returns OK");
     return assert;
@@ -105,7 +102,7 @@ language: typescript
     preimage[0] = 0xab;
     p.bytesVarLen(BytesBlob.wrap(preimage));
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 0, "provide returns OK");
     return assert;
@@ -121,13 +118,13 @@ language: typescript
     p.bytesFixLen(BytesBlob.zero(32));
     p.varU64(64);
 
-    const resp = callAccumulateWithOperand(p.finishRaw());
+    const resp = callAccumulateWithOperand(p.finish());
     const assert = Assert.create();
     assert.isEqual(resp.result, 100, "query returns preimage length");
-    assert.isEqual(resp.data.raw.length, 8, "r8 output length");
-    // r8=7 in little-endian: 0x07 0x00 ...
-    assert.isEqual(resp.data.raw[0], 7, "r8 byte 0 (slot1)");
-    assert.isEqual(resp.data.raw[1], 0, "r8 byte 1");
+    // r8 = 7 encoded as u64 LE.
+    const expected = Encoder.create();
+    expected.u64(7);
+    assert.isEqualBytes(resp.data, expected.finish(), "r8 output");
     return assert;
   }),
 
@@ -136,4 +133,11 @@ language: typescript
     const p1 = Encoder.create();
     p1.varU64(EcalliIndex.NewService);
     p1.bytesFixLen(BytesBlob.zero(32));
+    p1.varU64(1024);
+    p1.varU64(100000);
+    p1.varU64(50000);
+    p1.varU64(0);
+    p1.varU64(u64(u32.MAX_VALUE));
+    const resp1 = callAccumulateWithOperand(p1.finish());
+
 ```

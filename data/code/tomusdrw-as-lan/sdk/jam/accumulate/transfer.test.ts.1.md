@@ -2,35 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/transfer.test.ts#L101-L127
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/transfer.test.ts#L109-L119
 title: sdk/jam/accumulate/transfer.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-04-28T00:16:09+02:00'
-last_modified: '2026-04-28T00:16:09+02:00'
+created_at: '2026-05-07T23:20:06+02:00'
+last_modified: '2026-05-07T23:20:06+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 5c65b083ae7307dc4a945ca758a23d10ae601f9be6ab8142a6ad5a52d9ee8f3e
+content_sha: 61ef3f695a0ab8eec09908df1229849b565088f4e2aa0c85e0cb664ba51a0918
 language: typescript
 ---
-`sdk/jam/accumulate/transfer.test.ts` (lines 101–127)
+`sdk/jam/accumulate/transfer.test.ts` (lines 109–119)
 
 ```typescript
-    a.isEqual(result.isError, true, "should be error");
-    a.isEqual(result.error, TransferError.Cash, "should be Cash");
-    return a;
-  }),
-
-  test("scheduleTransfer uses zero memo when none provided", () => {
-    TestEcalli.reset();
-    const a = Assert.create();
-    const ctx = AccumulateContext.create();
-
-    // Should succeed with default null memo (128 zero bytes)
-    const result = ctx.scheduleTransfer(100, 5000, 100);
-    a.isEqual(result.isOkay, true, "should be ok with null memo");
-    return a;
-  }),
-
   test("scheduleTransfer accepts explicit Memo", () => {
     TestEcalli.reset();
     const a = Assert.create();

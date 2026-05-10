@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/package.json#L1-L12
 title: packages/core/utils/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-04-22T14:38:44+02:00'
-last_modified: '2026-04-22T14:38:44+02:00'
+created_at: '2026-05-07T07:54:29Z'
+last_modified: '2026-05-07T07:54:29Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 8bff38a2be8572f80d1fb5052bedb0ed72237a8aafcb405138e25e6dccd2c862
+content_sha: bbcc789f6738dfb20af6e157b6f2213ea1cb439db2eb2acc5022ac41c97f9933
 language: json
 ---
 `packages/core/utils/package.json` (lines 1–12)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/utils",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "description": "Utilities for typeberry implementation. Things don't go here lightly.",
   "main": "index.ts",
   "scripts": {
