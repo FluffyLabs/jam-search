@@ -19,3 +19,8 @@ The demo graymatter fuzz source test against **pyjamaz** with spec **tiny** fail
 **Run:** https://github.com/FluffyLabs/jam-testing/actions/runs/25572977030
 
 Please investigate and close this issue once resolved.
+
+
+## Comment by @emielsebastiaan
+
+We'll be looking into this shortly. 🙏🏻 
