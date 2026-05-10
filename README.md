@@ -97,3 +97,4 @@ same tools the `/ask` assistant uses. Point any MCP-compatible client at
 ## License
 
 MPL-2.0
+
