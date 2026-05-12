@@ -19,3 +19,8 @@ The demo graymatter fuzz source test against **jambda** with spec **full** faile
 **Run:** https://github.com/FluffyLabs/jam-testing/actions/runs/25575466271
 
 Please investigate and close this issue once resolved.
+
+
+## Comment by @libingjiang47
+
+Thanks, found a bug and fixed it.

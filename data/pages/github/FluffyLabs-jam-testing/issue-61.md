@@ -55,3 +55,11 @@ yes, equation 11.1; ok let me know. Btw I'm running it locally and I'm having th
 ## Comment by @tomusdrw
 
 CC @ggwpez
+
+
+## Comment by @ggwpez
+
+I just logged the Genesis state in JSON and am seeing 682 zero Hex chars for Key rho `0a00...`.  
+That works out to 341 zero bytes, therefore Option variants Null. In tiny spec its two zero bytes.  
+
+So it looks correct to me.

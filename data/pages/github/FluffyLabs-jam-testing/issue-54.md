@@ -41,3 +41,15 @@ I guess either pyjamaz sets some weird permissions to the socket or it might be 
 ## Comment by @emielsebastiaan
 
 Yes thx probably Monday. 
+
+
+## Comment by @emielsebastiaan
+
+@tomusdrw 
+We have both `full` & `tiny` running on a fork with a default `ubuntu-latest`-runner.
+Also it seems that the `full` config is now running correctly at FluffyLabs (after a change to the `docker_memory`-setting this weekend).
+The `tiny`-config still seems to fail at FluffyLabs and this does not seem to have the added `docker_memory`-setting of '8192m'.
+So perhaps the pyjamaz-demo-tiny.yml needs to also have a memory allocation?
+
+Our tiny run: https://github.com/JAMdotTech/fluffylabs-jam-testing/actions/runs/25662426507/job/75326844941
+Our full run: https://github.com/JAMdotTech/fluffylabs-jam-testing/actions/runs/25662005747/job/75325387935
