@@ -63,3 +63,12 @@ I just logged the Genesis state in JSON and am seeing 682 zero Hex chars for Key
 That works out to 341 zero bytes, therefore Option variants Null. In tiny spec its two zero bytes.  
 
 So it looks correct to me.
+
+
+## Comment by @dakk
+
+> I just logged the Genesis state in JSON and am seeing 682 zero Hex chars for Key rho `0a00...`. That works out to 341 zero bytes, therefore Option variants Null. In tiny spec its two zero bytes.
+> 
+> So it looks correct to me.
+
+You were right, I've found an insidious bug on jampy (thank you); this issue can be closed
