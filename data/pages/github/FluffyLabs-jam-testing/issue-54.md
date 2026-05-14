@@ -53,3 +53,8 @@ So perhaps the pyjamaz-demo-tiny.yml needs to also have a memory allocation?
 
 Our tiny run: https://github.com/JAMdotTech/fluffylabs-jam-testing/actions/runs/25662426507/job/75326844941
 Our full run: https://github.com/JAMdotTech/fluffylabs-jam-testing/actions/runs/25662005747/job/75325387935
+
+
+## Comment by @tomusdrw
+
+Closing this issue, since `full` is now passing. We can retry `tiny` with 8g of mem (see #71). Is 8g a strict requirement or could we try running tiny with 4g instead?

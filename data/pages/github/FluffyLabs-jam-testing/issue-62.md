@@ -19,3 +19,8 @@ The demo graymatter fuzz source test against **vinwolf** with spec **full** fail
 **Run:** https://github.com/FluffyLabs/jam-testing/actions/runs/25575466272
 
 Please investigate and close this issue once resolved.
+
+
+## Comment by @tomusdrw
+
+seems green now, closing.

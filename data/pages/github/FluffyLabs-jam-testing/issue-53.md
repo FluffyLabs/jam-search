@@ -19,3 +19,8 @@ The demo graymatter fuzz source test against **jampy-recompiler** with spec **fu
 **Run:** https://github.com/FluffyLabs/jam-testing/actions/runs/25575466273
 
 Please investigate and close this issue once resolved.
+
+
+## Comment by @tomusdrw
+
+green now, closing.
