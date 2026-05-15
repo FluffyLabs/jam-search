@@ -19,3 +19,15 @@ The demo graymatter fuzz source test against **jamduna** with spec **full** fail
 **Run:** https://github.com/FluffyLabs/jam-testing/actions/runs/25575466258
 
 Please investigate and close this issue once resolved.
+
+
+## Comment by @mkchungs
+
+" jamduna (full)" is now supported in [ghcr.io/jam-duna/duna-target:0.7.2.19](http://ghcr.io/jam-duna/duna-target:0.7.2.19)
+
+Logs: https://github.com/FluffyLabs/jam-testing/actions/runs/25818668541
+
+
+## Comment by @tomusdrw
+
+Perfect! Closing.
