@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/json-parser/package.json#L1-L12
 title: packages/core/json-parser/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: c4396c0a0c27823c882ba66ed39420894feecdbc0435890968c7b4f7177dad82

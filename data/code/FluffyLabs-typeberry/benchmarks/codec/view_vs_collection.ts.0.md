@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/codec/view_vs_collection.ts#L1-L101
 title: benchmarks/codec/view_vs_collection.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 67aace23adf1c04dbea57bacc720caa9069f57974c311a0f2d10b7355efef577

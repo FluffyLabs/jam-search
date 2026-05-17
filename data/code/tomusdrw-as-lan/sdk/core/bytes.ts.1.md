@@ -1,22 +1,19 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/core/bytes.ts#L148-L209'
+url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/core/bytes.ts#L151-L213'
 title: sdk/core/bytes.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 8cfe56243f9ac9ff2511aa33a595a8e3597da3b1846176b9fca5a196da6eecbb
+content_sha: f83f9eb5461b526fda0671dace85aa6bb10bbc0aa8466e23cea6c53c43c527b5
 language: typescript
 ---
-`sdk/core/bytes.ts` (lines 148–209)
+`sdk/core/bytes.ts` (lines 151–213)
 
 ```typescript
-    return this.raw.length;
-  }
-
   @inline()
   ptr(): u32 {
     return u32(this.raw.dataStart);
@@ -27,12 +24,16 @@ language: typescript
   }
 }
 
-const CODE_OF_0: i32 = "0".charCodeAt(0);
-const CODE_OF_9: i32 = "9".charCodeAt(0);
-const CODE_OF_a: i32 = "a".charCodeAt(0);
-const CODE_OF_f: i32 = "f".charCodeAt(0);
-const CODE_OF_A: i32 = "A".charCodeAt(0);
-const CODE_OF_F: i32 = "F".charCodeAt(0);
+// ASCII codes for '0', '9', 'a', 'f', 'A', 'F'. Inlined here rather than
+// derived from `"0".charCodeAt(0)` etc. — AS evaluates `charCodeAt` at
+// module-init (`~start`), which re-runs on every PVM invocation and
+// emits dead `String#charCodeAt` calls into every service.
+const CODE_OF_0: i32 = 0x30;
+const CODE_OF_9: i32 = 0x39;
+const CODE_OF_a: i32 = 0x61;
+const CODE_OF_f: i32 = 0x66;
+const CODE_OF_A: i32 = 0x41;
+const CODE_OF_F: i32 = 0x46;
 const VALUE_OF_A: i32 = 0xa;
 
 function byteFromString(s: string): U8WithError {

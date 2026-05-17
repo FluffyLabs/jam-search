@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/sizes.yml#L1-L128
 title: .github/workflows/sizes.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 330b9687c785629673cdae25ed3575694cc827af192ce81e822c19519b6444b6
+content_sha: d22d74f9494baaa7f8c542dedacafd0259ed13a79d6d11837f687efa7e0173bb
 language: yaml
 ---
 `.github/workflows/sizes.yml` (lines 1–128)
@@ -52,11 +52,11 @@ jobs:
       uses: actions/cache@v5
       with:
         path: ~/.cargo/bin/wasm-pvm
-        key: wasm-pvm-cli-0.8.0
+        key: wasm-pvm-cli-0.9.0
 
     - name: Install wasm-pvm-cli
       if: steps.cache-wasm-pvm.outputs.cache-hit != 'true'
-      run: cargo install wasm-pvm-cli@0.8.0 --locked
+      run: cargo install wasm-pvm-cli@0.9.0 --locked
 
     # --- Build PR branch ---
     - name: Install dependencies (PR)

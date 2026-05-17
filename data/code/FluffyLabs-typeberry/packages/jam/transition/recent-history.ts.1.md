@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/recent-history.ts#L105-L120
 title: packages/jam/transition/recent-history.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: dbcf744faa5ba0f5d75dc581d798df3c0d0a61ef450aaa94894c38f1b3c4cede

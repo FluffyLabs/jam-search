@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/release-prepare.yml#L112-L118
 title: .github/workflows/release-prepare.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: dc2a29854ed134bb28e59ed4e4b41938ad820c01a40190996beb43dcd6dc5197

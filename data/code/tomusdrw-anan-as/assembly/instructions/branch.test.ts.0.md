@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/branch.test.ts#L1-L31
 title: assembly/instructions/branch.test.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-08T13:25:50+02:00'
-last_modified: '2026-05-08T13:25:50+02:00'
+created_at: '2026-05-15T10:20:08+02:00'
+last_modified: '2026-05-15T10:20:08+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: f31c17f9dc464f2ff127b6c8576665c6616252d38ec0c37631d1a9fc14f65ff4

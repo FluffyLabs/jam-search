@@ -2,21 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/generator.ts#L1-L116
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/generator.ts#L1-L112
 title: packages/workers/block-authorship/generator.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
-chunk_total: 2
-content_sha: 92cf1f64d51371b7e95e076fbd4e184ad269dae03a71fd82a125e872105c895d
+chunk_total: 3
+content_sha: d71e5de46510873332b9e984158c9dc819687517afcb0ae9b125d24fa837e60f
 language: typescript
 ---
-`packages/workers/block-authorship/generator.ts` (lines 1–116)
+`packages/workers/block-authorship/generator.ts` (lines 1–112)
 
 ```typescript
 import {
   Block,
+  type EntropyHash,
   encodeUnsealedHeader,
   Header,
   reencodeAsView,
@@ -25,7 +26,9 @@ import {
 } from "@typeberry/block";
 import { type BlockView, Extrinsic } from "@typeberry/block/block.js";
 import { DisputesExtrinsic } from "@typeberry/block/disputes.js";
+import type { SignedTicket } from "@typeberry/block/tickets.js";
 import { Bytes, BytesBlob } from "@typeberry/bytes";
+import { HashSet } from "@typeberry/collections/hash-set.js";
 import type { ChainSpec } from "@typeberry/config";
 import { BANDERSNATCH_VRF_SIGNATURE_BYTES, type BandersnatchSecretSeed } from "@typeberry/crypto";
 import type { BlocksDb, StatesDb } from "@typeberry/database";
@@ -105,8 +108,9 @@ export class Generator {
     bandersnatchSecret: BandersnatchSecretSeed,
     sealPayload: BlockSealInput,
     timeSlot: TimeSlot,
+    pendingTickets: { ticket: SignedTicket; id: EntropyHash }[] = [],
   ): Promise<BlockView> {
-    const newBlock = await this.nextBlock(validatorIndex, bandersnatchSecret, sealPayload, timeSlot);
+    const newBlock = await this.nextBlock(validatorIndex, bandersnatchSecret, sealPayload, timeSlot, pendingTickets);
     return reencodeAsView(Block.Codec, newBlock, this.chainSpec);
   }
 
@@ -123,12 +127,4 @@ export class Generator {
   private async getEntropyHash(
     sealPayload: BytesBlob,
     bandersnatchSecret: BandersnatchSecretSeed,
-  ): Promise<Result<VrfOutputHash, null>> {
-    const entropyHashResult = await bandersnatchVrf.getVrfOutputHash(
-      this.bandersnatch,
-      bandersnatchSecret,
-      sealPayload,
-    );
-
-    if (entropyHashResult.isError) {
 ```

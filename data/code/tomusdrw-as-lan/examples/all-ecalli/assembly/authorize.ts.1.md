@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/all-ecalli/assembly/authorize.ts#L122-L129
 title: examples/all-ecalli/assembly/authorize.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 8c2b3186139b0a9694186cc0496fde78ada9feb59b2ddedf43a18ab2892ec460

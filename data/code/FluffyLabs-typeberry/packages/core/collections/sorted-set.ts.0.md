@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-set.ts#L1-L121
 title: packages/core/collections/sorted-set.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 13dd920ef50e2572f0e29d550b595e3b4a392c5d9532f2f725abc88b4adf8ce0

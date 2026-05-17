@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/math.ts#L111-L237
 title: assembly/instructions/math.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-08T13:25:50+02:00'
-last_modified: '2026-05-08T13:25:50+02:00'
+created_at: '2026-05-15T10:20:08+02:00'
+last_modified: '2026-05-15T10:20:08+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 9592a9f1fe928a5a8bd3c7c34d46d401e3c74b0339725f9a3eadbe0cef6f1d79

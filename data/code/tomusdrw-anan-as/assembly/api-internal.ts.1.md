@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/api-internal.ts#L104-L211
 title: assembly/api-internal.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-08T13:25:50+02:00'
-last_modified: '2026-05-08T13:25:50+02:00'
+created_at: '2026-05-15T10:20:08+02:00'
+last_modified: '2026-05-15T10:20:08+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: af58b82a65b83071d2f3dd1effb00ceb896cfff2669eab60437a5d14486aabde

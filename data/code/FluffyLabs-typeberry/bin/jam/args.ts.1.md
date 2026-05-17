@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/args.ts#L79-L226'
 title: bin/jam/args.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: 088f500056d4f2be831d999927c0aaeecc87105fd1ea460e71014513067c84a5

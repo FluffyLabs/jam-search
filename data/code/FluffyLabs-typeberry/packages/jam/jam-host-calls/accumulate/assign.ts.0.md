@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/assign.ts#L1-L88
 title: packages/jam/jam-host-calls/accumulate/assign.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 1eb3f84e24eb9f831d7d4891f31183a7ff5875cfccb565c28c9b851c835d5ace

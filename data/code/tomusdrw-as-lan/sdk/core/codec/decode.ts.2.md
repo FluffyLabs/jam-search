@@ -2,19 +2,32 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/decode.ts#L277-L313
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/decode.ts#L272-L322
 title: sdk/core/codec/decode.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: 73d5ce9f44ad849aafd8db74cafc2a78608bab6f6e7588983df69ae48142049a
+content_sha: b8cb8dc1c8aae2a62af5e52b125dcc082df7858e6ba26c74b7558ad76d2401a9
 language: typescript
 ---
-`sdk/core/codec/decode.ts` (lines 277–313)
+`sdk/core/codec/decode.ts` (lines 272–322)
 
 ```typescript
+    if (this.offset < newOffset) {
+      this.skip(newOffset - this.offset);
+    } else {
+      this.offset = newOffset;
+    }
+  }
+
+  /** Skip given number of bytes for decoding. */
+  skip(bytes: u32): boolean {
+    return this.moveOffset(bytes) !== -1;
+  }
+
+  /**
    * Finish decoding `source` object and make sure there is no data left.
    *
    * This method can be called when the entire object that was meant to be
@@ -23,7 +36,7 @@ language: typescript
    */
   isFinished(): boolean {
     // TODO [ToDr] set isError?
-    return this.offset === this.source.length;
+    return this.offset === this.srcLen;
   }
 
   // Progress the offset, but return the previous offset or -1 if not enough bytes.
@@ -37,8 +50,9 @@ language: typescript
     return -1;
   }
 
+  @inline
   private hasBytes(bytes: u32): boolean {
-    return bytes <= <u32>this.source.length - this.offset;
+    return bytes <= this.srcLen - this.offset;
   }
 }
 

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/state-entries.ts#L105-L194
 title: packages/jam/state-merkleization/state-entries.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 401b900d692b83f2ca0a4f9372ac11442f368160d40f7ab1ae62b1e251c8efd9

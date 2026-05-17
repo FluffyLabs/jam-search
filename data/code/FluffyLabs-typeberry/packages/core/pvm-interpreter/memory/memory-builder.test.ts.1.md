@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/memory-builder.test.ts#L100-L205
 title: packages/core/pvm-interpreter/memory/memory-builder.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: ccf3c9d80fe004a6e7a0f396fcb6f5d3c79b87f21f788f584c1a5781a998e730

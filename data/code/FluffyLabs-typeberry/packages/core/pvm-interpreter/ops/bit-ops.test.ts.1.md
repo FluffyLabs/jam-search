@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops/bit-ops.test.ts#L113-L225
 title: packages/core/pvm-interpreter/ops/bit-ops.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 4
 content_sha: 201f43f138a54826c61fd8fc5c2ffc579519bd02a2a30ba1c27f7a0c8c033b1d

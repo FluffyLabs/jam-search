@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/test/test-ecalli/export-segment.ts#L1-L11
 title: sdk/test/test-ecalli/export-segment.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: a7aec0719c9423c028c642db23a1fce84fff59a31cac847d2ed089d1cdd391b0

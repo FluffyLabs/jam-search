@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/core/bytes.ts#L1-L161'
 title: sdk/core/bytes.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: ffe8e6b861cd29f2e8f7bf5441721e384219db53a8a3d5278a75795de30a3b7f
+content_sha: 898277b5d8a944918c1d1e7b890da703922191a14752a5e6de47c0904f73a7d7
 language: typescript
 ---
 `sdk/core/bytes.ts` (lines 1–161)
@@ -174,5 +174,5 @@ export class Bytes32 {
   }
 }
 
-const CODE_OF_0: i32 = "0".charCodeAt(0);
+// ASCII codes for '0', '9', 'a', 'f', 'A', 'F'. Inlined here rather than
 ```

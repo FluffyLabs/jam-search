@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/api-internal.ts#L1-L107'
 title: assembly/api-internal.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-08T13:25:50+02:00'
-last_modified: '2026-05-08T13:25:50+02:00'
+created_at: '2026-05-15T10:20:08+02:00'
+last_modified: '2026-05-15T10:20:08+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: d1f20daf8c94f81fd0550ddbe72c3ec3dc9efabf4108d5794561fb0a27d51adf

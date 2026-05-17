@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/docs/src/getting-started.md#L1-L102
 title: docs/src/getting-started.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 50ee37d591e5e327ffc4a6a58c405e9ca93a10c5e125854cc6492f6004499a1a
+content_sha: 50495921f8dde06986121beaa21c98fc649478d97c927d30890ad5b39f8b8844
 language: markdown
 ---
 `docs/src/getting-started.md` (lines 1–102)
@@ -93,7 +93,7 @@ export function refine(ptr: u32, len: u32): u64 {
 
 ## Build & Test
 
-You need [`wasm-pvm`](https://crates.io/crates/wasm-pvm-cli) installed (`cargo install wasm-pvm-cli@0.8.0`) to produce PVM binaries.
+You need [`wasm-pvm`](https://crates.io/crates/wasm-pvm-cli) installed (`cargo install wasm-pvm-cli@0.9.0`) to produce PVM binaries.
 
 ```bash
 npm run build          # compile WASM (debug + release) and PVM binary

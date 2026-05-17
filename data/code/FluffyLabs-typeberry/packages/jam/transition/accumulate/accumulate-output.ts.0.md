@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/accumulate/accumulate-output.ts#L1-L34
 title: packages/jam/transition/accumulate/accumulate-output.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 07c55bf356323c4c2c9316866732af780579b6c0e29b16a2e5d4cee4940cd45a

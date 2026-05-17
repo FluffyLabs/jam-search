@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/test/test-ecalli/services.ts#L1-L47
 title: sdk/test/test-ecalli/services.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: bc76ac6d5522f00a736c685591271220ccec870b2dd17acc610bb879c8c98c64

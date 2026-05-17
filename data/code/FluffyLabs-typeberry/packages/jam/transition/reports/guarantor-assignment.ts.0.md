@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/reports/guarantor-assignment.ts#L1-L76
 title: packages/jam/transition/reports/guarantor-assignment.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 9b954ce1a8795d2d72337fea54064e71c8219869c466f7b40af7b3920d9e0d7d

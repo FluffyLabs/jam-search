@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/src/server.ts#L1-L140
 title: bin/rpc/src/server.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: c0718e049c135a702c0b57d4655e966626738d4ccb3bd0306b47fc2ae261eda8

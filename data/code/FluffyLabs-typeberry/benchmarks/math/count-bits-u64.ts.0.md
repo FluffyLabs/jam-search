@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/math/count-bits-u64.ts#L1-L49
 title: benchmarks/math/count-bits-u64.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2914d1a9b3c1f62e4411ccfbc34b2683e1d0697139344988f785578546ffc72f

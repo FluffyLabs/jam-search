@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/interpreter.ts#L99-L190
 title: packages/core/pvm-interpreter/interpreter.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 4
 content_sha: 3b31e9220c72a4c88206e7c71848837aac91b3e2bd56873fad7020896164d071

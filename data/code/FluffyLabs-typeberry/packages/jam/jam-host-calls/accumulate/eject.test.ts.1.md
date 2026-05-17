@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/eject.test.ts#L98-L177
 title: packages/jam/jam-host-calls/accumulate/eject.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: d8aa80d3cc041266e1d86277fc8463100e3cc326f4fa49380bb1affe9fbc5824

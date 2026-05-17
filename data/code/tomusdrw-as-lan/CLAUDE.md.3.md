@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/CLAUDE.md#L152-L213'
 title: CLAUDE.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 3
 chunk_total: 6
 content_sha: 759ea5abbabe9a884f511b2c6e0841b61f454b76959ed98da1c8cf962eef9743

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L228-L280
 title: packages/jam/config-node/node-config.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 2
 chunk_total: 3
 content_sha: 50ecce3623dd9e4b72507f618f204f8547deab5a109305ac720a9f7bbbc662d7

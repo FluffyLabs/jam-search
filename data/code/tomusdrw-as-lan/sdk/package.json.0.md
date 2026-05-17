@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/package.json#L1-L45'
 title: sdk/package.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 294372de1c834d41f9f73b3e8acca3ac8286878d5252c9f268d5c69db8236109
+content_sha: 1de79d71de305c1d3a0eb88c71b0179478a4101d07993d92b545221e6793013d
 language: json
 ---
 `sdk/package.json` (lines 1–45)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@fluffylabs/as-lan",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "AssemblyScript SDK for building JAM (Join-Accumulate Machine) services",
   "type": "module",
   "ascMain": "index.ts",

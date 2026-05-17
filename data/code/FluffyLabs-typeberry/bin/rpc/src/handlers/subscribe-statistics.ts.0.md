@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/src/handlers/subscribe-statistics.ts#L1-L20
 title: bin/rpc/src/handlers/subscribe-statistics.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 442d7ba5cb23c80dae62c2e4d2ba548afb8dda2827b56f993fa78697f9f5f44a

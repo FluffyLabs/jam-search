@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L311-L403
 title: examples/library/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 3
 chunk_total: 5
 content_sha: 9461b6f17e41ed90d172dbdc2ebd8b525d38a3e9f7248ad92ff8cd574468ee60

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/args-decoder/instruction-argument-type-map.ts#L1-L52
 title: packages/core/pvm-interpreter/args-decoder/instruction-argument-type-map.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 4
 content_sha: f0f97ec037f77ae6fb1d100567a80938b65a0554537eaa1b71c71a19425f24f3

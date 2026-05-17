@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/chain-stf.ts#L296-L407
 title: packages/jam/transition/chain-stf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 3
 chunk_total: 5
 content_sha: 30dfd6e5100cebb63412ce649c6104f9572fa6626637952f3b81a14dfe65fcb0

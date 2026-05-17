@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/concurrent/parent.ts#L106-L181
 title: packages/core/concurrent/parent.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 1dc9b232ec35fc5e3e2ca29d332dc7855fe63a7eacd97315faee82d7dd797e3c

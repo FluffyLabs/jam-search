@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/trie/nodes.ts#L226-L245
 title: packages/core/trie/nodes.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 2
 chunk_total: 3
 content_sha: 7d2411878bf76b9df1cbae19c27fb35cf6dfb2c8b8b184f20a96db8aebdee817

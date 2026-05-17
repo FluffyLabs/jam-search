@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/admin.test.ts#L1-L106
 title: sdk/jam/accumulate/admin.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: f3d1cab1942afef68b3f2ae8e0f588a0f226a6b732ad08da66e960ac642b40ed

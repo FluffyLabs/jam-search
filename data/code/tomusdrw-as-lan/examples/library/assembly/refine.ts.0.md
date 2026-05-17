@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.ts#L1-L101
 title: examples/library/assembly/refine.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 7b0a1a3a082320a4cc396727502cc9667a265c0c8d0e2da2a96a92ebc7b7af10

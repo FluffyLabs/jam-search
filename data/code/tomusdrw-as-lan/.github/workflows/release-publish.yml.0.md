@@ -5,11 +5,11 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/release-publish.yml#L1-L105
 title: .github/workflows/release-publish.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 7af3a60dbfb573970deef140a83194faaa4795bc57bf8598358e5c143f747f33
+content_sha: d684d6b463e6256d0bdc26d668d3aeb7fc3608a7c3641af8d25e799a05a9135a
 language: yaml
 ---
 `.github/workflows/release-publish.yml` (lines 1–105)
@@ -58,11 +58,11 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cargo/bin/wasm-pvm
-          key: wasm-pvm-cli-0.8.0
+          key: wasm-pvm-cli-0.9.0
 
       - name: Install wasm-pvm-cli
         if: steps.cache-wasm-pvm.outputs.cache-hit != 'true'
-        run: cargo install wasm-pvm-cli@0.8.0 --locked
+        run: cargo install wasm-pvm-cli@0.9.0 --locked
 
       - name: Verify tag matches package versions
         run: |

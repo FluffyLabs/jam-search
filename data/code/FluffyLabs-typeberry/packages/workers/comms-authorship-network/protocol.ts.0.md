@@ -2,22 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/comms-authorship-network/protocol.ts#L1-L29
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/comms-authorship-network/protocol.ts#L1-L36
 title: packages/workers/comms-authorship-network/protocol.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 10743f3819aab2a8b2799d2d4dea3b22e6b58649174bfe0d85c5da2b9027d786
+content_sha: 3224bc9cda383f3dc1256c978fe5bfd6887d4851f03e683497b533dc99b3e5a6
 language: typescript
 ---
-`packages/workers/comms-authorship-network/protocol.ts` (lines 1–29)
+`packages/workers/comms-authorship-network/protocol.ts` (lines 1–36)
 
 ```typescript
 import { codec } from "@typeberry/codec";
 import { type Api, createProtocol, type Internal } from "@typeberry/workers-api";
-import { TicketsMessage } from "./tickets-message.js";
+import { ReceivedTicketMessage, TicketsMessage } from "./tickets-message.js";
 
 /**
  * Port name for authorship-network direct communication.
@@ -38,8 +38,15 @@ export const protocol = createProtocol("authorship-network", {
       response: codec.nothing,
     },
   },
-  // Messages from jam-network to block-authorship (none for now)
-  fromWorker: {},
+  // Messages from jam-network to block-authorship (one ticket per relay).
+  // Response indicates whether the ticket passed validation — used by jam-network
+  // to decide whether to redistribute the ticket to other peers.
+  fromWorker: {
+    receivedTickets: {
+      request: ReceivedTicketMessage.Codec,
+      response: codec.bool,
+    },
+  },
 });
 
 export type NetworkingComms = Api<typeof protocol>;

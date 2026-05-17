@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/test/e2e.ts#L327-L422
 title: bin/rpc/test/e2e.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 3
 chunk_total: 4
 content_sha: e2a68fc82f99043835cba3764d80f53b6418cbb59f15980d04b7278fa90825db

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/args-decoder/argument-type.ts#L1-L15
 title: packages/core/pvm-interpreter/args-decoder/argument-type.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 40d33907d629fbcc26819661ae91beb80ccf3c22a5e03dbbbe50e29cdc3acf2b

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/convert/main.ts#L266-L283
 title: bin/convert/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 2
 chunk_total: 3
 content_sha: d2e9af7b32e4336b49fd9b175b67bc6411c27e080f2aa81b5cdd20d6d096d264

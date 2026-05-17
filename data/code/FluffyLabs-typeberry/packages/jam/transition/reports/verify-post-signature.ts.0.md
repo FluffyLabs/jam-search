@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/reports/verify-post-signature.ts#L1-L81
 title: packages/jam/transition/reports/verify-post-signature.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: a15ab89a1773667ae711f4768fd8c976cad66dbe4557342d5aa01d4ecf89a393

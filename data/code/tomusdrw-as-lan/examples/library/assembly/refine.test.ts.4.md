@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/refine.test.ts#L400-L418
 title: examples/library/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 4
 chunk_total: 5
 content_sha: 94aa09aecb4ef9c3db212838eadf65e98f2aaa1fdf6858445e0f35d114a7f39b

@@ -2,28 +2,35 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/encode.ts#L135-L245
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/encode.ts#L135-L257
 title: sdk/core/codec/encode.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 231b8b6e987f5e9e9fca4bf7d0715917997438e4b6d47a7995f7ef43ad9645a3
+content_sha: f52ea8826033805a592dbf787cd7a812bf3b3b08945a751d85b2be0368f51b3f
 language: typescript
 ---
-`sdk/core/codec/encode.ts` (lines 135–245)
+`sdk/core/codec/encode.ts` (lines 135–257)
 
 ```typescript
+      this.offset += 1;
+      store<u64>(this.ptr + this.offset, value);
+      this.offset += 8;
+      return;
+    }
+
+    if (!this.ensureCapacity(1 + l)) return;
     // First byte: prefix mask | high bits of value
     const shifted = value >> (8 * l);
     const prefix = u8(2 ** 8 - 2 ** (8 - l));
-    this.dataView.setUint8(this.offset, prefix | u8(shifted));
+    store<u8>(this.ptr + this.offset, prefix | u8(shifted));
     this.offset += 1;
 
     // Remaining l bytes: low bits, little-endian
     for (let i: u8 = 0; i < l; i += 1) {
-      this.dataView.setUint8(this.offset, u8(value >> (8 * i)));
+      store<u8>(this.ptr + this.offset, u8(value >> (8 * i)));
       this.offset += 1;
     }
   }
@@ -35,12 +42,12 @@ language: typescript
 
   /** Encode a fixed-length sequence of bytes. */
   bytesFixLen(value: BytesBlob): void {
-    const len = value.length;
+    const len = <u32>value.length;
     if (len === 0) {
       return;
     }
     if (!this.ensureCapacity(len)) return;
-    this.data.set(value.raw, this.offset);
+    memory.copy(this.ptr + this.offset, value.raw.dataStart, len);
     this.offset += len;
   }
 
@@ -82,23 +89,27 @@ language: typescript
    * Ensure the internal buffer has room for `bytes` more bytes.
    * Returns true if space is available, false if the buffer is full (fixed-size mode).
    */
+  @inline
   private ensureCapacity(bytes: u32): boolean {
     if (this._isError) {
       return false;
     }
 
-    const remaining = <u32>this.data.length - this.offset;
-    if (bytes <= remaining) {
+    if (bytes <= this.cap - this.offset) {
       return true;
     }
 
+    return this.grow(bytes);
+  }
+
+  private grow(bytes: u32): boolean {
     if (!this.growable) {
       this._isError = true;
       return false;
     }
 
     const required = this.offset + bytes;
-    let newCapacity = <u32>this.data.length;
+    let newCapacity = this.cap;
     if (newCapacity === 0) {
       newCapacity = DEFAULT_CAPACITY;
     }
@@ -107,9 +118,10 @@ language: typescript
     }
 
     const newData = new Uint8Array(newCapacity);
-    newData.set(this.data.subarray(0, this.offset));
+    memory.copy(newData.dataStart, this.ptr, this.offset);
     this.data = newData;
-    this.dataView = new DataView(newData.buffer, 0, newCapacity);
+    this.ptr = newData.dataStart;
+    this.cap = newCapacity;
     return true;
   }
 }

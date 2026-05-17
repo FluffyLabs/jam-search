@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-json/availability-assignment.ts#L1-L20
 title: packages/jam/state-json/availability-assignment.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2c2998c58abf013aea5a6bbd5719adaaf84b46b8419aa9162efdf54b2d0e7b2f

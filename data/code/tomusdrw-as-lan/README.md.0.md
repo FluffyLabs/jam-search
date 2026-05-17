@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/README.md#L1-L100'
 title: README.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: a14cea475afd39ae9b739f75e79bda34dba442b0a58a0e4424435bd72dd34d2b
+content_sha: 37aea4f9f6bb8e278854a81c0fed4d7a9b99c7a5046707a6d0c0eae339924c88
 language: markdown
 ---
 `README.md` (lines 1–100)
@@ -26,7 +26,7 @@ AssemblyScript SDK for building [JAM](https://graypaper.com/) services.
 - [wasm-pvm-cli](https://crates.io/crates/wasm-pvm-cli) — compiles WASM to JAM PVM binaries
 
   ```bash
-  cargo install wasm-pvm-cli@0.8.0
+  cargo install wasm-pvm-cli@0.9.0
   ```
 
 ## Quick Start

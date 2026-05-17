@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/main.ts#L1-L112
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/main.ts#L1-L110
 title: packages/workers/block-authorship/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
-chunk_total: 3
-content_sha: b676c40389b0b6259bc3872a30a576eaa914f992ae671eee7633dd8d09bf8b46
+chunk_total: 6
+content_sha: e11e273dc9f3e522ff0fa895acd3c7e9f56f244d2f25d05d544da115a8e0039e
 language: typescript
 ---
-`packages/workers/block-authorship/main.ts` (lines 1–112)
+`packages/workers/block-authorship/main.ts` (lines 1–110)
 
 ```typescript
 import { setTimeout } from "node:timers/promises";
@@ -25,8 +25,9 @@ import {
   tryAsTimeSlot,
   tryAsValidatorIndex,
 } from "@typeberry/block";
-import type { TicketAttempt } from "@typeberry/block/tickets.js";
+import type { SignedTicket } from "@typeberry/block/tickets.js";
 import { BytesBlob } from "@typeberry/bytes";
+import { HashDictionary } from "@typeberry/collections/hash-dictionary.js";
 import { HashSet } from "@typeberry/collections/hash-set.js";
 import type { NetworkingComms } from "@typeberry/comms-authorship-network";
 import { type BandersnatchKey, type Ed25519Key, initWasm } from "@typeberry/crypto";
@@ -40,10 +41,11 @@ import { Blake2b, keccak } from "@typeberry/hash";
 import { Logger } from "@typeberry/logger";
 import { tryAsU64 } from "@typeberry/numbers";
 import { Safrole } from "@typeberry/safrole";
+import bandersnatchVrf from "@typeberry/safrole/bandersnatch-vrf.js";
 import { BandernsatchWasm } from "@typeberry/safrole/bandersnatch-wasm.js";
 import { JAM_FALLBACK_SEAL, JAM_TICKET_SEAL } from "@typeberry/safrole/constants.js";
 import { type SafroleSealingKeys, SafroleSealingKeysKind, type State, type ValidatorData } from "@typeberry/state";
-import { asOpaqueType, assertNever, Result } from "@typeberry/utils";
+import { asOpaqueType, Result } from "@typeberry/utils";
 import type { WorkerConfig } from "@typeberry/workers-api";
 import { type BlockSealInput, Generator } from "./generator.js";
 import type { BlockAuthorshipConfig, GeneratorInternal } from "./protocol.js";
@@ -65,6 +67,12 @@ type ValidatorPrivateKeys = {
 type ValidatorPublicKeys = {
   bandersnatchPublic: BandersnatchKey;
   ed25519Public: Ed25519Key;
+};
+
+type SealData = {
+  key: ValidatorKeys;
+  sealPayload: BlockSealInput;
+  logId?: string;
 };
 
 type ValidatorKeys = ValidatorPrivateKeys & ValidatorPublicKeys;
@@ -114,17 +122,7 @@ export async function main(config: Config, comms: GeneratorInternal, networkingC
   const initialState = states.getState(initialHash);
 
   logger.info`Block authorship validator keys: ${keys.map(({ bandersnatchPublic }, index) => `\n ${index}: ${bandersnatchPublic.toString()}`)}`;
-  if (initialState !== null) {
-    const initialKeys = await getSealingKeySeries(
-      startTimeSlot % chainSpec.epochLength === 0,
-      startTimeSlot,
-      initialState,
-    );
-    if (initialKeys.isOk) {
-      logEpochBlockCreation(tryAsEpoch(Math.floor(startTimeSlot / chainSpec.epochLength)), initialKeys.ok);
-    }
-  }
 
-  function getTime() {
-    const currentTime = process.hrtime.bigint() / 1_000_000n;
+  // Per-epoch cache for Tickets mode: index corresponds to position in sealingKeySeries.tickets.
+  // null entry means none of our keys match that slot.
 ```

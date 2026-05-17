@@ -2,19 +2,20 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/generator.test.ts#L93-L211
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/generator.test.ts#L94-L210
 title: packages/workers/block-authorship/generator.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 1
-chunk_total: 3
-content_sha: 6fe18f97928c8aae096258f948e4029d6a348c541ce538f37182154e64b31f0d
+chunk_total: 5
+content_sha: 0023b4e6852c24d3a3bfdcf6b695913e102bed954b3ab40d82984c363fb927d1
 language: typescript
 ---
-`packages/workers/block-authorship/generator.test.ts` (lines 93–211)
+`packages/workers/block-authorship/generator.test.ts` (lines 94–210)
 
 ```typescript
+const MOCK_BANDERSNATCH_SECRET = Bytes.zero(BANDERSNATCH_KEY_BYTES).asOpaque();
 const MOCK_SEAL_PAYLOAD = asOpaqueType(
   BytesBlob.blobFromParts(JAM_FALLBACK_SEAL, Bytes.zero(HASH_SIZE).raw),
 ) as BlockSealInput;
@@ -131,7 +132,4 @@ describe("Generator", () => {
       const blocksDb = createMockBlocksDb(MOCK_PARENT_HASH);
       const statesDb = createMockStatesDb(state);
 
-      const generator = Generator.new({
-        chainSpec: tinyChainSpec,
-        bandersnatch,
 ```

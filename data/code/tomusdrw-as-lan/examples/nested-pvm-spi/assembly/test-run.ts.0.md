@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/nested-pvm-spi/assembly/test-run.ts#L1-L6
 title: examples/nested-pvm-spi/assembly/test-run.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 24e881b579d1bfa5f0e74a32f38eadcb0a55fe1699703c1410c906909c93792d

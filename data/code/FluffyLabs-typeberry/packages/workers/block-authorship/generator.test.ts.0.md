@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/generator.test.ts#L1-L98
 title: packages/workers/block-authorship/generator.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
-chunk_total: 3
-content_sha: 90aa8607ee112557dd0b0ed8981c76f557cf953efb8176c04412794c3808e79a
+chunk_total: 5
+content_sha: d20f1112effb045bf9de71063800fa24d4404853babdead29f410f0c8af27f0c
 language: typescript
 ---
 `packages/workers/block-authorship/generator.test.ts` (lines 1–98)
@@ -30,11 +30,13 @@ import {
   type ValidatorIndex,
   ValidatorKeys,
 } from "@typeberry/block";
+import { SignedTicket, Ticket, tryAsTicketAttempt } from "@typeberry/block/tickets.js";
 import { Bytes, BytesBlob } from "@typeberry/bytes";
 import { asKnownSize, FixedSizeArray } from "@typeberry/collections";
 import { tinyChainSpec } from "@typeberry/config";
 import {
   BANDERSNATCH_KEY_BYTES,
+  BANDERSNATCH_PROOF_BYTES,
   BANDERSNATCH_VRF_SIGNATURE_BYTES,
   BLS_KEY_BYTES,
   ED25519_KEY_BYTES,
@@ -111,6 +113,4 @@ const MOCK_SEAL_PAYLOAD = asOpaqueType(
   BytesBlob.blobFromParts(JAM_FALLBACK_SEAL, Bytes.zero(HASH_SIZE).raw),
 ) as BlockSealInput;
 
-// Mock state entropy values
-const MOCK_ENTROPY_0: EntropyHash = Bytes.fill(HASH_SIZE, 10).asOpaque();
 ```

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/jam-network/main.ts#L1-L72
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/jam-network/main.ts#L1-L78
 title: packages/workers/jam-network/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 71c344eb2db0683cd6ebba8d96d983326e0b6dc66775e7ea2143454cb515670b
+content_sha: f33086ab223d64e9af6ef9e6f74ff83bee4607f361212ea8ff07a3a40ccd6e3a
 language: typescript
 ---
-`packages/workers/jam-network/main.ts` (lines 1–72)
+`packages/workers/jam-network/main.ts` (lines 1–78)
 
 ```typescript
 import type { AuthorshipComms } from "@typeberry/comms-authorship-network";
@@ -76,6 +76,12 @@ export async function main(
     for (const ticket of tickets) {
       network.ticketTask.addTicket(epochIndex, ticket);
     }
+  });
+
+  // Relay tickets received from peers back to block-authorship (one ticket at a time).
+  // Returns the validation result so ticket-distribution knows whether to redistribute.
+  network.ticketTask.setOnTicketReceived(async (epochIndex, ticket) => {
+    return await authorshipComms.sendReceivedTickets({ epochIndex, ticket });
   });
 
   await network.network.start();

@@ -2,25 +2,38 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/decode.ts#L157-L280
+  https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/decode.ts#L152-L280
 title: sdk/core/codec/decode.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: c65fb2b9733bed18105eb603df6db39634ec08a30070ee0cbf3e2bd999265e91
+content_sha: 3a0f52a8787ff58395a19e72177d630b1293d3c231190c9726d734d99006cac2
 language: typescript
 ---
-`sdk/core/codec/decode.ts` (lines 157–280)
+`sdk/core/codec/decode.ts` (lines 152–280)
 
 ```typescript
-      return this.dataView.getUint64(offset, true);
+    const firstByte = load<u8>(this.ptr + offset);
+    const l = decodeVariableLengthExtraBytes(firstByte);
+
+    if (l === 0) {
+      return u64(firstByte);
+    }
+
+    offset = this.moveOffset(l);
+    if (offset === -1) {
+      return 0;
+    }
+
+    if (l === 8) {
+      return load<u64>(this.ptr + offset);
     }
 
     let num = (u64(firstByte) + 2 ** (8 - l) - 2 ** 8) << (8 * l);
-    for (let i = 0; i < <i32>l; i += 1) {
-      num |= u64(this.source[offset + i]) << (8 * i);
+    for (let i: u32 = 0; i < <u32>l; i += 1) {
+      num |= u64(load<u8>(this.ptr + offset + i)) << (8 * i);
     }
     return num;
   }
@@ -131,12 +144,4 @@ language: typescript
 
   /** Skip given number of bytes for decoding. */
   skip(bytes: u32): boolean {
-    return this.moveOffset(bytes) !== -1;
-  }
-
-  /**
-   * Finish decoding `source` object and make sure there is no data left.
-   *
-   * This method can be called when the entire object that was meant to be
-   * stored in the `source` is now fully decoded and we want to ensure
 ```

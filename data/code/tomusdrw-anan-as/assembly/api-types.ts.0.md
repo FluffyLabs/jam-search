@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/api-types.ts#L1-L53'
 title: assembly/api-types.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-08T13:25:50+02:00'
-last_modified: '2026-05-08T13:25:50+02:00'
+created_at: '2026-05-15T10:20:08+02:00'
+last_modified: '2026-05-15T10:20:08+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 1cf3611e067cbb66fe6393c7bbb9cd0c518805f8ef41f28f0c2493a9091185fb

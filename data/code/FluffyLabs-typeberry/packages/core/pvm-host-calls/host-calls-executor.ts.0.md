@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-host-calls/host-calls-executor.ts#L1-L122
 title: packages/core/pvm-host-calls/host-calls-executor.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: f5e34473070bf96e53c3060d931c5290b67e4d5ea53190eaaed0885d19c9e861

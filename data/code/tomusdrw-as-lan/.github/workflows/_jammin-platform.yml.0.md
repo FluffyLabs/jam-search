@@ -5,10 +5,10 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/_jammin-platform.yml#L1-L101
 title: .github/workflows/_jammin-platform.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 0
-chunk_total: 2
+chunk_total: 3
 content_sha: e31540a6be95864a9455124b81ae6d45cfd2ca2de2c882161da03da17de60c21
 language: yaml
 ---

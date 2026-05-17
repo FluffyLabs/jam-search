@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/release-bump-version.yml#L1-L121
 title: .github/workflows/release-bump-version.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: b3bfdbc1da83cd8554482259210e42da6cd6519fd9dca59c7c337febe652522f

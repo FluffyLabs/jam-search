@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/test/test-trace-format.ts#L1-L98'
 title: test/test-trace-format.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-08T13:25:50+02:00'
-last_modified: '2026-05-08T13:25:50+02:00'
+created_at: '2026-05-15T10:20:08+02:00'
+last_modified: '2026-05-15T10:20:08+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: d98097a722992dff6116e77c76c101c433a9b4be85429eb89149d78619640df6

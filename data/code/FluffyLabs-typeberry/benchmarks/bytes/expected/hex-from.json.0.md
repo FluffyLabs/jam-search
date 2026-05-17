@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/bytes/expected/hex-from.json#L1-L30
 title: benchmarks/bytes/expected/hex-from.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 7cf25dbc09b425c9840d09c974a90b0c3df9823452705f5044c9f8db1a3e6d00

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/w3f/codec/work-package.ts#L1-L44
 title: bin/test-runner/w3f/codec/work-package.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 45cda0a70f1b87d04e2b3d0d8b011c6f3604b646632f13c245b63af70d0af602

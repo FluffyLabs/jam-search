@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/work-package.ts#L348-L479'
 title: sdk/jam/work-package.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-07T23:20:06+02:00'
-last_modified: '2026-05-07T23:20:06+02:00'
+created_at: '2026-05-15T23:42:49+02:00'
+last_modified: '2026-05-15T23:42:49+02:00'
 chunk_index: 3
 chunk_total: 6
 content_sha: d0439292c288c6253528de84229cc09df66f93e64fee16e206f14b6e45cd1130

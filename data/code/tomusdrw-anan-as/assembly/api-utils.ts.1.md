@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/api-utils.ts#L124-L258'
 title: assembly/api-utils.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-08T13:25:50+02:00'
-last_modified: '2026-05-08T13:25:50+02:00'
+created_at: '2026-05-15T10:20:08+02:00'
+last_modified: '2026-05-15T10:20:08+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: cbb2757b999d4c9eb42cae2836e057dbff390efecb2c196994f0ab9ec286ac05

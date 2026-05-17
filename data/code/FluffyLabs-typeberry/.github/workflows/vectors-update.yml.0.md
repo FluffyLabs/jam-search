@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/vectors-update.yml#L1-L94
 title: .github/workflows/vectors-update.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-07T07:54:29Z'
-last_modified: '2026-05-07T07:54:29Z'
+created_at: '2026-05-15T16:05:10Z'
+last_modified: '2026-05-15T16:05:10Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: c60c524f324090af60e01ba4f0d336917f13ec4401f3ecd4a3fb5da94d425928
