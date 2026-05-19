@@ -3,8 +3,8 @@ type: page
 url: 'https://graypaper.com/resources/'
 title: JAM Resources
 site: graypaper.com
-created_at: '2026-05-15T04:21:17.417Z'
-last_modified: '2026-05-15T04:21:17.417Z'
+created_at: '2026-05-19T04:23:49.816Z'
+last_modified: '2026-05-19T04:23:49.816Z'
 ---
 ## Resources
 
