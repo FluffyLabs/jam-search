@@ -159,3 +159,9 @@ Now the error should not appear no matter how many times fuzz session is connect
 ## Comment by @0xjunha
 
 Hi @davxy , [fastroll v0.1.25](https://github.com/fastroll-jam/fastroll-releases/releases/tag/v0.1.25) is released, now aligned with GP v0.7.2. Thank you.
+
+
+## Comment by @0xjunha
+
+Hi @davxy , FastRoll now gets released as docker image. Thanks!
+- https://github.com/davxy/jam-conformance/pull/208
