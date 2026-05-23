@@ -175,3 +175,13 @@ Yes, I just start to impl fuzz-v1, probably ready tomorrow
 ## Comment by @qiweiii
 
 @davxy boka latest release should be able to pass all existing traces. btw can we have another perf round
+
+
+## Comment by @davxy
+
+Hey @qiweiii  have you implemented [std packaging](https://github.com/davxy/jam-conformance/blob/main/fuzz-proto/README.md#standard-target-packaging) for your target?
+
+
+## Comment by @xlc
+
+yes we have

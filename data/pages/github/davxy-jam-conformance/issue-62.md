@@ -359,3 +359,20 @@ Please align your target with the standard packaging requirements:
 https://github.com/davxy/jam-conformance/tree/main/fuzz-proto#standard-target-packaging
 
 Let me know once you have updated it to give it a try
+
+
+## Comment by @davxy
+
+Hey @aang114  have you implemented [std packaging](https://github.com/davxy/jam-conformance/blob/main/fuzz-proto/README.md#standard-target-packaging) for your target?
+
+
+## Comment by @aang114
+
+> Hey [@aang114](https://github.com/aang114) have you implemented [std packaging](https://github.com/davxy/jam-conformance/blob/main/fuzz-proto/README.md#standard-target-packaging) for your target?
+
+Hi @davxy, I have just implemented std packaging and opened a PR: https://github.com/davxy/jam-conformance/pull/210. It would be great to see the updated results. Thanks :)
+
+
+## Comment by @davxy
+
+@aang114 you can now self-assess your implementation here: https://fuzz.jamtoaster.network/
