@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/publish.yml#L1-L135
+  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/publish.yml#L1-L126
 title: .github/workflows/publish.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: faea9cd4e3b5becfd94d3be5176b9f9d554e0b5d2131764073fcc29672efa344
+content_sha: dd8d5aab011262c0a364e78903645b5d0fcd99419ea0e6ab938703b3dbceaba3
 language: yaml
 ---
-`.github/workflows/publish.yml` (lines 1–135)
+`.github/workflows/publish.yml` (lines 1–126)
 
 ```yaml
 name: Publish
@@ -48,10 +48,18 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Get short commit SHA
+      id: sha
+      run: echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
     - name: Build @typeberry/${{ matrix.project }}
       run: npm run build -w @typeberry/${{ matrix.project }}
+      # Stamp the commit into the version for everything except a real (non-pre)
+      # release, which publishes the clean version. The SHA is the truthy branch
+      # on purpose: GitHub Actions' `cond && A || B` returns B when A is empty,
+      # so an empty-string true-branch would never win.
       env:
-        IS_RELEASE: ${{ github.event_name == 'release' && !github.event.release.prerelease && '1' || '' }}
+        VERSION_SHA: ${{ (github.event_name != 'release' || github.event.release.prerelease) && steps.sha.outputs.short || '' }}
 
     - name: Determine npm tag
       id: npm-tag
@@ -133,21 +141,4 @@ jobs:
         cache-to: type=gha,mode=max
         platforms: linux/amd64
 
-  update-release-notes:
-    if: github.event_name == 'release'
-    runs-on: ubuntu-latest
-    needs: [publish-npm, publish-docker]
-    permissions:
-      contents: write
-
-    steps:
-    - uses: actions/checkout@v6
-
-    - name: Compute release version (strip leading v)
-      id: ver
-      run: |
-        RAW="${{ github.event.release.tag_name }}"
-        echo "version=${RAW#v}" >> "$GITHUB_OUTPUT"
-
-    - name: Update Release Notes
 ```

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/bytes/compare.ts#L1-L86
 title: benchmarks/bytes/compare.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 7e9d05145d1f12974040dd1bf1a208562328bb9a9018a7b8fbd205329e361f07

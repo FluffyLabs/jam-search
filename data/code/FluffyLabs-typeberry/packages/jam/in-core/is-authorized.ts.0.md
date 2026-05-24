@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/is-authorized.ts#L1-L109
 title: packages/jam/in-core/is-authorized.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 68809ad1677561aee8fc9ff1d2a25d897253487181c2d9c7aa0c05842232394b

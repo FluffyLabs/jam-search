@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L1-L104
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: 1b4ddeb00e11937ed445b0cc232bd3ac27d1c9718cff75361cc4c72c6cda7614

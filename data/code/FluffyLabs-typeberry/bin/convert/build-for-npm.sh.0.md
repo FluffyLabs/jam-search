@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/convert/build-for-npm.sh#L1-L54
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/convert/build-for-npm.sh#L1-L59
 title: bin/convert/build-for-npm.sh
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: d0b0672197e0cabfbc9b6a18115d2ab858e612f1146b388c2f18e814c8d8af6d
+content_sha: b09ffa1a4190a17f734a33657a94b27cfc03c470eb6f0d2eaf8962756932ae06
 language: bash
 ---
-`bin/convert/build-for-npm.sh` (lines 1–54)
+`bin/convert/build-for-npm.sh` (lines 1–59)
 
 ```bash
 #!/bin/bash
@@ -32,6 +32,16 @@ DIST_FOLDER=./dist/convert
 # clean dist dir
 mkdir -p "${DIST_FOLDER}"
 rm -rf "${DIST_FOLDER:?}"/*
+
+# When VERSION_SHA is set (e.g. CI builds) append it to the version. convert's
+# --help banner uses the version inlined by ncc from packages/core/utils/package.json
+# (not the root), so we stamp utils before building, same as bin/jam. Unset =
+# clean release version.
+if [ -n "$VERSION_SHA" ]; then
+  VERSION="$VERSION-$VERSION_SHA"
+  npm pkg set version="$VERSION" -w packages/core/utils
+fi
+
 # Build the main binary
 BUILD="npx @vercel/ncc build -s -d"
 $BUILD ./bin/convert/index.ts -o $DIST_FOLDER
@@ -42,11 +52,6 @@ cp ./README.md $DIST_FOLDER/
 # Make index.js executable and insert shebang
 echo '#!/usr/bin/env node' > $DIST_FOLDER/temp.js && cat $DIST_FOLDER/index.js >> $DIST_FOLDER/temp.js && mv $DIST_FOLDER/temp.js $DIST_FOLDER/index.js
 chmod +x $DIST_FOLDER/index.js
-
-if [ -z "$IS_RELEASE" ]; then
-  SHA=$(git rev-parse --short HEAD)
-  VERSION="$VERSION-$SHA"
-fi
 
 # build package.json file
 cat > $DIST_FOLDER/package.json << EOF

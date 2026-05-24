@@ -2,21 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L431-L459
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L432-L458
 title: bin/lib/scripts/build-lib.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 4
 chunk_total: 5
-content_sha: ef9b4a21c4afb6cc592dd67b2d824f1173b396cac24bc547cb8b86c06a581fe4
+content_sha: 7e616d14bac0f1ba155ee1aed073e9ed08ffd0c53acebe9bcd1da2bebd870233
 language: typescript
 ---
-`bin/lib/scripts/build-lib.ts` (lines 431–459)
+`bin/lib/scripts/build-lib.ts` (lines 432–458)
 
 ```typescript
-// 1. Discover all workspace packages by reading package.json files
-// 2. Rewrite all workspace package imports to #<package-name>/* in .js and .d.ts files
 // 3. Create a distribution package.json with "imports" field for resolution
 // 4. Copy README.md and .npmignore for npm publishing
 

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/state.ts#L94-L220
 title: packages/jam/state/state.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: cbdf27d481110e42266a60111dc603302dac7e7410bba2281c8067eedc12a7ca

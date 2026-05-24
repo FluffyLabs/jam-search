@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/shift.ts#L1-L108
 title: assembly/instructions/shift.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 191032d89d158c684a944373f5232677f33dff3ad2c0559504dc6bf7f8bfb2d0

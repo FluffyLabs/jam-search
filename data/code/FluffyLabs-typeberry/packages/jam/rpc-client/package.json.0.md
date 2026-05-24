@@ -2,29 +2,31 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/rpc-client/package.json#L1-L18
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/rpc-client/package.json#L1-L20
 title: packages/jam/rpc-client/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 545c9c76649c95b1d3f3c03fb89f096c6c5a079bb0dd4d4b2da54b8852365dee
+content_sha: 6f00a48552e1d7ef2fd3ab04db61b6027429554eee615e0740197a78f38b0d6d
 language: json
 ---
-`packages/jam/rpc-client/package.json` (lines 1–18)
+`packages/jam/rpc-client/package.json` (lines 1–20)
 
 ```json
 {
   "name": "@typeberry/rpc-client",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A TypeScript JAM JSON-RPC client.",
   "main": "index.ts",
   "dependencies": {
+    "@opentelemetry/auto-instrumentations-node": "0.76.0",
+    "@opentelemetry/sdk-node": "0.218.0",
     "@typeberry/logger": "*",
     "@typeberry/rpc-validation": "*",
-    "ws": "8.18.2",
-    "eventemitter3": "^5.0.1"
+    "eventemitter3": "^5.0.1",
+    "ws": "^8.20.1"
   },
   "scripts": {
     "test": "tsx --test $(find . -type f -name '*.test.ts' | tr '\\n' ' ')"

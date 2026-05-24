@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/package.json#L1-L32
 title: packages/jam/in-core/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 0cde7fecc49c8c2adb4dd1485c2a4591bed4f14744f92b4aaceb337f30ec3149
+content_sha: 0245b0fd7faf3a48ed88d3ddb7dc3860b07f26ccf023bb5d5d7a906d0860be13
 language: json
 ---
 `packages/jam/in-core/package.json` (lines 1–32)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/in-core",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "In core execution utilities (refine phase).",
   "main": "index.ts",
   "scripts": {

@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L1-L154'
+url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L1-L153'
 title: assembly/api-debugger.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: 57e9d9a59aa10fef44770ca00bcd7974eeb48c5d63bc1f16e94f1937f30c869b
+content_sha: 1fdde1eaa6a2b29304f150836d46f8e7976f286685aba1270c48da03ee75422e
 language: typescript
 ---
-`assembly/api-debugger.ts` (lines 1–154)
+`assembly/api-debugger.ts` (lines 1–153)
 
 ```typescript
 import { buildMemory } from "./api-internal";
@@ -34,10 +34,11 @@ export function resetJAM(
   args: u8[],
   hasMetadata: boolean = false,
   useBlockGas: boolean = false,
+  preallocateMemoryPages: u32 = 128,
 ): void {
   const code = hasMetadata ? extractCodeAndMetadata(liftBytes(program)).code : liftBytes(program);
 
-  const p = decodeSpi(code, liftBytes(args), 128, useBlockGas);
+  const p = decodeSpi(code, liftBytes(args), preallocateMemoryPages, useBlockGas);
   const int = new Interpreter(p.program, p.registers, p.memory);
   int.nextPc = <u32>pc;
   int.gas.set(initialGas);
@@ -79,6 +80,7 @@ export function resetGenericWithMemory(
   initialGas: Gas,
   hasMetadata: boolean = false,
   useBlockGas: boolean = false,
+  preallocateMemoryPages: u32 = 0,
 ): void {
   const code = hasMetadata ? extractCodeAndMetadata(liftBytes(program)).code : liftBytes(program);
 
@@ -86,7 +88,7 @@ export function resetGenericWithMemory(
   const registers: Registers = newRegisters();
   fillRegisters(registers, flatRegisters);
 
-  const builder = new MemoryBuilder();
+  const builder = new MemoryBuilder(preallocateMemoryPages);
   const memory = buildMemory(builder, readPages(pageMap), readChunks(chunks));
 
   const int = new Interpreter(p, registers, memory);
@@ -165,7 +167,4 @@ export function getRegisters(): Uint8Array {
   }
 
   const int = <Interpreter>interpreter;
-  for (let i = 0; i < int.registers.length; i++) {
-    let val = int.registers[i];
-    for (let j = 0; j < REG_SIZE_BYTES; j++) {
 ```

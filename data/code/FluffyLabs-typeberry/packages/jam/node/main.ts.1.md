@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L92-L206
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L93-L207
 title: packages/jam/node/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 4
 content_sha: 8d6ac3fb3821ccaa412b4718c3917804d46021b0f877c61b1850b586af5733fa
 language: typescript
 ---
-`packages/jam/node/main.ts` (lines 92–206)
+`packages/jam/node/main.ts` (lines 93–207)
 
 ```typescript
   // it seems that opening it in the main thread for writing, and later

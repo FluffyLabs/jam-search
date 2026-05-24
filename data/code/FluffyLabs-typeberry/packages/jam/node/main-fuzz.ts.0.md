@@ -2,19 +2,20 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L1-L105
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L1-L102
 title: packages/jam/node/main-fuzz.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
-chunk_total: 1
-content_sha: c2a6db4a011911aed9cfd5f1ccf68a268daecc9135a04c58a77a972837c238fd
+chunk_total: 2
+content_sha: c099f06ff749758ed0fcc06eb6b99d52f02fcd9ba125088338e405de376da649
 language: typescript
 ---
-`packages/jam/node/main-fuzz.ts` (lines 1–105)
+`packages/jam/node/main-fuzz.ts` (lines 1–102)
 
 ```typescript
+import { rm } from "node:fs/promises";
 import { type BlockView, Header, type HeaderHash, type StateRootHash, type TimeSlot } from "@typeberry/block";
 import { Bytes } from "@typeberry/bytes";
 import { Encoder } from "@typeberry/codec";
@@ -25,6 +26,7 @@ import { HASH_SIZE } from "@typeberry/hash";
 import { Logger } from "@typeberry/logger";
 import type { StateEntries } from "@typeberry/state-merkleization";
 import { CURRENT_VERSION, Result, version } from "@typeberry/utils";
+import { logHostEnvironment } from "@typeberry/workers-api-node";
 import { getChainSpec } from "./common.js";
 import type { JamConfig } from "./jam-config.js";
 import type { NodeApi } from "./main.js";
@@ -39,19 +41,50 @@ export type FuzzConfig = {
 
 const logger = Logger.new(import.meta.filename, "fuzztarget");
 
+/** Dedicated subdirectory under the configured base path that the fuzzer owns and wipes. */
+const FUZZ_DB_SUBDIR = "typeberry-fuzz-db";
+
+/**
+ * Resolve the directory the fuzzer should use for its on-disk database, or
+ * `undefined` for an in-memory database. The dedicated `FUZZ_DB_SUBDIR` is
+ * appended so we only ever wipe a directory the fuzzer owns, never the base
+ * path the harness handed us.
+ *
+ * The empty / "undefined" guards are defensive: the env flow already normalizes via fuzzDatabaseBasePath,
+ * but the CLI fuzz-target path can set databaseBasePath directly without going through fuzz-env's normalization.
+ */
+export function resolveFuzzDbBase(configured: string | undefined): string | undefined {
+  if (configured === undefined) {
+    return undefined;
+  }
+  const trimmed = configured.trim();
+  if (trimmed === "" || trimmed.toLowerCase() === "undefined") {
+    return undefined;
+  }
+  return `${trimmed}/${FUZZ_DB_SUBDIR}`;
+}
+
+/** Recursively remove the fuzzer's database directory. No-op if it is absent. */
+export async function wipeFuzzDb(base: string): Promise<void> {
+  await rm(base, { recursive: true, force: true });
+}
+
 export function getFuzzDetails() {
   return {
     nodeName: "@typeberry/jam",
     nodeVersion: fuzzV1.Version.tryFromString(version),
-    gpVersion: fuzzV1.Version.tryFromString(CURRENT_VERSION.split("-")[0]),
+    gpVersion: fuzzV1.Version.tryFromString(CURRENT_VERSION),
   };
 }
 
 export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) => string) {
   logger.info`💨 Fuzzer V${fuzzConfig.version} starting up.`;
   logger.info`🖥️ PVM Backend: ${PvmBackend[fuzzConfig.jamNodeConfig.pvmBackend]}.`;
+  logHostEnvironment(logger);
 
   const { jamNodeConfig: config } = fuzzConfig;
+
+  const fuzzDbBase = resolveFuzzDbBase(config.node.databaseBasePath);
 
   let runningNode: NodeApi | null = null;
 
@@ -84,40 +117,4 @@ export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) 
       state: StateEntries,
       ancestry: [HeaderHash, TimeSlot][],
     ): Promise<StateRootHash> => {
-      if (runningNode !== null) {
-        const finish = runningNode.close();
-        runningNode = null;
-        await finish;
-      }
-      // update the chainspec
-      const newNode = await mainImporter(
-        {
-          ...config,
-          node: {
-            ...config.node,
-            // use in-memory db
-            databaseBasePath: undefined,
-            chainSpec: {
-              ...config.node.chainSpec,
-              genesisHeader: Encoder.encodeObject(Header.Codec, header, chainSpec),
-              genesisState: new Map(state),
-            },
-          },
-          ancestry,
-          network: null,
-        },
-        withRelPath,
-        {
-          initGenesisFromAncestry: fuzzConfig.initGenesisFromAncestry,
-          dummyFinalityDepth: 10_000,
-          pruneBlocks: true,
-        },
-      );
-      runningNode = newNode;
-      return await newNode.getBestStateRootHash();
-    },
-  });
-
-  return closeFuzzTarget;
-}
 ```

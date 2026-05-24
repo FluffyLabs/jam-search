@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/README.md#L146-L210'
 title: README.md
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 61e2cc3af383169b52cbf5c9edaae385812312a9a38a3ac972fb8e746b58d38c

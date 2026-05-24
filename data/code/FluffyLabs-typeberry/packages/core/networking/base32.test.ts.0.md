@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/networking/base32.test.ts#L1-L12
 title: packages/core/networking/base32.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 1f61f5666a7bd31e12169d2479d23e1eef71d1ca570c51f808d3a5e6fd4912fe

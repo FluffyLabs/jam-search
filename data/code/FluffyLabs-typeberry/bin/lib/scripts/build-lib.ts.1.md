@@ -2,21 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L110-L214
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L111-L216
 title: bin/lib/scripts/build-lib.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 5
-content_sha: 227e624a95c34ad919749adb1b68c6322883b53d8f6da73b53ff17ae5e4a160f
+content_sha: 7bcbaeaa00f7b63f64f5cb7c91e3b93b37b9270b24297d61526d739b6732da38
 language: typescript
 ---
-`bin/lib/scripts/build-lib.ts` (lines 110–214)
+`bin/lib/scripts/build-lib.ts` (lines 111–216)
 
 ```typescript
- * Build a map of package names to their workspace paths
- *
  * Reads the root package.json and discovers all workspace packages by reading each
  * workspace's package.json file. This creates a mapping used for import rewriting.
  *
@@ -120,4 +118,7 @@ function rewriteImports(filePath: string, packageMap: Record<string, string>): v
       modified = true;
       // Prepend # to the import path
       const newImportPath = `#${importPath}`;
+      return `${prefix}${newImportPath}${suffix}`;
+    }
+
 ```

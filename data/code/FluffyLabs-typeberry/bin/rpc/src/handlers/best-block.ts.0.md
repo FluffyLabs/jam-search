@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/src/handlers/best-block.ts#L1-L22
 title: bin/rpc/src/handlers/best-block.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: bdd3a0a8247673e5b4001b62980c6b70e501799bd312da84ead772733a27406d

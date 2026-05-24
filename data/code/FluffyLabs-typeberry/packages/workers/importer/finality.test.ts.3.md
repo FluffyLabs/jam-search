@@ -2,36 +2,69 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L297-L382
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L293-L376
 title: packages/workers/importer/finality.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 3
-chunk_total: 5
-content_sha: a5f9a5367678dc64bc923fdc9e2824713acf424e129c5d971618a613b4da241f
+chunk_total: 6
+content_sha: a11d10a1a3c53513a05c671e427aff8db62ff03ae92ec5a263fae615f5cee364
 language: typescript
 ---
-`packages/workers/importer/finality.test.ts` (lines 297–382)
+`packages/workers/importer/finality.test.ts` (lines 293–376)
 
 ```typescript
-      assertExists(r3);
-      assert.strictEqual(r3.finalizedHash.isEqualTo(b2), true);
-      assert.strictEqual(r3.prunableStateHashes.length, 1);
-      assert.ok(r3.prunableStateHashes[0].isEqualTo(b1));
+      // Import M1..M4. F1 creates a fork from the middle of the chain.
+      // After importing M1..M4: chain [M1,M2,M3,M4], length 4 not > 4.
+      for (const h of [m1, m2, m3, m4]) {
+        finalizer.onBlockImported(h);
+      }
 
-      // Import F3: fork chain becomes [f1, f2, f3], length=3 > depth=2.
-      // Finalize f1 (index 0). Main chain [b3] doesn't contain f1 → dead.
-      const r4 = finalizer.onBlockImported(f3);
-      assertExists(r4);
-      assert.strictEqual(r4.finalizedHash.isEqualTo(f1), true);
+      // Import F1: parent M3 is at index 2 (not tip M4). Fork: [M1,M2,M3,F1].
+      finalizer.onBlockImported(f1);
 
-      const pruned = r4.prunableStateHashes.map((h) => h.toString());
-      assert.ok(pruned.includes(b2.toString()), "B2 (prev finalized) should be pruned");
-      assert.ok(pruned.includes(b3.toString()), "B3 should be pruned (dead fork)");
-      assert.ok(!pruned.includes(f1.toString()), "F1 should not be pruned (finalized)");
-      assert.ok(!pruned.includes(f2.toString()), "F2 should not be pruned (after finalized)");
-      assert.ok(!pruned.includes(f3.toString()), "F3 should not be pruned (after finalized)");
+      // Extend main chain to trigger finality.
+      const m5 = await createBlock(db, m4, 5);
+
+      // Import M5: main chain [M1,M2,M3,M4,M5] length 5 > 4. Finalize M3.
+      const r1 = finalizer.onBlockImported(m5);
+      assertExists(r1);
+      assert.strictEqual(r1.finalizedHash.isEqualTo(m3), true);
+
+      // Both chains contain M3:
+      // Main [M1,M2,M3,M4,M5]: M3 at index 2. Prune M1,M2. Remaining: [M4,M5].
+      // Fork [M1,M2,M3,F1]: M3 at index 2. Prune M1,M2. Remaining: [F1].
+      const pruned1 = r1.prunableStateHashes.map((h) => h.toString());
+      assert.ok(pruned1.includes(genesis.toString()), "Genesis should be pruned");
+      assert.ok(!pruned1.includes(m3.toString()), "M3 (finalized) should not be pruned");
+      assert.ok(!pruned1.includes(m4.toString()), "M4 should not be pruned (alive)");
+      assert.ok(!pruned1.includes(f1.toString()), "F1 should not be pruned (alive)");
+
+      // Extend fork to trigger next finality round.
+      const f2 = await createBlock(db, f1, 21);
+      const f3 = await createBlock(db, f2, 22);
+      const f4 = await createBlock(db, f3, 23);
+      const f5 = await createBlock(db, f4, 24);
+
+      // [F1] length 1, [M4,M5] length 2. No finality yet.
+      assert.strictEqual(finalizer.onBlockImported(f2), null);
+      assert.strictEqual(finalizer.onBlockImported(f3), null);
+      assert.strictEqual(finalizer.onBlockImported(f4), null);
+
+      // Import F5: fork chain [F1,F2,F3,F4,F5] length 5 > 4. Finalize F3 (index 2).
+      // Main chain [M4,M5] doesn't contain F3 → dead fork, prune M4,M5.
+      const r2 = finalizer.onBlockImported(f5);
+      assertExists(r2);
+      assert.strictEqual(r2.finalizedHash.isEqualTo(f3), true);
+
+      const pruned2 = r2.prunableStateHashes.map((h) => h.toString());
+      assert.ok(pruned2.includes(m3.toString()), "M3 (prev finalized) should be pruned");
+      assert.ok(pruned2.includes(m4.toString()), "M4 should be pruned (dead fork)");
+      assert.ok(pruned2.includes(m5.toString()), "M5 should be pruned (dead fork)");
+      assert.ok(pruned2.includes(f1.toString()), "F1 should be pruned (before finalized)");
+      assert.ok(pruned2.includes(f2.toString()), "F2 should be pruned (before finalized)");
+      assert.ok(!pruned2.includes(f3.toString()), "F3 (finalized) should not be pruned");
     });
 
     it("should prune a dead fork that diverged before the finalized block", async () => {
@@ -40,65 +73,30 @@ language: typescript
 
       const finalizer = DummyFinalizer.create(db, 2);
 
-      // Main: genesis -> 1 -> 2 -> 3 -> 4
-      const chain = await buildLinearChain(db, genesis, 4);
+      // Main: genesis -> 1 -> 2 -> 3 -> 4 -> 5
+      const chain = await buildLinearChain(db, genesis, 5);
 
       // Fork from genesis: genesis -> F1 -> F2
       const f1 = await createBlock(db, genesis, 100);
       const f2 = await createBlock(db, f1, 101);
 
-      // Import: 1, 2, F1, F2, 3 (finalize block 1), 4 (finalize block 2)
-      finalizer.onBlockImported(chain[0]);
-      finalizer.onBlockImported(chain[1]);
+      // Import main chain and fork — no finality yet.
+      for (const h of chain.slice(0, 4)) {
+        finalizer.onBlockImported(h);
+      }
       finalizer.onBlockImported(f1);
       finalizer.onBlockImported(f2);
 
-      // Import 3: main chain length=3 > depth=2, finalize block 1.
-      const r1 = finalizer.onBlockImported(chain[2]);
+      // Import 5th block: main chain length 5 > 4, finalize chain[2].
+      const r1 = finalizer.onBlockImported(chain[4]);
       assertExists(r1);
-      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[0]), true);
+      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
 
-      // Fork [F1, F2] doesn't contain block 1, so it's dead.
-      // Also, the previous finalized (genesis) is pruned.
+      // Fork [F1,F2] doesn't contain chain[2], so it's dead.
       const pruned1 = r1.prunableStateHashes.map((h) => h.toString());
-      assert.ok(pruned1.includes(genesis.toString()), "Genesis (prev finalized) should be pruned");
+      assert.ok(pruned1.includes(genesis.toString()), "Genesis should be pruned");
       assert.ok(pruned1.includes(f1.toString()), "F1 should be pruned");
       assert.ok(pruned1.includes(f2.toString()), "F2 should be pruned");
     });
 
-    it("should handle fork from the middle of a chain", async () => {
-      const db = InMemoryBlocks.new();
-      const genesis = db.getBestHeaderHash();
-
-      const finalizer = DummyFinalizer.create(db, 2);
-
-      // Main: genesis -> 1 -> 2 -> 3
-      const b1 = await createBlock(db, genesis, 1);
-      const b2 = await createBlock(db, b1, 2);
-      const b3 = await createBlock(db, b2, 3);
-
-      // Fork from block 1: 1 -> F1 -> F2 -> F3
-      const f1 = await createBlock(db, b1, 10);
-      const f2 = await createBlock(db, f1, 11);
-      const f3 = await createBlock(db, f2, 12);
-
-      // Import main chain first.
-      finalizer.onBlockImported(b1);
-      finalizer.onBlockImported(b2);
-      finalizer.onBlockImported(b3);
-
-      // Import fork — F1's parent is b1 which is mid-chain, not a tip.
-      finalizer.onBlockImported(f1);
-      finalizer.onBlockImported(f2);
-
-      // Import F3: fork chain = [b1, f1, f2, f3], length=4 > depth=2.
-      // Finalize block at index 4-1-2 = 1 → f1.
-      // But wait — the main chain [b1, b2, b3] also has length 3 > 2.
-      // Block 3 import already triggered finality for b1.
-      // After that, main chain trimmed to [b2, b3].
-      // Fork was created from mid-chain of [b1, b2, b3] at b1.
-      // But b1 was already part of the chain before finality.
-      // After finality of b1: unfinalized = [[b2, b3]].
-      // Now F1's parent is b1 = lastFinalized, so it starts a new chain: [f1].
-      // F2 extends it: [f1, f2]. F3 extends: [f1, f2, f3]. Length=3 > 2.
 ```

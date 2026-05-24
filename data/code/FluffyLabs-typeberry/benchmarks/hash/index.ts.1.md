@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/hash/index.ts#L154-L294
 title: benchmarks/hash/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 5
 content_sha: 132481a7c9d5db0df1b6f4993fd4752fa9f4bb3756bb32e310c75da31dad22ae

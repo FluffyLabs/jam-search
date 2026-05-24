@@ -2,114 +2,112 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L121-L217
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L122-L216
 title: packages/workers/importer/finality.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
-chunk_total: 5
-content_sha: 182be3b5183a45274818e358c3bb479dd1d19299204657087480405813485e00
+chunk_total: 6
+content_sha: d0164f1da619c9a2ec6f31ff3be1d2ba89ec820a92d7fb556b22b98a5ffc4add
 language: typescript
 ---
-`packages/workers/importer/finality.test.ts` (lines 121–217)
+`packages/workers/importer/finality.test.ts` (lines 122–216)
 
 ```typescript
-      const result = finalizer.onBlockImported(chain[3]);
-      assertExists(result);
-      // Block 1 is finalized. The previously finalized block (genesis) is pruned.
-      assert.strictEqual(result.prunableStateHashes.length, 1);
+      // Prunable: genesis (prev finalized) + chain[0..2] = 4 items.
+      assert.strictEqual(result.prunableStateHashes.length, 4);
       assert.ok(result.prunableStateHashes[0].isEqualTo(genesis));
+      for (let i = 0; i < 3; i++) {
+        assert.ok(result.prunableStateHashes[i + 1].isEqualTo(chain[i]));
+      }
     });
 
-    it("should advance finality one block at a time, pruning previous finalized each time", async () => {
+    it("should advance finality in batches of depth blocks", async () => {
       const db = InMemoryBlocks.new();
       const genesis = db.getBestHeaderHash();
 
       const finalizer = DummyFinalizer.create(db, 2);
 
-      // Build: genesis -> 1 -> 2 -> 3 -> 4 -> 5
-      const chain = await buildLinearChain(db, genesis, 5);
+      // depth=2: triggers at > 4 (length >= 5).
+      // After trigger: remaining = 2 blocks. Next trigger needs 3 more (length 5).
+      // Build enough for 3 triggers: 5 + 3 + 3 = 11 blocks.
+      const chain = await buildLinearChain(db, genesis, 11);
 
-      // Import 1, 2: no finality (length <= depth)
-      assert.strictEqual(finalizer.onBlockImported(chain[0]), null);
-      assert.strictEqual(finalizer.onBlockImported(chain[1]), null);
+      // First 4 imports: no finality (chain length <= 2*depth = 4).
+      for (let i = 0; i < 4; i++) {
+        assert.strictEqual(finalizer.onBlockImported(chain[i]), null);
+      }
 
-      // Import 3: length=3 > depth=2, finalize block 1. Prune genesis.
-      const r1 = finalizer.onBlockImported(chain[2]);
+      // 5th import: chain length = 5 > 4, finalize chain[2].
+      const r1 = finalizer.onBlockImported(chain[4]);
       assertExists(r1);
-      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[0]), true);
-      assert.strictEqual(r1.prunableStateHashes.length, 1);
+      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
+      assert.strictEqual(r1.prunableStateHashes.length, 3);
       assert.ok(r1.prunableStateHashes[0].isEqualTo(genesis));
+      assert.ok(r1.prunableStateHashes[1].isEqualTo(chain[0]));
+      assert.ok(r1.prunableStateHashes[2].isEqualTo(chain[1]));
 
-      // Import 4: finalize block 2. Prune block 1 (previous finalized).
-      const r2 = finalizer.onBlockImported(chain[3]);
+      // Next 2 imports: no finality (remaining chain = 2, need > 4).
+      assert.strictEqual(finalizer.onBlockImported(chain[5]), null);
+      assert.strictEqual(finalizer.onBlockImported(chain[6]), null);
+
+      // 8th import: chain length = 5 > 4, finalize chain[5].
+      const r2 = finalizer.onBlockImported(chain[7]);
       assertExists(r2);
-      assert.strictEqual(r2.finalizedHash.isEqualTo(chain[1]), true);
-      assert.strictEqual(r2.prunableStateHashes.length, 1);
-      assert.ok(r2.prunableStateHashes[0].isEqualTo(chain[0]));
+      assert.strictEqual(r2.finalizedHash.isEqualTo(chain[5]), true);
+      assert.strictEqual(r2.prunableStateHashes.length, 3);
+      assert.ok(r2.prunableStateHashes[0].isEqualTo(chain[2]));
+      assert.ok(r2.prunableStateHashes[1].isEqualTo(chain[3]));
+      assert.ok(r2.prunableStateHashes[2].isEqualTo(chain[4]));
 
-      // Import 5: finalize block 3. Prune block 2 (previous finalized).
-      const r3 = finalizer.onBlockImported(chain[4]);
+      // Next 2 imports: no finality.
+      assert.strictEqual(finalizer.onBlockImported(chain[8]), null);
+      assert.strictEqual(finalizer.onBlockImported(chain[9]), null);
+
+      // 11th import: chain length = 5 > 4, finalize chain[8].
+      const r3 = finalizer.onBlockImported(chain[10]);
       assertExists(r3);
-      assert.strictEqual(r3.finalizedHash.isEqualTo(chain[2]), true);
-      assert.strictEqual(r3.prunableStateHashes.length, 1);
-      assert.ok(r3.prunableStateHashes[0].isEqualTo(chain[1]));
+      assert.strictEqual(r3.finalizedHash.isEqualTo(chain[8]), true);
+      assert.strictEqual(r3.prunableStateHashes.length, 3);
+      assert.ok(r3.prunableStateHashes[0].isEqualTo(chain[5]));
+      assert.ok(r3.prunableStateHashes[1].isEqualTo(chain[6]));
+      assert.ok(r3.prunableStateHashes[2].isEqualTo(chain[7]));
     });
 
-    it("should advance finality on every import even when blocks arrive in a burst", async () => {
+    it("should not trigger between batch boundaries", async () => {
       const db = InMemoryBlocks.new();
       const genesis = db.getBestHeaderHash();
 
       const finalizer = DummyFinalizer.create(db, 2);
 
-      // Build: genesis -> 1 -> 2 -> 3 -> 4 -> 5
       const chain = await buildLinearChain(db, genesis, 5);
 
-      // Import blocks 1..4 — finality fires on block 3 and block 4.
-      assert.strictEqual(finalizer.onBlockImported(chain[0]), null);
-      assert.strictEqual(finalizer.onBlockImported(chain[1]), null);
+      // First 4: no finality (chain length <= 4).
+      for (let i = 0; i < 4; i++) {
+        assert.strictEqual(finalizer.onBlockImported(chain[i]), null);
+      }
 
-      // Block 3: chain [1,2,3] length=3 > depth=2 → finalize block 1.
-      const r1 = finalizer.onBlockImported(chain[2]);
+      // 5th: chain length = 5 > 4, finalize chain[2].
+      const r1 = finalizer.onBlockImported(chain[4]);
       assertExists(r1);
-      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[0]), true);
-
-      // Block 4: chain [2,3,4] length=3 > depth=2 → finalize block 2.
-      const r2 = finalizer.onBlockImported(chain[3]);
-      assertExists(r2);
-      assert.strictEqual(r2.finalizedHash.isEqualTo(chain[1]), true);
-
-      // Block 5: chain [3,4,5] length=3 > depth=2 → finalize block 3.
-      const r3 = finalizer.onBlockImported(chain[4]);
-      assertExists(r3);
-      assert.strictEqual(r3.finalizedHash.isEqualTo(chain[2]), true);
+      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
     });
   });
 
   describe("with depth=1", () => {
-    it("should finalize immediately after 2 blocks", async () => {
+    it("should finalize after 3 blocks and prune in batches of 2", async () => {
       const db = InMemoryBlocks.new();
       const genesis = db.getBestHeaderHash();
 
       const finalizer = DummyFinalizer.create(db, 1);
 
-      const chain = await buildLinearChain(db, genesis, 3);
+      const chain = await buildLinearChain(db, genesis, 6);
 
-      // Import 1: length=1, not > 1. No finality.
+      // Import 1: length=1, not > 2. No finality.
       assert.strictEqual(finalizer.onBlockImported(chain[0]), null);
 
-      // Import 2: length=2 > 1. Finalize block 1.
-      const r = finalizer.onBlockImported(chain[1]);
-      assertExists(r);
-      assert.strictEqual(r.finalizedHash.isEqualTo(chain[0]), true);
+      // Import 2: length=2, not > 2. No finality.
+      assert.strictEqual(finalizer.onBlockImported(chain[1]), null);
 
-      // Import 3: finalize block 2.
-      const r2 = finalizer.onBlockImported(chain[2]);
-      assertExists(r2);
-      assert.strictEqual(r2.finalizedHash.isEqualTo(chain[1]), true);
-    });
-  });
-
-  describe("forks", () => {
 ```

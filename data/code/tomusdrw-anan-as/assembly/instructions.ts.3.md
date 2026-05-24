@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions.ts#L263-L279
 title: assembly/instructions.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 3
 chunk_total: 4
 content_sha: 5014a44500b4ba8e32d28fa1d0b73d946f79e3a9b34ddeab226fad0be7aa7dc8

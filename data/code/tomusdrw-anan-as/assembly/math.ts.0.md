@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/math.ts#L1-L13'
 title: assembly/math.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: aa58ae14a0eefaa404e1cc0c250b83be9de5f35113ef2d6479108ac651f2f9fc

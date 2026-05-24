@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/package.json#L1-L34
 title: packages/workers/block-authorship/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 8a49dc9abc6b66dea868365f9686f56b9558a4ef45ea0df7aee0857c09496d67
+content_sha: 283c9e298a133e89804c95e02d5f7105c06f0d2ff97db8e42008418783ba1547
 language: json
 ---
 `packages/workers/block-authorship/package.json` (lines 1–34)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/block-authorship",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A test block generator simulating blocks received over the network.",
   "main": "index.ts",
   "dependencies": {

@@ -2,20 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L210-L330
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L210-L331
 title: bin/lib/scripts/build-lib.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 2
 chunk_total: 5
-content_sha: 8aef6fee5f5abea26c0524feb89d1a101a8c15af50ceb39d20293eb214e61b1c
+content_sha: 264f0dc67d31e700d3dfb1ea5354243a2a9c0f48288fdf12734988d3f21e2353
 language: typescript
 ---
-`bin/lib/scripts/build-lib.ts` (lines 210–330)
+`bin/lib/scripts/build-lib.ts` (lines 210–331)
 
 ```typescript
-    // Only rewrite if this package is in our workspace
     if (packageMap[packageName] !== undefined && packageMap[packageName] !== "") {
       modified = true;
       // Prepend # to the import path
@@ -136,4 +135,6 @@ function createDistPackageJson(packageMap: Record<string, string>): void {
   const sourcePackageJson = JSON.parse(fs.readFileSync(sourcePackageJsonPath, "utf-8"));
 
   // Filter out workspace dependencies
+  const filteredDeps = Object.entries(sourcePackageJson.dependencies).filter(([_key, version]) => version !== "*");
+
 ```

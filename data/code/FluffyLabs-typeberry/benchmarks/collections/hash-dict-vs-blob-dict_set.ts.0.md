@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/collections/hash-dict-vs-blob-dict_set.ts#L1-L115
 title: benchmarks/collections/hash-dict-vs-blob-dict_set.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: d3b4ef6da3233cc67a341f67eab35ef0dc7c12141df737ff5f09fb3de50308e8

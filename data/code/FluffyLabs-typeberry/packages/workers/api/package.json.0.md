@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api/package.json#L1-L20
 title: packages/workers/api/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: a735353a0e8fa4e301eb26c67d881230925e1098140f5e0bfcb9fda35a1861e7
+content_sha: ed79dbddb789eaf15a02105d98656e39bdc4590718890950f344e1e6304b53d9
 language: json
 ---
 `packages/workers/api/package.json` (lines 1–20)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/workers-api",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Abstract workers' API utilities.",
   "main": "index.ts",
   "scripts": {

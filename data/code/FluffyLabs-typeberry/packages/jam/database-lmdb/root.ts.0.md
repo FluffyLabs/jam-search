@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/root.ts#L1-L31
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/root.ts#L1-L36
 title: packages/jam/database-lmdb/root.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 8c631859f869080a1f5873e76e9709364375fa8cecb99f598ecacade8a429b2e
+content_sha: 9e2f1f42e3b4830e9b1b2b7e56a4df74c26fec6351f82b5131d076128f9b0dd6
 language: typescript
 ---
-`packages/jam/database-lmdb/root.ts` (lines 1–31)
+`packages/jam/database-lmdb/root.ts` (lines 1–36)
 
 ```typescript
 import * as lmdb from "lmdb";
@@ -23,13 +23,18 @@ export type SubDb = lmdb.Database<Uint8Array, lmdb.Key>;
 export class LmdbRoot {
   readonly db: lmdb.RootDatabase<Uint8Array, lmdb.Key>;
 
-  static new(dbPath: string, readOnly = false) {
-    return new LmdbRoot(dbPath, readOnly);
+  static new(dbPath: string, readOnly = false, ephemeral = false) {
+    return new LmdbRoot(dbPath, readOnly, ephemeral);
   }
 
-  private constructor(dbPath: string, readOnly = false) {
+  private constructor(dbPath: string, readOnly = false, ephemeral = false) {
     this.db = lmdb.open(dbPath, {
-      compression: true,
+      // For ephemeral databases (e.g. the fuzz target, which wipes on every reset)
+      // durability is pointless, so we skip fsync and skip compressing the large
+      // per-block leaf blobs. Both are pure overhead there and dominate the cost.
+      // This trades disk space (uncompressed) and crash-durability for speed.
+      compression: !ephemeral,
+      noSync: ephemeral,
       keyEncoding: "binary",
       encoding: "binary",
       readOnly,

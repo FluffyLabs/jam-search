@@ -2,19 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.ts#L283-L321
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.ts#L283-L324
 title: packages/jam/fuzz-proto/v1/types.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: f702c260b1092e0d3fa14612d016dec510d908c2743f955847b713ef1e5f91d3
+content_sha: 98852ae8548528cd711091132f2be239d1adf9cab06d62082d25c6868fe8a28c
 language: typescript
 ---
-`packages/jam/fuzz-proto/v1/types.ts` (lines 283–321)
+`packages/jam/fuzz-proto/v1/types.ts` (lines 283–324)
 
 ```typescript
+        return { type: MessageType.ImportBlock, value: Block.Codec.View.decode(d) };
+      case MessageType.GetState:
+        return { type: MessageType.GetState, value: getStateCodec.decode(d) };
       case MessageType.State:
         return { type: MessageType.State, value: stateCodec.decode(d) };
       case MessageType.Error:

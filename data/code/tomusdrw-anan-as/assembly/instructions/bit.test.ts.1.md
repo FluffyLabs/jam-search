@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/bit.test.ts#L140-L211
 title: assembly/instructions/bit.test.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 22df51f579f111f2027fffcda5328bec1c1317e103f695442ac099970b5444cf

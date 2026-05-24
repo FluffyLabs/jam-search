@@ -2,19 +2,34 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L121-L235
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L122-L233
 title: packages/jam/fuzz-proto/v1/types.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 4
-content_sha: fef7dbdcde9161294694bc2c6ea4df0eee85f65650a406cb6cc42e982e40052f
+content_sha: 7c9b0ea1cc9478e191a1f6b44c79582a486e62e28c0387e84c9ecb83bb1a400c
 language: typescript
 ---
-`packages/jam/fuzz-proto/v1/types.test.ts` (lines 121–235)
+`packages/jam/fuzz-proto/v1/types.test.ts` (lines 122–233)
 
 ```typescript
+      //   "jam_version": { "major": 0, "minor": 1, "patch": 23 },
+      //   "app_version": { "major": 0, "minor": 7, "patch": 0 },
+      //   "name": "fuzzer"
+      // }
+      // Expected: 0x0001020000000001170007000666757a7a6572
+
+      const peerInfo = PeerInfo.create({
+        fuzzVersion: tryAsU8(1),
+        features: tryAsU32(Features.Fork),
+        jamVersion: Version.create({
+          major: tryAsU8(0),
+          minor: tryAsU8(1),
+          patch: tryAsU8(23),
+        }),
+        appVersion: Version.create({
           major: tryAsU8(0),
           minor: tryAsU8(7),
           patch: tryAsU8(0),
@@ -112,22 +127,4 @@ language: typescript
       assert.strictEqual(decoded[0].slot, 100);
       assert.strictEqual(decoded[1].slot, 101);
       assert.deepStrictEqual(decoded[0].headerHash, Bytes.fill(32, 0x01).asOpaque<HeaderHash>());
-      assert.deepStrictEqual(decoded[1].headerHash, Bytes.fill(32, 0x02).asOpaque<HeaderHash>());
-    });
-
-    it("should handle empty ancestry", () => {
-      const ancestry: AncestryItem[] = [];
-
-      const encoded = Encoder.encodeObject(ancestryCodec, ancestry, spec);
-      const decoded = Decoder.decodeObject(ancestryCodec, encoded, spec);
-
-      assert.strictEqual(decoded.length, 0);
-    });
-  });
-
-  describe("Initialize", () => {
-    it("should encode and decode initialize message", () => {
-      const header = testBlockView().header.materialize();
-      const keyvals = [
-        KeyValue.create({
 ```

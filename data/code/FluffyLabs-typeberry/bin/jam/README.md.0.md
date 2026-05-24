@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/README.md#L1-L159'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/README.md#L1-L151'
 title: bin/jam/README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 589db98289942ecda51e8a6bd8a26bca73a9a2427cc22707413bbb2f5126470f
+content_sha: 160445d389644055ebfbbb11d8c573da83e6653a38c084dd61663830eab447ee
 language: markdown
 ---
-`bin/jam/README.md` (lines 1–159)
+`bin/jam/README.md` (lines 1–151)
 
 ```markdown
 # @typeberry/jam
@@ -161,16 +161,8 @@ contract.
 | `JAM_FUZZ` | Yes (any non-empty value) | Activates fuzz mode. |
 | `JAM_FUZZ_SPEC` | Yes | Chain spec: `tiny` or `full`. |
 | `JAM_FUZZ_SOCK_PATH` | Yes | Unix domain socket path the target listens on. |
-| `JAM_FUZZ_DATA_PATH` | Yes | Persistent data directory (currently unused; reserved). |
+| `JAM_FUZZ_DATA_PATH` | No | Database location. A real path runs the target against an on-disk LMDB database (recommended for full-spec runs, to bound memory). Unset, empty, or `undefined` keeps the in-memory database (the default). |
 | `JAM_FUZZ_LOG_LEVEL` | No | Log verbosity: `error`, `warn`, `info`, `debug`, `trace`. Overrides `JAM_LOG` in fuzz mode. |
 
 The target stays up across multiple fuzzer sessions; on each `Initialize`
-message it resets the in-memory state to the genesis sent by the fuzzer.
-
-**Docker example:**
-
-```bash
-docker run --rm \
-  -e JAM_FUZZ=1 \
-  -e JAM_FUZZ_SPEC=tiny \
 ```

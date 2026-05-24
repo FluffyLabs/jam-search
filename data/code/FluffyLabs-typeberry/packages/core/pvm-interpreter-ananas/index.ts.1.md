@@ -2,26 +2,38 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter-ananas/index.ts#L142-L186
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter-ananas/index.ts#L142-L198
 title: packages/core/pvm-interpreter-ananas/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 3a82a91a996123c5f751c573f2cea0d3839b5274b8cee450ccfd6c9ec9c9668e
+content_sha: a458a89cde22c228af991dba00f879007a8e049e9173bf6eb025dfcf97b02fba
 language: typescript
 ---
-`packages/core/pvm-interpreter-ananas/index.ts` (lines 142–186)
+`packages/core/pvm-interpreter-ananas/index.ts` (lines 142–198)
 
 ```typescript
+    this.instance.resetJAM(programArr, pc, BigInt(gas), argsArr, true, USE_BLOCK_GAS, PAGES_TO_PREALLOCATE);
+  }
+
   resetGeneric(program: Uint8Array, _pc: number, gas: Gas): void {
     const programArr = lowerBytes(program);
     const emptyRegisters = Array(13 * 8).fill(0);
     const pageMap = new Uint8Array();
     const chunks = new Uint8Array();
     this.gas.initialGas = gas;
-    this.instance.resetGenericWithMemory(programArr, emptyRegisters, pageMap, chunks, BigInt(gas), false);
+    this.instance.resetGenericWithMemory(
+      programArr,
+      emptyRegisters,
+      pageMap,
+      chunks,
+      BigInt(gas),
+      false,
+      USE_BLOCK_GAS,
+      PAGES_TO_PREALLOCATE,
+    );
   }
 
   nextStep(): boolean {

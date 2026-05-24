@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/README.md#L1-L121'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/README.md#L1-L110'
 title: README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
-chunk_total: 2
-content_sha: 80a5c7140de16b72a5b1b6cfae4ccccc7ce3baf4387098ba79b5fbc953bff722
+chunk_total: 3
+content_sha: d6604a7cf3751fed497f749699ca7db190688e6b9fcfba8f7e6d87419c2250dc
 language: markdown
 ---
-`README.md` (lines 1–121)
+`README.md` (lines 1–110)
 
 ```markdown
 # typeberry 🫐
@@ -84,8 +84,9 @@ $ npm start -- fuzz-target
 Build and run typeberry using Docker:
 
 ```bash
-# Build the Docker image
-$ docker build -t typeberry .
+# Build the Docker image (stamp the commit hash into the version so the image
+# is not mistaken for a clean release; omit the build-arg to build a release).
+$ docker build --build-arg VERSION_SHA=$(git rev-parse --short HEAD) -t typeberry .
 
 # Run with default settings
 $ docker run typeberry
@@ -100,7 +101,9 @@ $ docker run -e JAM_LOG=trace GP_VERSION=0.7.2 typeberry
 $ docker run -v $(pwd)/database:/app/database typeberry
 ```
 
-The Docker container uses a minimal Alpine Linux image and forwards all arguments to `npm start`.
+This is a two-stage build on `node:25-bookworm-slim`: the first stage compiles the
+project into a single bundle (one per worker thread) and the final image runs that
+bundle directly via the `index.js` entrypoint, forwarding all arguments to it.
 
 ### Running the JSON RPC
 
@@ -121,18 +124,4 @@ $ npm start -w @typeberry/rpc
 - [JAM search](https://github.com/fluffylabs/jam-search) - search across all public JAM-related channels
 - [State Viewer](https://github.com/fluffylabs/state-viewer) - load & inspect state of test vectors
 - [PVM Debugger](https://github.com/fluffylabs/pvm-debugger) - load & inspect a PVM program
-- [Gray Paper Reader](https://github.com/fluffylabs/graypaper-reader) - view the Gray Paper
-- [Ananas](https://github.com/tomusdrw/anan-as) - AssemblyScript PVM interpreter
-
-### Formatting & linting
-
-```bash
-$ npm run qa
-```
-
-Formatting & linting is done by [biomejs](https://biomejs.dev/)). You can run
-separate tools using commands below.
-Note that all safe fixes will be applied automatically.
-
-```bash
 ```

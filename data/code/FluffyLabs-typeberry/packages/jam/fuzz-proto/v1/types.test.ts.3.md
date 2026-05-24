@@ -2,19 +2,36 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L340-L440
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L339-L456
 title: packages/jam/fuzz-proto/v1/types.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 3
 chunk_total: 4
-content_sha: 1f7ed1302a23d78f767b370ff06dfb557481bdfac0ac645c7c9205b01a2d6d50
+content_sha: afc1104128ee03892509cc6ca462c2a032159da64552c022c9a5916fc3ab23bc
 language: typescript
 ---
-`packages/jam/fuzz-proto/v1/types.test.ts` (lines 340–440)
+`packages/jam/fuzz-proto/v1/types.test.ts` (lines 339–456)
 
 ```typescript
+      assert.strictEqual(decoded.type, MessageType.StateRoot);
+      if (decoded.type !== MessageType.StateRoot) {
+        assert.fail();
+      }
+      assert.deepStrictEqual(decoded.value, stateRoot);
+
+      // Expected encoding from spec example:
+      // 0x024559342d3a32a8cbc3c46399a80753abff8bf785aa9d6f623e0de045ba6701fe
+      const expectedStateRoot = Bytes.parseBytes(
+        "0x4559342d3a32a8cbc3c46399a80753abff8bf785aa9d6f623e0de045ba6701fe",
+        HASH_SIZE,
+      ).asOpaque<StateRootHash>();
+      const expectedMessage: MessageData = {
+        type: MessageType.StateRoot,
+        value: expectedStateRoot,
+      };
+
       const expectedEncoded = Encoder.encodeObject(messageCodec, expectedMessage, spec);
       const expectedHex = "0x024559342d3a32a8cbc3c46399a80753abff8bf785aa9d6f623e0de045ba6701fe";
 

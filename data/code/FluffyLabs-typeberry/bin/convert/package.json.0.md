@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/convert/package.json#L1-L45
 title: bin/convert/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: ae2e1676c9fb84d66263ada2831bc3c244100b00a9396d1254037ba387d4dd3f
+content_sha: 204a7a9646da31ee62e22eb1c2fc15e2366afb3170a51d7c1ef9f5a196120d10
 language: json
 ---
 `bin/convert/package.json` (lines 1–45)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/convert",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Convert JAM-related types between different formats.",
   "repository": {
     "type": "git",

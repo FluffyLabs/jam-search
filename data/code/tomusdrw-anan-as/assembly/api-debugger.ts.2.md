@@ -2,19 +2,24 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L277-L302
+  https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L274-L304
 title: assembly/api-debugger.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 2
 chunk_total: 3
-content_sha: 3c2ab1cb7f03eb5946d38e8109579b7fab4d1bd67a091ca22f741ccd0a3790e1
+content_sha: 6ca283b315143e088c99e059560ab9a94c6fc5905fd89be8332b025194db3026
 language: typescript
 ---
-`assembly/api-debugger.ts` (lines 277–302)
+`assembly/api-debugger.ts` (lines 274–304)
 
 ```typescript
+  }
+}
+
+function readPages(pageMap: Uint8Array): InitialPage[] {
+  const pages: InitialPage[] = [];
   const codec = new Decoder(pageMap);
   while (!codec.isExhausted()) {
     const p = new InitialPage();

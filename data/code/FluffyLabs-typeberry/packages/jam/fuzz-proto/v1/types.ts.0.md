@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.ts#L1-L163
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.ts#L1-L158
 title: packages/jam/fuzz-proto/v1/types.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 92a07344225fe160ed1b00a0d801cf13059a221b8a89657a450744e9cfb78c46
+content_sha: 2c88bb53121edfb882219c540aa53e67ee93e491c472903cda553beae670fb26
 language: typescript
 ---
-`packages/jam/fuzz-proto/v1/types.ts` (lines 1–163)
+`packages/jam/fuzz-proto/v1/types.ts` (lines 1–158)
 
 ```typescript
 import { Block, type BlockView, Header, type HeaderHash, type StateRootHash, type TimeSlot } from "@typeberry/block";
@@ -39,7 +39,10 @@ export class Version extends WithDebug {
   static tryFromString(str: string): Version {
     const parse = (v: string) => tryAsU8(Number(v));
     try {
-      const [major, minor, patch] = str.trim().split(".").map(parse);
+      // strip any semver pre-release / build metadata (e.g. "-15ccd70", "+build.42")
+      // so that only `major.minor.patch` is parsed.
+      const core = str.trim().split(/[-+]/)[0];
+      const [major, minor, patch] = core.split(".").map(parse);
 
       return Version.create({
         major,
@@ -170,12 +173,4 @@ export const ancestryCodec = codec.sequenceVarLen(AncestryItem.Codec, {
 export type Ancestry = AncestryItem[];
 
 /**
- * Initialize ::= SEQUENCE {
- *     header Header,
- *     keyvals State,
- *     ancestry Ancestry
- * }
- */
-export class Initialize extends WithDebug {
-  static Codec = codec.Class(Initialize, {
 ```

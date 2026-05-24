@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/rpc-validation/validation.ts#L113-L215
 title: packages/jam/rpc-validation/validation.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: e34ead7706a68dbc8aea34c9110a01f3f7628f092fe710f34dd2a25421fe2269

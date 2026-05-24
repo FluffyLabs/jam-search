@@ -1,19 +1,27 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/README.md#L113-L228'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/README.md#L108-L230'
 title: README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
-chunk_total: 2
-content_sha: b53230f189c5d1fe314df1b456e5b22822531aef7a626f7608194bb7c7b2f06c
+chunk_total: 3
+content_sha: 163539d5060ab4df03f8048961f57036d0bf0a1ba39edd3c67342db803a0a63e
 language: markdown
 ---
-`README.md` (lines 113–228)
+`README.md` (lines 108–230)
 
 ```markdown
+- [JAM search](https://github.com/fluffylabs/jam-search) - search across all public JAM-related channels
+- [State Viewer](https://github.com/fluffylabs/state-viewer) - load & inspect state of test vectors
+- [PVM Debugger](https://github.com/fluffylabs/pvm-debugger) - load & inspect a PVM program
+- [Gray Paper Reader](https://github.com/fluffylabs/graypaper-reader) - view the Gray Paper
+- [Ananas](https://github.com/tomusdrw/anan-as) - AssemblyScript PVM interpreter
+
+### Formatting & linting
+
 ```bash
 $ npm run qa
 ```
@@ -129,5 +137,4 @@ https://fluffylabs.dev/typeberry/links.json
 5. Select **All Versions**.
 ![gpr-source-notes-3](https://github.com/user-attachments/assets/877a6494-75fd-4c0c-b531-55af6f676c89)
 6. Click **OK**.
-7. Ensure the ✅ next to **Typeberry** is enabled.
 ```

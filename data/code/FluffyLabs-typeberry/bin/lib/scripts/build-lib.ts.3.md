@@ -2,22 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L325-L433
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L327-L436
 title: bin/lib/scripts/build-lib.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 3
 chunk_total: 5
-content_sha: 561cb39f97fb9419478b76a219ef24655300a1ec674b466ad0f8edaea3e8a9f5
+content_sha: 845f01cdc2f1f1d10583fd3e16213833f86fcb8711d7bb32080b4608686dd7d6
 language: typescript
 ---
-`bin/lib/scripts/build-lib.ts` (lines 325–433)
+`bin/lib/scripts/build-lib.ts` (lines 327–436)
 
 ```typescript
-  const sourcePackageJsonPath = path.join(ROOT_DIR, "bin/lib/package.json");
-  const targetPackageJsonPath = path.join(DIST_DIR, "package.json");
-
   const sourcePackageJson = JSON.parse(fs.readFileSync(sourcePackageJsonPath, "utf-8"));
 
   // Filter out workspace dependencies
@@ -124,4 +121,8 @@ function copyDistributionFiles(): void {
 // 1. Discover all workspace packages by reading package.json files
 // 2. Rewrite all workspace package imports to #<package-name>/* in .js and .d.ts files
 // 3. Create a distribution package.json with "imports" field for resolution
+// 4. Copy README.md and .npmignore for npm publishing
+
+console.log("Building package map from workspace configuration...");
+const packageMap = buildPackageMap();
 ```

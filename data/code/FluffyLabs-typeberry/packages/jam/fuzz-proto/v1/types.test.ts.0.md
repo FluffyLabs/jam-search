@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L1-L128
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L1-L127
 title: packages/jam/fuzz-proto/v1/types.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 4
-content_sha: fa80ec177d6cb541a85a60d1b3d16fb6f315c986134c3816aa798ce0e3fb0414
+content_sha: a3631061d44a52bac931a373b351b359afd36717aecc3aa40028cecaa63a1e74
 language: typescript
 ---
-`packages/jam/fuzz-proto/v1/types.test.ts` (lines 1–128)
+`packages/jam/fuzz-proto/v1/types.test.ts` (lines 1–127)
 
 ```typescript
 import assert from "node:assert";
@@ -80,6 +80,22 @@ describe("Fuzzer V1 Data Structures", () => {
       assert.strictEqual(version.minor, 2);
       assert.strictEqual(version.patch, 3);
     });
+
+    it("should ignore the git hash / pre-release suffix", () => {
+      const version = Version.tryFromString("0.7.0-15ccd70");
+
+      assert.strictEqual(version.major, 0);
+      assert.strictEqual(version.minor, 7);
+      assert.strictEqual(version.patch, 0);
+    });
+
+    it("should ignore the build metadata suffix", () => {
+      const version = Version.tryFromString("1.2.3+build.42");
+
+      assert.strictEqual(version.major, 1);
+      assert.strictEqual(version.minor, 2);
+      assert.strictEqual(version.patch, 3);
+    });
   });
 
   describe("PeerInfo", () => {
@@ -126,21 +142,4 @@ describe("Fuzzer V1 Data Structures", () => {
       // }
       // Expected: 0x0001020000000001170007000666757a7a6572
 
-      const peerInfo = PeerInfo.create({
-        fuzzVersion: tryAsU8(1),
-        features: tryAsU32(Features.Fork),
-        jamVersion: Version.create({
-          major: tryAsU8(0),
-          minor: tryAsU8(1),
-          patch: tryAsU8(23),
-        }),
-        appVersion: Version.create({
-          major: tryAsU8(0),
-          minor: tryAsU8(7),
-          patch: tryAsU8(0),
-        }),
-        name: "fuzzer",
-      });
-
-      const encoded = Encoder.encodeObject(PeerInfo.Codec, peerInfo, spec);
 ```

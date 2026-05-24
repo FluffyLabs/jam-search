@@ -2,19 +2,29 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/protocol.ts#L121-L163
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/protocol.ts#L115-L167
 title: packages/workers/api-node/protocol.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: f96dde7224aafb12c510d1f783519d638462d64f12f74227fbb14ede9952af20
+content_sha: 2fd7dd709cebb02a8ca0f4b97edde5c84bc44e89eb97607696dd751f570f49e5
 language: typescript
 ---
-`packages/workers/api-node/protocol.ts` (lines 121–163)
+`packages/workers/api-node/protocol.ts` (lines 115–167)
 
 ```typescript
+  threadComms: Listener<ThreadComms>;
+}> {
+  // configure logger inside a worker thread
+  Logger.configureAll(process.env.JAM_LOG ?? "", Level.LOG);
+
+  logger.trace`Worker ${protocol.name} starting.`;
+  logHeapLimit(logger, protocol.name);
+
+  return new Promise((resolve, reject) => {
+    if (parentPort === null) {
       throw new Error(`Unable to start ${protocol.name} worker. Not running in a worker thread!`);
     }
 

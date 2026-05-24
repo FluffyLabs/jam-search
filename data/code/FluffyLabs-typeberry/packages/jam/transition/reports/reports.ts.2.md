@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/reports/reports.ts#L197-L289
 title: packages/jam/transition/reports/reports.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: f4a1ffd7c20a512fc528b5cd77530c6d8d5511e35e5e119befe67af57ada16ac

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L106
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L109
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: b2c8c4110701f1c6484b6899a4037e66afb53a3bb8232483abb96ffa3c3c334c
+content_sha: 055749bb147f84a610fa79c2add524f8ead2d78a94d8869ac8d7944db57c44be
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 1–106)
+`packages/jam/node/main-importer.ts` (lines 1–109)
 
 ```typescript
 import type { BlockView, HeaderHash, StateRootHash } from "@typeberry/block";
@@ -34,6 +34,8 @@ export type ImporterOptions = {
   initGenesisFromAncestry?: boolean;
   dummyFinalityDepth?: number;
   pruneBlocks?: boolean;
+  /** Open the LMDB database without fsync/compression. Only safe for throwaway dbs (e.g. fuzzing). */
+  ephemeralDb?: boolean;
 };
 
 export async function mainImporter(
@@ -79,6 +81,7 @@ export async function mainImporter(
           blake2b,
           dbPath,
           workerParams,
+          ephemeral: options.ephemeralDb ?? false,
         });
 
   // Initialize the database with genesis state and block if there isn't one.

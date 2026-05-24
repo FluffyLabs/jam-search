@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/statistics.ts#L1-L145
 title: packages/jam/state/statistics.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 78d1a4a8f6e64d295244fba2eaec26d6703f1df57acbfb1175f4a8c21b4808e6

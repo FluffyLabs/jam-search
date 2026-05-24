@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/package.json#L1-L104'
 title: package.json
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: 58ea62a06a8243393942c1967679e1afd753485c2de7993f5011232c38a04477
+content_sha: e370f1c8996a9f1ed985415affe9eb734f3e33202f787daea14f8f58703c1041
 language: json
 ---
 `package.json` (lines 1–104)
@@ -17,7 +17,7 @@ language: json
 {
 	"name": "@fluffylabs/anan-as",
 	"description": "AssemblyScript PVM interpreter.",
-	"version": "1.3.0",
+	"version": "1.4.0",
 	"main": "./dist/bin/index.js",
 	"bin": {
 		"anan-as": "./dist/bin/index.js"

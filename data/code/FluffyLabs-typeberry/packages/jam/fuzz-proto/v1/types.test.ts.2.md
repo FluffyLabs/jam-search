@@ -2,19 +2,36 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L231-L345
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L230-L345
 title: packages/jam/fuzz-proto/v1/types.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 2
 chunk_total: 4
-content_sha: 231f992ce3f8d9a7468dd4b4bd70bc1288681250e9dde5fef8fa2bd0591a6034
+content_sha: 4473673b498dc87d621c34345053d8609299b413e4e4a1e2dc902d6851fce754
 language: typescript
 ---
-`packages/jam/fuzz-proto/v1/types.test.ts` (lines 231–345)
+`packages/jam/fuzz-proto/v1/types.test.ts` (lines 230–345)
 
 ```typescript
+      assert.strictEqual(decoded.length, 2);
+      assert.strictEqual(decoded[0].slot, 100);
+      assert.strictEqual(decoded[1].slot, 101);
+      assert.deepStrictEqual(decoded[0].headerHash, Bytes.fill(32, 0x01).asOpaque<HeaderHash>());
+      assert.deepStrictEqual(decoded[1].headerHash, Bytes.fill(32, 0x02).asOpaque<HeaderHash>());
+    });
+
+    it("should handle empty ancestry", () => {
+      const ancestry: AncestryItem[] = [];
+
+      const encoded = Encoder.encodeObject(ancestryCodec, ancestry, spec);
+      const decoded = Decoder.decodeObject(ancestryCodec, encoded, spec);
+
+      assert.strictEqual(decoded.length, 0);
+    });
+  });
+
   describe("Initialize", () => {
     it("should encode and decode initialize message", () => {
       const header = testBlockView().header.materialize();
@@ -114,20 +131,4 @@ language: typescript
       assert.deepStrictEqual(decoded.value, stateRoot);
 
       // Expected encoding from spec example:
-      // 0x024559342d3a32a8cbc3c46399a80753abff8bf785aa9d6f623e0de045ba6701fe
-      const expectedStateRoot = Bytes.parseBytes(
-        "0x4559342d3a32a8cbc3c46399a80753abff8bf785aa9d6f623e0de045ba6701fe",
-        HASH_SIZE,
-      ).asOpaque<StateRootHash>();
-      const expectedMessage: MessageData = {
-        type: MessageType.StateRoot,
-        value: expectedStateRoot,
-      };
-
-      const expectedEncoded = Encoder.encodeObject(messageCodec, expectedMessage, spec);
-      const expectedHex = "0x024559342d3a32a8cbc3c46399a80753abff8bf785aa9d6f623e0de045ba6701fe";
-
-      assert.strictEqual(expectedEncoded.toString(), expectedHex);
-    });
-
 ```

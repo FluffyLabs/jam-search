@@ -2,19 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L147-L282
+  https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L147-L281
 title: assembly/api-debugger.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-15T10:20:08+02:00'
-last_modified: '2026-05-15T10:20:08+02:00'
+created_at: '2026-05-20T20:20:54Z'
+last_modified: '2026-05-20T20:20:54Z'
 chunk_index: 1
 chunk_total: 3
-content_sha: 2da18c34f009e452ef5d7f010e710f3edfeb0cee9b0ee141b3fdda105d6785bd
+content_sha: 3e3f729b04255b27f7d4e2e9023fff702504c7217c3da925c68290eede296fbe
 language: typescript
 ---
-`assembly/api-debugger.ts` (lines 147–282)
+`assembly/api-debugger.ts` (lines 147–281)
 
 ```typescript
+export function getRegisters(): Uint8Array {
+  const flat = new Uint8Array(NO_OF_REGISTERS * REG_SIZE_BYTES).fill(0);
   if (interpreter === null) {
     return flat;
   }
@@ -148,7 +150,4 @@ function readPages(pageMap: Uint8Array): InitialPage[] {
   const codec = new Decoder(pageMap);
   while (!codec.isExhausted()) {
     const p = new InitialPage();
-    p.address = codec.u32();
-    p.length = codec.u32();
-    p.access = codec.u8() > 0 ? Access.Write : Access.Read;
 ```

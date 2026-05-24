@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/protocol.ts#L1-L126
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/protocol.ts#L1-L120
 title: packages/workers/api-node/protocol.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: bc42c5454338c4b1c97e2bcd31b7f724cb179efce3a068088d044858a39ea1d8
+content_sha: a8c70df8913b07af368da415be25cf6a7cb55b8ab720940ce7fe76188abf2fff
 language: typescript
 ---
-`packages/workers/api-node/protocol.ts` (lines 1–126)
+`packages/workers/api-node/protocol.ts` (lines 1–120)
 
 ```typescript
 import { MessageChannel, type MessagePort, parentPort, Worker } from "node:worker_threads";
@@ -22,7 +22,8 @@ import { Level, Logger } from "@typeberry/logger";
 import { assertNever } from "@typeberry/utils";
 import { Channel } from "@typeberry/workers-api";
 import type { Api, Internal, LousyProtocol } from "@typeberry/workers-api/types.js";
-import { LmdbWorkerConfig, type TransferableConfig } from "./config.js";
+import { configTransferList, LmdbWorkerConfig, type TransferableConfig } from "./config.js";
+import { logHeapLimit, workerResourceLimits } from "./host-environment.js";
 import { ThreadPort } from "./port.js";
 
 const logger = Logger.new(import.meta.filename, "workers");
@@ -85,7 +86,7 @@ export function spawnWorker<To, From, Params>(
   logger.trace`Spawning ${protocol.name} child worker.`;
 
   const channel = new MessageChannel();
-  const worker = new Worker(bootstrapPath);
+  const worker = new Worker(bootstrapPath, { resourceLimits: workerResourceLimits() });
 
   const msg: WorkerControlPlane = {
     kind: WorkerControlPlaneMsg.Config,
@@ -94,8 +95,10 @@ export function spawnWorker<To, From, Params>(
   };
 
   logger.trace`(${protocol.name}) <-- config`;
-  // send the config down to the worker
-  worker.postMessage(msg, [msg.parentPort]);
+  // send the config down to the worker. We need to transfer the parent
+  // communication port as well as any inter-worker ports carried in the config,
+  // otherwise structured clone fails with a `DataCloneError`.
+  worker.postMessage(msg, [msg.parentPort, ...configTransferList(msg.config)]);
 
   const workerFinished = new Promise<void>((resolve, reject) => {
     worker.once("error", reject);
@@ -132,13 +135,4 @@ export async function initWorker<To, From, Params>(
   Logger.configureAll(process.env.JAM_LOG ?? "", Level.LOG);
 
   logger.trace`Worker ${protocol.name} starting.`;
-
-  return new Promise((resolve, reject) => {
-    if (parentPort === null) {
-      throw new Error(`Unable to start ${protocol.name} worker. Not running in a worker thread!`);
-    }
-
-    parentPort.once("close", () => reject(new Error(`(${protocol.name}) parent port closed too early`)));
-
-    let isResolved = false;
 ```

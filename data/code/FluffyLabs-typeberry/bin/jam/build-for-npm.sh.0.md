@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L1-L95
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L1-L103
 title: bin/jam/build-for-npm.sh
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-15T16:05:10Z'
-last_modified: '2026-05-15T16:05:10Z'
+created_at: '2026-05-24T08:09:48+02:00'
+last_modified: '2026-05-24T08:09:48+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: e803a8dca8766cf612d6d66ddf64e0dd35b0a9461c4cb413384e74709948865a
+content_sha: f7dbe2da318fa8de6ac12f6a20b4dca80fc02f688cc407f546f67df15e28bd56
 language: bash
 ---
-`bin/jam/build-for-npm.sh` (lines 1–95)
+`bin/jam/build-for-npm.sh` (lines 1–103)
 
 ```bash
 #!/bin/bash
@@ -33,58 +33,66 @@ DIST_FOLDER=./dist/jam
 mkdir $DIST_FOLDER || true
 rm -rf $DIST_FOLDER/*
 
-# TODO [ToDr] Temporary require anan-as before https://github.com/tomusdrw/anan-as/issues/99
-# is resolved.
+# When VERSION_SHA is set (e.g. Docker builds) append it to the version. The
+# banner version is inlined by ncc from packages/core/utils/package.json: the
+# `../../../package.json` import in that package resolves there through the
+# workspace symlink, NOT to the repo root, so we must stamp utils (not root).
+if [ -n "$VERSION_SHA" ]; then
+  VERSION="$VERSION-$VERSION_SHA"
+  npm pkg set version="$VERSION" -w packages/core/utils
+fi
+
 # Build the main binary
 BUILD="npx @vercel/ncc build -a -s -e lmdb -e @matrixai/quic -e tsx/esm/api"
 $BUILD ./bin/jam/index.ts -o $DIST_FOLDER
 
-# Fix un-compiled worker files to point to the ones we will compile manually.
-#
 # Despite using `-a` flag, @vercel/ncc does not bundle the worker files,
 # so they still point to some external files via `import` statements.
 # To fix that, we manually build workers and move the files inside.
 
-# Build all workers separately and then the main binary
-$BUILD ./packages/workers/importer/index.ts -o $DIST_FOLDER/importer
-$BUILD ./packages/workers/jam-network/index.ts -o $DIST_FOLDER/jam-network
-$BUILD ./packages/workers/block-authorship/index.ts -o $DIST_FOLDER/block-authorship
+# NOTE: the entry MUST be `bootstrap-main.ts` (the file that actually calls
+# `initWorker()` + `main()`), NOT `index.ts`. For some reason bundling
+# `index.ts` produces a worker that does nothing on load so the app just
+# hangs and does not do anything.
+$BUILD ./packages/workers/importer/bootstrap-main.ts -o $DIST_FOLDER/importer
+$BUILD ./packages/workers/jam-network/bootstrap-main.ts -o $DIST_FOLDER/jam-network
+$BUILD ./packages/workers/block-authorship/bootstrap-main.ts -o $DIST_FOLDER/block-authorship
 
 # copy some files that should be there
 cp ./LICENSE $DIST_FOLDER/
 cp ./README.md $DIST_FOLDER/
 
+# Flatten one worker build into dist/jam: rename its index.js -> $2.mjs (and map),
+# repoint the trailing sourceMappingURL (last line, via the `$` address) at the
+# renamed map so worker crash traces resolve to the right TS source, then move
+# everything up a level. $1 = worker subdir, $2 = bootstrap file basename.
+flatten_worker() {
+  cd "./$1"
+  rm *.mjs || true
+  mv index.js "$2.mjs"
+  mv index.js.map "$2.mjs.map"
+  sed -i "\$ s|sourceMappingURL=index.js.map|sourceMappingURL=$2.mjs.map|" "$2.mjs"
+  # Move the bundle up one level into $DIST_FOLDER. We can't use `mv * ../`:
+  # workers that pull in telemetry also emit gRPC asset directories (proto/,
+  # protoc-gen-validate/, xds/) that the main bundle - and earlier workers -
+  # already created up there, and `mv` refuses to merge into a non-empty dir.
+  tar cf - . | ( cd ../ && tar xf - )
+  cd ../
+  rm -rf "./$1"
+}
+
 # Flatten the workers structure
 cd $DIST_FOLDER
-
-cd ./importer
-rm *.mjs || true
-mv index.js bootstrap-importer.mjs
-mv index.js.map bootstrap-importer.mjs.map
-mv * ../
-cd ../jam-network
-rm *.mjs || true
-mv index.js bootstrap-network.mjs
-mv index.js.map bootstrap-network.mjs.map
-mv * ../
-cd ../block-authorship
-rm *.mjs || true
-mv index.js bootstrap-generator.mjs
-mv index.js.map bootstrap-generator.mjs.map
-mv * ../
-cd ../
+flatten_worker importer bootstrap-importer
+flatten_worker jam-network bootstrap-network
+flatten_worker block-authorship bootstrap-generator
 
 # copy worker wasm files
 cp **/*.wasm ./ || true # ignore overwrite errors
 
-# Make index.js executable and insert shebang with 8GB heap size
-echo '#!/usr/bin/env -S node --max-old-space-size=8192' > ./temp.js && cat ./index.js >> ./temp.js && mv ./temp.js ./index.js
+# Make index.js executable and insert shebang with 6GB heap size (leaves headroom on an 8GB box)
+echo '#!/usr/bin/env -S node --max-old-space-size=6144' > ./temp.js && cat ./index.js >> ./temp.js && mv ./temp.js ./index.js
 chmod +x ./index.js
-
-if [ -z "$IS_RELEASE" ]; then
-  SHA=$(git rev-parse --short HEAD)
-  VERSION="$VERSION-$SHA"
-fi
 
 # build package.json file
 cat > ./package.json << EOF
