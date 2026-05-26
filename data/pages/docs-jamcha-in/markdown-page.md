@@ -3,7 +3,7 @@ type: page
 url: 'https://docs.jamcha.in/markdown-page'
 title: Markdown page example | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-05-22T04:25:14.939Z'
-last_modified: '2026-05-22T04:25:14.939Z'
+created_at: '2026-05-26T04:23:40.708Z'
+last_modified: '2026-05-26T04:23:40.708Z'
 ---
 You don't need React to write simple standalone pages.
