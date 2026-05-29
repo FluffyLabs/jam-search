@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/testing/conformance'
 title: Conformance Tests | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-05-26T04:23:56.348Z'
-last_modified: '2026-05-26T04:23:56.348Z'
+created_at: '2026-05-29T04:27:32.197Z'
+last_modified: '2026-05-29T04:27:32.197Z'
 ---
 Conformance tests are used to check that an implementation adheres to the exact definitions of the Graypaper. There are official ones and unofficial test vectors. Only official ones need to be passed for the JAM Prize, but it is advisable to try and pass as many as possible to ensure that an implementation is 100% conformant.  
 Otherwise there is the chance that private conformance test vector will reveal issues in an implementation when trying to claim the JAM Prize.
