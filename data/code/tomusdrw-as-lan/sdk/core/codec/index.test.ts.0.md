@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/index.test.ts#L1-L135
 title: sdk/core/codec/index.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: 62ff9bad0da5ffe29e906a5d3ed623628feceaad26f02d0040fcc8678fedc1d2

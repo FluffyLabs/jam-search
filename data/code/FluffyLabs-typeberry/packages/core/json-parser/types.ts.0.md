@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/json-parser/types.ts#L1-L42
 title: packages/core/json-parser/types.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 42afb660b83f0158acbaee438a927ce56168b7a533b5500cba0fc9c6c0fa3c1b

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/telemetry/index.ts#L1-L126
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/telemetry/index.ts#L1-L120
 title: packages/core/telemetry/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
-chunk_total: 1
-content_sha: 07816e0cf377b9633aafdbbbcf86ee528c1ae5f32d155972acde5cabbf6e455b
+chunk_total: 2
+content_sha: 56a3d82b560814db1d3fbe4850bf3f37beb3b16f979cdcaa827b0456d1195fa1
 language: typescript
 ---
-`packages/core/telemetry/index.ts` (lines 1–126)
+`packages/core/telemetry/index.ts` (lines 1–120)
 
 ```typescript
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
@@ -38,7 +38,10 @@ export class Telemetry {
       isMain: config.isMain ?? false,
       serviceName: `typeberry-${config.nodeName}`,
       serviceVersion: version,
-      enabled: env.OTEL_ENABLED !== "false",
+      // Opt-in: telemetry is off unless explicitly enabled. Keeping it on by
+      // default makes long-running processes (e.g. the fuzz target) accumulate
+      // unbounded in-memory metric series for high-cardinality attributes.
+      enabled: env.OTEL_ENABLED === "true",
       otlpEndpoint: env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "http://localhost:9090/api/v1/otlp",
       resourceAttributes: {
         "worker.type": config.worker,
@@ -132,13 +135,4 @@ function initializeTelemetry(config: TelemetryConfigFull): NodeSDK | null {
 
   try {
     sdk.start();
-    if (config.isMain) {
-      logger.info`📳 OTLP metrics will be exported to ${otlpEndpoint}`;
-    }
-  } catch (error) {
-    logger.error`🔴 Error initializing OpenTelemetry: ${error}`;
-  }
-
-  return sdk;
-}
 ```

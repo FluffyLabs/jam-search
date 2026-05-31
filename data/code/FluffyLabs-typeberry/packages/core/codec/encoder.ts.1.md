@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/codec/encoder.ts#L137-L269
 title: packages/core/codec/encoder.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 1
 chunk_total: 4
 content_sha: 64f6308cacbe12752e19bee6bf6c1d407fa2d57e42305e0a6fbfa349bf851c95

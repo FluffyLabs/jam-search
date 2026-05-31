@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.ts#L1-L139
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.ts#L1-L140
 title: packages/core/utils/debug.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 127a088d1dbb6a6b4a8ad134db3da02a34b57deb39a24a8673a261ed81a6017f
+content_sha: 7def35c9945256167a7fee2c2ebd67293088abab5f79f3fe38e9c0e040386a0f
 language: typescript
 ---
-`packages/core/utils/debug.ts` (lines 1–139)
+`packages/core/utils/debug.ts` (lines 1–140)
 
 ```typescript
 export function isBrowser() {
@@ -154,4 +154,5 @@ export function measure(id: string) {
   return () => `${id} took ${(now() - start).toFixed(2)}ms`;
 }
 
+const BYTES_IN_MB = 1024 * 1024;
 ```

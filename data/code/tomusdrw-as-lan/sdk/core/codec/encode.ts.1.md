@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/encode.ts#L135-L257
 title: sdk/core/codec/encode.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: f52ea8826033805a592dbf787cd7a812bf3b3b08945a751d85b2be0368f51b3f

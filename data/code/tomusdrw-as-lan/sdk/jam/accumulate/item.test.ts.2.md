@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/item.test.ts#L202-L307
 title: sdk/jam/accumulate/item.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 0ff613ee2c624c6c1a93e9f8abab984643b27bbeeede74a2c2d2ae58f69cdc92

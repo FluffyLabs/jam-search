@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/utils-benchmarks.yml#L1-L61
 title: .github/workflows/utils-benchmarks.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 843a204ed3e00d2f666762f3dbc628c491a9aae44de585ad89b21691c1016bd0
+content_sha: bf104efbe785ae6c646c2a5a723a39eed88e30d21835cecfb7a21d4587b368c1
 language: yaml
 ---
 `.github/workflows/utils-benchmarks.yml` (lines 1–61)
@@ -35,7 +35,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - name: Delete previous comment on PR
@@ -53,7 +53,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - name: Benchmarks run
-        uses: nick-fields/retry@v3
+        uses: nick-fields/retry@v4
         with:
           timeout_minutes: 30
           max_attempts: 3
@@ -69,7 +69,7 @@ jobs:
           comment-tag: benchmarks
       - name: Upload new transaction log
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: |
             ./benchmarks/*/output

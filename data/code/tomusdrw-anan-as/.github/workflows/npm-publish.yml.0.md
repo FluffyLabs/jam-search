@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/.github/workflows/npm-publish.yml#L1-L81
 title: .github/workflows/npm-publish.yml
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 840b014456d2156988b52536b680c2c4563e2dacbeef1a64ebe84befb256ecd6

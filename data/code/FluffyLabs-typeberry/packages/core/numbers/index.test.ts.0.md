@@ -2,22 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/numbers/index.test.ts#L1-L80
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/numbers/index.test.ts#L1-L102
 title: packages/core/numbers/index.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 9a8970e40173229a6e3e528eaf83ed378e2817cea5973e8b476cadb11e0829b6
+content_sha: 627213e5d402946600d55fe0397ca02eee1ebaf69eb8f47ee7fc1d8f3a670fa0
 language: typescript
 ---
-`packages/core/numbers/index.test.ts` (lines 1–80)
+`packages/core/numbers/index.test.ts` (lines 1–102)
 
 ```typescript
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { maxU64, minU64, sumU32, sumU64, tryAsU32, tryAsU64, u32AsLeBytes } from "./index.js";
+import { leBytesAsU32, maxU64, minU64, sumU32, sumU64, tryAsU32, tryAsU64, u32AsLeBytes } from "./index.js";
 
 describe("sumU32", () => {
   it("should sum and handle overflow", () => {
@@ -62,6 +62,28 @@ describe("u32AsLittleEndian", () => {
       const result = u32AsLeBytes(value);
 
       assert.deepStrictEqual(result, expectedResult);
+    });
+  }
+});
+
+describe("leBytesAsU32", () => {
+  const createTestCase = (bytes: number[], expectedResult: number) => ({
+    bytes: new Uint8Array(bytes),
+    expectedResult,
+  });
+
+  const testCases = [
+    createTestCase([5, 0, 0, 0], 5),
+    createTestCase([0xff, 0xff, 0xff, 0x7f], 2147483647),
+    createTestCase([0, 0, 0, 0x80], 2147483648),
+    createTestCase([0xff, 0xff, 0xff, 0xff], 2 ** 32 - 1),
+  ];
+
+  for (const { bytes, expectedResult } of testCases) {
+    it(`should decode ${bytes} as ${expectedResult}`, () => {
+      const result = leBytesAsU32(bytes);
+
+      assert.strictEqual(result, expectedResult);
     });
   }
 });

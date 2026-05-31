@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/test/test-trace-format.ts#L203-L207
 title: test/test-trace-format.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 6e212e138c2a02617c38a489f706c21f5dd89dd76f73d8c32fedb43177ee60ec

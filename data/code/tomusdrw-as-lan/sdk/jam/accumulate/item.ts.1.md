@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/item.ts#L119-L230
 title: sdk/jam/accumulate/item.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 4be1df19bd72e71043ed5cc949e1ab5da242f7d9a664cc9099eab523338d424c

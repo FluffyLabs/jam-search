@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-json/not-yet-accumulated.ts#L1-L11
 title: packages/jam/state-json/not-yet-accumulated.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 93fb1b8a68c65eafe3203401aca8b80e64095b0ded2edaca55bba3d19fc933d6

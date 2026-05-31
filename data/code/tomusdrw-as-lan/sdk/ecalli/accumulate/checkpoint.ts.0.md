@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/accumulate/checkpoint.ts#L1-L14
 title: sdk/ecalli/accumulate/checkpoint.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2aaa6d513d34bee21f6c773bfc979ca14a08ad03a60c647e405ac8a5d2cd8e33

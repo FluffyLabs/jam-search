@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L1-L104
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L1-L111
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 1b4ddeb00e11937ed445b0cc232bd3ac27d1c9718cff75361cc4c72c6cda7614
+content_sha: 73a7dee8de78778a62357e00bd4830d25e7d4a67bf137e6fd7385c368a1d8640
 language: typescript
 ---
-`packages/workers/importer/importer.ts` (lines 1–104)
+`packages/workers/importer/importer.ts` (lines 1–111)
 
 ```typescript
 import { type BlockView, type HeaderHash, type HeaderView, type StateRootHash, tryAsTimeSlot } from "@typeberry/block";
@@ -24,7 +24,15 @@ import type { SerializedState } from "@typeberry/state-merkleization";
 import type { TransitionHasher } from "@typeberry/transition";
 import { BlockVerifier, BlockVerifierError } from "@typeberry/transition/block-verifier.js";
 import { DbHeaderChain, OnChain, type StfError } from "@typeberry/transition/chain-stf.js";
-import { type ErrorResult, measure, now, Result, resultToString, type TaggedError } from "@typeberry/utils";
+import {
+  type ErrorResult,
+  measure,
+  memoryTracker,
+  now,
+  Result,
+  resultToString,
+  type TaggedError,
+} from "@typeberry/utils";
 import type { Finalizer } from "./finality.js";
 import * as metrics from "./metrics.js";
 
@@ -70,6 +78,7 @@ export class Importer {
   // Hash of the block that we have the posterior state for in `state`.
   private currentHash: HeaderHash;
   private readonly metrics: ReturnType<typeof metrics.createMetrics>;
+  private readonly memory = memoryTracker();
 
   private readonly hasher: TransitionHasher;
   private readonly logger: Logger;
@@ -117,6 +126,4 @@ export class Importer {
   }
 
   /** Do some extra work for preparation for the next epoch. */
-  public async prepareForNextEpoch() {
-    try {
 ```

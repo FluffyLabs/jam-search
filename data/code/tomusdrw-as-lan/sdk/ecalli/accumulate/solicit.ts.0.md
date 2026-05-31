@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/accumulate/solicit.ts#L1-L17
 title: sdk/ecalli/accumulate/solicit.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: ce13d2aed206bfae9afa2a9360bd1b2afcbc9a1de1b3770b91f61c1beaeda3b1

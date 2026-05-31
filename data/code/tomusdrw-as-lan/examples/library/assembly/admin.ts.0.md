@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/library/assembly/admin.ts#L1-L105
 title: examples/library/assembly/admin.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 1ab67e9190114dfba5280c030a86600c739131fa8bffaba50916583d01cecc31

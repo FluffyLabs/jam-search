@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L1-L103
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L1-L85
 title: bin/jam/build-for-npm.sh
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
-chunk_total: 1
-content_sha: f7dbe2da318fa8de6ac12f6a20b4dca80fc02f688cc407f546f67df15e28bd56
+chunk_total: 2
+content_sha: 67e080a362ac56d28b6118f904436cb9081b7b14b901530c6996bed398034dc5
 language: bash
 ---
-`bin/jam/build-for-npm.sh` (lines 1–103)
+`bin/jam/build-for-npm.sh` (lines 1–85)
 
 ```bash
 #!/bin/bash
@@ -26,6 +26,32 @@ DESCRIPTION=$(node -p "require('./package.json').description")
 
 # Start from the top-level project directory
 cd ../..
+
+# These three are native/external modules that ncc can't bundle, so they ship as
+# real prod deps and get installed by the `npm install` below. We read the
+# versions from the packages that actually declare them instead of hardcoding,
+# so the bundle never drifts from the rest of the workspace.
+#
+# @typeberry/native carries the bandersnatch native addon as platform-specific
+# optionalDependencies. ncc can't bundle the runtime `require(<platformPkg>)`
+# (the argument is computed at runtime), so shipping it as a dep lets npm pull
+# the matching `.node` binary into dist/jam/node_modules. Otherwise the node
+# falls back to the slower wasm impl.
+NATIVE_VERSION=$(node -p "require('./packages/core/crypto/package.json').dependencies['@typeberry/native']")
+LMDB_VERSION=$(node -p "require('./packages/jam/database-lmdb/package.json').dependencies.lmdb")
+QUIC_VERSION=$(node -p "require('./packages/core/networking/package.json').dependencies['@matrixai/quic']")
+
+# A missing/renamed dependency key makes `node -p` print the literal "undefined"
+# and exit 0, so `set -e` won't catch it. Bail out here with a clear message
+# instead of writing a broken "undefined" version into dist/jam/package.json.
+for pair in "@typeberry/native=$NATIVE_VERSION" "lmdb=$LMDB_VERSION" "@matrixai/quic=$QUIC_VERSION"; do
+  name="${pair%%=*}"
+  ver="${pair#*=}"
+  if [ -z "$ver" ] || [ "$ver" = "undefined" ]; then
+    echo "ERROR: could not resolve version for '$name' from its package.json" >&2
+    exit 1
+  fi
+done
 
 DIST_FOLDER=./dist/jam
 
@@ -74,48 +100,4 @@ flatten_worker() {
   sed -i "\$ s|sourceMappingURL=index.js.map|sourceMappingURL=$2.mjs.map|" "$2.mjs"
   # Move the bundle up one level into $DIST_FOLDER. We can't use `mv * ../`:
   # workers that pull in telemetry also emit gRPC asset directories (proto/,
-  # protoc-gen-validate/, xds/) that the main bundle - and earlier workers -
-  # already created up there, and `mv` refuses to merge into a non-empty dir.
-  tar cf - . | ( cd ../ && tar xf - )
-  cd ../
-  rm -rf "./$1"
-}
-
-# Flatten the workers structure
-cd $DIST_FOLDER
-flatten_worker importer bootstrap-importer
-flatten_worker jam-network bootstrap-network
-flatten_worker block-authorship bootstrap-generator
-
-# copy worker wasm files
-cp **/*.wasm ./ || true # ignore overwrite errors
-
-# Make index.js executable and insert shebang with 6GB heap size (leaves headroom on an 8GB box)
-echo '#!/usr/bin/env -S node --max-old-space-size=6144' > ./temp.js && cat ./index.js >> ./temp.js && mv ./temp.js ./index.js
-chmod +x ./index.js
-
-# build package.json file
-cat > ./package.json << EOF
-{
-  "name": "@typeberry/jam",
-  "version": "$VERSION",
-  "description": "$DESCRIPTION",
-  "main": "./index.js",
-  "bin": {
-    "jam": "./index.js"
-  },
-  "dependencies": {
-    "lmdb": "3.1.3",
-    "@matrixai/quic": "2.0.9"
-  },
-  "homepage": "https://typeberry.dev",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/FluffyLabs/typeberry"
-  },
-  "author": "Fluffy Labs <hello@fluffylabs.dev>",
-  "license": "MPL-2.0",
-  "type": "module"
-}
-EOF
 ```

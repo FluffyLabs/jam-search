@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk-ecalli-mocks/src/refine/index.ts#L1-L24
 title: sdk-ecalli-mocks/src/refine/index.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: c38ce17525d47d1ca36a7ade038ea7787409b5fc3f9ae216d613a354f1c2eebf

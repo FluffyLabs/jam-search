@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/scripts/start.sh#L1-L88'
 title: scripts/start.sh
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2cb333326e5fbe52d46f82bb82b4786e870cf85a704900d5b7bcbaef9d5f11ab

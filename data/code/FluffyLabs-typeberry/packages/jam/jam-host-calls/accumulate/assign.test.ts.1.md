@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/assign.test.ts#L92-L174
 title: packages/jam/jam-host-calls/accumulate/assign.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: d92eaa9353ae674963a16854e695f1b248cea7d3f7cbde341932dd255a9e62f7

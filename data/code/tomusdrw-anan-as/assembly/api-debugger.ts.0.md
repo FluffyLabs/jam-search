@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L1-L153'
 title: assembly/api-debugger.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: 1fdde1eaa6a2b29304f150836d46f8e7976f286685aba1270c48da03ee75422e

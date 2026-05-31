@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/prize-blockchain.yml#L1-L51
 title: .github/workflows/prize-blockchain.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 693e2030cc626e7c0dfe62bddeac8a405738b3fc04898ee5bd7178fbf70a0155
+content_sha: 4de634deffd6d81e2c2bd84e6cf64907f001fb346b978be18f1bd69e635fb439
 language: yaml
 ---
 `.github/workflows/prize-blockchain.yml` (lines 1–51)
@@ -38,7 +38,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
       - uses: actions/checkout@v6
@@ -51,7 +51,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - name: Download previous transaction log
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v21
         with:
           name: log
           search_artifacts: true
@@ -62,7 +62,7 @@ jobs:
           COMMIT_KEY_SECRET: ${{ secrets.COMMIT_KEY_SECRET }}
         continue-on-error: true
       - name: Upload new transaction log
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: ${{ env.LOG_FILENAME }}
           name: log

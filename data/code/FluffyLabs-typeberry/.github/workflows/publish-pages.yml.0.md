@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/publish-pages.yml#L1-L49
 title: .github/workflows/publish-pages.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 19686d0f1a3ec80135f776abe213c8ccbb7bfb7f06aeb32e8c17f1f7ae786968
+content_sha: 62b74d70e9b2365137f5799b879ac5f21bec9918b52d328d001dd07df964227b
 language: yaml
 ---
 `.github/workflows/publish-pages.yml` (lines 1–49)
@@ -44,7 +44,7 @@ jobs:
     - name: Use Node.js 24
       uses: actions/setup-node@v6
       with:
-        node-version: 24
+        node-version: 26
         cache: 'npm'
     - run: npm ci
     - name: Generate documentation
@@ -56,12 +56,12 @@ jobs:
     - name: Copy configs & schemas (schemas dir)
       run: cp -r ./packages/configs/* ./web/schemas/
     - name: Setup Pages
-      uses: actions/configure-pages@v5
+      uses: actions/configure-pages@v6
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v4
+      uses: actions/upload-pages-artifact@v5
       with:
         path: "./web"
     - name: Deploy to GitHub Pages
       id: deployment
-      uses: actions/deploy-pages@v4
+      uses: actions/deploy-pages@v5
 ```

@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/shuffling/shuffling.ts#L1-L48
 title: packages/core/shuffling/shuffling.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: f73546d9905eb6e1595f9f0ac55ad8d7db04044c4b805639dc383a1ddb5986dd
+content_sha: 3ee817112d7e1eaffd2d7bbe9cd3637e867f64830ab99c7243598b6be3d2b840
 language: typescript
 ---
 `packages/core/shuffling/shuffling.ts` (lines 1–48)
@@ -57,7 +57,7 @@ function hashToNumberSequence(blake2b: Blake2b, entropy: Bytes<ENTROPY_BYTES>, l
     const newHash = blake2b.hashBytes(randomBytes);
     const numberStartIndex = (4 * i) % 32;
     const numberEndIndex = numberStartIndex + 4;
-    const number = leBytesAsU32(newHash.raw.subarray(numberStartIndex, numberEndIndex)) >>> 0;
+    const number = leBytesAsU32(newHash.raw.subarray(numberStartIndex, numberEndIndex));
     result[i] = number;
   }
 

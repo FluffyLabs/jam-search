@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L106'
 title: package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 1e52648f643859950ca3e6a2688bf742eb20d0f0c179ad540ed8e7d6d49d9515
+content_sha: 04e2ed3e401583572af8d9abfcef087cd9b26dbbe944c31f9fb1ff7eff30ebaa
 language: json
 ---
 `package.json` (lines 1–106)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@typeberry/jam",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "JAM implementation in TypeScript",
   "private": true,
   "workspaces": [
@@ -83,7 +83,7 @@ language: json
     "packages/workers/jam-network"
   ],
   "engines": {
-    "node": ">=24",
+    "node": ">=26",
     "npm": ">=10"
   },
   "scripts": {

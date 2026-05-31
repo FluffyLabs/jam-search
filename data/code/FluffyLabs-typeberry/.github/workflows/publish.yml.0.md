@@ -2,23 +2,25 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/publish.yml#L1-L126
+  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/publish.yml#L1-L119
 title: .github/workflows/publish.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
-chunk_total: 2
-content_sha: dd8d5aab011262c0a364e78903645b5d0fcd99419ea0e6ab938703b3dbceaba3
+chunk_total: 3
+content_sha: aba50ae0cc8e3577a4893e282d11c6aca1ad4592f0b9161f23d6392c3eafa3c0
 language: yaml
 ---
-`.github/workflows/publish.yml` (lines 1–126)
+`.github/workflows/publish.yml` (lines 1–119)
 
 ```yaml
-name: Publish
+name: Build & Publish
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
   release:
@@ -26,6 +28,7 @@ on:
 
 jobs:
   publish-npm:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -33,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [24]
+        node-version: [26]
         project: [lib, jam, convert]
 
     steps:
@@ -95,8 +98,7 @@ jobs:
       if: steps.check-version.outputs.exists == 'true'
       run: npm dist-tag add @typeberry/${{ matrix.project }}@${{ steps.pkg-version.outputs.version }} ${{ steps.npm-tag.outputs.tag }}
 
-  publish-docker:
-    if: github.event_name == 'release'
+  docker:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -104,41 +106,32 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-    - uses: docker/setup-buildx-action@v3
+    - uses: docker/setup-buildx-action@v4
 
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Get short commit SHA
+      id: sha
+      run: echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
-    - name: Extract version from package.json
+    - name: Get package version
       id: version
+      run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+    # Stamp the commit into the version for everything except a final (non-pre)
+    # release. Mirrors the publish-npm VERSION_SHA logic.
+    - name: Compute VERSION_SHA build-arg
+      id: vsha
       run: |
-        VERSION=$(node -p "require('./package.json').version")
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Version: $VERSION"
+        if [[ "${{ github.event_name }}" == "release" && "${{ github.event.release.prerelease }}" != "true" ]]; then
+          echo "value=" >> "$GITHUB_OUTPUT"
+        else
+          echo "value=${{ steps.sha.outputs.short }}" >> "$GITHUB_OUTPUT"
+        fi
 
-    - name: Extract metadata
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: |
-          ghcr.io/${{ github.repository_owner }}/typeberry
-        tags: |
-          type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
-          type=raw,value=latest,enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        platforms: linux/amd64
-
+    # metadata-action auto-lowercases the image path and produces OCI labels.
+    # Tag matrix:
+    #   push to main         -> next + {version}-{sha}
+    #   release (prerelease) -> next + {version}-{sha}
+    #   release (final)      -> {version} + latest
+    #   pull_request/dispatch -> no tags (no push)
+    - name: Compute image tags and labels
 ```

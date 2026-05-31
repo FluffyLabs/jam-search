@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/nodemon.json#L1-L6'
 title: nodemon.json
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: c4b9dd9ef77d64c91b722e9af661718365315ebd269b8a8d34a4cc518deb11cd

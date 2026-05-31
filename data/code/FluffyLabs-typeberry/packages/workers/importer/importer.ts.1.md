@@ -2,19 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L99-L202
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L106-L210
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 06c770cfbdfd5b4d9848fe5fb0d6fa88a7a11270ec0803a1a373a0c83f4a5a16
+content_sha: cc6d37e2f89b2c75eb522f73337780d0781780e2b1397be69c428e1f0d7479f2
 language: typescript
 ---
-`packages/workers/importer/importer.ts` (lines 99–202)
+`packages/workers/importer/importer.ts` (lines 106–210)
 
 ```typescript
+    this.prepareForNextEpoch();
+
     args.logger.info`😎 Best time slot: ${state.timeslot} (header hash: ${currentBestHeaderHash})`;
   }
 
@@ -46,6 +48,9 @@ language: typescript
     const duration = now() - startTime;
 
     if (maybeBestHeader.isOk) {
+      if (timeSlot % 100 === 0) {
+        this.logger.info`📊 mem #${timeSlot}: ${this.memory()}`;
+      }
       const bestHeader = maybeBestHeader.ok;
       this.logger.info`🧊 Best block: #${timeSlot} (${bestHeader.hash})`;
       this.logger.log`${timer()}`;
@@ -115,8 +120,4 @@ language: typescript
     const timerState = measure("import:state");
     const updateResult = await this.states.updateAndSetState(headerHash, this.state, update);
     if (updateResult.isError) {
-      logger.error`🧱 Unable to update state: ${resultToString(updateResult)}`;
-      return importerError(ImporterErrorKind.Update, updateResult);
-    }
-
 ```

@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/logic.ts#L1-L56
 title: assembly/instructions/logic.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 7993b84900cdff6c070d90e9e990310ed01a65a3479d34098bb24245ff9b8683

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/gas.test.ts#L1-L53
 title: packages/core/pvm-interpreter/gas.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 3c77eaee00341ea2c8fb8a0e9e7edc8b857582c1940e03241d9b5d9e4267b7d6

@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/core/byte-buf.ts#L145-L168'
 title: sdk/core/byte-buf.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 4cc835f978ce446bc79badbf1a5b0cc2dfc747e8a14ff35164a0ba025bf81ef6

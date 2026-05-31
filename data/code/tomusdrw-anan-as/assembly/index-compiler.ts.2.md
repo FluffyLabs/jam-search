@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/index-compiler.ts#L254-L278
 title: assembly/index-compiler.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 9f21745cc66cd76d71a9186c2e9a5d6a6b3ab9f012f08002b9da436cc3be9876

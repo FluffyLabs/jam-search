@@ -6,8 +6,8 @@ url: >-
 title: >-
   packages/core/pvm-interpreter/args-decoder/decoders/extended-with-immediate-decoder.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: f2c32b20c9c3f51e0a9fc5d803c8f90ed63987f59e98d1bef271d202c9610a81

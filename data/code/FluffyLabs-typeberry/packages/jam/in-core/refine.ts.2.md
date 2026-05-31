@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/refine.ts#L236-L260
 title: packages/jam/in-core/refine.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 975f133f991527d8793ffcdf9de091e3b1f13396176b805e1a3907949d648ed7

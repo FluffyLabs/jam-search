@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/package.json#L1-L34
 title: packages/jam/transition/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: d21f3ef18a5d8251d72e9a68f050c2dcc7a476d6f044606b6d4b6fce0052ad9c
+content_sha: 7c1d0d1cc6b2f4b6e99db57c98bb9322e89d28f98eafbe3192740b50e662bc3b
 language: json
 ---
 `packages/jam/transition/package.json` (lines 1–34)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/transition",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "JAM state transition.",
   "main": "index.ts",
   "dependencies": {

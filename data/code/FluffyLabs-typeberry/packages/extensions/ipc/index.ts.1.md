@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/extensions/ipc/index.ts#L121-L151
 title: packages/extensions/ipc/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 2eb3f95b2e12e983816426e66ba6859bdd6ede8c0dd70ba7594d108aaeb9a5a0

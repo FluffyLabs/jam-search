@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/memory-utils.test.ts#L1-L110
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/memory-utils.test.ts#L1-L122
 title: packages/core/pvm-interpreter/memory/memory-utils.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
-chunk_total: 1
-content_sha: 6c0921bad894d2579cd9fca1c5efb3eb2094dffe5ed01414f44c367ca18e284c
+chunk_total: 2
+content_sha: 4c32164313d821bd734cf9fef167e063cd9868a60eae7933bd8b23cae15eae01
 language: typescript
 ---
-`packages/core/pvm-interpreter/memory/memory-utils.test.ts` (lines 1–110)
+`packages/core/pvm-interpreter/memory/memory-utils.test.ts` (lines 1–122)
 
 ```typescript
 import assert from "node:assert";
@@ -94,6 +94,24 @@ describe("memory-utils", () => {
 
       assert.strictEqual(startPageIndex, expectedAddress);
     });
+
+    it("should return a non-negative index for an address with bit 31 set", () => {
+      const address = tryAsMemoryIndex(0x8e64_e123);
+      const expectedAddress = 0x8e64_e000;
+
+      const startPageIndex = getStartPageIndex(address);
+
+      assert.strictEqual(startPageIndex, expectedAddress);
+    });
+
+    it("should return start index of the last page", () => {
+      const address = tryAsMemoryIndex(MAX_MEMORY_INDEX);
+      const expectedAddress = MAX_MEMORY_INDEX - PAGE_SIZE + 1;
+
+      const startPageIndex = getStartPageIndex(address);
+
+      assert.strictEqual(startPageIndex, expectedAddress);
+    });
   });
 
   describe("getStartPageIndexFromPageNumber", () => {
@@ -119,10 +137,4 @@ describe("memory-utils", () => {
       const lastMemoryIndex = tryAsMemoryIndex(MAX_MEMORY_INDEX);
       const pageNumber = getPageNumber(lastMemoryIndex);
 
-      const startIndex = getStartPageIndexFromPageNumber(pageNumber);
-
-      assert.strictEqual(startIndex, pageNumber * PAGE_SIZE);
-    });
-  });
-});
 ```

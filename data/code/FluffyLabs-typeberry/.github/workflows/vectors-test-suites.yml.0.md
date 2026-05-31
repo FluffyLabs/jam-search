@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/vectors-test-suites.yml#L1-L123
+  https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/vectors-test-suites.yml#L1-L121
 title: .github/workflows/vectors-test-suites.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: f84aeacce7f86611fa57e263266fe52684963bd8c805d87f8c57252d05810483
+content_sha: 5fe7331a6faaed8579ce76ed54491f8543fa2d6fff1d9202f2ac92b21a13600f
 language: yaml
 ---
-`.github/workflows/vectors-test-suites.yml` (lines 1–123)
+`.github/workflows/vectors-test-suites.yml` (lines 1–121)
 
 ```yaml
 name: VECTORS - test suites
@@ -29,7 +29,7 @@ concurrency:
 
 env:
   TEST_VECTORS_REF: ffffffffffffffffffffffffffffffffffffffff # loaded in scripts/load-test-ref.sh
-  NODE_VERSION: 24.x
+  NODE_VERSION: 26.x
 
 jobs:
   test-vectors:
@@ -70,6 +70,13 @@ jobs:
             output: javajam-071.txt
             artifact_name: javajam-071-results
             submodule: javajam_071
+          # Vectors committed in-repo under `test-vectors-local/` (no external submodule).
+          - display_name: local-0.7.2
+            gp_version: 0.7.2
+            script: local.ts
+            output: local.txt
+            artifact_name: local-results
+            submodule: ""
 
     env:
       GP_VERSION: ${{ matrix.gp_version }}
@@ -79,12 +86,14 @@ jobs:
       - name: Load test ref
         run: .github/scripts/load-test-ref.sh
       - name: Checkout JAM test vectors
+        if: ${{ matrix.submodule != '' }}
         uses: actions/checkout@v6
         with:
           repository: fluffylabs/test-vectors
           path: "./test-vectors"
           ref: ${{ env.TEST_VECTORS_REF }}
       - name: Fetch only required submodule (${{ matrix.submodule }})
+        if: ${{ matrix.submodule != '' }}
         working-directory: ./test-vectors
         run: |
           sed -i 's|git@github.com:|https://github.com/|g' .gitmodules
@@ -102,7 +111,7 @@ jobs:
         run: cat ./dist/${{ matrix.output }}
       - name: Upload new transaction log
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: |
             ./dist/${{ matrix.output }}
@@ -124,18 +133,7 @@ jobs:
 
       - name: Download all failure artifacts
         if: ${{ needs.test-vectors.result == 'failure' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
-          pattern: "*-results"
-          merge-multiple: false
-
-      - name: Combine error results
-        if: ${{ needs.test-vectors.result == 'failure' }}
-        run: |
-          echo "## ❌ Test Vector Failures" > combined-errors.md
-          echo "" >> combined-errors.md
-          for dir in artifacts/*/; do
-            if [ -d "$dir" ]; then
-              name=$(basename "$dir")
 ```

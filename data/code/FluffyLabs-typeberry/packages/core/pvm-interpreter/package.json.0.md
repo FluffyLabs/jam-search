@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/package.json#L1-L21
 title: packages/core/pvm-interpreter/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 5426dd985e11fd3909cc24c6d7915c0d4b68d72bc0d7561ca9e9bf8e0e66c877
+content_sha: 61631588db80d64cf1997e3b38447ebb16b60713bc4487229e071f96a0b5840d
 language: json
 ---
 `packages/core/pvm-interpreter/package.json` (lines 1–21)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/pvm-interpreter",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "A PVM implementation based on the Gray Paper.",
   "main": "index.ts",
   "dependencies": {

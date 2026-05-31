@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/externalities/state-update.ts#L113-L239
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/externalities/state-update.ts#L113-L237
 title: packages/jam/jam-host-calls/externalities/state-update.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 1
 chunk_total: 4
-content_sha: cd5a355b2da6990cce432d4c28eeab5eaf0e9ef6eb17a0c6c73a7445fa095765
+content_sha: fb672996d21e9a64fb6f5eefb83585437dfed04a0b31cf23808f8e5886725849
 language: typescript
 ---
-`packages/jam/jam-host-calls/externalities/state-update.ts` (lines 113–239)
+`packages/jam/jam-host-calls/externalities/state-update.ts` (lines 113–237)
 
 ```typescript
       update.validatorsData = asKnownSize([...from.validatorsData]);
@@ -73,12 +73,18 @@ export class PartiallyUpdatedState<T extends StateSlice = StateSlice> {
       return null;
     }
 
-    const maybeUpdatedServiceInfo = this.stateUpdate.services.updated.get(destination);
+    // make sure the service is not being ejected in the same round
+    if (this.stateUpdate.services.removed.indexOf(destination) !== -1) {
+      return null;
+    }
 
+    // check the updated info
+    const maybeUpdatedServiceInfo = this.stateUpdate.services.updated.get(destination);
     if (maybeUpdatedServiceInfo !== undefined) {
       return maybeUpdatedServiceInfo.action.account;
     }
 
+    // or fallback to the state entry
     const maybeService = this.state.getService(destination);
     if (maybeService === null) {
       return null;
@@ -134,12 +140,4 @@ export class PartiallyUpdatedState<T extends StateSlice = StateSlice> {
     }
 
     const service = this.state.getService(serviceId);
-    return service?.getPreimage(hash) ?? null;
-  }
-
-  /**
-   * Get status of a preimage of current service taking into account any updates.
-   *
-   * https://graypaper.fluffylabs.dev/#/ab2cdbd/110201110201?v=0.7.2
-   */
 ```

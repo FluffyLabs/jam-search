@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/test/calls.ts#L264-L290'
 title: sdk/test/calls.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 43028a3959c5f3c68bacc781e3ebb01651ee4a0a654c024410e023b78429a80d

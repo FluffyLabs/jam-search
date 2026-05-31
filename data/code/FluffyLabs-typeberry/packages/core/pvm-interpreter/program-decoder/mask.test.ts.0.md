@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/program-decoder/mask.test.ts#L1-L122
 title: packages/core/pvm-interpreter/program-decoder/mask.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 209b8aa904eca013cb5cc210f4f9907ee5e9aa1b7e49092a9f2d3b077dd19929

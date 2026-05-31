@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/accumulate/accumulate-utils.ts#L1-L75
 title: packages/jam/transition/accumulate/accumulate-utils.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 5decef1145b9712fdc177f9653a1ed9065add886aa9385062ff661aeebc94e98
+content_sha: 305e4bb9f253ef81d78e4ca1dd0ed62020b61b9b115f427fe87a14b2e853d911
 language: typescript
 ---
 `packages/jam/transition/accumulate/accumulate-utils.ts` (lines 1–75)
@@ -86,7 +86,7 @@ export function generateNextServiceId(
   );
 
   const result = blake2b.hashBytes(encoded).raw.subarray(0, 4);
-  const number = leBytesAsU32(result) >>> 0;
+  const number = leBytesAsU32(result);
   const mod = 2 ** 32 - MIN_PUBLIC_SERVICE_INDEX - 2 ** 8;
   return tryAsServiceId((number % mod) + MIN_PUBLIC_SERVICE_INDEX);
 }

@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/package.json#L1-L104'
 title: package.json
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: e370f1c8996a9f1ed985415affe9eb734f3e33202f787daea14f8f58703c1041
+content_sha: e64cf97112bdcef3f3c0c36645dba90a03c2b18cc1d619f7c4fabd425dde42e2
 language: json
 ---
 `package.json` (lines 1–104)
@@ -70,7 +70,7 @@ language: json
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.10",
-		"@typeberry/lib": "^0.6.0",
+		"@typeberry/lib": "^0.8.0",
 		"@types/node": "^25.3.3",
 		"assemblyscript": "^0.28.9",
 		"esbuild": "^0.28.0",

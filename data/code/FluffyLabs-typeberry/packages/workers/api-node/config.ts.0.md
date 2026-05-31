@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L1-L114
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L1-L112
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: b0a3dabc82a08d7821a6291869304d08ceb581389686f75cd8f0c11dde15987b
+content_sha: b6c70e606bf25b8be7640aa2695b3035239acc7751f26499ea028256e7e9d35d
 language: typescript
 ---
-`packages/workers/api-node/config.ts` (lines 1–114)
+`packages/workers/api-node/config.ts` (lines 1–112)
 
 ```typescript
 import type { MessagePort } from "node:worker_threads";
@@ -25,7 +25,7 @@ import {
   type RootDb,
   type SerializedStatesDb,
 } from "@typeberry/database";
-import { LmdbBlocks, LmdbRoot, LmdbStates } from "@typeberry/database-lmdb";
+import { HybridSerializedStates, LmdbBlocks, LmdbRoot, LmdbStates } from "@typeberry/database-lmdb";
 import { Blake2b } from "@typeberry/hash";
 import type { WorkerConfig } from "@typeberry/workers-api";
 import { ThreadPort, type TransferablePort } from "./port.js";
@@ -127,6 +127,4 @@ export function configTransferList(config: TransferableConfig): MessagePort[] {
 }
 
 /**
- * In-memory (direct) worker using serialized state database.
- *
 ```

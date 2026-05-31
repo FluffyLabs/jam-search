@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/protocol/ce-134-work-package-sharing.test.ts#L1-L54
 title: packages/jam/jamnp-s/protocol/ce-134-work-package-sharing.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 16c6f5e8b3c2634e6b6c768752b2c445038b6ed3f29a5b12e402b602071df815

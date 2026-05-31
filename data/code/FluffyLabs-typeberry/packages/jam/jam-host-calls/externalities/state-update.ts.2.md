@@ -2,19 +2,24 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/externalities/state-update.ts#L232-L345
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/externalities/state-update.ts#L233-L345
 title: packages/jam/jam-host-calls/externalities/state-update.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 2
 chunk_total: 4
-content_sha: 8f44cc291152ab383aed5f01bd6917c0f54b44622e0fc686d8bbddce2fb55ad3
+content_sha: 465db964f3c5809c3d38967b298daca3fe1727de96c9a8caa89fbbdaaa18963c
 language: typescript
 ---
-`packages/jam/jam-host-calls/externalities/state-update.ts` (lines 232–345)
+`packages/jam/jam-host-calls/externalities/state-update.ts` (lines 233–345)
 
 ```typescript
+    if (freshlyProvided !== undefined && freshlyProvided.action.kind === UpdatePreimageKind.Provide) {
+      return freshlyProvided.action.preimage.blob;
+    }
+
+    const service = this.state.getService(serviceId);
     return service?.getPreimage(hash) ?? null;
   }
 
@@ -123,10 +128,4 @@ language: typescript
     check`${bytes >= 0} storageUtilisationBytes has to be a positive number, got: ${bytes}`;
 
     const overflowItems = !isU32(items);
-    const overflowBytes = !isU64(bytes);
-
-    // TODO [ToDr] this is not specified in GP, but it seems sensible.
-    if (overflowItems || overflowBytes) {
-      return Result.error(
-        InsufficientFundsError,
 ```

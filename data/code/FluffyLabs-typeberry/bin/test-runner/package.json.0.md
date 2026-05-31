@@ -2,22 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/package.json#L1-L49
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/package.json#L1-L50
 title: bin/test-runner/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 5ea654929f3dd469abe68ce49ccd0b60cbbecffb55eeaa81a8093bc941d40bc0
+content_sha: a8b4ab4da58c3af7bebed738858d3fc93eb5c4a18f436cccae64df6fb196975b
 language: json
 ---
-`bin/test-runner/package.json` (lines 1–49)
+`bin/test-runner/package.json` (lines 1–50)
 
 ```json
 {
   "name": "@typeberry/test-runner",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "JAM-test-vectors runner.",
   "main": "index.ts",
   "dependencies": {
@@ -58,6 +58,7 @@ language: json
     "jam-conformance:0.7.1": "GP_VERSION=0.7.1 tsx ./jam-conformance-071.ts",
     "jam-conformance:0.7.2": "GP_VERSION=0.7.2 tsx ./jam-conformance-072.ts",
     "javajam:0.7.1": "GP_VERSION=0.7.1 tsx ./javajam-071.ts",
+    "local:0.7.2": "GP_VERSION=0.7.2 tsx ./local.ts",
     "test": "tsx --test $(find . -type f -name '*.test.ts' | tr '\\n' ' ')"
   },
   "author": "Fluffy Labs",

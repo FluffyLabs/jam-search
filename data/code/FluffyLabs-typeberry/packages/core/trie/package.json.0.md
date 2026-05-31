@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/trie/package.json#L1-L18
 title: packages/core/trie/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: e521d752605bfc2e54af8530bb2e6ffff80516edbb3cdd2e2f34c5750110014a
+content_sha: 866ab2124991723a05968d9d80f8c0cf01d77ff5114a51caea099f872e4d4963
 language: json
 ---
 `packages/core/trie/package.json` (lines 1–18)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/trie",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "Trie implementation for Typeberry JAM.",
   "main": "index.ts",
   "scripts": {

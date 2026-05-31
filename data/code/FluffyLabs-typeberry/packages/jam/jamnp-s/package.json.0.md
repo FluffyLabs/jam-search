@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/package.json#L1-L26
 title: packages/jam/jamnp-s/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 85bbbbbf4d0c18ef5b0815515e3001e05fc9f01d63631c6a0954f55b22a6c319
+content_sha: de634089940ef1be3fc243b882672977346cbe6d3111df45f817d968985ce356
 language: json
 ---
 `packages/jam/jamnp-s/package.json` (lines 1–26)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/jamnp-s",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "JAM Networking Protocol - Simple",
   "license": "MPL-2.0",
   "author": "Fluffy Labs",

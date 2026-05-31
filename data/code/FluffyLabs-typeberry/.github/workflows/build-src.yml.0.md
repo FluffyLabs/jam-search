@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/build-src.yml#L1-L61
 title: .github/workflows/build-src.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: f792ef904ef3757123f45c8d9db2072e0caf8f2b336298d16e935a75f5fe5f49
+content_sha: ee7f601295f5158e81ff3d0a1f7187e1fbe674ea1360b0fc8ae98f513d758255
 language: yaml
 ---
 `.github/workflows/build-src.yml` (lines 1–61)
@@ -30,7 +30,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
     - uses: actions/checkout@v6
@@ -59,7 +59,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [24.x]
+        node-version: [26.x]
 
     steps:
     - uses: actions/checkout@v6

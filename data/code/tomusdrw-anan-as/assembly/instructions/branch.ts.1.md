@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/branch.ts#L125-L136
 title: assembly/instructions/branch.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-20T20:20:54Z'
-last_modified: '2026-05-20T20:20:54Z'
+created_at: '2026-05-29T16:20:56+02:00'
+last_modified: '2026-05-29T16:20:56+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 988a61a98a2713547fcc0169081c73b30a65bcceb67dbf1f074accc2917c8368

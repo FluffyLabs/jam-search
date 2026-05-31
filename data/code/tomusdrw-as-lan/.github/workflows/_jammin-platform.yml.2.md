@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/_jammin-platform.yml#L183-L252
 title: .github/workflows/_jammin-platform.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-15T23:42:49+02:00'
-last_modified: '2026-05-15T23:42:49+02:00'
+created_at: '2026-05-28T15:07:03+02:00'
+last_modified: '2026-05-28T15:07:03+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 323f2fb7dc11bb1413c273cdd8ac876a10368685c2693f9868312052683c03d1

@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/package.json#L1-L46'
 title: bin/rpc/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-24T08:09:48+02:00'
-last_modified: '2026-05-24T08:09:48+02:00'
+created_at: '2026-05-30T08:29:37+02:00'
+last_modified: '2026-05-30T08:29:37+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 5e93819e539d4ddc9f4a7c0749e097a10b3b618ca43e93d0fde48e3a062c4327
+content_sha: 291f4e11fa72009f0e61f9d6d60e543a9388eef0940981501a010a37a8c4732c
 language: json
 ---
 `bin/rpc/package.json` (lines 1–46)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@typeberry/rpc",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "description": "A JSON RPC server for Typeberry.",
   "license": "MPL-2.0",
   "author": "Fluffy Labs",
