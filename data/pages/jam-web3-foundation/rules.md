@@ -3,8 +3,8 @@ type: page
 url: 'https://jam.web3.foundation/rules'
 title: Decentralized JAM
 site: jam.web3.foundation
-created_at: '2026-06-02T04:28:52.339Z'
-last_modified: '2026-06-02T04:28:52.339Z'
+created_at: '2026-06-05T04:28:09.542Z'
+last_modified: '2026-06-05T04:28:09.542Z'
 ---
 # The Rules of the JAM Prize
 

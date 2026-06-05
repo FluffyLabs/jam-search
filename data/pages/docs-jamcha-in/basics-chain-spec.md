@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/basics/chain-spec'
 title: Chain Spec | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-06-02T04:28:28.028Z'
-last_modified: '2026-06-02T04:28:28.028Z'
+created_at: '2026-06-05T04:27:48.182Z'
+last_modified: '2026-06-05T04:27:48.182Z'
 ---
 The Chain Specification is a configuration that defines all core constants of the JAM Chain. The JAM Chain itself has fixed parameters, but for testing and local deployments it can be useful to define alternative versions of these parameters.
 
