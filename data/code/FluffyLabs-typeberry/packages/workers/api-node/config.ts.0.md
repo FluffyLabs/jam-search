@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L1-L112
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L1-L115
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: b6c70e606bf25b8be7640aa2695b3035239acc7751f26499ea028256e7e9d35d
+content_sha: 75ac6cd863ab0c00d6a2efde35af49f3ad6487eb11683793b7e9ef2b06588959
 language: typescript
 ---
-`packages/workers/api-node/config.ts` (lines 1–112)
+`packages/workers/api-node/config.ts` (lines 1–115)
 
 ```typescript
 import type { MessagePort } from "node:worker_threads";
@@ -78,14 +78,17 @@ export class LmdbWorkerConfig<T = void> implements WorkerConfig<T, BlocksDb, Ser
     public readonly dbPath: string,
     public readonly blake2b: Blake2b,
     public readonly ports: Map<string, ThreadPort>,
-    // When set, the underlying LMDB skips fsync and compression. Only safe for
-    // throwaway databases (the fuzz target wipes on reset). Not transferred to
-    // worker threads, so the durable main node path always gets the default.
+    // When set, the underlying LMDB skips fsync. Only safe for throwaway
+    // databases (the fuzz target wipes on reset). Not transferred to worker
+    // threads, so the durable main node path always gets the default.
     public readonly ephemeral: boolean = false,
   ) {}
 
   openDatabase(options: { readonly: boolean } = { readonly: true }): RootDb<BlocksDb, SerializedStatesDb> {
-    const lmdb = LmdbRoot.new(this.dbPath, options.readonly, this.ephemeral);
+    const lmdb = LmdbRoot.new(this.dbPath, {
+      readOnly: options.readonly,
+      ephemeral: this.ephemeral,
+    });
 
     return {
       getBlocksDb: () => LmdbBlocks.new(this.chainSpec, lmdb),

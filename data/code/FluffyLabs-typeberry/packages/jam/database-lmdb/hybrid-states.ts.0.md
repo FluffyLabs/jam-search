@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.ts#L1-L111
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.ts#L1-L113
 title: packages/jam/database-lmdb/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: cee324b047e50a3fa09d1aad347857090a9a53746a50fbb03ac1bd2051a35e66
+content_sha: f2e82ac4c83757a51f8cad5cbc1f86d2e6f78694e1b6d44646d59399358ba439
 language: typescript
 ---
-`packages/jam/database-lmdb/hybrid-states.ts` (lines 1–111)
+`packages/jam/database-lmdb/hybrid-states.ts` (lines 1–113)
 
 ```typescript
 // packages/jam/database-lmdb/hybrid-states.ts
@@ -60,14 +60,16 @@ export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>
     dbPath,
     readOnly,
     ephemeral,
+    compression,
   }: {
     spec: ChainSpec;
     blake2b: Blake2b;
     dbPath: string;
     readOnly?: boolean;
     ephemeral?: boolean;
+    compression?: boolean;
   }) {
-    const root = LmdbRoot.new(dbPath, readOnly, ephemeral);
+    const root = LmdbRoot.new(dbPath, { readOnly, ephemeral, compression });
     return new HybridSerializedStates(spec, blake2b, root);
   }
 

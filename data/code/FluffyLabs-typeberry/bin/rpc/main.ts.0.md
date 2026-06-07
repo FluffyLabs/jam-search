@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/main.ts#L1-L87'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/main.ts#L1-L88'
 title: bin/rpc/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 82b0924ed6e2e2f1ab8cdfce52393258ef690379d075a902053b77cef417770c
+content_sha: 84795ca754afcb70b0cef3891f8d36849468efa540fc05634c30867f90ae5a95
 language: typescript
 ---
-`bin/rpc/main.ts` (lines 1–87)
+`bin/rpc/main.ts` (lines 1–88)
 
 ```typescript
 /** biome-ignore-all lint/suspicious/noConsole: for displaying help */
@@ -89,7 +89,8 @@ export async function main(args: string[]) {
     withRelPath(nodeConfig.databaseBasePath),
   );
 
-  const rootDb = LmdbRoot.new(dbPath, true);
+  // Read-only view of a durable node db, which is written compressed by default.
+  const rootDb = LmdbRoot.new(dbPath, { readOnly: true, compression: true });
   // TODO [RPC] Make PvmBackend configurable via CLI args
   const pvmBackend = PvmBackend.Ananas;
   const server = RpcServer.new(port, rootDb, spec, blake2b, pvmBackend, handlers, validation.schemas);

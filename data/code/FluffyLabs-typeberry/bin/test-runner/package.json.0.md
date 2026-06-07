@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/package.json#L1-L50
 title: bin/test-runner/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: a8b4ab4da58c3af7bebed738858d3fc93eb5c4a18f436cccae64df6fb196975b
+content_sha: f62b357ffba3111dffe794fa19899c39a7fd3c553306d4f491658d8add5c720b
 language: json
 ---
 `bin/test-runner/package.json` (lines 1–50)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/test-runner",
-  "version": "0.8.1",
+  "version": "0.8.4",
   "description": "JAM-test-vectors runner.",
   "main": "index.ts",
   "dependencies": {

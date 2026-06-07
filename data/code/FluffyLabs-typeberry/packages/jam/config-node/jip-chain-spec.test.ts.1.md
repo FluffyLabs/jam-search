@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/jip-chain-spec.test.ts#L94-L136
 title: packages/jam/config-node/jip-chain-spec.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: df2578f15c3474d62fc7a3da569b9f4347bc6c53e7416731380466a744e9acb3

@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/states.test.ts#L1-L112
 title: packages/jam/database-lmdb/states.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: e41d4b914310380b2486e80a2db07c6caca686c2b9d78c31f412a2bb417d3a64
+content_sha: 4cfeee12f99dd1ca2c61ff7b0d5b2a8e576092a1613c6ec39808e8adede13657
 language: typescript
 ---
 `packages/jam/database-lmdb/states.test.ts` (lines 1–112)
@@ -70,7 +70,7 @@ describe("LMDB States database", () => {
   const spec = tinyChainSpec;
 
   it("should import state and read state", async () => {
-    const root = LmdbRoot.new(tmpDir);
+    const root = LmdbRoot.new(tmpDir, {});
     const states = LmdbStates.new(spec, blake2b, root);
 
     try {
@@ -94,7 +94,7 @@ describe("LMDB States database", () => {
   });
 
   it("should update the state", async () => {
-    const root = LmdbRoot.new(tmpDir);
+    const root = LmdbRoot.new(tmpDir, {});
     const states = LmdbStates.new(spec, blake2b, root);
 
     try {

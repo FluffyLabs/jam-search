@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.test.ts#L225-L321
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.test.ts#L225-L318
 title: packages/jam/safrole/bandersnatch-vrf.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 7
 chunk_total: 9
-content_sha: 7a03ebfef4341f520e89a385e6aadfae67be3b595ab0419844ec6fab40ba9c56
+content_sha: ab052f1b5c40b2c24ce73ad1328fabd13a8570ae0022dbef2edbd30765b06bae
 language: typescript
 ---
-`packages/jam/safrole/bandersnatch-vrf.test.ts` (lines 225–321)
+`packages/jam/safrole/bandersnatch-vrf.test.ts` (lines 225–318)
 
 ```typescript
         BytesBlob.blobFrom(result).toString(),
@@ -27,7 +27,7 @@ language: typescript
       const input = BytesBlob.blobFromString("example input");
       const auxData = BytesBlob.blobFromString("example aux data");
       const expectedSeal = Bytes.parseBytes(
-        "0x0b6c772fe61e4e7252722633475c998be3bfcabcda2efff75edaa7c6c889f4df8b487dea89dfbdf086e74c7a3678fed15e5b39eceebf133711c7410ea99d420163f50a95249c087272604395fc694a522ac50a572ac66a4706366a69fda74500",
+        "0x0b6c772fe61e4e7252722633475c998be3bfcabcda2efff75edaa7c6c889f4df832618f0679ff329ca154a1e495a64939756928fbfb7d50587348584d0ad6e09a84014dab23c7493031bba1a2efe727cea82fe1f7c2f0d9777f0d40761083007",
         BANDERSNATCH_VRF_SIGNATURE_BYTES,
       ).asOpaque();
 
@@ -62,7 +62,7 @@ language: typescript
       const input = BytesBlob.blobFromString("example input");
       const auxData = BytesBlob.blobFromString("example aux data");
       const expectedSeal = Bytes.parseBytes(
-        "0x0b6c772fe61e4e7252722633475c998be3bfcabcda2efff75edaa7c6c889f4df8b487dea89dfbdf086e74c7a3678fed15e5b39eceebf133711c7410ea99d420163f50a95249c087272604395fc694a522ac50a572ac66a4706366a69fda74500",
+        "0x0b6c772fe61e4e7252722633475c998be3bfcabcda2efff75edaa7c6c889f4df832618f0679ff329ca154a1e495a64939756928fbfb7d50587348584d0ad6e09a84014dab23c7493031bba1a2efe727cea82fe1f7c2f0d9777f0d40761083007",
         BANDERSNATCH_VRF_SIGNATURE_BYTES,
       ).asOpaque();
 
@@ -80,11 +80,11 @@ language: typescript
         input,
         auxData,
       );
-
-      deepEqual(
-        verificationResult,
-        Result.ok(BytesBlob.parseBlob("0x000b0e5c06e70a23d6cfed372763de718b0c21119ea51f7afe1e69b0000de620")),
+      const expected: typeof verificationResult = Result.ok(
+        Bytes.parseBytes("0x000b0e5c06e70a23d6cfed372763de718b0c21119ea51f7afe1e69b0000de620", HASH_SIZE).asOpaque(),
       );
+
+      deepEqual(verificationResult, expected);
     });
   });
 
@@ -109,7 +109,4 @@ language: typescript
       assert.ok(genResult.isOk);
 
       const commitment = await bandersnatchVrf.getRingCommitment(await bandersnatchWasm, ringKeys);
-      assert.ok(commitment.isOk);
-
-      const verifyResult = await bandersnatchVrf.verifyTickets(
 ```

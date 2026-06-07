@@ -2,19 +2,29 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/chain-stf.ts#L296-L407
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/chain-stf.ts#L297-L406
 title: packages/jam/transition/chain-stf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 3
 chunk_total: 5
-content_sha: 30dfd6e5100cebb63412ce649c6104f9572fa6626637952f3b81a14dfe65fcb0
+content_sha: 9db7d71574c684238b9894bde2d2ca10b829510762b926bccb822067321594ce
 language: typescript
 ---
-`packages/jam/transition/chain-stf.ts` (lines 296–407)
+`packages/jam/transition/chain-stf.ts` (lines 297–406)
 
 ```typescript
+      return stfError(StfErrorKind.Reports, reportsResult);
+    }
+
+    const { reported: workPackages, reporters, stateUpdate: reportsUpdate, ...reportsRest } = reportsResult.ok;
+    assertEmpty(reportsRest);
+    const { availabilityAssignment: reportsAvailAssignment, ...reportsUpdateRest } = reportsUpdate;
+    assertEmpty(reportsUpdateRest);
+
+    // preimages
+    const preimagesResult = this.preimages.integrate({
       slot: timeSlot,
       preimages: block.extrinsic.view().preimages.materialize(),
     });
@@ -24,14 +34,14 @@ language: typescript
     const { preimages, ...preimagesRest } = preimagesResult.ok;
     assertEmpty(preimagesRest);
 
-    const timerAccumulate = measure(`import:accumulate (${PvmBackend[this.accumulate.options.pvm]})`);
+    const timerAccumulate = this.measureAccumulate();
     // accumulate
     const accumulateResult = await this.accumulate.transition({
       slot: timeSlot,
       reports: availableReports,
       entropy: entropy[0],
     });
-    logger.log`${timerAccumulate()}`;
+    logger.log`#${timeSlot} ${timerAccumulate}`;
     if (accumulateResult.isError) {
       return stfError(StfErrorKind.Accumulate, accumulateResult);
     }
@@ -115,16 +125,4 @@ language: typescript
       previousValidatorData,
       sealingKeySeries,
       ticketsAccumulator,
-      accumulationQueue,
-      recentlyAccumulated,
-      accumulationOutputLog,
-      ...servicesUpdate,
-      preimages,
-    });
-  }
-
-  private getUsedAuthorizerHashes(guarantees: GuaranteesExtrinsicView) {
-    const map = new Map<CoreIndex, HashSet<AuthorizerHash>>();
-    for (const guarantee of guarantees) {
-      const reportView = guarantee.view().report.view();
 ```

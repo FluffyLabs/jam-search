@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L106'
 title: package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 04e2ed3e401583572af8d9abfcef087cd9b26dbbe944c31f9fb1ff7eff30ebaa
+content_sha: ec30f8a37bec5a8c7729ad8426f178c460b641eee2b06a9845a5061182e26e64
 language: json
 ---
 `package.json` (lines 1–106)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@typeberry/jam",
-  "version": "0.8.1",
+  "version": "0.8.4",
   "description": "JAM implementation in TypeScript",
   "private": true,
   "workspaces": [

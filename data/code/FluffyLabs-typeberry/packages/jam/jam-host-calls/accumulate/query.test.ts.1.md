@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/query.test.ts#L97-L198
 title: packages/jam/jam-host-calls/accumulate/query.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: fe6e24990ca305186bf0a869c6076fc57d5cdc930c2406b8ed879cee527fcee6

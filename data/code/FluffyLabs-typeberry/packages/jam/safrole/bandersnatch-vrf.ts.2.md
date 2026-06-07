@@ -2,19 +2,26 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L224-L257
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L234-L274
 title: packages/jam/safrole/bandersnatch-vrf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: bc6c98989e8e8d63a1b2531c44f8783af472ee6c24c3a435a52fdd50ab3551a1
+content_sha: 2362af745dcfeeb3795866839026bdba0b74312af163bee38db6b4e66b88ae02
 language: typescript
 ---
-`packages/jam/safrole/bandersnatch-vrf.ts` (lines 224–257)
+`packages/jam/safrole/bandersnatch-vrf.ts` (lines 234–274)
 
 ```typescript
+  const vrfInputParts: Uint8Array[] = [];
+  for (let attempt = 0; attempt < ticketsPerValidator; attempt++) {
+    vrfInputParts.push(BytesBlob.blobFromParts([JAM_TICKET_SEAL, entropy.raw, Uint8Array.of(attempt)]).raw);
+  }
+  const attemptLength = 1;
+  const vrfInputDataLen = JAM_TICKET_SEAL.length + entropy.length + attemptLength;
+  const inputsData = BytesBlob.blobFromParts(vrfInputParts).raw;
   const ringKeysData = BytesBlob.blobFromParts(ringKeys.map((k) => k.raw)).raw;
 
   const result = await bandersnatch.batchGenerateRingVrf(

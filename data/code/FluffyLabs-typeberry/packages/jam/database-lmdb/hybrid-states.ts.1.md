@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.ts#L106-L151
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.ts#L108-L157
 title: packages/jam/database-lmdb/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 6cca575b0b9136ec2ce42cbd592a2abb7b273ee92e22b185ee505318367f06c7
+content_sha: eedc8993a2fcb6d242ab082b602a388464c9cd7e4e18a368c926277a6de65017
 language: typescript
 ---
-`packages/jam/database-lmdb/hybrid-states.ts` (lines 106–151)
+`packages/jam/database-lmdb/hybrid-states.ts` (lines 108–157)
 
 ```typescript
   getState(header: HeaderHash): SerializedState<LeafDb> | null {
@@ -28,6 +28,10 @@ language: typescript
     // We only remove the state from memory - values are not pruned at all,
     // but since they are stored on disk we should be safe.
     this.inMemStates.delete(header);
+  }
+
+  diskSizeInBytes(): number | null {
+    return this.root.sizeInBytes();
   }
 
   async close() {

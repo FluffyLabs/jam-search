@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/binary-merkleization.test.ts#L1-L33
 title: packages/jam/state-merkleization/binary-merkleization.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: bc9ed5ce478b787dc10d8c2ce1124ce92387077af7217acb713bb9e2bdd66cea

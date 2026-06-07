@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/math/add_one_overflow.ts#L1-L32
 title: benchmarks/math/add_one_overflow.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: d27600a5f01cdbbdc2d3f9831407636f353bebd2d57334630314536435f4a2b6

@@ -6,8 +6,8 @@ url: >-
 title: >-
   packages/core/pvm-interpreter/ops-dispatchers/one-reg-two-imms-dispatcher.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: f5c5ca7767167615f9b52f12a2135cd3fd26f970a04ee5bbd304aeb4af482a14

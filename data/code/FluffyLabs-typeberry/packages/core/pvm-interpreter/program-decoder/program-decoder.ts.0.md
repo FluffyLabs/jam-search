@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/program-decoder/program-decoder.ts#L1-L75
 title: packages/core/pvm-interpreter/program-decoder/program-decoder.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 24de9d1123a609413de397a39c2ba7ea2494768c98c3666c9c47e5cd59833833

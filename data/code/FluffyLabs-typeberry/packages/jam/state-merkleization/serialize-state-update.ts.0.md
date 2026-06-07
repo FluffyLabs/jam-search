@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/serialize-state-update.ts#L1-L117
 title: packages/jam/state-merkleization/serialize-state-update.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: 3735049853d64d1a6a1178f910ed028892f6bcc0023545b1ea45b1dac38aeeaf

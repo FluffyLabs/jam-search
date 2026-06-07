@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L201-L346
 title: packages/jam/node/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 2
 chunk_total: 4
 content_sha: 19ac99506db9aa5df5a61ba37b6cc71e468c9dd4412e869d9feb3143f6eb65a2

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L1-L111
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L1-L101
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 73a7dee8de78778a62357e00bd4830d25e7d4a67bf137e6fd7385c368a1d8640
+content_sha: 00109b2c452c42b3e6e515c0554c8536bbbc6c6985dd19ae5759d3f9480529b4
 language: typescript
 ---
-`packages/workers/importer/importer.ts` (lines 1–111)
+`packages/workers/importer/importer.ts` (lines 1–101)
 
 ```typescript
 import { type BlockView, type HeaderHash, type HeaderView, type StateRootHash, tryAsTimeSlot } from "@typeberry/block";
@@ -24,17 +24,10 @@ import type { SerializedState } from "@typeberry/state-merkleization";
 import type { TransitionHasher } from "@typeberry/transition";
 import { BlockVerifier, BlockVerifierError } from "@typeberry/transition/block-verifier.js";
 import { DbHeaderChain, OnChain, type StfError } from "@typeberry/transition/chain-stf.js";
-import {
-  type ErrorResult,
-  measure,
-  memoryTracker,
-  now,
-  Result,
-  resultToString,
-  type TaggedError,
-} from "@typeberry/utils";
+import { type ErrorResult, measure, Result, resultToString, type TaggedError } from "@typeberry/utils";
 import type { Finalizer } from "./finality.js";
 import * as metrics from "./metrics.js";
+import { type ImporterEventsListener, ImporterStats } from "./stats.js";
 
 export enum ImporterErrorKind {
   Verifier = 0,
@@ -67,8 +60,15 @@ export type ImporterArgs = {
   blocks: BlocksDb;
   states: StatesDb<SerializedState<LeafDb>>;
   options?: ImporterOptions;
+  events?: ImporterEventsListener;
 };
 
+const MEASURE = {
+  importVerify: measure("import:verify"),
+  importStf: measure("import:stf"),
+  importState: measure("import:state"),
+  importDb: measure("import:db"),
+};
 export class Importer {
   private readonly verifier: BlockVerifier;
   private readonly stf: OnChain;
@@ -78,13 +78,13 @@ export class Importer {
   // Hash of the block that we have the posterior state for in `state`.
   private currentHash: HeaderHash;
   private readonly metrics: ReturnType<typeof metrics.createMetrics>;
-  private readonly memory = memoryTracker();
 
   private readonly hasher: TransitionHasher;
   private readonly logger: Logger;
   private readonly blocks: BlocksDb;
   private readonly states: StatesDb<SerializedState<LeafDb>>;
   private readonly options: ImporterOptions;
+  private readonly events: ImporterEventsListener;
 
   /**
    * Build an {@link Importer} connected to the best state loaded from `states`.
@@ -107,6 +107,7 @@ export class Importer {
     this.blocks = args.blocks;
     this.states = args.states;
     this.options = args.options ?? {};
+    this.events = args.events ?? ImporterStats.new(args.logger, () => this.states.diskSizeInBytes?.() ?? null);
 
     this.metrics = metrics.createMetrics();
 
@@ -115,15 +116,4 @@ export class Importer {
       chainSpec: args.spec,
       state,
       hasher: args.hasher,
-      options: { pvm: args.pvm, accumulateSequentially: false },
-      headerChain: DbHeaderChain.new(args.blocks),
-    });
-    this.state = state;
-    this.currentHash = currentBestHeaderHash;
-    this.prepareForNextEpoch();
-
-    args.logger.info`😎 Best time slot: ${state.timeslot} (header hash: ${currentBestHeaderHash})`;
-  }
-
-  /** Do some extra work for preparation for the next epoch. */
 ```

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L105-L217
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L108-L224
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 5e02f6634c304e66915ae07c23273c0d731126a6864492e3a08dbc4f6a198689
+content_sha: 8ca3ab4712e89c8d8e93407434aa0e0dea05bbbcee18bd6a4e79b579ffcb6c3d
 language: typescript
 ---
-`packages/workers/api-node/config.ts` (lines 105–217)
+`packages/workers/api-node/config.ts` (lines 108–224)
 
 ```typescript
  * be listed in the `postMessage` transfer list. Omitting them results in a
@@ -86,6 +86,7 @@ export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, Blocks
     blake2b,
     dbPath,
     ephemeral = false,
+    compression = true,
   }: {
     nodeName: string;
     chainSpec: ChainSpec;
@@ -93,8 +94,9 @@ export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, Blocks
     blake2b: Blake2b;
     dbPath: string;
     ephemeral?: boolean;
+    compression?: boolean;
   }) {
-    return new HybridWorkerConfig(nodeName, chainSpec, workerParams, blake2b, dbPath, ephemeral);
+    return new HybridWorkerConfig(nodeName, chainSpec, workerParams, blake2b, dbPath, ephemeral, compression);
   }
 
   private readonly blocks: InMemoryBlocks;
@@ -107,6 +109,7 @@ export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, Blocks
     public readonly blake2b: Blake2b,
     public readonly dbPath: string,
     public readonly ephemeral: boolean,
+    public readonly compression: boolean = true,
   ) {
     this.blocks = InMemoryBlocks.new();
     this.states = HybridSerializedStates.new({
@@ -114,6 +117,7 @@ export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, Blocks
       blake2b: this.blake2b,
       dbPath: this.dbPath,
       ephemeral: this.ephemeral,
+      compression: this.compression,
       readOnly: false,
     });
   }

@@ -2,19 +2,37 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/chain-stf.ts#L404-L434
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/chain-stf.ts#L397-L445
 title: packages/jam/transition/chain-stf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 4
 chunk_total: 5
-content_sha: 00421f7c51599ea23400cae20d6306d6409d07594802a504504fafc830350f39
+content_sha: dbad3f84366e43e65b411461fa77c7701eaf658ff9dc9fc722429d19549f569b
 language: typescript
 ---
-`packages/jam/transition/chain-stf.ts` (lines 404–434)
+`packages/jam/transition/chain-stf.ts` (lines 397–445)
 
 ```typescript
+      recentBlocks,
+      statistics,
+      timeslot,
+      epochRoot,
+      entropy,
+      currentValidatorData,
+      nextValidatorData,
+      previousValidatorData,
+      sealingKeySeries,
+      ticketsAccumulator,
+      accumulationQueue,
+      recentlyAccumulated,
+      accumulationOutputLog,
+      ...servicesUpdate,
+      preimages,
+    });
+  }
+
   private getUsedAuthorizerHashes(guarantees: GuaranteesExtrinsicView) {
     const map = new Map<CoreIndex, HashSet<AuthorizerHash>>();
     for (const guarantee of guarantees) {

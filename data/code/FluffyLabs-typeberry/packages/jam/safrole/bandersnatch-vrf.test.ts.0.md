@@ -5,17 +5,17 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.test.ts#L1-L75
 title: packages/jam/safrole/bandersnatch-vrf.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 9
-content_sha: c76ae2e370e233decc0f1800ae5fe073b759b2a8825117f2aceebc9610bb2ee4
+content_sha: e612f827d59f234a7c5be0d3e9d8187f94535c14ce3474ddb17c4ccde33327ed
 language: typescript
 ---
 `packages/jam/safrole/bandersnatch-vrf.test.ts` (lines 1–75)
 
 ```typescript
-import assert, { deepEqual } from "node:assert";
+import assert from "node:assert";
 import { before, describe, it } from "node:test";
 
 import { tryAsValidatorIndex } from "@typeberry/block";
@@ -32,7 +32,7 @@ import {
 } from "@typeberry/crypto/bandersnatch.js";
 import { deriveBandersnatchPublicKey } from "@typeberry/crypto/key-derivation.js";
 import { HASH_SIZE } from "@typeberry/hash";
-import { Result } from "@typeberry/utils";
+import { deepEqual, Result } from "@typeberry/utils";
 import bandersnatchVrf from "./bandersnatch-vrf.js";
 import { BandernsatchWasm } from "./bandersnatch-wasm.js";
 

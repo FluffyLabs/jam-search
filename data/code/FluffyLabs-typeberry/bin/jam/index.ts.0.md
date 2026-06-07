@@ -1,23 +1,23 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L119'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L116'
 title: bin/jam/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 90a5d5aa01c7dcac98544614afb24185deb58b1b0728465371ccff1a096dbe95
+content_sha: 1ae8c718754742d6a2eaf560968ad60abc368078ca89d0a9e355a7fabdd15b75
 language: typescript
 ---
-`bin/jam/index.ts` (lines 1–119)
+`bin/jam/index.ts` (lines 1–116)
 
 ```typescript
 // biome-ignore-all lint/suspicious/noConsole: bin file
 
 import { Bootnode } from "@typeberry/config";
-import { loadConfig } from "@typeberry/config-node";
+import { KnownChainSpec, loadConfig } from "@typeberry/config-node";
 import { ed25519 } from "@typeberry/crypto";
 import { deriveEd25519SecretKey } from "@typeberry/crypto/key-derivation.js";
 import { Blake2b } from "@typeberry/hash";
@@ -45,7 +45,7 @@ try {
     // In fuzz mode, the logger config is determined by JAM_FUZZ_LOG_LEVEL alone;
     // any JAM_LOG filters configured at module load are discarded so behavior is
     // deterministic regardless of which env vars happen to be present.
-    Logger.configureAll("", fuzzEnv.logLevel ?? Level.LOG);
+    Logger.configureAll("", fuzzEnv.logLevel ?? (fuzzEnv.spec === KnownChainSpec.Full ? Level.TRACE : Level.LOG));
     args = synthesizeFuzzArgs(fuzzEnv);
   } else {
     const parsed = parseArgs(process.argv.slice(2), withRelPath);
@@ -130,7 +130,4 @@ async function startNode(args: Arguments, withRelPath: (p: string) => string) {
   const jamNodeConfig = await prepareConfigFile(args, blake2b, withRelPath);
 
   // Initialize OpenTelemetry before anything else
-  const telemetry = Telemetry.initialize({
-    isMain: true,
-    nodeName: jamNodeConfig.nodeName,
 ```

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/chain-stf.ts#L96-L196
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/chain-stf.ts#L96-L197
 title: packages/jam/transition/chain-stf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 5
-content_sha: e724b580c96bed1535c18421583b6c83ca4b2352195e9cd16ac120032d287ccb
+content_sha: f1224dc84c5107e8a7b5bbdd134ffbe738570fe02e86579c75545e98c875fbe6
 language: typescript
 ---
-`packages/jam/transition/chain-stf.ts` (lines 96–196)
+`packages/jam/transition/chain-stf.ts` (lines 96–197)
 
 ```typescript
   | TaggedError<StfErrorKind.Accumulate, ACCUMULATION_ERROR>
@@ -54,6 +54,7 @@ export class OnChain {
   public readonly chainSpec: ChainSpec;
   public readonly state: State & WithStateView;
   public readonly hasher: TransitionHasher;
+  public readonly measureAccumulate: ReturnType<typeof measure>;
 
   /** Wire up a full on-chain STF from its dependencies. */
   static assemble(args: {
@@ -94,6 +95,7 @@ export class OnChain {
     this.preimages = new Preimages(state, hasher.blake2b);
 
     this.authorization = new Authorization(chainSpec, state);
+    this.measureAccumulate = measure(`import:accumulate (${PvmBackend[options.pvm]})`);
   }
 
   /** Pre-populate things worth caching for the next epoch. */
@@ -101,19 +103,18 @@ export class OnChain {
     if (await this.isReadyForNextEpoch) {
       return;
     }
+    const timeslot = this.state.timeslot;
+    logger.log`#${timeslot} preparing for next epoch`;
     const ready = this.safrole.prepareValidatorKeysForNextEpoch(this.state.disputesRecords.punishSet);
-    this.isReadyForNextEpoch = ready.then((_) => true);
+    this.isReadyForNextEpoch = ready.then((x) => {
+      if (x.isOk) {
+        logger.log`#${timeslot} next epoch ready`;
+      } else {
+        logger.log`#${timeslot} ${x.details()}`;
+      }
+      return true;
+    });
   }
 
   private async verifySeal(timeSlot: TimeSlot, block: BlockView) {
-    const sealState = this.safrole.getSafroleSealState(timeSlot);
-    return await this.safroleSeal.verifyHeaderSeal(block.header.view(), sealState);
-  }
-
-  async transition(block: BlockView, headerHash: HeaderHash): Promise<Result<Ok, StfError>> {
-    const headerView = block.header.view();
-    const header = block.header.materialize();
-    const timeSlot = header.timeSlotIndex;
-
-    // reset the epoch cache state
 ```

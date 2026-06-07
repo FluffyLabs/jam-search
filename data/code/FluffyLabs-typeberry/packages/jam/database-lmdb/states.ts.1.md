@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/states.ts#L79-L168
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/states.ts#L79-L172
 title: packages/jam/database-lmdb/states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: b1fdaf71c3b5cd57fa78644bb59155728299fd0f8819b829e3a6d7dcaf0251fa
+content_sha: 31da0fce0d3c78908b35bd5a692d6b30c0eb2b45790033cdf84789319cfbe56b
 language: typescript
 ---
-`packages/jam/database-lmdb/states.ts` (lines 79–168)
+`packages/jam/database-lmdb/states.ts` (lines 79–172)
 
 ```typescript
     this.states = this.root.subDb("states");
@@ -99,6 +99,10 @@ language: typescript
 
   markUnused(header: HeaderHash): void {
     this.states.removeSync(header.raw);
+  }
+
+  diskSizeInBytes(): number | null {
+    return this.root.sizeInBytes();
   }
 
   async close() {

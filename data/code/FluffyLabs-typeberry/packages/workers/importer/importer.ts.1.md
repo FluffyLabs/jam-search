@@ -2,22 +2,34 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L106-L210
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L95-L199
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: cc6d37e2f89b2c75eb522f73337780d0781780e2b1397be69c428e1f0d7479f2
+content_sha: 191a7c4ebcc4eeceef0e1234c9950296b25ffb2136b555acfcb144d492c16bfb
 language: typescript
 ---
-`packages/workers/importer/importer.ts` (lines 106–210)
+`packages/workers/importer/importer.ts` (lines 95–199)
 
 ```typescript
+    this.metrics = metrics.createMetrics();
+
+    this.verifier = BlockVerifier.new(args.hasher, args.blocks);
+    this.stf = OnChain.assemble({
+      chainSpec: args.spec,
+      state,
+      hasher: args.hasher,
+      options: { pvm: args.pvm, accumulateSequentially: false },
+      headerChain: DbHeaderChain.new(args.blocks),
+    });
+    this.state = state;
+    this.currentHash = currentBestHeaderHash;
     this.prepareForNextEpoch();
 
-    args.logger.info`😎 Best time slot: ${state.timeslot} (header hash: ${currentBestHeaderHash})`;
+    this.events.onStart(currentBestHeaderHash, state);
   }
 
   /** Do some extra work for preparation for the next epoch. */
@@ -38,30 +50,30 @@ language: typescript
   }
 
   public async importBlock(block: BlockView): Promise<Result<WithHash<HeaderHash, HeaderView>, ImporterError>> {
-    const timer = measure("importBlock");
     const timeSlot = extractTimeSlot(block);
 
+    const onEnd = this.events.onBlockImportingStarted(timeSlot);
     this.metrics.recordBlockImportingStarted(timeSlot);
 
-    const startTime = now();
-    const maybeBestHeader = await this.importBlockInternal(block);
-    const duration = now() - startTime;
-
-    if (maybeBestHeader.isOk) {
-      if (timeSlot % 100 === 0) {
-        this.logger.info`📊 mem #${timeSlot}: ${this.memory()}`;
-      }
-      const bestHeader = maybeBestHeader.ok;
-      this.logger.info`🧊 Best block: #${timeSlot} (${bestHeader.hash})`;
-      this.logger.log`${timer()}`;
-      this.metrics.recordBlockImportComplete(duration, true);
+    let maybeBestHeader: Result<WithHash<HeaderHash, HeaderView>, ImporterError> | null = null;
+    try {
+      maybeBestHeader = await this.importBlockInternal(block);
       return maybeBestHeader;
-    }
+    } finally {
+      const isOk = maybeBestHeader?.isOk ?? false;
+      const duration = onEnd(isOk);
 
-    this.logger.log`❌ Rejected block #${timeSlot}: ${resultToString(maybeBestHeader)}`;
-    this.logger.log`${timer()}`;
-    this.metrics.recordBlockImportComplete(duration, false);
-    return maybeBestHeader;
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (maybeBestHeader?.isOk) {
+        const bestHeader = maybeBestHeader.ok;
+        this.logger.info`🧊 Best block: #${timeSlot} (${bestHeader.hash})`;
+        this.metrics.recordBlockImportComplete(duration, true);
+      } else {
+        this.logger
+          .log`❌ Rejected block #${timeSlot}: ${maybeBestHeader !== null ? resultToString(maybeBestHeader) : "exception"}`;
+        this.metrics.recordBlockImportComplete(duration, false);
+      }
+    }
   }
 
   private async importBlockInternal(
@@ -70,18 +82,17 @@ language: typescript
     const logger = this.logger;
     logger.log`🧱 Attempting to import a new block`;
 
-    const timerVerify = measure("import:verify");
-    const verifyStart = now();
+    const timerVerify = MEASURE.importVerify();
     const hash = await this.verifier.verifyBlock(block, {
       skipParentAndStateRoot: this.options.initGenesisFromAncestry ?? false,
     });
-    const verifyDuration = now() - verifyStart;
-    logger.log`${timerVerify()}`;
     if (hash.isError) {
+      logger.log`${timerVerify}`;
       this.metrics.recordBlockVerificationFailed(resultToString(hash));
       return importerError(ImporterErrorKind.Verifier, hash);
     }
-    this.metrics.recordBlockVerified(verifyDuration);
+    logger.log`${hash.ok} ${timerVerify}`;
+    this.metrics.recordBlockVerified(timerVerify.duration());
 
     // TODO [ToDr] This is incomplete/temporary fork support!
     const parentHash = block.header.view().parentHeaderHash.materialize();
@@ -105,19 +116,8 @@ language: typescript
     const timeSlot = block.header.view().timeSlotIndex.materialize();
     const headerHash = hash.ok;
     logger.log`🧱 Verified block: Got hash ${headerHash} for block at slot ${timeSlot}.`;
-    const timerStf = measure("import:stf");
-    const stfStart = now();
+    const timerStf = MEASURE.importStf();
     const res = await this.stf.transition(block, headerHash);
-    const stfDuration = now() - stfStart;
-    logger.log`${timerStf()}`;
+    logger.log`${headerHash} ${timerStf}`;
     if (res.isError) {
-      this.metrics.recordBlockExecutionFailed(resultToString(res));
-      return importerError(ImporterErrorKind.Stf, res);
-    }
-    this.metrics.recordBlockExecuted(stfDuration, 0);
-    // modify the state
-    const update = res.ok;
-    const timerState = measure("import:state");
-    const updateResult = await this.states.updateAndSetState(headerHash, this.state, update);
-    if (updateResult.isError) {
 ```

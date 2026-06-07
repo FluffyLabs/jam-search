@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.ts#L119-L219
 title: packages/jam/config-node/node-config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: ac3f9fefd48765b13bebde028d7c86ecf5f6afde4d3a37d711db2c302c9663db

@@ -1,19 +1,21 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L114-L168'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L112-L168'
 title: bin/jam/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 530d4fbe23c9da20e5ffec7ffa91666142238cc8c60a9e179e60384b61a8f024
+content_sha: 1134e66d76ec2eb23db69fd0c7cfe7274fa04fc466ff86b5dbd41ade5df67949
 language: typescript
 ---
-`bin/jam/index.ts` (lines 114–168)
+`bin/jam/index.ts` (lines 112–168)
 
 ```typescript
+async function startNode(args: Arguments, withRelPath: (p: string) => string) {
+  const blake2b = await Blake2b.createHasher();
   const jamNodeConfig = await prepareConfigFile(args, blake2b, withRelPath);
 
   // Initialize OpenTelemetry before anything else

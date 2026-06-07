@@ -2,25 +2,35 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L120-L234
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L125-L236
 title: packages/jam/safrole/bandersnatch-vrf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 540d2516c6ffd2f2143b9f4d2e24a10605291a7e63f0ba26db4c106990df2fdd
+content_sha: ce7b66e20659ff9d9e770a416b958c08dc338fe967f107356cdf109e4d089432
 language: typescript
 ---
-`packages/jam/safrole/bandersnatch-vrf.ts` (lines 120–234)
+`packages/jam/safrole/bandersnatch-vrf.ts` (lines 125–236)
 
 ```typescript
-  if (ringCommitmentCache.length > MAX_CACHE_ENTRIES) {
-    ringCommitmentCache.shift();
+  const cacheEntry = ringCommitmentCache.find((v) => v.keys.isEqualTo(keys));
+  if (cacheEntry !== undefined) {
+    return cacheEntry.value;
   }
+
+  const value = getRingCommitmentNoCache(bandersnatch, keys);
+  ringCommitmentCache[ringCommitmentIndex] = {
+    keys,
+    value,
+  };
+  // move the index to point at next entry to override.
+  ringCommitmentIndex = (ringCommitmentIndex + 1) % ringCommitmentCache.length;
   return value;
 }
 
+const RING_COMMITMENT_FAILED = () => "Bandersnatch ring commitment calculation failed";
 async function getRingCommitmentNoCache(
   bandersnatch: BandernsatchWasm,
   keys: BytesBlob,
@@ -28,7 +38,7 @@ async function getRingCommitmentNoCache(
   const commitmentResult = await bandersnatch.getRingCommitment(keys.raw);
 
   if (commitmentResult[RESULT_INDEX] === ResultValues.Error) {
-    return Result.error(null, () => "Bandersnatch ring commitment calculation failed");
+    return Result.error(null, RING_COMMITMENT_FAILED);
   }
 
   return Result.ok(Bytes.fromBlob(commitmentResult.subarray(1), BANDERSNATCH_RING_ROOT_BYTES).asOpaque());
@@ -66,6 +76,7 @@ async function verifyTickets(
   }));
 }
 
+const SEAL_FAILED_ERROR = () => "Seal generation failed";
 async function generateSeal(
   bandersnatch: BandernsatchWasm,
   authorKey: BandersnatchSecretSeed,
@@ -75,7 +86,7 @@ async function generateSeal(
   const result = await bandersnatch.generateSeal(authorKey.raw, input.raw, auxData.raw);
 
   if (result[RESULT_INDEX] === ResultValues.Error) {
-    return Result.error(null, () => "Seal generation failed");
+    return Result.error(null, SEAL_FAILED_ERROR);
   }
 
   return Result.ok(Bytes.fromBlob(result.subarray(1), BANDERSNATCH_VRF_SIGNATURE_BYTES).asOpaque());
@@ -83,6 +94,7 @@ async function generateSeal(
 
 export type VrfOutputHash = Opaque<OpaqueHash, "VRF Output Hash">;
 
+const VRF_OUTPUT_FAILED = () => "VRF output hash generation failed";
 async function getVrfOutputHash(
   bandersnatch: BandernsatchWasm,
   authorKey: BandersnatchSecretSeed,
@@ -91,7 +103,7 @@ async function getVrfOutputHash(
   const result = await bandersnatch.getVrfOutputHash(authorKey.raw, input.raw);
 
   if (result[RESULT_INDEX] === ResultValues.Error) {
-    return Result.error(null, () => "VRF output hash generation failed");
+    return Result.error(null, VRF_OUTPUT_FAILED);
   }
 
   return Result.ok(Bytes.fromBlob(result.subarray(1), HASH_SIZE).asOpaque());
@@ -115,19 +127,4 @@ async function generateTickets(
   const vrfInputParts: Uint8Array[] = [];
   for (let attempt = 0; attempt < ticketsPerValidator; attempt++) {
     vrfInputParts.push(BytesBlob.blobFromParts([JAM_TICKET_SEAL, entropy.raw, Uint8Array.of(attempt)]).raw);
-  }
-  const attemptLength = 1;
-  const vrfInputDataLen = JAM_TICKET_SEAL.length + entropy.length + attemptLength;
-  const inputsData = BytesBlob.blobFromParts(vrfInputParts).raw;
-  const ringKeysData = BytesBlob.blobFromParts(ringKeys.map((k) => k.raw)).raw;
-
-  const result = await bandersnatch.batchGenerateRingVrf(
-    ringKeysData,
-    proverKeyIndex,
-    key.raw,
-    inputsData,
-    vrfInputDataLen,
-  );
-
-  const tickets: SignedTicket[] = [];
 ```

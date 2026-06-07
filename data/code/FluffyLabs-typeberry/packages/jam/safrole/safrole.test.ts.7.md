@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L705-L828
 title: packages/jam/safrole/safrole.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 7
 chunk_total: 9
 content_sha: 0c6c0de7459e8aa8231ae5a0924dd2e99a7cff3f9b9d16ba61bbad7461e4f2ae

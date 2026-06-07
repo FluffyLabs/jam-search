@@ -2,28 +2,45 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.ts#L134-L198
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.ts#L135-L216
 title: packages/core/utils/debug.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 8bf8600e5a1562ec390e04a4198b25f270bbdd5cbc65221db691adcd482a7569
+content_sha: f2c8b8fb338efd179cc8a776f04153b2e5a62a591a311175a478d37fe0565d2d
 language: typescript
 ---
-`packages/core/utils/debug.ts` (lines 134–198)
+`packages/core/utils/debug.ts` (lines 135–216)
 
 ```typescript
-/** Utility function to measure time taken for some operation [ms]. */
+ * Utility function to measure time taken for some operation [ms].
+ *
+ * To reduce allocations, each timer can only track one entry.
+ *
+ */
 export function measure(id: string) {
-  const start = now();
-  return () => `${id} took ${(now() - start).toFixed(2)}ms`;
+  const response = {
+    id,
+    start: 0,
+    duration() {
+      return now() - this.start;
+    },
+    toString() {
+      return `${this.id} took ${(this.duration()).toFixed(2)}ms`;
+    },
+  };
+
+  return () => {
+    response.start = now();
+    return response;
+  };
 }
 
 const BYTES_IN_MB = 1024 * 1024;
 const toMb = (bytes: number) => (bytes / BYTES_IN_MB).toFixed(1);
-const signedMb = (bytes: number) => `${bytes >= 0 ? "+" : "-"}${toMb(bytes)}`;
+const signedMb = (bytes: number) => `${bytes >= 0 ? "+" : ""}${toMb(bytes)}`;
 
 /** Raw process memory usage, or `null` in environments without `process` (e.g. browser). */
 function rawMemoryUsage(): NodeJS.MemoryUsage | null {

@@ -2,22 +2,23 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L101
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L102
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: f23db4a259b0f3ffa356f53ae3521d57497dd0d337cc06619d1177343dba5300
+content_sha: c1d8449f3904a22436b8d4bd14464f43feda673bf81fc632fb12923ff45acd43
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 1–101)
+`packages/jam/node/main-importer.ts` (lines 1–102)
 
 ```typescript
 import type { BlockView, HeaderHash, StateRootHash } from "@typeberry/block";
 import { Bytes } from "@typeberry/bytes";
 import { PvmBackend } from "@typeberry/config";
+import { KnownChainSpec } from "@typeberry/config-node";
 import { bandersnatch, initWasm } from "@typeberry/crypto";
 import { Blake2b, HASH_SIZE } from "@typeberry/hash";
 import { createImporter, ImporterConfig } from "@typeberry/importer";
@@ -35,7 +36,7 @@ export type ImporterOptions = {
   dummyFinalityDepth?: number;
   pruneBlocks?: boolean;
   /** Open the LMDB database without fsync/compression. Only safe for throwaway dbs (e.g. fuzzing). */
-  ephemeralDb?: boolean;
+  ephemeral?: boolean;
   /** Persistent backend to use when `databaseBasePath` is set. Defaults to full LMDB. */
   stateBackend?: "lmdb" | "hybrid";
 };
@@ -74,6 +75,10 @@ export async function mainImporter(
     dummyFinalityDepth: tryAsU16(options.dummyFinalityDepth ?? 0),
     pruneBlocks: options.pruneBlocks ?? false,
   });
+
+  const ephemeral = options.ephemeral ?? false;
+  // enable compression when running full test suite
+  const compression = ephemeral && config.node.flavor === KnownChainSpec.Full;
   const workerConfig =
     dbBackend === "in-memory"
       ? InMemWorkerConfig.new({
@@ -89,7 +94,8 @@ export async function mainImporter(
             blake2b,
             dbPath,
             workerParams,
-            ephemeral: options.ephemeralDb ?? false,
+            ephemeral,
+            compression,
           })
         : LmdbWorkerConfig.new({
             nodeName,
@@ -97,7 +103,7 @@ export async function mainImporter(
             blake2b,
             dbPath,
             workerParams,
-            ephemeral: options.ephemeralDb ?? false,
+            ephemeral,
           });
 
   // Initialize the database with genesis state and block if there isn't one.
@@ -111,9 +117,4 @@ export async function mainImporter(
   const { db, importer } = await createImporter(workerConfig, {
     initGenesisFromAncestry: options.initGenesisFromAncestry,
   });
-  await importer.prepareForNextEpoch();
-
-  const api: NodeApi = {
-    chainSpec,
-    async importBlock(block: BlockView): Promise<Result<StateRootHash, string>> {
 ```

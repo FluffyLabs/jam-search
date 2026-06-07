@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/tci/package.json#L1-L28'
 title: bin/tci/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-05-30T08:29:37+02:00'
-last_modified: '2026-05-30T08:29:37+02:00'
+created_at: '2026-06-02T00:04:19+02:00'
+last_modified: '2026-06-02T00:04:19+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 73636af399421837e5e9e3843a64706afcbc36ef6a96c7c2f86e9ec6349e7919
+content_sha: adcc56545241c76a59973dc040c4876ce7cccebb30fd1a93197177a33a2e35a2
 language: json
 ---
 `bin/tci/package.json` (lines 1–28)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@typeberry/tci",
-  "version": "0.8.1",
+  "version": "0.8.4",
   "description": "Typeberry Common Interface - Compatibility wrapper binary with flags understood by all JAM nodes",
   "main": "index.ts",
   "bin": "./index.ts",
