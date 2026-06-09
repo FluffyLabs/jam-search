@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/testing/pvm/host-call-log'
 title: host-call-log | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-06-05T04:27:59.491Z'
-last_modified: '2026-06-05T04:27:59.491Z'
+created_at: '2026-06-09T04:23:13.344Z'
+last_modified: '2026-06-09T04:23:13.344Z'
 ---
 (fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-1.md) on 2026-03-28)
 
