@@ -23,7 +23,7 @@ Formally: $$\begin{aligned}
     \header^A &\not\in \ancestors(\header^\natural)
   }\end{aligned}$$
 
-Of these acceptable blocks, that which contains the most ancestor blocks whose author used a seal-key ticket, rather than a fallback key should be selected as the best head, and thus the chain on which the participant should make GRANDPA votes.
+Of these acceptable blocks, that which contains the most ancestor blocks whose author used a slot-sealer ticket, rather than a fallback key should be selected as the best head, and thus the chain on which the participant should make GRANDPA votes.
 
 Formally, we aim to select $\block^\flat$ to maximize the value $m$ where: $$m = \sum_{\header^A \in \ancestors^\flat} \isticketed^A$$
 

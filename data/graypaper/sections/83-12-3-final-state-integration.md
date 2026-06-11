@@ -23,7 +23,7 @@ Given the result of the top-level $\accseq$, we may define the posterior state $
   \!\!\!\!\!\\
   
   &\tup{
-    n, \psX', \mathbf{b}, \mathbf{u}
+    n, \psX', \mathbf{b}, \mathbf{u}, \mathbf{t}
   } \equiv \accseq(g, \sq{}, \justbecameavailable^*, \psX, \alwaysaccers) \\
   &\lastaccout' \equiv \sq{\tup{s, h} \in \mathbf{b}} \\
   
@@ -39,24 +39,31 @@ Given the result of the top-level $\accseq$, we may define the posterior state $
   } \equiv \psX'
   \!\!\!\!\!\end{aligned}$$
 
-From this formulation, we also receive $n$, the total number of work-reports accumulated and $\mathbf{u}$, the gas used in the accumulation process for each service. We compose $\accumulationstatistics$, our accumulation statistics, which is a mapping from the service indices which were accumulated to the amount of gas used throughout accumulation and the number of work-items accumulated. Formally: $$\begin{aligned}
+From this formulation, we also receive $n$, the total number of work-reports accumulated and $\mathbf{u}$, the gas used in the accumulation process for each service. We compose $\accumulationstatistics$, our accumulation statistics, which is a mapping from the service indices which were accumulated to the amount of gas used throughout accumulation and the number of work-items and transfers accumulated. Formally: $$\begin{aligned}
   
-  &\accumulationstatistics \in \dictionary{\serviceid}{\tuple{\gas, \N}} \\
+  &\accumulationstatistics \in \dictionary{\serviceid}{\tuple{\N, \N, \gas}} \\
   
   &\textstyle \accumulationstatistics \equiv \set{\build{
-    \kv{s}{\tup{G(s), N(s)}}
+    \kv{s}{S(s)}
   }{
-    G(s) + N(s) \ne 0
+    S(s) \ne \tup{0, 0, 0}
   }}
   \!\!\!\!\\
   \nonumber
-  \where &G(s) \equiv \sum_{\tup{s, u} \in \mathbf{u}}(u) \\
+  \where &S(s) \equiv \tup{N(s), T(s), G(s)} \\
   \nonumber
   \also &N(s) \equiv \len{\sq{\build{d}{
     r \orderedin \justbecameavailable^*\sub{\dots n} ,
     d \orderedin r_\wrNdigests ,
     d_\wdNserviceindex = s
-  }}}\end{aligned}$$
+  }}} \\
+  \nonumber
+  \also &T(s) \equiv \len{\sq{\build{t}{
+    t \orderedin \mathbf{t},
+    t_\dxNdest = s
+  }}} \\
+  \nonumber
+  \also &G(s) \equiv \sum_{\tup{s, u} \in \mathbf{u}}(u)\end{aligned}$$
 
 The second intermediate state $\accountspostxfer$ may then be defined with the last-accumulation record being updated for all accumulated services: $$\begin{aligned}
   \accountspostxfer &\equiv \set{ \build{ \kv{s}{a'} }{ \kv{s}{a} \in \accountspostacc }} \\

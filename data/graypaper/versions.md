@@ -1,7 +1,5 @@
 ---
 type: graypaper_versions
-latest_hash: ab2cdbd5b070ba2176e8dd830b06401ce05a954d
-latest_version: 0.7.2
 versions:
   - version: 0.3.7
     timestamp: '2024-09-11T04:31:45.000Z'
@@ -45,6 +43,10 @@ versions:
     timestamp: '2025-07-26T00:42:01.000Z'
   - version: 0.7.2
     timestamp: '2025-09-15T05:04:37.000Z'
+  - version: 0.8.0
+    timestamp: '2026-06-03T20:32:00.000Z'
+latest_hash: 07f041dabd073f9018b418e9ee72e79dd2185401
+latest_version: 0.8.0
 ---
 - **0.3.7** — 2024-09-11T04:31:45.000Z
 - **0.3.8** — 2024-09-23T06:29:58.000Z
@@ -67,3 +69,4 @@ versions:
 - **0.7.0** — 2025-06-25T10:25:08.000Z
 - **0.7.1** — 2025-07-26T00:42:01.000Z
 - **0.7.2** — 2025-09-15T05:04:37.000Z
+- **0.8.0** — 2026-06-03T20:32:00.000Z

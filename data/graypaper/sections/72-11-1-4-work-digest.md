@@ -32,6 +32,10 @@ Finally, we have five fields describing the level of activity which this workloa
 
 In order to ensure fair use of a block's extrinsic space, work-reports are limited in the maximum total size of the successful refinement output blobs together with the authorizer trace, effectively limiting their overall size: $$\begin{aligned}
   
-  &\forall \wrX \in \workreport:
-    \len{\wrX_\wrNauthtrace} + \sum_{\wdX \in \wrX_\wrNdigests \cap \blob} \len{\wdX_\wdNresult} \le \Cmaxreportvarsize \\
-  &\Cmaxreportvarsize \equiv 48\cdot2^{10}\end{aligned}$$
+  \forall \wrX \in \workreport &:
+    \len{\wrX_\wrNauthtrace} + \sum\limits_{i=0}^{i<\len{\wrX_\wrNdigests}} L(\wrX_\wrNdigests\subb{i}_\wdNresult) \le \Cmaxreportvarsize \\
+  L(\wdNresult \in \blob \cup \workerror) &\equiv \begin{cases}
+    \len{\wdNresult} &\when \wdNresult \in \blob \\
+    0 &\otherwise
+  \end{cases} \\
+  \Cmaxreportvarsize &\equiv 48\cdot2^{10}\end{aligned}$$

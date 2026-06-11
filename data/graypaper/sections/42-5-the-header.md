@@ -16,20 +16,25 @@ $P$ is thus defined as being the mapping from one block header to its parent blo
 
 We only require implementations to store headers of ancestors which were authored in the previous $\Cmaxlookupanchorage = 24$ hours of any block $\block$ they wish to validate.
 
-The extrinsic hash is a Merkle commitment to the block's extrinsic data, taking care to allow for the possibility of reports to individually have their inclusion proven. Given any block $\block = \tup{\header, \extrinsic}$, then formally: $$\begin{aligned}
+The extrinsic hash is a Merkle commitment to the block's extrinsic data, taking care to allow for the possibility of reports and preimages to individually have their inclusion proven. Given any block $\block = \tup{\header, \extrinsic}$, then formally: $$\begin{aligned}
   \H_\Nextrinsichash &\in \hash \ ,\quad
   \H_\Nextrinsichash \equiv \blake{\encode{\blakemany{\mathbf{a}}}} \\
   \where \mathbf{a} &= \sq{
     \encodetickets{\xttickets},
-    \encodepreimages{\xtpreimages},
+    \mathbf{p},
     \mathbf{g},
     \encodeassurances{\xtassurances},
     \encodedisputes{\xtdisputes}
   } \\
-  \also \mathbf{g} &= \encode{\var{\sq{\build{
-    \tup{\blake{\xgNworkreport}, \encode[4]{\xgNtimeslot}, \var{\xgNcredential}}
+  \also \mathbf{p} &= \encode{\var{\sq{\build{
+    \tup{\encode[4]{\xpNserviceindex}, \blake{\xpNdata}}
   }{
-    \tup{\xgNworkreport, \xgNtimeslot, \xgNcredential} \orderedin \xtguarantees
+    \tup{\xpNserviceindex, \xpNdata} \orderedin \xtpreimages
+  }}}} \\
+  \also \mathbf{g} &= \encode{\var{\sq{\build{
+    \tup{\blake{\gNworkreport}, \encode[4]{\gNtimeslot}, \var{\gNcredential}}
+  }{
+    \tup{\gNworkreport, \gNtimeslot, \gNcredential} \orderedin \xtguarantees
   }}}}\end{aligned}$$
 
 A block may only be regarded as valid once the time-slot index $\H_\Ntimeslot$ is in the past. It is always strictly greater than that of its parent. Formally: $$\H_\Ntimeslot \in \timeslot \,,\quad
@@ -41,4 +46,4 @@ The parent state root $\H_\Npriorstateroot$ is the root of a Merkle trie compose
 
 We assume the state-Merklization function $\fnmerklizestate$ is capable of transforming our state $\thestate$ into a 32-octet commitment. See appendix 27 for a full definition of these two functions.
 
-All blocks have an associated public key to identify the author of the block. We identify this as an index into the posterior current validator set $\activeset'$. We denote the Bandersnatch key of the author as $\H_\Nauthorbskey$ though note that this is merely an equivalence, and is not serialized as part of the header. $$\H_\Nauthorindex \in \valindex \,,\quad \H_\Nauthorbskey \equiv \activeset'[\H_\Nauthorindex]_\vkNbs$$
+All blocks have an associated public key to identify the author of the block. We identify this as an index into the posterior current validator set $\activeset'$. We denote the Bandersnatch key of the author as $\H_\Nauthorbskey$ though note that this is merely an equivalence, and is not serialized as part of the header. $$\H_\Nauthorindex \in \Nmax{\len{\activeset'}} \,,\quad \H_\Nauthorbskey \equiv \activeset'[\H_\Nauthorindex]_\vkNbs$$

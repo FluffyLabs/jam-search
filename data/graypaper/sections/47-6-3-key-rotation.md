@@ -3,12 +3,14 @@ type: graypaper_section
 title: 6.3 Key Rotation
 index: 47
 ---
-In addition to the active set of validator keys $\activeset$ and staging set $\stagingset$, internal to the Safrole state we retain a pending set $\pendingset$. The active set is the set of keys identifying the nodes which are currently privileged to author blocks and carry out the validation processes, whereas the pending set $\pendingset$, which is reset to $\stagingset$ at the beginning of each epoch, is the set of keys which will be active in the next epoch and which determine the Bandersnatch ring root which authorizes tickets into the sealing-key contest for the next epoch. $$\begin{aligned}
+In addition to the active sequence of validator keys $\activeset$ and staging sequence $\stagingset$, internal to the Safrole state we retain a pending sequence $\pendingset$. The active validator keys identifies the nodes which are currently privileged to author blocks and carry out the validation processes, whereas the pending keys $\pendingset$, which is reset to $\stagingset$ at the beginning of each epoch, is the sequence of keys which will be active in the next epoch and which determine the Bandersnatch ring root which authorizes tickets into the slot-sealer contest for the next epoch. The length of each sequence is always a multiple of 3 between 6 and $3\Ccorecount$. $$\begin{gathered}
   
   \stagingset \in \allvalkeys \;,\quad
   \pendingset \in \allvalkeys \;,\quad
   \activeset \in \allvalkeys \;,\quad
-  \previousset \in \allvalkeys\end{aligned}$$
+  \previousset \in \allvalkeys \\
+  
+  \valcount \equiv \set{\build{3c}{c \in \Nclamp{2}{\Ccorecount+1}}}\end{gathered}$$
 
 We must introduce $\valkey$, the set of validator key tuples. This is a combination of a set of cryptographic public keys and metadata which is an opaque octet sequence, but utilized to specify practical identifiers for the validator, not least a hardware address.
 
@@ -19,7 +21,7 @@ The set of validator keys itself is equivalent to the set of 336-octet sequences
   \forall \vkX \in \valkey : \vkX_\vkNbls \in \blskey &\equiv \vkX\subrange{64}{144} \\
   \forall \vkX \in \valkey : \vkX_\vkNmetadata \in \metadatakey &\equiv \vkX\subrange{208}{128}\end{aligned}$$
 
-With a new epoch under regular conditions, validator keys get rotated and the epoch's Bandersnatch key root is updated into $\epochroot'$: $$\begin{aligned}
+With a new epoch under regular conditions, validator keys get rotated and the epoch's Bandersnatch ring root is updated into $\epochroot'$: $$\begin{aligned}
   \tup{\pendingset', \activeset', \previousset', \epochroot'} &\equiv \begin{cases}
     (\Phi(\stagingset), \pendingset, \activeset, z) &\when e' > e \\ \tup{\pendingset, \activeset, \previousset, \epochroot} &\otherwise
   \end{cases} \\
@@ -35,4 +37,4 @@ With a new epoch under regular conditions, validator keys get rotated and the ep
     }
   }\end{aligned}$$
 
-Note that on epoch changes the posterior queued validator key set $\pendingset'$ is defined such that incoming keys belonging to the offenders $\offenders'$ are replaced with a null key containing only zeroes. The origin of the offenders is explained in section 10.
+Note that on epoch changes the posterior queued validator key sequence $\pendingset'$ is defined such that incoming keys belonging to the offenders $\offenders'$ are replaced with a null key containing only zeroes. The origin of the offenders is explained in section 10.

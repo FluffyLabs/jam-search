@@ -9,14 +9,18 @@ For convenience, we define two equivalences $\mathbf{x}$ and $\mathbf{p}$ to be,
 There must be no duplicate work-package hashes (i.e. two work-reports of the same package). Therefore, we require the cardinality of $\mathbf{p}$ to be the length of the work-report sequence $\incomingreports$: $$\len{\mathbf{p}} = \len{\incomingreports}$$
 
 We require that the anchor block be within the last $\Crecenthistorylen$ blocks and that its details be correct by ensuring that it appears within our most recent blocks $\recenthistorypostparentstaterootupdate$: $$\begin{aligned}
-  \forall x \in \mathbf{x}: \exists y \in \recenthistorypostparentstaterootupdate : x_\wcNanchorhash = y_\rhNheaderhash \wedge x_\wcNanchorpoststate = y_\rhNstateroot \wedge x_\wcNanchoraccoutlog = y_\rhNaccoutlogsuperpeak \!\!\!\!\!\!\end{aligned}$$
+  \forall x \in \mathbf{x}: \exists y \in \recenthistorypostparentstaterootupdate : x_\wcNanchorhash = y_\rhNheaderhash \wedge x_\wcNanchorpoststate = y_\rhNstateroot \wedge x_\wcNanchoraccoutlog = y_\rhNaccoutlogsuperpeak \wedge x_\wcNanchortime = y_\rhNtimeslot \!\!\!\!\!\!\end{aligned}$$
 
 We require that each lookup-anchor block be within the last $\Cmaxlookupanchorage$ timeslots: $$\begin{aligned}
   
   \forall x \in \mathbf{x}:\ x_\wcNlookupanchortime \ge \H_\Ntimeslot - \Cmaxlookupanchorage\end{aligned}$$
 
-We also require that we have a record of it; this is one of the few conditions which cannot be checked purely with on-chain state and must be checked by virtue of retaining the series of the last $\Cmaxlookupanchorage$ headers as the ancestor set $\ancestors$. Since it is determined through the header chain, it is still deterministic and calculable. Formally: $$\begin{aligned}
-  \forall x \in \mathbf{x}:\ \exists h \in \ancestors: h_\Ntimeslot = x_\wcNlookupanchortime \wedge \blake{h} = x_\wcNlookupanchorhash\end{aligned}$$
+We also require that we have a record of it; this is one of the few conditions which cannot be checked purely with on-chain state and must be checked by virtue of retaining the series of the last $\Cmaxlookupanchorage$ headers as the ancestor set $\ancestors$. Since it is determined through the header chain, it is still deterministic and calculable. Formally: $$\forall x \in \mathbf{x}: \exists h, h' \in \ancestors : \bigwedge \abracegroup{
+    h_\Ntimeslot &= x_\wcNlookupanchortime \\
+    \blake{h} &= x_\wcNlookupanchorhash \\
+    h'_\Nparent &= \blake{h} \\
+    h'_\Npriorstateroot &= x_\wcNlookupanchorpoststate
+  }$$
 
 We require that the work-package of the report not be the work-package of some other report made in the past. We ensure that the work-package not appear anywhere within our pipeline. Formally: $$\begin{aligned}
   &\using \mathbf{q} = \set{\build{
@@ -25,9 +29,9 @@ We require that the work-package of the report not be the work-package of some o
       \tup{\wrX, \mathbf{d}} \in \concatall{\ready}
     }} \\
   &\using \mathbf{a} = \set{\build{
-      ((\wrX_\rsNworkreport)_\wrNavspec)_\asNpackagehash
+      (((\aaX_\aaNguarantee)_\gNworkreport)_\wrNavspec)_\asNpackagehash
     }{
-      \wrX \in \reports, \wrX \ne \none
+      \aaX \in \availassignments, \aaX \ne \none
     }} \\
   &\forall p \in \mathbf{p},
     p \not\in \bigcup_{x \in \recenthistory}\keys{x_\rhNreportedpackagehashes}
@@ -48,9 +52,9 @@ We require that the prerequisite work-packages, if present, and any work-package
 We require that any segment roots mentioned in the segment-root lookup be verified as correct based on our recent work-package history and the present block: $$\begin{aligned}
   &\using \mathbf{p}= \set{ \build {
     \kv{
-      ((g_\xgNworkreport)_\wrNavspec)_\asNpackagehash
+      ((g_\gNworkreport)_\wrNavspec)_\asNpackagehash
     }{
-      ((g_\xgNworkreport)_\wrNavspec)_\asNsegroot
+      ((g_\gNworkreport)_\wrNavspec)_\asNsegroot
     }
   }{
     g \in \xtguarantees

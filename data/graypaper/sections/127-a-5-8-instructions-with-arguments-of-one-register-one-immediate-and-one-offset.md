@@ -15,16 +15,16 @@ $$\begin{aligned}
       \nu_Y &= \imath + \signfunc{l_Y}(\decode[l_Y]{\zeta\subrange{\imath+2+l_X}{l_Y}})
   \end{aligned}$$
 
-  ------------ -- --- ---------------------------------------------------------------------
-  80              1   $\token{branch}(\nu_Y, \top)\ ,\qquad {\registers}_A' = \nu_X$
-  (lr)1-4 81      1   $\token{branch}(\nu_Y, {\registers}_A = \nu_X)$
-  (lr)1-4 82      1   $\token{branch}(\nu_Y, {\registers}_A \ne \nu_X)$
-  (lr)1-4 83      1   $\token{branch}(\nu_Y, {\registers}_A < \nu_X)$
-  (lr)1-4 84      1   $\token{branch}(\nu_Y, {\registers}_A \le \nu_X)$
-  (lr)1-4 85      1   $\token{branch}(\nu_Y, {\registers}_A \ge \nu_X)$
-  (lr)1-4 86      1   $\token{branch}(\nu_Y, {\registers}_A > \nu_X)$
-  (lr)1-4 87      1   $\token{branch}(\nu_Y, \signed{{\registers}_A} < \signed{\nu_X})$
-  (lr)1-4 88      1   $\token{branch}(\nu_Y, \signed{{\registers}_A} \le \signed{\nu_X})$
-  (lr)1-4 89      1   $\token{branch}(\nu_Y, \signed{{\registers}_A} \ge \signed{\nu_X})$
-  (lr)1-4 90      1   $\token{branch}(\nu_Y, \signed{{\registers}_A} > \signed{\nu_X})$
-  ------------ -- --- ---------------------------------------------------------------------
+  ------------ -- ---------------------------------------------------------------------
+  80              $\token{sjump}(\nu_Y)\ ,\qquad {\registers}_A' = \nu_X$
+  (lr)1-3 81      $\token{branch}(\nu_Y, {\registers}_A = \nu_X)$
+  (lr)1-3 82      $\token{branch}(\nu_Y, {\registers}_A \ne \nu_X)$
+  (lr)1-3 83      $\token{branch}(\nu_Y, {\registers}_A < \nu_X)$
+  (lr)1-3 84      $\token{branch}(\nu_Y, {\registers}_A \le \nu_X)$
+  (lr)1-3 85      $\token{branch}(\nu_Y, {\registers}_A \ge \nu_X)$
+  (lr)1-3 86      $\token{branch}(\nu_Y, {\registers}_A > \nu_X)$
+  (lr)1-3 87      $\token{branch}(\nu_Y, \signed{{\registers}_A} < \signed{\nu_X})$
+  (lr)1-3 88      $\token{branch}(\nu_Y, \signed{{\registers}_A} \le \signed{\nu_X})$
+  (lr)1-3 89      $\token{branch}(\nu_Y, \signed{{\registers}_A} \ge \signed{\nu_X})$
+  (lr)1-3 90      $\token{branch}(\nu_Y, \signed{{\registers}_A} > \signed{\nu_X})$
+  ------------ -- ---------------------------------------------------------------------

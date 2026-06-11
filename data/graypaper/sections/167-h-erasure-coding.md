@@ -1,0 +1,15 @@
+---
+type: graypaper_section
+title: H Erasure Coding
+index: 167
+---
+The foundation of the data-availability and distribution system of JAM is a systematic Reed-Solomon erasure coding function in GF($2^{16}$), the same transform as done by the algorithm of [@lin2014novel]. The coding rate is $\fnecoriginalshards(v)$:$v$, where $v \in \valcount$ is the number of validators. $$
+  \fnecoriginalshards(v \in \valcount) \equiv \max\left(\set{\build{d}{d \in \Nmax{\nicefrac{v}{3} + 2}, \Csegmentsize \rem 2d = 0}}\right)$$
+
+This rate is derived from the fact we wish to be able to reconstruct even should almost two-thirds of the $v$ validators be malicious or incapacitated, the 16-bit Galois field on which the erasure-code is based and the desire to support, for simplicity, encoding segments of size $\Csegmentsize$ without padding. The rate is optimal, i.e. there is no more redundancy than necessary, when $\fnecoriginalshards(v) = \nicefrac{v}{3} + 1$. This occurs when $v \in \set{6, 9, 15, 24, 33, 51, 54, 78, 105, 111, 159, 168, 225, 321, 339, 510, 681, 1023}$. Note that the rate is least efficient when $v$ is slightly below one of these values. For example, when $v = 1022$, the rate is approximately 1:4.5. It is recommended, for efficiency of the data availability system, that validator set sizes be chosen from the given set.
+
+We use a little-endian $\blob[2]$ form of the 16-bit GF points with a functional equivalence given by $\fnencode[2]$. From this we may assume the encoding function $\fnerasurecode{v \in \valcount}{}: \sequence[\fnecoriginalshards(v)]{\blob[2]} \to \sequence[v]{\blob[2]}$ and the recovery function $\fnecrecover{v \in \valcount}{}: \protoset{\tuple{\blob[2], \Nmax{v}}}_{\fnecoriginalshards(v)} \to \sequence[\fnecoriginalshards(v)]{\blob[2]}$. Encoding is done by extrapolating a data blob of size $2 \cdot \fnecoriginalshards(v)$ octets (provided in $\fnerasurecode{v}{}$ here as $\fnecoriginalshards(v)$ octet pairs) into $v$ octet pairs. Recovery is done by collecting together any distinct $\fnecoriginalshards(v)$ octet pairs, together with their indices, and transforming this into the original sequence of $\fnecoriginalshards(v)$ octet pairs.
+
+Practically speaking, this allows for the efficient encoding and recovery of data whose size is a multiple of $2 \cdot \fnecoriginalshards(v)$ octets. Data whose length is not divisible by $2 \cdot \fnecoriginalshards(v)$ must be padded (we pad with zeroes). We use this erasure-coding in two contexts within the JAM protocol; one where we encode variable sized (but typically very large) data blobs for the Audit DA and block-distribution system, and the other where we encode much smaller fixed-size data *segments* for the Import DA system.
+
+For the Import DA system, we deal with an input size of $\Csegmentsize = \text{4,104}$ octets resulting in data-parallelism of order 6 with 1023 validators. We may attain a greater degree of data parallelism if encoding or recovering more than one segment at a time though for recovery, we may be restricted to requiring each segment to be formed from the same set of indices (depending on the specific algorithm).

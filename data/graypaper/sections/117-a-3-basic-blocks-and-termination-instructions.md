@@ -16,3 +16,10 @@ Instructions of the following opcodes are considered basic-block termination ins
 -   Immediate branches: $\token{branch\_lt\_u\_imm}$ , $\token{branch\_lt\_s\_imm}$ , $\token{branch\_le\_u\_imm}$ , $\token{branch\_le\_s\_imm}$ , $\token{branch\_ge\_u\_imm}$ , $\token{branch\_ge\_s\_imm}$ , $\token{branch\_gt\_u\_imm}$ , $\token{branch\_gt\_s\_imm}$
 
 We denote this set, as opcode indices rather than names, as $T$, which is a subset of all valid opcode indices $U$. We define the instruction opcode indices denoting the beginning of basic-blocks as $\varpi$: $$\varpi\equiv \left(\set{0} \cup \set{\build{n + 1 + \text{skip}(n)}{n \in \Nmax{\len{\mathbf{c}}} \wedge \mathbf{k}\sub{n} = 1 \wedge \mathbf{c}\sub{n} \in T}}\right) \cap \set{\build{n}{\mathbf{k}\sub{n} = 1 \wedge \mathbf{c}\sub{n} \in U}}$$
+
+For convenience we will define function $\mathfrak{L}$ which represents the start of a basic block for any $\imath$ within that basic block. Formally:
+
+$$\mathfrak{L}\colon \abracegroup{
+    \pvmreg &\to \pvmreg\\
+    \imath &\mapsto \max(j \in \varpi: j \le \imath)
+  }$$

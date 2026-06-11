@@ -3,9 +3,9 @@ type: graypaper_section
 title: 17.2 Data Fetching
 index: 101
 ---
-For each work-report to be audited, we use its erasure-root to request erasure-coded chunks from enough assurers. From each assurer we fetch three items (which with a good network protocol should be done under a single request) corresponding to the work-package super-chunks, the self-justifying imports super-chunks and the extrinsic segments super-chunks.
+For each work-report to be audited, we use its erasure-root to request erasure-coded chunks from enough assurers, and then reconstruct the work-package bundle from these chunks. The bundle contains the work-package together with its extrinsic data, imported segments, and imported segment justifications.
 
-We may validate the work-package reconstruction by ensuring its hash is equivalent to the hash includes as part of the work-package specification in the work-report. We may validate the extrinsic segments through ensuring their hashes are each equivalent to those found in the relevant work-item.
+We may validate the work-package by ensuring its hash is equivalent to the hash included as part of the work-package specification in the work-report. We may validate the extrinsic data through ensuring their hashes are each equivalent to those found in the relevant work-item.
 
 Finally, we may validate each imported segment as a justification must follow the concatenated segments which allows verification that each segment's hash is included in the referencing Merkle root and index of the corresponding work-item.
 

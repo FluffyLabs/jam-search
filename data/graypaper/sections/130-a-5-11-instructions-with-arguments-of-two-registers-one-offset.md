@@ -14,11 +14,11 @@ $$\begin{aligned}
     \nu_X &\equiv \imath + \signfunc{l_X}(\decode[l_X]{\zeta\subrange{\imath+2}{l_X}})
   \end{aligned}$$
 
-  ------------- -- --- ------------------------------------------------------------------------------
-  170              1   $\token{branch}(\nu_X, {\registers}_A = {\registers}_B)$
-  (lr)1-4 171      1   $\token{branch}(\nu_X, {\registers}_A \ne {\registers}_B)$
-  (lr)1-4 172      1   $\token{branch}(\nu_X, {\registers}_A < {\registers}_B)$
-  (lr)1-4 173      1   $\token{branch}(\nu_X, \signed{{\registers}_A} < \signed{{\registers}_B})$
-  (lr)1-4 174      1   $\token{branch}(\nu_X, {\registers}_A \ge {\registers}_B)$
-  (lr)1-4 175      1   $\token{branch}(\nu_X, \signed{{\registers}_A} \ge \signed{{\registers}_B})$
-  ------------- -- --- ------------------------------------------------------------------------------
+  ------------- -- ------------------------------------------------------------------------------
+  170              $\token{branch}(\nu_X, {\registers}_A = {\registers}_B)$
+  (lr)1-3 171      $\token{branch}(\nu_X, {\registers}_A \ne {\registers}_B)$
+  (lr)1-3 172      $\token{branch}(\nu_X, {\registers}_A < {\registers}_B)$
+  (lr)1-3 173      $\token{branch}(\nu_X, \signed{{\registers}_A} < \signed{{\registers}_B})$
+  (lr)1-3 174      $\token{branch}(\nu_X, {\registers}_A \ge {\registers}_B)$
+  (lr)1-3 175      $\token{branch}(\nu_X, \signed{{\registers}_A} \ge \signed{{\registers}_B})$
+  ------------- -- ------------------------------------------------------------------------------

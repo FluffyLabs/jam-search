@@ -5,15 +5,15 @@ index: 93
 ---
 We begin by defining a *work-package*, of set $\workpackage$, and its constituent *work-item*s, of set $\workitem$. A work-package includes a simple blob acting as an authorization token $\wpNauthtoken$, the index of the service which hosts the authorization code $\wpNauthcodehost$, an authorization code hash $\wpNauthcodehash$ and a configuration blob $\wpNauthconfig$, a context $\wpNcontext$ and a sequence of work items $\wpNworkitems$: $$
   \workpackage \equiv \tuple{
-    \isa{\wpNauthtoken}{\blob},\ 
-    \isa{\wpNauthcodehost}{\serviceid},\ 
-    \isa{\wpNauthcodehash}{\hash},\ 
-    \isa{\wpNauthconfig}{\blob},\ 
-    \isa{\wpNcontext}{\workcontext},\ 
+    \isa{\wpNauthtoken}{\blob},\
+    \isa{\wpNauthcodehost}{\serviceid},\
+    \isa{\wpNauthcodehash}{\hash},\
+    \isa{\wpNauthconfig}{\blob},\
+    \isa{\wpNcontext}{\workcontext},\
     \isa{\wpNworkitems}{\sequence[1:\Cmaxpackageitems]{\workitem}}
   }$$
 
-A work item includes: $\wiNserviceindex$ the identifier of the service to which it relates, the code hash of the service at the time of reporting $\wiNcodehash$ (whose preimage must be available from the perspective of the lookup anchor block), a payload blob $\wiNpayload$, gas limits for Refinement and Accumulation $\wiNrefgaslimit$ & $\wiNaccgaslimit$, and the three elements of its manifest, a sequence of imported data segments $\wiNimportsegments$ which identify a prior exported segment through an index and the identity of an exporting work-package, $\wiNextrinsics$, a sequence of blob hashes and lengths to be introduced in this block (and which we assume the validator knows) and $\wiNexportcount$ the number of data segments exported by this work item. $$
+A work item includes: $\wiNserviceindex$ the identifier of the service to which it relates, the code hash of the service at the time of reporting $\wiNcodehash$ (whose preimage must be available from the perspective of the lookup anchor block), a payload blob $\wiNpayload$, gas limits for Refinement and Accumulation $\wiNrefgaslimit$ & $\wiNaccgaslimit$, and the three elements of its manifest, a sequence of imported data segments $\wiNimportsegments$ which identify a prior exported segment through an index and the identity of an exporting work-package, $\wiNextrinsics$, a sequence of extrinsic data hashes and lengths and $\wiNexportcount$ the number of data segments exported by this work item. $$
   \workitem \equiv \tuple{\begin{aligned}
     &\isa{\wiNserviceindex}{\serviceid},
     \isa{\wiNcodehash}{\hash},
@@ -25,14 +25,14 @@ A work item includes: $\wiNserviceindex$ the identifier of the service to which 
     \isa{\wiNextrinsics}{\sequence{\tuple{\hash, \N}}}
   \end{aligned}}$$
 
-Note that an imported data segment's work-package is identified through the union of sets $\hash$ and a tagged variant $\hash^\boxplus$. A value drawn from the regular $\hash$ implies the hash value is of the segment-root containing the export, whereas a value drawn from $\hash^\boxplus$ implies the hash value is the hash of the exporting work-package. In the latter case it must be converted into a segment-root by the guarantor and this conversion reported in the work-report for on-chain validation.
+Note that an imported data segment's work-package is identified through the union of sets $\hash$ and a tagged variant $\hash^\boxplus$. A value drawn from the regular $\hash$ implies the hash value is of the segment-root containing the export, whereas a value drawn from $\hash^\boxplus$ implies the hash value is the hash of the exporting work-package. In the latter case it must be converted into a segment-root by the guarantor and this conversion reported in the work-report for on-chain validation. Work-packages referenced in this manner are considered dependencies, as are work-packages explicitly listed as prerequisites in the context $\wpNcontext$. We limit the total number of dependencies to $\Cmaxreportdeps = 8$: $$\forall \wpX \in \workpackage: \len{\set{\build{h}{\wiX \in \wpX_\wpNworkitems, \tup{h^\boxplus, n} \in \wiX_\wiNimportsegments}}} + \len{(\wpX_\wpNcontext)_\wcNprerequisites} \le \Cmaxreportdeps$$
 
 We limit the total number of exported items to $\Cmaxpackageexports = 3072$, the total number of imported items to $\Cmaxpackageimports = 3072$, and the total number of extrinsics to $\Cmaxpackagexts = 128$: $$
   \!\!\!\!
   \begin{aligned}
     &\forall \wpX \in \workpackage: \\
-    &\ \sum_{\wiX \in \wpX_\wpNworkitems} \wiX_\wiNexportcount \le \Cmaxpackageexports \ \wedge\ 
-    \sum_{\wiX \in \wpX_\wpNworkitems} \len{\wiX_\wiNimportsegments} \le \Cmaxpackageimports \ \wedge\ 
+    &\ \sum_{\wiX \in \wpX_\wpNworkitems} \wiX_\wiNexportcount \le \Cmaxpackageexports \wedge\
+    \sum_{\wiX \in \wpX_\wpNworkitems} \len{\wiX_\wiNimportsegments} \le \Cmaxpackageimports \wedge\
     \sum_{\wiX \in \wpX_\wpNworkitems} \len{\wiX_\wiNextrinsics} \le \Cmaxpackagexts
   \end{aligned}$$
 
@@ -46,7 +46,7 @@ We limit the total size of the auditable *work-bundle*, containing the work-pack
     &\where S(\wiX \in \workitem) \equiv \len{\wiX_\wiNpayload} + \len{\wiX_\wiNimportsegments}\cdot\Csegmentfootprint + \!\!\!\!\!\!\sum_{\tup{h, l} \in \wiX_\wiNextrinsics} \!\!\!l
   \end{aligned}\\
   
-  &\Csegmentfootprint \equiv \Csegmentsize + 32\ceil{\log_2(\Cmaxpackageimports)}\\
+  &\Csegmentfootprint \equiv \Csegmentsize + 32\ceil{\log_2(\Cmaxpackageexports)}\\
   &\Cmaxbundlesize \equiv \Cmaxpackageimports\cdot\Csegmentfootprint + 4096 + 64 + 64 = 13,791,360\end{aligned}$$
 
 We limit the sums of each of the two gas limits to be at most the maximum gas allocated to a core for the corresponding operation: $$

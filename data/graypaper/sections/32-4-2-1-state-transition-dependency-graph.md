@@ -12,10 +12,10 @@ Much as in the *YP*, we specify $\transitionstate$ as the implication of formula
   \activeset' &\prec \tup{\theheader, \thetime, \activeset, \safrole} \\
   \previousset' &\prec \tup{\theheader, \thetime, \previousset, \activeset} \\
   \disputes' &\prec \tup{\xtdisputes, \disputes} \\
-  \reportspostjudgement &\prec \tup{\xtdisputes, \reports}  \\
-  \reportspostguarantees &\prec \tup{\xtassurances, \reportspostjudgement}  \\
-  \reports' &\prec \tup{\xtguarantees, \reportspostguarantees, \activeset, \thetime'}  \\
-  \justbecameavailable^* &\prec \tup{\xtassurances, \reportspostjudgement} \\
+  \availassignmentspostjudgment &\prec \tup{\xtdisputes, \availassignments}  \\
+  \availassignmentspostassurances &\prec \tup{\xtassurances, \availassignmentspostjudgment}  \\
+  \availassignments' &\prec \tup{\xtguarantees, \availassignmentspostassurances, \activeset, \thetime'}  \\
+  \justbecameavailable^* &\prec \tup{\xtassurances, \availassignmentspostjudgment} \\
   \tup{\ready', \accumulated', \accountspostxfer, \privileges', \stagingset', \authqueue', \lastaccout', \accumulationstatistics} &\prec \tup{\justbecameavailable^*, \ready, \accumulated, \accountspre, \privileges, \stagingset, \authqueue, \thetime, \thetime'}  \\
   \recenthistory' &\prec \tup{\theheader, \xtguarantees, \recenthistorypostparentstaterootupdate, \lastaccout'}  \\
   \accountspostpreimage &\prec \tup{\xtpreimages, \accountspostxfer, \thetime'}  \\

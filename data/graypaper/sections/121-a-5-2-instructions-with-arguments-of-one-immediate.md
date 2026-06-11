@@ -8,6 +8,6 @@ $$\begin{aligned}
   \nu_X \equiv \sext{l_X}{\decode[l_X]{\zeta\subrange{\imath+1}{l_X}}}
 \end{aligned}$$
 
-  ---- -- --- ------------------------------------
-  10      1   $\varepsilon = \host \times \nu_X$
-  ---- -- --- ------------------------------------
+  ---- -- ------------------------------------
+  10      $\varepsilon = \host \times \nu_X$
+  ---- -- ------------------------------------

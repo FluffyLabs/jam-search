@@ -7,5 +7,5 @@ For each finalized block $\block$ which a validator imports, said validator shal
 
 Formally, let $\accoutcommitment{v}$ be the signed commitment of validator index $v$ which will be published: $$\begin{aligned}
 
-  \accoutcommitment{v} &\equiv \blssigndata{\activeset'\sub{v}}{\Xbeefy \concat \text{last}(\recenthistory)_\rhNaccoutlogsuperpeak}\\
+  \accoutcommitment{v} &\equiv \blssigndata{\activeset'\subb{v}\sub{\vkNbls}}{\Xbeefy \concat \text{last}(\recenthistory)_\rhNaccoutlogsuperpeak}\\
   \Xbeefy &= \token{\$jam\_beefy}\end{aligned}$$

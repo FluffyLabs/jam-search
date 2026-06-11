@@ -24,7 +24,7 @@ The other two components of statistics are the core and service activity statist
       \isa{\ssNxtcount}{\N}\,,\;
       \isa{&\ssNxtsize&}{\N}\,,\;
       \isa{\ssNexportcount}{\N}\,,\;\\
-      \isa{\ssNaccumulation&}{\tup{\N, \gas}}
+      \isa{\ssNaccumulation&}{\tup{\N, \N, \gas}}
     \end{alignedat}
   }}\end{aligned}$$
 
@@ -78,7 +78,7 @@ Finally, the service statistics are updated using the same intermediate values a
       }\,,\;\\
       \is{\ssNaccumulation&}{
         \span\span
-        \subifnone{\accumulationstatistics\subb{s}, \tup{0, 0}}
+        \subifnone{\accumulationstatistics\subb{s}, \tup{0, 0, 0}}
       }
     \end{alignedat}
   }\!\!\!\!\\

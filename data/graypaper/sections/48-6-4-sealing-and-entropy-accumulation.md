@@ -3,7 +3,7 @@ type: graypaper_section
 title: 6.4 Sealing and Entropy Accumulation
 index: 48
 ---
-The header must contain a valid seal and valid VRF output. These are two signatures both using the current slot's seal key; the message data of the former is the header's serialization omitting the seal component $\H_\Nsealsig$, whereas the latter is used as a bias-resistant entropy source and thus its message must already have been fixed: we use the entropy stemming from the VRF of the seal signature. Formally: $$\begin{aligned}
+The header must contain a valid seal and valid entropy source. These are two VRF signatures both using the private key corresponding to the slot-sealer sequence entry for the current timeslot; the message data of the former is the header's serialization omitting the seal component $\H_\Nsealsig$, whereas the latter is used as a bias-resistant entropy source and thus its message must already have been fixed: we use the entropy stemming from the VRF of the seal signature. Formally: $$\begin{aligned}
   \nonumber \using i = \cyclic{\sealtickets'[\H_\Ntimeslot]}\colon \\
   
   \sealtickets' \in \sequence{\safroleticket} &\implies \abracegroup[\,]{
@@ -26,7 +26,7 @@ The header must contain a valid seal and valid VRF output. These are two signatu
 
 Sealing using the ticket is of greater security, and we utilize this knowledge when determining a candidate block on which to extend the chain, detailed in section 19. We thus note that the block was sealed under the regular security with the boolean marker $\isticketed$. We define this only for the purpose of ease of later specification.
 
-In addition to the entropy accumulator $\entropyaccumulator$, we retain three additional historical values of the accumulator at the point of each of the three most recently ended epochs, $\entropy_1$, $\entropy_2$ and $\entropy_3$. The second-oldest of these $\entropy_2$ is utilized to help ensure future entropy is unbiased (see equation [eq:ticketsextrinsic]) and seed the fallback seal-key generation function with randomness (see equation [eq:slotkeysequence]). The oldest is used to regenerate this randomness when verifying the seal above (see equations [eq:ticketconditionfalse] and [eq:ticketconditiontrue]). $$\begin{aligned}
+In addition to the entropy accumulator $\entropyaccumulator$, we retain three additional historical values of the accumulator at the point of each of the three most recently ended epochs, $\entropy_1$, $\entropy_2$ and $\entropy_3$. The second-oldest of these $\entropy_2$ is utilized to help ensure future entropy is unbiased (see equation [eq:ticketsextrinsic]) and seed the fallback slot-sealer generation function with randomness (see equation [eq:slotkeysequence]). The oldest is used to regenerate this randomness when verifying the seal above (see equations [eq:ticketconditionfalse] and [eq:ticketconditiontrue]). $$\begin{aligned}
   
   \entropy &\in \sequence[4]{\hash}\end{aligned}$$
 

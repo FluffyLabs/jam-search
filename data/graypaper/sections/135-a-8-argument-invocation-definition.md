@@ -3,13 +3,13 @@ type: graypaper_section
 title: A.8 Argument Invocation Definition
 index: 135
 ---
-The four instances where the PVM is utilized each expect to be able to pass argument data in and receive some return data back. We thus define the common PVM program-argument invocation function $\Psi_M$: $$\Psi_M\colon \abracegroup{
+The three instances where the PVM is utilized each expect to be able to pass argument data in and receive some return data back. We thus define the common PVM program-argument invocation function $\Psi_M$: $$\Psi_M\colon \abracegroup{
     \tuple{
       \blob, \pvmreg, \gas, \blob[:\Cpvminitinputsize], \contextmutator{X}, X
     } &\to \tuple{\gas, \blob \cup \set{\panic, \oog}, X}\\
-    \tup{\mathbf{p}, \imath, \gascounter, \mathbf{a}, f, \mathbf{x}} &\mapsto \begin{cases}
-      \tup{0, \panic, \mathbf{x}} &\when Y(\mathbf{p}, \mathbf{a}) = \none\\
-      R(\gascounter, \Psi_H(\mathbf{c}, \imath, \gascounter, \registers, {\memory}, f, \mathbf{x})) &\when Y(\mathbf{p}, \mathbf{a}) = \tup{\mathbf{c}, \registers, {\memory}}\\
+    \tup{\jamNblob, \imath, \gascounter, \mathbf{a}, f, \mathbf{x}} &\mapsto \begin{cases}
+      \tup{0, \panic, \mathbf{x}} &\when Y(\jamNblob, \mathbf{a}) = \none\\
+      R(\gascounter, \Psi_H(\pvmNblob, \imath, \gascounter, \registers, {\memory}, f, \mathbf{x})) &\when Y(\jamNblob, \mathbf{a}) = \tup{\pvmNblob, \registers, {\memory}}\\
       \multicolumn{2}{l}{
         \quad \where R \colon \tup{\gascounter, \tup{\begin{alignedat}{5}
           &\varepsilon,\, &&\imath',\, &&\gascounter',\\

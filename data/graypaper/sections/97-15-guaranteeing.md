@@ -9,26 +9,28 @@ We presume that in a public system, validators will be punished severely if they
 
 1.  Evaluation of the work-package's authorization, and cross-referencing against the authorization pool in the most recent JAM chain state.
 
-2.  Creation and publication of a work-package report.
+2.  Evaluation of each work-item's refine logic.
 
-3.  Chunking of the work-package and each of its extrinsic and exported data, according to the erasure codec.
+3.  Chunking of the work-package bundle and the data exported by the refine logic, according to the erasure codec.
 
-4.  Distributing the aforementioned chunks across the validator set.
+4.  Assembly and publication of a work-package report.
 
-5.  Providing the work-package, extrinsic and exported data to other validators on request is also helpful for optimal network performance.
+5.  Distributing the aforementioned chunks across the validator set.
 
-For any work-package $p$ we are in receipt of, we may determine the work-report, if any, it corresponds to for the core $c$ that we are assigned to. When JAM chain state is needed, we always utilize the chain state of the most recent block.
+6.  Providing the work-package bundle and exported data to other validators on request is also helpful for optimal network performance.
 
-For any guarantor of index $v$ assigned to core $c$ and a work-package $p$, we define the work-report $r$ simply as: $$r = \computereport(p, c)$$
+For any work-package $\mathbf{p}$ a guarantor is in receipt of, the work-report $\mathbf{r}$, if any, may be determined by: $$\mathbf{r} = \computereport(\mathbf{p}, c, \mathbf{l}, v)$$
 
-Such guarantors may safely create and distribute the payload $\tup{s, v}$. The component $s$ may be created according to equation [eq:guarantorsig]; specifically it is a signature using the validator's registered Ed25519 key on a payload $l$: $$l = \blake{\encode{r}}$$
+When JAM chain state is needed, the chain state of the most recent block should always be utilized. The guarantor may choose values for $c$ (the core index), $\mathbf{l}$ (the segment-root dictionary), and $v$ (the size of the assuring validator set), but should be careful to choose values which allow the work-report to be included on-chain (see section 11.4). Typically $c$ should be the core currently assigned to the guarantor, $v$ should be the size of the active validator set, and $\mathbf{l}$ should be derived from previously guaranteed work-reports.
 
-To maximize profit, the guarantor should require the work-digest meets all expectations which are in place during the guarantee extrinsic described in section 11.4. This includes contextual validity and inclusion of the authorization in the authorization pool. No doing so does not result in punishment, but will prevent the block author from including the package and so reduces rewards.
+Following production of a work-report $\mathbf{r}$, a guarantor may safely create and distribute the payload $\tup{s, i}$, where $i$ identifies the guarantor by index and $s$ is a signature created according to equation [eq:guarantorsig]. Specifically, $s$ is a signature using the validator's registered Ed25519 key on a payload $l$: $$l = \Xguarantee \concat \blake{\encode{\mathbf{r}}}$$
 
-Advanced nodes may maximize the likelihood that their reports will be includable on-chain by attempting to predict the state of the chain at the time that the report will get to the block author. Naive nodes may simply use the current chain head when verifying the work-report. To minimize work done, nodes should make all such evaluations *prior* to evaluating the $\Psi_R$ function to calculate the report's work-results.
+To maximize profit, the guarantor should require the work-report meets all expectations which are in place during the guarantee extrinsic described in section 11.4. This includes contextual validity and inclusion of the authorization in the authorization pool. Not doing so does not result in punishment, but will prevent the block author from including the report and so reduces rewards.
+
+Advanced nodes may maximize the likelihood that their reports will be includable on-chain by attempting to predict the state of the chain at the time that the report will get to the block author. Naive nodes may simply use the current chain head when verifying the work-package. To minimize work done, nodes should make all such evaluations *prior* to evaluating the $\Psi_R$ function to calculate the report's work-digests.
 
 Once evaluated as a reasonable work-package to guarantee, guarantors should maximize the chance that their work is not wasted by attempting to form consensus over the core. To achieve this they should send the work-package to any other guarantors on the same core which they do not believe already know of it.
 
-In order to minimize the work for block authors and thus maximize expected profits, guarantors should attempt to construct their core's next guarantee extrinsic from the work-report, core index and set of attestations including their own and as many others as possible.
+In order to minimize the work for block authors and thus maximize expected profits, guarantors should attempt to construct their core's next guarantee extrinsic from the work-report and set of attestations including their own and as many others as possible.
 
 In order to minimize the chance of any block authors disregarding the guarantor for anti-spam measures, guarantors should sign an average of no more than two work-reports per timeslot.

@@ -16,7 +16,7 @@ $\epochroot$ is the epoch's root, a Bandersnatch ring root composed with the one
   
   \epochroot &\in \ringroot\end{aligned}$$
 
-Finally, $\ticketaccumulator$ is the ticket accumulator, a series of highest-scoring ticket identifiers to be used for the next epoch. $\sealtickets$ is the current epoch's slot-sealer series, which is either a full complement of $\Cepochlen$ tickets or, in the case of a fallback mode, a series of $\Cepochlen$ Bandersnatch keys: $$\begin{aligned}
+Finally, $\ticketaccumulator$ is the ticket accumulator, a sequence of highest-scoring ticket identifiers to be used for the next epoch. $\sealtickets$ is the current epoch's slot-sealer sequence, which is either a full complement of $\Cepochlen$ tickets or, in the case of a fallback mode, a sequence of $\Cepochlen$ Bandersnatch keys: $$\begin{aligned}
   
   \ticketaccumulator \in \sequence[:\Cepochlen]{\safroleticket} \,,\quad
   \sealtickets \in \sequence[\Cepochlen]{\safroleticket} \cup \sequence[\Cepochlen]{\bskey}\end{aligned}$$
@@ -25,7 +25,7 @@ Here, $\safroleticket$ is used to denote the set of *tickets*, a combination of 
   
   \safroleticket &\equiv \tuple{
     \isa{\stNid}{\hash},\,
-    \isa{\stNentryindex}{\ticketentryindex}
+    \isa{\stNentryindex}{\N}
   }\end{aligned}$$
 
-As we state in section 6.4, Safrole requires that every block header $\H$ contain a valid seal $\H_\Nsealsig$, which is a Bandersnatch signature for a public key at the appropriate index $m$ of the current epoch's seal-key series, present in state as $\sealtickets$.
+As we state in section 6.4, Safrole requires that every block header $\H$ contain a valid seal $\H_\Nsealsig$, which is a Bandersnatch signature produced with the private key corresponding to the entry at index $m'$ of the current epoch's slot-sealer sequence $\sealtickets'$.

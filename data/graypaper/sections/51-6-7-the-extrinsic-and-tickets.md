@@ -3,23 +3,26 @@ type: graypaper_section
 title: 6.7 The Extrinsic and Tickets
 index: 51
 ---
-The extrinsic $\xttickets$ is a sequence of proofs of valid tickets; a ticket implies an entry in our epochal "contest" to determine which validators are privileged to author a block for each timeslot in the following epoch. Tickets specify an entry index together with a proof of ticket's validity. The proof implies a ticket identifier, a high-entropy unbiasable 32-octet sequence, which is used both as a score in the aforementioned contest and as input to the on-chain VRF.
+The extrinsic $\xttickets$ is a sequence of proofs of valid tickets; a ticket implies an entry in our epochal "contest" to determine which validators are privileged to author a block for each timeslot in the following epoch. Tickets specify an entry index (a natural number less than the maximum number of ticket entries per validator, defined in equation [eq:ticketsextrinsic]) together with a proof of ticket's validity. The proof implies a ticket identifier, a high-entropy unbiasable 32-octet sequence, which is used both as a score in the aforementioned contest and as input for the block's entropy source $\textsc{vrf}$ signature.
 
-Towards the end of the epoch (i.e. $\Cepochtailstart$ slots from the start) this contest is closed implying successive blocks within the same epoch must have an empty tickets extrinsic. At this point, the following epoch's seal key sequence becomes fixed.
+Towards the end of the epoch (i.e. $\Cepochtailstart$ slots from the start) this contest is closed implying successive blocks within the same epoch must have an empty tickets extrinsic. At this point, the following epoch's slot-sealer sequence becomes fixed.
 
-We define the extrinsic as a sequence of proofs of valid tickets, each of which is a tuple of an entry index (a natural number less than $\Cticketentries$) and a proof of ticket validity. Formally: $$\begin{aligned}
+We define the extrinsic as a sequence of proofs of valid tickets, each of which is a tuple of an entry index and a proof of ticket validity. To ensure the accumulator can be saturated, when there are fewer validators, each validator is permitted more tickets. Formally: $$\begin{aligned}
   
-  \xttickets &\in \sequence{\tuple{
-    \isa{\xtNentryindex}{\Nmax{\Cticketentries}},\,
-    \isa{\xtNproof}{\bsringproof{\epochroot'}{\Xticket \concat \entropy'_2 \append \xtNentryindex}{\sq{}}}
-  }} \\
+  \begin{split}
+    \xttickets &\in \sequence{\tuple{
+      \isa{\xtNentryindex}{\Nmax{n}},\,
+      \isa{\xtNproof}{\bsringproof{\epochroot'}{\Xticket \concat \entropy'_2 \append \xtNentryindex}{\sq{}}}
+    }} \\
+    &\phantom{{}\in{}} \where n = \ceil{\frac{2\Cepochlen}{\len{\pendingset'}}}
+  \end{split} \\
   
   \len{\xttickets} &\le \begin{cases}
       \Cmaxblocktickets &\when m' < \Cepochtailstart \\
       0 &\otherwise
   \end{cases}\end{aligned}$$
 
-We define $\mathbf{n}$ as the set of new tickets, with the ticket identifier, a hash, defined as the output component of the Bandersnatch RingVRF proof: $$\begin{aligned}
+We define $\mathbf{n}$ as the sequence of new tickets, with the ticket identifier, a hash, defined as the output component of the Bandersnatch RingVRF proof: $$\begin{aligned}
   \mathbf{n} &\equiv \sq{\build{
     \tup{
       \is{\stNid}{\banderout{i_\xtNproof}},\,

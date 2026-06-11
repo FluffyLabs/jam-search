@@ -11,6 +11,7 @@ We retain in state information on the most recent $\Crecenthistorylen$ blocks. T
     \isa{\rhNheaderhash}{\hash},
     \isa{\rhNstateroot}{\hash},
     \isa{\rhNaccoutlogsuperpeak}{\hash},
+    \isa{\rhNtimeslot}{\timeslot},
     \isa{\rhNreportedpackagehashes}{\dictionary{\hash}{\hash}}
   }}\\
   
@@ -31,16 +32,17 @@ We define the new Accumulation Output Log $\accoutbelt$. This is formed from the
 The final state transition for $\recenthistory$ appends a new item including the new block's header hash, a Merkle commitment to the block's Accumulation Output Log and the set of work-reports made into it (for which we use the guarantees extrinsic, $\xtguarantees$). Formally: $$
   \begin{aligned}
     \recenthistory' &\equiv {\overleftarrow{\recenthistorypostparentstaterootupdate \append \tup{
-      \rhNreportedpackagehashes,
       \is{\rhNheaderhash}{\blake{\theheader}},
       \is{\rhNstateroot}{\zerohash},
-      \is{\rhNaccoutlogsuperpeak}{\mmrsuperpeak{\accoutbelt'}}
+      \is{\rhNaccoutlogsuperpeak}{\mmrsuperpeak{\accoutbelt'}},
+      \is{\rhNtimeslot}{\H_\Ntimeslot},
+      \rhNreportedpackagehashes
       }}}^\Crecenthistorylen \\
     \where \rhNreportedpackagehashes &= \set{\build{
         \kv{
-          ((g_\xgNworkreport)_\wrNavspec)_\asNpackagehash
+          ((g_\gNworkreport)_\wrNavspec)_\asNpackagehash
         }{
-          ((g_\xgNworkreport)_\wrNavspec)_\asNsegroot
+          ((g_\gNworkreport)_\wrNavspec)_\asNsegroot
         }
       }{
         g \in \xtguarantees
