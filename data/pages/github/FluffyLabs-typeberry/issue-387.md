@@ -18,3 +18,8 @@ Currently `block-generator` is not able to create new blocks that are valid, sin
 The "proper" authorship module should work like that:
 1. Given a collection of `Ed25519` private keys (ping @tomusdrw for how to do it, since it's already implemented in networking) should check the on-chain state and figure out which slots it should author blocks.
 2. On top of that we should probably submit our tickets for the next epoch when we create blocks.
+
+
+## Comment by @tomusdrw
+
+Done in #827 

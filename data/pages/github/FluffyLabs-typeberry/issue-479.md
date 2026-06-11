@@ -16,3 +16,8 @@ We can parse [common CLI flag](https://docs.jamcha.in/basics/cli-args) but they 
 
 Related: Issue #457 , PR #459 
 
+
+
+## Comment by @tomusdrw
+
+Given fuzzing uses ENV vars, I don't think common CLI is planned. jamchain docs are 404 now.

@@ -20,3 +20,8 @@ For faster lookups, such as in the .find() in #754
 ## Comment by @tomusdrw
 
 FYI: https://jsperf.app/pisogo/2 we might want to create something like `NumericMap<K extends number, V>` which is backed by a plain object, since it's much, much faster (3x) than `Map` and faster than `Array` even for couple of elements.
+
+
+## Comment by @tomusdrw
+
+Not a priority.

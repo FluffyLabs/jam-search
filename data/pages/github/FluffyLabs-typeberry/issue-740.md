@@ -13,3 +13,8 @@ content_kind: issue
 ## Issue by @tomusdrw
 
 By default we would like everything to run in parallel in built-in PVM and ananas PVM, hence we should have a special PVM interface implementation that simply invokes both PVMs and makes sure they return the same results.
+
+
+## Comment by @tomusdrw
+
+Not necessarily useful in the current state

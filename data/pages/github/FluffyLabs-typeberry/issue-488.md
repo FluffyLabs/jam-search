@@ -49,3 +49,8 @@ parseBlob("0xdeadbeef") -> Result<Bytes, Error>
 
 To avoid adding `*NoPrefix` methods, we could consider passing optional `type ParseOptions = { prefix?: 'required' | 'forbidden' | 'maybe' }`, but the defaults should always be strict and developer needs to opt-in for leniency.
 
+
+
+## Comment by @tomusdrw
+
+Not planned for now.
