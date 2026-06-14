@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/test.ts#L108-L236
 title: packages/core/utils/test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: 18256ee7248525e7dcdd407858db07aaa8716048a0907e44fd3ee3e4a74e7d12

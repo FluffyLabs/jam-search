@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-json/accounts.ts#L1-L142
 title: packages/jam/state-json/accounts.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 1030a83eb89e4273c6d28d8c0f84d2fb065ea854d4c0a8cdb4aa0880d51d292c

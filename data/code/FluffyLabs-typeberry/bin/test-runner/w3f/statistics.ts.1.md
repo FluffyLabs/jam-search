@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/w3f/statistics.ts#L136-L175
 title: bin/test-runner/w3f/statistics.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: ee5ef9ce25929e58ec4013e16afabc41fe36554e054035ed745a0225e15c2235

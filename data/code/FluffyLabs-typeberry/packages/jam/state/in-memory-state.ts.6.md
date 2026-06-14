@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/in-memory-state.ts#L599-L651
 title: packages/jam/state/in-memory-state.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 6
 chunk_total: 7
 content_sha: 2b26088978a40c4de2b840eb3bb8ca5dadb62b2f8f83409a5dda66ebb0cf2a6c

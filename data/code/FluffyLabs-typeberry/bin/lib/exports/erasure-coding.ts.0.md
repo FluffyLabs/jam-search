@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/exports/erasure-coding.ts#L1-L9
 title: bin/lib/exports/erasure-coding.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 52189054687c5f97f42f2f67cb90f9ee56332705ba2864c556419d08f2a828a6

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L1-L85
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L1-L81
 title: bin/jam/build-for-npm.sh
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: 67e080a362ac56d28b6118f904436cb9081b7b14b901530c6996bed398034dc5
+content_sha: de541cc89a2b076d013567b992a14203f0bb78188952ba7bc450a69914544e60
 language: bash
 ---
-`bin/jam/build-for-npm.sh` (lines 1–85)
+`bin/jam/build-for-npm.sh` (lines 1–81)
 
 ```bash
 #!/bin/bash
@@ -27,7 +27,7 @@ DESCRIPTION=$(node -p "require('./package.json').description")
 # Start from the top-level project directory
 cd ../..
 
-# These three are native/external modules that ncc can't bundle, so they ship as
+# These four are native/external modules that ncc can't bundle, so they ship as
 # real prod deps and get installed by the `npm install` below. We read the
 # versions from the packages that actually declare them instead of hardcoding,
 # so the bundle never drifts from the rest of the workspace.
@@ -37,14 +37,22 @@ cd ../..
 # (the argument is computed at runtime), so shipping it as a dep lets npm pull
 # the matching `.node` binary into dist/jam/node_modules. Otherwise the node
 # falls back to the slower wasm impl.
+#
+# @fjall-js/fjall is the same story: a napi-rs native addon whose generated
+# index.js uses CommonJS `__dirname` to locate its `.node` binary. Inlining it
+# into the ESM bundle crashes at load with "__dirname is not defined", and even
+# if it bundled it would freeze the build host's platform binary into the bundle
+# (wrong for cross-platform deploys). Externalizing + shipping as a dep lets npm
+# pull the matching platform binary, just like lmdb.
 NATIVE_VERSION=$(node -p "require('./packages/core/crypto/package.json').dependencies['@typeberry/native']")
 LMDB_VERSION=$(node -p "require('./packages/jam/database-lmdb/package.json').dependencies.lmdb")
 QUIC_VERSION=$(node -p "require('./packages/core/networking/package.json').dependencies['@matrixai/quic']")
+FJALL_VERSION=$(node -p "require('./packages/jam/database-fjall/package.json').dependencies['@fjall-js/fjall']")
 
 # A missing/renamed dependency key makes `node -p` print the literal "undefined"
 # and exit 0, so `set -e` won't catch it. Bail out here with a clear message
 # instead of writing a broken "undefined" version into dist/jam/package.json.
-for pair in "@typeberry/native=$NATIVE_VERSION" "lmdb=$LMDB_VERSION" "@matrixai/quic=$QUIC_VERSION"; do
+for pair in "@typeberry/native=$NATIVE_VERSION" "lmdb=$LMDB_VERSION" "@matrixai/quic=$QUIC_VERSION" "@fjall-js/fjall=$FJALL_VERSION"; do
   name="${pair%%=*}"
   ver="${pair#*=}"
   if [ -z "$ver" ] || [ "$ver" = "undefined" ]; then
@@ -69,7 +77,7 @@ if [ -n "$VERSION_SHA" ]; then
 fi
 
 # Build the main binary
-BUILD="npx @vercel/ncc build -a -s -e lmdb -e @matrixai/quic -e tsx/esm/api"
+BUILD="npx @vercel/ncc build -a -s -e lmdb -e @matrixai/quic -e @fjall-js/fjall -e tsx/esm/api"
 $BUILD ./bin/jam/index.ts -o $DIST_FOLDER
 
 # Despite using `-a` flag, @vercel/ncc does not bundle the worker files,
@@ -88,16 +96,4 @@ $BUILD ./packages/workers/block-authorship/bootstrap-main.ts -o $DIST_FOLDER/blo
 cp ./LICENSE $DIST_FOLDER/
 cp ./README.md $DIST_FOLDER/
 
-# Flatten one worker build into dist/jam: rename its index.js -> $2.mjs (and map),
-# repoint the trailing sourceMappingURL (last line, via the `$` address) at the
-# renamed map so worker crash traces resolve to the right TS source, then move
-# everything up a level. $1 = worker subdir, $2 = bootstrap file basename.
-flatten_worker() {
-  cd "./$1"
-  rm *.mjs || true
-  mv index.js "$2.mjs"
-  mv index.js.map "$2.mjs.map"
-  sed -i "\$ s|sourceMappingURL=index.js.map|sourceMappingURL=$2.mjs.map|" "$2.mjs"
-  # Move the bundle up one level into $DIST_FOLDER. We can't use `mv * ../`:
-  # workers that pull in telemetry also emit gRPC asset directories (proto/,
 ```

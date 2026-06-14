@@ -2,115 +2,124 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/main.ts#L183-L280
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/main.ts#L177-L283
 title: packages/workers/block-authorship/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 2
-chunk_total: 6
-content_sha: f4806bf90492b28a8dc0f97ade9f31eefe6eb205d6a3aa3a458cf9d004dca217
+chunk_total: 4
+content_sha: baac25effd488e8d26cf2dc7934a4aa406f1dbbd44501c626b519560a2e19c6f
 language: typescript
 ---
-`packages/workers/block-authorship/main.ts` (lines 183–280)
+`packages/workers/block-authorship/main.ts` (lines 177–283)
 
 ```typescript
-   * startup and on every epoch transition, so we never fall back to on-the-fly VRF).
-   */
-  function getSealData(
-    sealingKeySeries: SafroleSealingKeys,
-    keys: ValidatorKeys[],
-    timeSlot: TimeSlot,
-    entropy: EntropyHash,
-  ): SealData | null {
-    if (sealingKeySeries.kind === SafroleSealingKeysKind.Keys) {
-      const indexForCurrentSlot = timeSlot % sealingKeySeries.keys.length;
-      const sealingKey = sealingKeySeries.keys[indexForCurrentSlot];
-      const key = keys.find((x) => x.bandersnatchPublic.isEqualTo(sealingKey)) ?? null;
-      if (key === null) {
-        return null;
-      }
-
-      return {
-        key,
-        sealPayload: getFallbackSealPayload(entropy),
-        logId: `key ${key.bandersnatchPublic}`,
-      };
+      const currentEpochTickets = verifiedPool.getForEpoch(epochData.epoch);
+      const newBlock = await generator.nextBlockView(
+        validatorIndex,
+        key.bandersnatchSecret,
+        sealPayload,
+        newTimeSlot,
+        // VerifiedTicket has the same `{ ticket, id }` shape the generator expects.
+        [...currentEpochTickets],
+      );
+      logger.trace`${logPrefix} sending block`;
+      await comms.sendBlock(newBlock);
     }
 
-    // Tickets mode: each slot is sealed by the validator who can produce the VRF output
-    // matching the ticket's ID for that slot.
-    const index = timeSlot % sealingKeySeries.tickets.length;
-    const ticket = sealingKeySeries.tickets.at(index) ?? null;
-    const cached = ticketAuthorshipCache?.at(index) ?? null;
-    if (ticket === null || cached === null) {
-      return null;
-    }
-    return { ...cached, logId: `ticket ${ticket.id} (attempt ${ticket.attempt})` };
+    logger.trace`${logPrefix} awaiting next slot`;
+    await timeSlotHandler.waitForNextSlot(currentSlot !== null, epochPhase, ticketGeneratorDone);
   }
 
-  function isEpochChanged(lastTimeslot: TimeSlot, currentTimeslot: TimeSlot): boolean {
-    const lastEpoch = Math.floor(lastTimeslot / chainSpec.epochLength);
-    const currentEpoch = Math.floor(currentTimeslot / chainSpec.epochLength);
-    return currentEpoch > lastEpoch;
+  logger.info`🎁 Block Authorship finished. Closing channel.`;
+  await db.close();
+}
+
+function getValidatorIndex(key: BandersnatchKey, currentValidatorData: PerValidator<ValidatorData>) {
+  const index = currentValidatorData.findIndex((data) => data.bandersnatch.isEqualTo(key));
+  if (index < 0) {
+    return null;
+  }
+  return tryAsValidatorIndex(index);
+}
+
+/**
+ * How many slots before the end of the contest period we force-await the ticket
+ * generator in fast-forward mode. Without this, blocks are produced faster than
+ * tickets are generated and the accumulator never fills (→ Keys-mode fallback).
+ *
+ * Derived so that, after the wait completes, there are enough remaining contest
+ * slots to include a full accumulator worth of tickets (`epochLength` tickets at
+ * `maxTicketsPerExtrinsic` per block), plus a small buffer.
+ */
+function ticketInclusionMargin(chainSpec: ChainSpec): number {
+  return Math.ceil(chainSpec.epochLength / chainSpec.maxTicketsPerExtrinsic) + 4;
+}
+
+function systemTimeMs(): bigint {
+  return process.hrtime.bigint() / 1_000_000n;
+}
+
+class TimeSlotHandler {
+  private readonly systemStartTimeMs: bigint;
+  private readonly stateStartTime: bigint;
+
+  static new(isFastForward: boolean, chainSpec: ChainSpec, stateTimeSlot: TimeSlot) {
+    const slotDurationMs = BigInt(chainSpec.slotDuration) * 1_000n;
+    return new TimeSlotHandler(
+      stateTimeSlot,
+      slotDurationMs,
+      isFastForward,
+      chainSpec.contestLength,
+      ticketInclusionMargin(chainSpec),
+    );
   }
 
-  function logEpochBlockCreation(epoch: Epoch, sealingKeySeries: SafroleSealingKeys) {
-    if (sealingKeySeries.kind === SafroleSealingKeysKind.Tickets) {
-      logger.info`[EPOCH ${epoch}] Tickets mode active with ${sealingKeySeries.tickets.length} tickets.`;
-      return;
-    }
-
-    let isCreating = false;
-    const epochStart = epoch * chainSpec.epochLength;
-    const epochEnd = epochStart + chainSpec.epochLength;
-    for (let slot = epochStart; slot < epochEnd; slot++) {
-      const indexForCurrentSlot = slot % sealingKeySeries.keys.length;
-      const sealingKey = sealingKeySeries.keys[indexForCurrentSlot];
-      const key = keys.find((x) => x.bandersnatchPublic.isEqualTo(sealingKey)) ?? null;
-      if (key !== null) {
-        isCreating = true;
-        logger.info`[EPOCH ${epoch}] Validator ${key.bandersnatchPublic.toString()} will author block at slot ${slot}`;
-      }
-    }
-
-    if (isCreating === false) {
-      logger.info`[EPOCH ${epoch}] No blocks to author for this epoch.`;
-    }
+  private constructor(
+    public readonly initialStateTimeSlot: TimeSlot,
+    private readonly slotDurationMs: bigint,
+    private readonly isFastForward: boolean,
+    private readonly contestLength: U32,
+    private readonly inclusionMargin: number,
+  ) {
+    this.systemStartTimeMs = systemTimeMs();
+    this.stateStartTime = BigInt(initialStateTimeSlot) * slotDurationMs;
   }
-
-  async function getSealingKeySeries(isNewEpoch: boolean, timeSlot: TimeSlot, state: State) {
-    if (isNewEpoch) {
-      const safrole = new Safrole(chainSpec, blake2bHasher, state);
-      return await safrole.getSealingKeySeries({
-        entropy: state.entropy[1],
-        slot: timeSlot,
-        punishSet: state.disputesRecords.punishSet,
-      });
-    }
-
-    return Result.ok(state.sealingKeySeries);
-  }
-
-  // Ticket pool: epochIndex -> {ticket, id}[]
-  // IDs (entropyHash) are computed at receipt time via verifyTickets(), enabling O(1) dedup by ID.
-  const ticketPool = new Map<number, { ticket: SignedTicket; id: EntropyHash }[]>();
-  const ticketIdSets = new Map<number, HashSet<EntropyHash>>();
 
   /**
-   * Adds pre-verified tickets to the in-memory ticket pool for the given epoch.
-   *
-   * Clears the pool when the epoch changes (we only ever need tickets for one epoch at a time).
-   * Deduplicates by ticket ID using a HashSet for O(1) lookup — prevents double-counting
-   * tickets received from multiple peers or via both CE-131 and CE-132 paths.
+   * In fastForward mode, use simulated time (next slot after current state).
+   * In normal mode, use wall clock time.
+   * Assuming `slotDuration` is 6 sec it is safe till year 2786.
+   * If `slotDuration` is 1 sec then it is safe till 2106.
    */
-  function addToPool(epochIndex: number, verifiedTickets: { ticket: SignedTicket; id: EntropyHash }[]) {
-    if (ticketPool.size > 0 && !ticketPool.has(epochIndex)) {
-      ticketPool.clear();
-      ticketIdSets.clear();
+  getCurrentTimeSlot(stateTimeSlot: TimeSlot) {
+    return this.isFastForward === true
+      ? tryAsTimeSlot(stateTimeSlot + 1)
+      : tryAsTimeSlot(Number(this.getVirtualTimeMs() / this.slotDurationMs));
+  }
+
+  async waitForNextSlot(wasAuthoring: boolean, epochPhase: number, ticketGeneratorDone: Promise<void>) {
+    if (this.isFastForward) {
+      // when we approach the end of the contest period make sure to wait for all tickets
+      if (epochPhase < this.contestLength && epochPhase + this.inclusionMargin > this.contestLength) {
+        await ticketGeneratorDone;
+      }
+      // return as fast as possible
+      if (wasAuthoring) {
+        return;
+      }
+      // or wait for other nodes to produce a block
+      return await setTimeout(100);
     }
-    const existing = ticketPool.get(epochIndex) ?? [];
-    let idSet = ticketIdSets.get(epochIndex) ?? null;
-    if (idSet === null) {
-      idSet = HashSet.new();
+    // Sleep until the next slot boundary (not a full slot from "now") so the
+    // wakeup doesn't drift later and later as block work eats into each slot.
+    const elapsedInSlot = this.getVirtualTimeMs() % this.slotDurationMs;
+    const waitMs = elapsedInSlot === 0n ? this.slotDurationMs : this.slotDurationMs - elapsedInSlot;
+    await setTimeout(Number(waitMs));
+  }
+
+  /**
+   * We assume there is no gap between system time and the initial state time.
+   *
 ```

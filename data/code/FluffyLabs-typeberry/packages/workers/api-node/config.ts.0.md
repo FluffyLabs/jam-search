@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L1-L115
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L1-L116
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
-chunk_total: 2
-content_sha: 75ac6cd863ab0c00d6a2efde35af49f3ad6487eb11683793b7e9ef2b06588959
+chunk_total: 3
+content_sha: 6cc9d9ef475157e9933b28b0afc79a653c9a83910adfb79a87f25818ec7acfab
 language: typescript
 ---
-`packages/workers/api-node/config.ts` (lines 1–115)
+`packages/workers/api-node/config.ts` (lines 1–116)
 
 ```typescript
 import type { MessagePort } from "node:worker_threads";
@@ -25,7 +25,13 @@ import {
   type RootDb,
   type SerializedStatesDb,
 } from "@typeberry/database";
-import { HybridSerializedStates, LmdbBlocks, LmdbRoot, LmdbStates } from "@typeberry/database-lmdb";
+import { HybridSerializedStates as FjallHybridSerializedStates } from "@typeberry/database-fjall";
+import {
+  LmdbBlocks,
+  HybridSerializedStates as LmdbHybridSerializedStates,
+  LmdbRoot,
+  LmdbStates,
+} from "@typeberry/database-lmdb";
 import { Blake2b } from "@typeberry/hash";
 import type { WorkerConfig } from "@typeberry/workers-api";
 import { ThreadPort, type TransferablePort } from "./port.js";
@@ -125,9 +131,4 @@ export type TransferableConfig = {
  * be listed in the `postMessage` transfer list. Omitting them results in a
  * `DataCloneError`.
  */
-export function configTransferList(config: TransferableConfig): MessagePort[] {
-  return config.workerPorts.map(([, transferable]) => transferable.port);
-}
-
-/**
 ```

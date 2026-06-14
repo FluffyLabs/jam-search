@@ -2,23 +2,24 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L1-L132
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L1-L131
 title: packages/jam/safrole/bandersnatch-vrf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: 037856d7d145f9532f9ac08752cbbd7b544ee1825bee149e0a7ad9247dc5379c
+content_sha: 34ee47dcc9161932debe6db73d27611714c07e93262b1642503940b520b69d97
 language: typescript
 ---
-`packages/jam/safrole/bandersnatch-vrf.ts` (lines 1–132)
+`packages/jam/safrole/bandersnatch-vrf.ts` (lines 1–131)
 
 ```typescript
 import type { EntropyHash } from "@typeberry/block";
 import { SignedTicket, tryAsTicketAttempt } from "@typeberry/block/tickets.js";
 import { Bytes, BytesBlob } from "@typeberry/bytes";
 import type { BandersnatchKey, BandersnatchSecretSeed } from "@typeberry/crypto";
+import { SEED_SIZE } from "@typeberry/crypto";
 import {
   BANDERSNATCH_PROOF_BYTES,
   BANDERSNATCH_RING_ROOT_BYTES,
@@ -53,6 +54,10 @@ enum ResultValues {
  */
 let ringCommitmentIndex = 0;
 const ringCommitmentCache: CacheEntry[] = [
+  {
+    keys: BytesBlob.empty(),
+    value: Promise.resolve(Result.error(null, () => "")),
+  },
   {
     keys: BytesBlob.empty(),
     value: Promise.resolve(Result.error(null, () => "")),
@@ -141,10 +146,4 @@ function getRingCommitment(
   const keys = BytesBlob.blobFromParts(validators.map((x) => x.raw));
   const cacheEntry = ringCommitmentCache.find((v) => v.keys.isEqualTo(keys));
   if (cacheEntry !== undefined) {
-    return cacheEntry.value;
-  }
-
-  const value = getRingCommitmentNoCache(bandersnatch, keys);
-  ringCommitmentCache[ringCommitmentIndex] = {
-    keys,
 ```

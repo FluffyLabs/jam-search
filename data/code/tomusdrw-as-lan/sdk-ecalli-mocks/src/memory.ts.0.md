@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk-ecalli-mocks/src/memory.ts#L1-L33
 title: sdk-ecalli-mocks/src/memory.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-28T15:07:03+02:00'
-last_modified: '2026-05-28T15:07:03+02:00'
+created_at: '2026-06-12T11:39:19+02:00'
+last_modified: '2026-06-12T11:39:19+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2690a1387d95d90f80afbb7f3b6da9870f3627eb6c539d85eab5e07f45a7561f

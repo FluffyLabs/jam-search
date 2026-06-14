@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/bytes/bytes.ts#L1-L137
 title: packages/core/bytes/bytes.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 3
 content_sha: a6ddea2ede18240163239a48529f9f1a47e918c39a7c191db88bb8a4724aa0fd

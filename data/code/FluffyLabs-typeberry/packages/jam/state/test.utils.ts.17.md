@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/test.utils.ts#L430-L430
 title: packages/jam/state/test.utils.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 17
 chunk_total: 47
 content_sha: fbb11e8fc6fd3e0f32fded94c005c446eae07bba13f858f12200537e9b64ef8d

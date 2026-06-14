@@ -1,22 +1,22 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L106'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L107'
 title: package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: ec30f8a37bec5a8c7729ad8426f178c460b641eee2b06a9845a5061182e26e64
+content_sha: f8abedd32ac31672b79983f6a80e988790d517c46e3d53d136b62d6ee957b030
 language: json
 ---
-`package.json` (lines 1–106)
+`package.json` (lines 1–107)
 
 ```json
 {
   "name": "@typeberry/jam",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "JAM implementation in TypeScript",
   "private": true,
   "workspaces": [
@@ -27,7 +27,6 @@ language: json
     "bin/lib",
     "bin/pvm",
     "bin/rpc",
-    "bin/tci",
     "bin/test-runner",
     "packages/configs",
     "packages/core/bytes",
@@ -58,6 +57,7 @@ language: json
     "packages/jam/config",
     "packages/jam/config-node",
     "packages/jam/database",
+    "packages/jam/database-fjall",
     "packages/jam/database-lmdb",
     "packages/jam/executor",
     "packages/jam/fuzz-proto",
@@ -72,6 +72,7 @@ language: json
     "packages/jam/state-json",
     "packages/jam/state-merkleization",
     "packages/jam/state-vectors",
+    "packages/jam/ticket-pool",
     "packages/jam/transition",
     "packages/jam/transition/disputes",
     "packages/misc/benchmark",

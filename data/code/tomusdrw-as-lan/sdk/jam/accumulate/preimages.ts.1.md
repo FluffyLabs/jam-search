@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/preimages.ts#L110-L150
 title: sdk/jam/accumulate/preimages.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-28T15:07:03+02:00'
-last_modified: '2026-05-28T15:07:03+02:00'
+created_at: '2026-06-12T11:39:19+02:00'
+last_modified: '2026-06-12T11:39:19+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 0970eaf139281a6b03debfa5e44a1eebfa743ded86bbeddc2666e1fb9ebfeb30

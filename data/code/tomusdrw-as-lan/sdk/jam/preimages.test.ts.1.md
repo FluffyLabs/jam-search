@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/preimages.test.ts#L110-L222
 title: sdk/jam/preimages.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-28T15:07:03+02:00'
-last_modified: '2026-05-28T15:07:03+02:00'
+created_at: '2026-06-12T11:39:19+02:00'
+last_modified: '2026-06-12T11:39:19+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: d52a53cbfdd1f2dc59d1d6d3a2e08f8fb6bafe887e8fdf33f527a2a08b12dd70

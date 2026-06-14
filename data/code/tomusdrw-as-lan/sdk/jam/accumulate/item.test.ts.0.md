@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/accumulate/item.test.ts#L1-L106
 title: sdk/jam/accumulate/item.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-28T15:07:03+02:00'
-last_modified: '2026-05-28T15:07:03+02:00'
+created_at: '2026-06-12T11:39:19+02:00'
+last_modified: '2026-06-12T11:39:19+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: d0272ececc2bd6d500f404fbc6fbae3dc33eaeb0a892a7adcd364c199e0e8ffc

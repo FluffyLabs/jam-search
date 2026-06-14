@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/jam-config.ts#L1-L114
 title: packages/jam/node/jam-config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 60b043522e3a60a518245430b500e019e2c634ba85ac75b4f3083a86f5eac013
+content_sha: 657fca6468d055d8e365892e7ccdd3800b1c3f857ae54ab9d43c92cef1ac5b93
 language: typescript
 ---
 `packages/jam/node/jam-config.ts` (lines 1–114)
@@ -106,7 +106,7 @@ export type SeedDevConfig = {
 
 /** Developer mode configuration. */
 export type DevConfig = {
-  // TODO [ToDr] This should be removed. genesis should be loaded into JIP4 ChainSpec in TCI
+  // TODO [ToDr] This should be removed. genesis should be loaded into JIP4 ChainSpec
   // and passed as `NodeConfiguration`.
   /** Path to genesis state JSON description file. */
   genesisPath: string;

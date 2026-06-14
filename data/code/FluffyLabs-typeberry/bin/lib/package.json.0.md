@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/package.json#L1-L95'
 title: bin/lib/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: f9ab2f8ef4b4920abae0782630ea4675e9896f25916d260df97d4582e510ce44
+content_sha: 8f05c7b26ccd94f406351f8ce10aab2e555c144a5c6a35d6627bf75fdf913f74
 language: json
 ---
 `bin/lib/package.json` (lines 1–95)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@typeberry/lib",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Typeberry Library",
   "repository": {
     "type": "git",
@@ -62,7 +62,7 @@ language: json
     "@fluffylabs/anan-as": "^1.4.0",
     "@noble/ed25519": "2.2.3",
     "hash-wasm": "4.12.0",
-    "@typeberry/native": "0.3.0-5dae93e",
+    "@typeberry/native": "0.5.1",
     "eventemitter3": "^5.0.1",
     "@opentelemetry/api": "1.9.0",
     "@typeberry/block": "*",

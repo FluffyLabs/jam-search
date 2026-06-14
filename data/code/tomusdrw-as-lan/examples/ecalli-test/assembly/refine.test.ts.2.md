@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/refine.test.ts#L237-L365
 title: examples/ecalli-test/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-28T15:07:03+02:00'
-last_modified: '2026-05-28T15:07:03+02:00'
+created_at: '2026-06-12T11:39:19+02:00'
+last_modified: '2026-06-12T11:39:19+02:00'
 chunk_index: 2
 chunk_total: 4
 content_sha: 873ebe6ba5cded84384699a49e36cb9a4014a83199c9a88b5c112b2c6c830951

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter-ananas/index.ts#L142-L198
 title: packages/core/pvm-interpreter-ananas/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: a458a89cde22c228af991dba00f879007a8e049e9173bf6eb025dfcf97b02fba

@@ -2,20 +2,38 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L83-L130
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L75-L141
 title: bin/jam/build-for-npm.sh
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: e165241785eb0f8ec70910db3bbfc0c8a2056798a3498845a9b9e60341421079
+content_sha: 0042abbf283139b871cb55dabfdc918f91ee2f0d5e9a889d3dc84f4c67f599b0
 language: bash
 ---
-`bin/jam/build-for-npm.sh` (lines 83–130)
+`bin/jam/build-for-npm.sh` (lines 75–141)
 
 ```bash
-  sed -i "\$ s|sourceMappingURL=index.js.map|sourceMappingURL=$2.mjs.map|" "$2.mjs"
+$BUILD ./packages/workers/jam-network/bootstrap-main.ts -o $DIST_FOLDER/jam-network
+$BUILD ./packages/workers/block-authorship/bootstrap-main.ts -o $DIST_FOLDER/block-authorship
+
+# copy some files that should be there
+cp ./LICENSE $DIST_FOLDER/
+cp ./README.md $DIST_FOLDER/
+
+# Flatten one worker build into dist/jam: rename its index.js -> $2.mjs (and map),
+# repoint the trailing sourceMappingURL (last line, via the `$` address) at the
+# renamed map so worker crash traces resolve to the right TS source, then move
+# everything up a level. $1 = worker subdir, $2 = bootstrap file basename.
+flatten_worker() {
+  cd "./$1"
+  rm *.mjs || true
+  mv index.js "$2.mjs"
+  mv index.js.map "$2.mjs.map"
+  # Portable in-place edit (BSD `sed -i` differs from GNU and breaks on macOS):
+  # rewrite via a temp file instead of relying on `-i`.
+  sed "\$ s|sourceMappingURL=index.js.map|sourceMappingURL=$2.mjs.map|" "$2.mjs" > "$2.mjs.tmp" && mv "$2.mjs.tmp" "$2.mjs"
   # Move the bundle up one level into $DIST_FOLDER. We can't use `mv * ../`:
   # workers that pull in telemetry also emit gRPC asset directories (proto/,
   # protoc-gen-validate/, xds/) that the main bundle - and earlier workers -
@@ -29,7 +47,7 @@ language: bash
 cd $DIST_FOLDER
 flatten_worker importer bootstrap-importer
 flatten_worker jam-network bootstrap-network
-flatten_worker block-authorship bootstrap-generator
+flatten_worker block-authorship bootstrap-authorship
 
 # copy worker wasm files
 cp **/*.wasm ./ || true # ignore overwrite errors
@@ -51,6 +69,7 @@ cat > ./package.json << EOF
   "dependencies": {
     "lmdb": "$LMDB_VERSION",
     "@matrixai/quic": "$QUIC_VERSION",
+    "@fjall-js/fjall": "$FJALL_VERSION",
     "@typeberry/native": "$NATIVE_VERSION"
   },
   "homepage": "https://typeberry.dev",

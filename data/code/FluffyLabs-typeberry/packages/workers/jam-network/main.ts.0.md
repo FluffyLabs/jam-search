@@ -2,24 +2,30 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/jam-network/main.ts#L1-L78
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/jam-network/main.ts#L1-L107
 title: packages/workers/jam-network/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: f33086ab223d64e9af6ef9e6f74ff83bee4607f361212ea8ff07a3a40ccd6e3a
+content_sha: 545d21656c3bf83ef5d6c5d4537c585ee2cf83b397a510edfc7a84bddfd5dbfb
 language: typescript
 ---
-`packages/workers/jam-network/main.ts` (lines 1–78)
+`packages/workers/jam-network/main.ts` (lines 1–107)
 
 ```typescript
+import type { Epoch } from "@typeberry/block";
+import type { SignedTicket } from "@typeberry/block/tickets.js";
+import { Bytes } from "@typeberry/bytes";
 import type { AuthorshipComms } from "@typeberry/comms-authorship-network";
 import { parseBootnode } from "@typeberry/config-node";
 import { ed25519, initWasm } from "@typeberry/crypto";
+import { HASH_SIZE } from "@typeberry/hash";
 import { setup } from "@typeberry/jamnp-s";
 import { Logger } from "@typeberry/logger";
+import { type TicketValidator, type ValidatedTicket, ValidationError } from "@typeberry/ticket-pool";
+import { Result } from "@typeberry/utils";
 import type { WorkerConfig } from "@typeberry/workers-api";
 import type { NetworkingConfig, NetworkingInternal } from "./protocol.js";
 
@@ -78,11 +84,34 @@ export async function main(
     }
   });
 
-  // Relay tickets received from peers back to block-authorship (one ticket at a time).
-  // Returns the validation result so ticket-distribution knows whether to redistribute.
-  network.ticketTask.setOnTicketReceived(async (epochIndex, ticket) => {
-    return await authorshipComms.sendReceivedTickets({ epochIndex, ticket });
+  // Authorship pushes the authoritative ticket pool on epoch boundaries; networking
+  // replaces its redistribution pool wholesale so the two sides cannot drift.
+  authorshipComms.setOnReplaceTicketPool(async ({ epochIndex, tickets }) => {
+    logger.log`Replacing redistribution pool from block-authorship for epoch ${epochIndex} (${tickets.length} tickets)`;
+    network.ticketTask.replacePool(epochIndex, tickets);
   });
+
+  // Validator that hands a received ticket to block-authorship over IPC and waits
+  // for an accept/reject decision. The wire protocol stays a simple bool; the
+  // computed id stays inside authorship (it owns the verified pool).
+  const ipcValidator: TicketValidator = {
+    validate: async (
+      epochIndex: Epoch,
+      tickets: SignedTicket[],
+    ): Promise<Result<ValidatedTicket[], ValidationError>> => {
+      const ok = await authorshipComms.sendReceivedTickets({ epochIndex, tickets });
+      if (!ok) {
+        return Result.error(ValidationError.InvalidProof, () => "authorship rejected the ticket");
+      }
+      return Result.ok(
+        tickets.map((ticket) => ({
+          ticket,
+          id: Bytes.zero(HASH_SIZE).asOpaque(),
+        })),
+      );
+    },
+  };
+  network.ticketTask.setTicketValidator(ipcValidator);
 
   await network.network.start();
 

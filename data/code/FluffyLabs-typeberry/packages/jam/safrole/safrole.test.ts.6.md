@@ -2,21 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L596-L711
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L598-L715
 title: packages/jam/safrole/safrole.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 6
 chunk_total: 9
-content_sha: aff1276807cdff167297023e026e3823f9dc8376a770168295d68482c7e3e8d0
+content_sha: cae8cc016cbaebc1611cbb6a2155667b16073374889ae4e20d0afefba1ee95da
 language: typescript
 ---
-`packages/jam/safrole/safrole.test.ts` (lines 596–711)
+`packages/jam/safrole/safrole.test.ts` (lines 598–715)
 
 ```typescript
-        // we are ignoring that result anyway, so safe to cast.
-        stateUpdate: {} as SafroleStateUpdate,
         epochMark: null,
         ticketsMark: null,
       }),
@@ -131,4 +129,8 @@ language: typescript
           Bytes.zero(HASH_SIZE).asOpaque(),
           Bytes.zero(HASH_SIZE).asOpaque(),
         ],
+        4,
+      ),
+      previousValidatorData: validators,
+      currentValidatorData: validators,
 ```

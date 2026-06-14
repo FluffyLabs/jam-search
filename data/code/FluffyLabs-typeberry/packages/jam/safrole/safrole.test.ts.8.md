@@ -2,24 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L821-L888
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L826-L888
 title: packages/jam/safrole/safrole.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 8
 chunk_total: 9
-content_sha: 9416aca09f3d7be1a65c3ef8c46e84fabe04c77726ae7b7ca2ce45f6f9c8ba53
+content_sha: 9b3e6078767bf4fe04555b25be13eb21e625a525bbeebd79e62f102948cc3b21
 language: typescript
 ---
-`packages/jam/safrole/safrole.test.ts` (lines 821–888)
+`packages/jam/safrole/safrole.test.ts` (lines 826–888)
 
 ```typescript
-          attempt: tryAsTicketAttempt(0),
-          id: Bytes.fill(HASH_SIZE, 1),
-        }),
-        Ticket.create({
-          attempt: tryAsTicketAttempt(0),
           id: Bytes.fill(HASH_SIZE, 2),
         }),
         Ticket.create({

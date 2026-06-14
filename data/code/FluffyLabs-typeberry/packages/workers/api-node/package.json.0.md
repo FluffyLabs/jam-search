@@ -2,22 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/package.json#L1-L24
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/package.json#L1-L25
 title: packages/workers/api-node/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 100feac7ebd21abd5ee8f226d8bf96f779c0e3b19f2c43db2dd5d4591f75baaf
+content_sha: e3b52d4656cf5a24350cc9767ec20f19c9d5898ed5ea78b506c7b1c5919ea19b
 language: json
 ---
-`packages/workers/api-node/package.json` (lines 1–24)
+`packages/workers/api-node/package.json` (lines 1–25)
 
 ```json
 {
   "name": "@typeberry/workers-api-node",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Node.js implementation of the workers API.",
   "main": "index.ts",
   "scripts": {
@@ -27,6 +27,7 @@ language: json
     "@typeberry/codec": "*",
     "@typeberry/config": "*",
     "@typeberry/database": "*",
+    "@typeberry/database-fjall": "*",
     "@typeberry/database-lmdb": "*",
     "@typeberry/hash": "*",
     "@typeberry/listener": "*",

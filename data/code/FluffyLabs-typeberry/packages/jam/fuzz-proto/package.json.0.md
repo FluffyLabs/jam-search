@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/package.json#L1-L22
 title: packages/jam/fuzz-proto/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 2574eb1dfb2b2a07e765a73c31e811be32c6e87adda086d4a68e11d305d92a90
+content_sha: 864cb3e3efd207ec600aafb2331462f769d6b6e56434b1d9c8997ff71235088d
 language: json
 ---
 `packages/jam/fuzz-proto/package.json` (lines 1–22)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/fuzz-proto",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Fuzzer protocol types.",
   "type": "module",
   "main": "index.ts",

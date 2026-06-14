@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.ts#L330-L445
 title: packages/jam/safrole/safrole.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 3
 chunk_total: 6
-content_sha: db2a69fe400c230c71782a647ea058d09c4a7c3778b318dcbbe29bb91533a0d8
+content_sha: dbed4d97daa278a1dd760c1b41040f7556567f5fd6c9123fcce77b39d7cb705a
 language: typescript
 ---
 `packages/jam/safrole/safrole.ts` (lines 330–445)
@@ -80,7 +80,7 @@ language: typescript
     // TODO [ToDr] Verify that ticket attempt is in correct range.
     const verificationResult =
       extrinsic.length === 0
-        ? []
+        ? { isValid: true, tickets: [] }
         : await bandersnatchVrf.verifyTickets(
             await this.bandersnatch,
             validators.length,
@@ -89,14 +89,14 @@ language: typescript
             entropy,
           );
 
-    const tickets: Ticket[] = extrinsic.map((ticket, i) => ({
-      id: verificationResult[i].entropyHash,
-      attempt: ticket.attempt,
-    }));
-
-    if (!verificationResult.every((x) => x.isValid)) {
+    if (!verificationResult.isValid) {
       return Result.error(SafroleErrorCode.BadTicketProof, () => "Safrole: invalid ticket proof in extrinsic");
     }
+
+    const tickets: Ticket[] = extrinsic.map((ticket, i) => ({
+      id: verificationResult.tickets[i],
+      attempt: ticket.attempt,
+    }));
 
     /**
      * Verify if tickets are sorted and unique

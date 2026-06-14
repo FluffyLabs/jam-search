@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L95-L199
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 3
-content_sha: 191a7c4ebcc4eeceef0e1234c9950296b25ffb2136b555acfcb144d492c16bfb
+content_sha: b452a44565db8298493a91ec8728a63d4e7eb02e5f950fe0f249648191a39102
 language: typescript
 ---
 `packages/workers/importer/importer.ts` (lines 95–199)
@@ -66,11 +66,11 @@ language: typescript
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (maybeBestHeader?.isOk) {
         const bestHeader = maybeBestHeader.ok;
-        this.logger.info`🧊 Best block: #${timeSlot} (${bestHeader.hash})`;
+        this.logger.info`🧊 Best: #${timeSlot} (${bestHeader.hash.toStringTruncated()})`;
         this.metrics.recordBlockImportComplete(duration, true);
       } else {
         this.logger
-          .log`❌ Rejected block #${timeSlot}: ${maybeBestHeader !== null ? resultToString(maybeBestHeader) : "exception"}`;
+          .log`❌ Rejected #${timeSlot}: ${maybeBestHeader !== null ? resultToString(maybeBestHeader) : "exception"}`;
         this.metrics.recordBlockImportComplete(duration, false);
       }
     }

@@ -2,19 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L108-L224
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L111-L221
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
-chunk_total: 2
-content_sha: 8ca3ab4712e89c8d8e93407434aa0e0dea05bbbcee18bd6a4e79b579ffcb6c3d
+chunk_total: 3
+content_sha: 8735df78b3d27ef8ef7dc1f5de1008d3d909bd3bf06c15ee2633b972c2c58930
 language: typescript
 ---
-`packages/workers/api-node/config.ts` (lines 108–224)
+`packages/workers/api-node/config.ts` (lines 111–221)
 
 ```typescript
+ * Collect the transferable objects (communication ports) embedded in a config.
+ *
+ * `MessagePort`s can only be transferred, not structurally cloned, so they have to
  * be listed in the `postMessage` transfer list. Omitting them results in a
  * `DataCloneError`.
  */
@@ -65,13 +68,20 @@ export class InMemWorkerConfig<T = undefined> implements WorkerConfig<T, BlocksD
   }
 }
 
+/** Persistent values store backing the hybrid config. */
+export type HybridBackend = "lmdb" | "fjall";
+
 /**
  * Hybrid worker config for the fuzz target: in-memory blocks and leaf sets,
- * but large values persisted to LMDB.
+ * but large values persisted to disk (LMDB or fjall, selected by `backend`).
+ *
+ * The fjall backend is opt-in so its performance can be compared against LMDB
+ * before committing to it. fjall opens its keyspace asynchronously, hence the
+ * async `new`.
  *
  * Like `InMemWorkerConfig`, the blocks and leaf sets are shared across the
  * open/close/reopen dance that genesis init performs, so `openDatabase`
- * returns the same instances and a no-op close. The LMDB root is opened once
+ * returns the same instances and a no-op close. The values store is opened once
  * here and closed by `HybridSerializedStates.close()` at importer teardown.
  *
  * In-process only: it holds shared mutable state (the in-memory leaf
@@ -79,7 +89,7 @@ export class InMemWorkerConfig<T = undefined> implements WorkerConfig<T, BlocksD
  * importer in-process via `createImporter`, not in a spawned worker.
  */
 export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, BlocksDb, SerializedStatesDb> {
-  static new<T>({
+  static async new<T>({
     nodeName,
     chainSpec,
     workerParams,
@@ -87,6 +97,7 @@ export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, Blocks
     dbPath,
     ephemeral = false,
     compression = true,
+    backend = "lmdb",
   }: {
     nodeName: string;
     chainSpec: ChainSpec;
@@ -95,12 +106,18 @@ export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, Blocks
     dbPath: string;
     ephemeral?: boolean;
     compression?: boolean;
-  }) {
-    return new HybridWorkerConfig(nodeName, chainSpec, workerParams, blake2b, dbPath, ephemeral, compression);
+    backend?: HybridBackend;
+  }): Promise<HybridWorkerConfig<T>> {
+    // fjall opens its keyspace asynchronously; LMDB is synchronous. Either way
+    // the values store is created once here and shared across reopen.
+    const states =
+      backend === "fjall"
+        ? await FjallHybridSerializedStates.new({ spec: chainSpec, blake2b, dbPath, ephemeral })
+        : LmdbHybridSerializedStates.new({ spec: chainSpec, blake2b, dbPath, ephemeral, compression, readOnly: false });
+    return new HybridWorkerConfig(nodeName, chainSpec, workerParams, blake2b, dbPath, ephemeral, compression, states);
   }
 
   private readonly blocks: InMemoryBlocks;
-  private readonly states: HybridSerializedStates;
 
   private constructor(
     public readonly nodeName: string,
@@ -109,27 +126,4 @@ export class HybridWorkerConfig<T = undefined> implements WorkerConfig<T, Blocks
     public readonly blake2b: Blake2b,
     public readonly dbPath: string,
     public readonly ephemeral: boolean,
-    public readonly compression: boolean = true,
-  ) {
-    this.blocks = InMemoryBlocks.new();
-    this.states = HybridSerializedStates.new({
-      spec: this.chainSpec,
-      blake2b: this.blake2b,
-      dbPath: this.dbPath,
-      ephemeral: this.ephemeral,
-      compression: this.compression,
-      readOnly: false,
-    });
-  }
-
-  openDatabase(_options: { readonly: boolean } = { readonly: true }): RootDb<BlocksDb, SerializedStatesDb> {
-    return {
-      getBlocksDb: () => this.blocks,
-      getStatesDb: () => this.states,
-      // Leaf sets and blocks live in memory; the LMDB values store is closed
-      // via states.close() at importer teardown, so this is a no-op.
-      close: async () => {},
-    };
-  }
-}
 ```

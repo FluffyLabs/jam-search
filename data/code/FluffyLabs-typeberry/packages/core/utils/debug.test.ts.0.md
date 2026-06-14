@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.test.ts#L1-L54
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.test.ts#L1-L60
 title: packages/core/utils/debug.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 3f0c4537db7a0c9974a6e432edf2f1930e770837be88b9fbf24996bddf41012f
+content_sha: f8b549069b0c7ef4f71f4006691dfe400534d426b9da48d5a340ab37c6eabe08
 language: typescript
 ---
-`packages/core/utils/debug.test.ts` (lines 1–54)
+`packages/core/utils/debug.test.ts` (lines 1–60)
 
 ```typescript
 import assert from "node:assert";
@@ -48,8 +48,14 @@ describe("utils::lazyInspect", () => {
 
 describe("utils::memoryUsage", () => {
   it("should report all memory fields", () => {
-    const usage = memoryUsage();
+    const usage = memoryUsage(true);
     for (const field of ["rss=", "heap=", "external=", "arrayBuffers="]) {
+      assert.ok(usage.includes(field), `expected "${field}" in "${usage}"`);
+    }
+  });
+  it("should report all memory fields without details", () => {
+    const usage = memoryUsage(false);
+    for (const field of ["rss=", "heap="]) {
       assert.ok(usage.includes(field), `expected "${field}" in "${usage}"`);
     }
   });
@@ -57,14 +63,14 @@ describe("utils::memoryUsage", () => {
 
 describe("utils::memoryTracker", () => {
   it("should not include a delta on the first call", () => {
-    const tracker = memoryTracker();
-    assert.ok(!tracker().includes("Δrss"));
+    const tracker = memoryTracker(true);
+    assert.ok(!tracker.toString().includes("Δrss"));
   });
 
   it("should include a delta on subsequent calls", () => {
-    const tracker = memoryTracker();
-    tracker();
-    const second = tracker();
+    const tracker = memoryTracker(true);
+    tracker.toString();
+    const second = tracker.toString();
     assert.ok(second.includes("Δrss="), `expected delta in "${second}"`);
     assert.ok(second.includes("ΔarrayBuffers="), `expected delta in "${second}"`);
   });

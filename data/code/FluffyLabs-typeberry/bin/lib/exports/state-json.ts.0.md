@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/exports/state-json.ts#L1-L9
 title: bin/lib/exports/state-json.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: dc4a058f6f66848f9a20fa295694b9de8b591a420c88f415903c6b8c6589bcd9

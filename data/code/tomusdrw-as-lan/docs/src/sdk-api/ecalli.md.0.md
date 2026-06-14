@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/sdk-api/ecalli.md#L1-L52'
 title: docs/src/sdk-api/ecalli.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-28T15:07:03+02:00'
-last_modified: '2026-05-28T15:07:03+02:00'
+created_at: '2026-06-12T11:39:19+02:00'
+last_modified: '2026-06-12T11:39:19+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: db3c1ebc1fcbbe254ddaabcc8464fadd9e43317981c0e7cfca7d6574e2a78a5e

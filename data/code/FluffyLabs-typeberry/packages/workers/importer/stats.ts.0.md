@@ -2,24 +2,26 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/stats.ts#L1-L95
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/stats.ts#L1-L96
 title: packages/workers/importer/stats.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 2e715d304fa0319c0c936081ba9261a76891d401fdd142d3ba98e12189cdcab5
+content_sha: 306a397b4462b429c083c8f6cad669afd4fb0c4789d8effdfac44c6d62b86983
 language: typescript
 ---
-`packages/workers/importer/stats.ts` (lines 1–95)
+`packages/workers/importer/stats.ts` (lines 1–96)
 
 ```typescript
 import type { HeaderHash, TimeSlot } from "@typeberry/block";
 import type { LeafDb } from "@typeberry/database";
-import type { Logger } from "@typeberry/logger";
+import { Level, Logger } from "@typeberry/logger";
 import type { SerializedState } from "@typeberry/state-merkleization";
 import { memoryTracker, now } from "@typeberry/utils";
+
+const logger = Logger.new(import.meta.filename, "stats");
 
 /** Reports the current on-disk database size in bytes, or `null` when unknown. */
 export type DbSizeProvider = () => number | null;
@@ -48,19 +50,18 @@ export interface ImporterEventsListener {
 }
 
 export class ImporterStats implements ImporterEventsListener {
-  private readonly memory = memoryTracker();
+  private readonly memory = memoryTracker(logger.getLevel() < Level.INFO);
   private showDiskStats = true;
   private totalTimePrev = 0;
   private totalTime = 0;
   private totalBlocksPrev = 0;
   private totalBlocks = 0;
 
-  static new(logger: Logger, dbSizeInBytes: DbSizeProvider = () => null) {
-    return new ImporterStats(logger, dbSizeInBytes);
+  static new(dbSizeInBytes: DbSizeProvider = () => null) {
+    return new ImporterStats(dbSizeInBytes);
   }
 
   private constructor(
-    private readonly logger: Logger,
     /** Reports the current on-disk database size in bytes, or `null` if unknown. */
     private readonly dbSizeInBytes: DbSizeProvider = () => null,
     /** How often we are going to print the stats (i.e. every `maxBlocks` blocks) */
@@ -70,7 +71,7 @@ export class ImporterStats implements ImporterEventsListener {
   ) {}
 
   onStart(currentBestHeaderHash: HeaderHash, currentBestState: SerializedState<LeafDb>) {
-    this.logger.info`😎 Best time slot: ${currentBestState.timeslot} (header hash: ${currentBestHeaderHash})`;
+    logger.info`😎 Best time slot: ${currentBestState.timeslot} (header hash: ${currentBestHeaderHash})`;
   }
 
   onBlockImportingStarted(timeSlot: TimeSlot) {
@@ -79,7 +80,7 @@ export class ImporterStats implements ImporterEventsListener {
     return (isOk: boolean) => {
       const duration = now() - start;
       const label = isOk ? "import" : "reject";
-      this.logger.log`⏱️ ${label} #${timeSlot} took ${duration.toFixed(2)}ms`;
+      logger.log`⏱️ ${label} #${timeSlot} took ${duration.toFixed(2)}ms`;
 
       this.totalTime += duration;
       this.totalBlocks += 1;
@@ -87,12 +88,12 @@ export class ImporterStats implements ImporterEventsListener {
       if (this.totalBlocks >= this.maxBlocks || this.totalTime >= this.maxTimeMs) {
         // disk data (every second output)
         if (this.showDiskStats) {
-          this.logger.info`💾 disk at #${timeSlot}: ${formatDbSize(this.dbSizeInBytes())}`;
+          logger.info`💾 disk at #${timeSlot}: ${formatDbSize(this.dbSizeInBytes())}`;
         }
         this.showDiskStats = !this.showDiskStats;
 
-        // memory
-        this.logger.info`📊 mem at #${timeSlot}: ${this.memory()}`;
+        // memory (memoryTracker's toString() is stateful — log it once)
+        logger.info`📊 mem at #${timeSlot}: ${this.memory}`;
 
         // compute block statistics (rolling window of last two rounds)
         const importedBlocks = this.totalBlocks + this.totalBlocksPrev;
@@ -103,7 +104,7 @@ export class ImporterStats implements ImporterEventsListener {
         this.totalTimePrev = this.totalTime;
         this.totalBlocks = 0;
         this.totalTime = 0;
-        this.logger.info`⏱️ time at #${timeSlot}: ${blocksPerSecond.toFixed(2)}bps`;
+        logger.info` ⏱️ speed at #${timeSlot}: ${blocksPerSecond.toFixed(2)}bps`;
       }
 
       return duration;

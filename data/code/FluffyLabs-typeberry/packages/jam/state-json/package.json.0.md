@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-json/package.json#L1-L27
 title: packages/jam/state-json/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 5e3b8bb8dd094d71da06e3670a4176dd94e40defc1cfd3a7910b37a4c7eb87a2
+content_sha: 5938418174d675738c2797efe58f1aaa516bef59b7c54dc2d53459c86cb2a9d8
 language: json
 ---
 `packages/jam/state-json/package.json` (lines 1–27)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/state-json",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Utilities to parse JSON state.",
   "license": "MPL-2.0",
   "author": "Fluffy Labs",

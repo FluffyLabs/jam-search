@@ -1,19 +1,42 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/args.ts#L214-L338'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/args.ts#L198-L345'
 title: bin/jam/args.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 2
 chunk_total: 3
-content_sha: 016d9d053463958c61f79f37a3c6eab40e14ce718469a8a638eda4166fbb1351
+content_sha: c90f91ac80e3d58047a760ee814abc1af1eb973d16c8e33d6ddfafabc67acc23
 language: typescript
 ---
-`bin/jam/args.ts` (lines 214–338)
+`bin/jam/args.ts` (lines 198–345)
 
 ```typescript
+      };
+    }
+    case Command.Import: {
+      const data = parseSharedOptions(args);
+      const files = args._.map((f) => withRelPath(f));
+      args._ = [];
+      assertNoMoreArgs(args);
+      return {
+        command: Command.Import,
+        args: {
+          ...data,
+          files,
+        },
+      };
+    }
+    case Command.Export: {
+      const data = parseSharedOptions(args);
+      const output = args._.shift();
+      if (output === undefined) {
+        throw new Error("Missing output directory.");
+      }
+      assertNoMoreArgs(args);
+      return {
         command: Command.Export,
         args: {
           ...data,

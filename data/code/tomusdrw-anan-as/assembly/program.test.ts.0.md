@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/program.test.ts#L1-L108'
 title: assembly/program.test.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-29T16:20:56+02:00'
-last_modified: '2026-05-29T16:20:56+02:00'
+created_at: '2026-06-12T09:48:57+02:00'
+last_modified: '2026-06-12T09:48:57+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: f73fd09e0b2dc1fd0f6e83b9234bd1fd994e6db8397f8995f4502c85bbfbb35a

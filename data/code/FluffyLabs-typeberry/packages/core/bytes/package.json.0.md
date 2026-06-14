@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/bytes/package.json#L1-L16
 title: packages/core/bytes/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 0e5896f2a02b5e1fe5d1c054c9ba24e38fb767298bcd7a9ce82b638f17ac1fca
+content_sha: 303dcee66caa00092828c758e56f7765483dde4c775a4baa1826e3cbc6535976
 language: json
 ---
 `packages/core/bytes/package.json` (lines 1–16)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/bytes",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Byte-related utilities and types.",
   "main": "index.ts",
   "dependencies": {

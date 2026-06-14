@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/exports/pvm-interface.ts#L1-L9
 title: bin/lib/exports/pvm-interface.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: bee17b41b184e34d252d1cc9a3c8a333cdc5663646e5a08f1bdb6578020fd25f

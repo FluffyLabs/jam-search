@@ -2,21 +2,30 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/bytes/bytes.ts#L240-L301
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/bytes/bytes.ts#L240-L310
 title: packages/core/bytes/bytes.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 2
 chunk_total: 3
-content_sha: 1adbf354b42b234e0a0c8c3e19778135394933cfcd5fe8d1ec42658a92ed8898
+content_sha: 5347a8684a60028eac3404e7c9d41554968fdfbeba49400aeae89162c454b8ed
 language: typescript
 ---
-`packages/core/bytes/bytes.ts` (lines 240–301)
+`packages/core/bytes/bytes.ts` (lines 240–310)
 
 ```typescript
   asOpaque<R>(): Opaque<Bytes<T>, TokenOf<R, Bytes<T>>> {
     return asOpaqueType<Bytes<T>, TokenOf<R, Bytes<T>>>(this);
+  }
+
+  toStringTruncated() {
+    if (this.raw.length > 8) {
+      const start = bytesToHexString(this.raw.subarray(0, 2));
+      const end = bytesToHexString(this.raw.subarray(this.raw.length - 2));
+      return `${start}...${end.substring(2)}`;
+    }
+    return `${this.toString()}`;
   }
 }
 

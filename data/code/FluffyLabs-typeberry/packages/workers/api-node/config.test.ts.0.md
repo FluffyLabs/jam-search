@@ -2,27 +2,28 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.test.ts#L1-L45
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.test.ts#L1-L82
 title: packages/workers/api-node/config.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: aa7460af971a601537ecbf211365207bf86dff70e123c015cb27228c5cc98d36
+content_sha: 8a5d4a02ef86f315661456859904a6832fc81b3c7161063688a374d62443eb8f
 language: typescript
 ---
-`packages/workers/api-node/config.test.ts` (lines 1–45)
+`packages/workers/api-node/config.test.ts` (lines 1–82)
 
 ```typescript
 import assert from "node:assert";
+import * as fs from "node:fs";
 import { describe, it } from "node:test";
 import { MessageChannel } from "node:worker_threads";
 import { codec } from "@typeberry/codec";
 import { tinyChainSpec } from "@typeberry/config";
 import { Blake2b } from "@typeberry/hash";
 import { tryAsU32 } from "@typeberry/numbers";
-import { configTransferList, LmdbWorkerConfig } from "./config.js";
+import { configTransferList, HybridWorkerConfig, LmdbWorkerConfig } from "./config.js";
 import { ThreadPort } from "./port.js";
 
 const spec = tinyChainSpec;
@@ -59,5 +60,41 @@ describe("LmdbWorkerConfig transfer list", () => {
       portB.close();
     }
   });
+});
+
+describe("HybridWorkerConfig", () => {
+  // Both persistent backends must construct asynchronously and hand out a
+  // working db. fjall is the experimental backend we want to benchmark.
+  for (const backend of ["lmdb", "fjall"] as const) {
+    it(`constructs and opens a ${backend}-backed hybrid db`, async () => {
+      const blake2b = await Blake2b.createHasher();
+      const dbPath = fs.mkdtempSync(`typeberry-hybrid-${backend}-`);
+      try {
+        const config = await HybridWorkerConfig.new({
+          nodeName: "node",
+          chainSpec: spec,
+          workerParams: undefined,
+          blake2b,
+          dbPath,
+          ephemeral: true,
+          backend,
+        });
+
+        const db = config.openDatabase({ readonly: false });
+        const states = db.getStatesDb();
+        try {
+          assert.notStrictEqual(db.getBlocksDb(), undefined);
+          assert.notStrictEqual(states, undefined);
+        } finally {
+          // The values store owns the on-disk resources (the no-op db.close()
+          // does not), so close it explicitly to release the fjall keyspace.
+          await states.close();
+          await db.close();
+        }
+      } finally {
+        fs.rmSync(dbPath, { recursive: true, force: true });
+      }
+    });
+  }
 });
 ```

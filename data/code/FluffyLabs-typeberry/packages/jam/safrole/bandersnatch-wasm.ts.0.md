@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-wasm.ts#L1-L58
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-wasm.ts#L1-L85
 title: packages/jam/safrole/bandersnatch-wasm.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: ec22be8de7ea008c9ee6d1868775a42967dc8bc212dff08d1e0997e15aab768f
+content_sha: 1ac17909fc257999703da75197dbc34570c70c74e7f7a85370fb3243e23e873d
 language: typescript
 ---
-`packages/jam/safrole/bandersnatch-wasm.ts` (lines 1–58)
+`packages/jam/safrole/bandersnatch-wasm.ts` (lines 1–85)
 
 ```typescript
 import { bandersnatchWasm, initWasm } from "@typeberry/crypto";
@@ -71,6 +71,33 @@ export class BandernsatchWasm {
     vrfInputDataLen: number,
   ) {
     return bandersnatchWasm.batchGenerateRingVrf(ringKeys, proverKeyIndex, secretSeed, inputsData, vrfInputDataLen);
+  }
+
+  /**
+   * Batch-generate ring VRF tickets for multiple validators in a single call,
+   * reusing the ring prover setup across all of them.
+   *
+   * `secretSeedsData` is the fixed-width concatenation of the validators' secret
+   * seeds (each `secretSeedDataLen` bytes); `proverKeyIndices` are their indices
+   * within the ring and must have the same count. Output records are ordered
+   * validator-major then input-major, each `status byte || signature`.
+   */
+  async batchGenerateRingVrfForValidators(
+    ringKeys: Uint8Array,
+    proverKeyIndices: Uint32Array,
+    secretSeedsData: Uint8Array,
+    secretSeedDataLen: number,
+    inputsData: Uint8Array,
+    vrfInputDataLen: number,
+  ) {
+    return bandersnatchWasm.batchGenerateRingVrfForValidators(
+      ringKeys,
+      proverKeyIndices,
+      secretSeedsData,
+      secretSeedDataLen,
+      inputsData,
+      vrfInputDataLen,
+    );
   }
 }
 ```

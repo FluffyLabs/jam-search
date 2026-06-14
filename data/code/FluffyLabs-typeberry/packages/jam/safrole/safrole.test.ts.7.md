@@ -2,23 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L705-L828
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L709-L833
 title: packages/jam/safrole/safrole.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 7
 chunk_total: 9
-content_sha: 0c6c0de7459e8aa8231ae5a0924dd2e99a7cff3f9b9d16ba61bbad7461e4f2ae
+content_sha: ef4116025a8d39fc4ab36a816810b368d31d9759d25ea75c486bbe281ada89d9
 language: typescript
 ---
-`packages/jam/safrole/safrole.test.ts` (lines 705–828)
+`packages/jam/safrole/safrole.test.ts` (lines 709–833)
 
 ```typescript
-      entropy: FixedSizeArray.new(
-        [
-          Bytes.zero(HASH_SIZE).asOpaque(),
-          Bytes.zero(HASH_SIZE).asOpaque(),
           Bytes.zero(HASH_SIZE).asOpaque(),
           Bytes.zero(HASH_SIZE).asOpaque(),
         ],
@@ -139,4 +135,9 @@ language: typescript
           id: Bytes.fill(HASH_SIZE, 2),
         }),
         Ticket.create({
+          attempt: tryAsTicketAttempt(0),
+          id: Bytes.fill(HASH_SIZE, 3),
+        }),
+        Ticket.create({
+          attempt: tryAsTicketAttempt(0),
 ```

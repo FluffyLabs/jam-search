@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L1-L101
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: 00109b2c452c42b3e6e515c0554c8536bbbc6c6985dd19ae5759d3f9480529b4
+content_sha: cf3edd312c6e1d99062d8c942960afb2f05ba6251fba3adc2407c217c21f619b
 language: typescript
 ---
 `packages/workers/importer/importer.ts` (lines 1–101)
@@ -51,7 +51,7 @@ export type ImporterOptions = {
   pruneBlocks?: boolean;
 };
 
-/** Construction arguments for {@link Importer}. */
+/** Construction arguments for `Importer`. */
 export type ImporterArgs = {
   spec: ChainSpec;
   pvm: PvmBackend;
@@ -87,7 +87,7 @@ export class Importer {
   private readonly events: ImporterEventsListener;
 
   /**
-   * Build an {@link Importer} connected to the best state loaded from `states`.
+   * Build an `Importer` connected to the best state loaded from `states`.
    *
    * Throws if the best state cannot be loaded — callers are expected to treat that
    * as a programmer error (the DB should be initialized before reaching here).
@@ -107,7 +107,7 @@ export class Importer {
     this.blocks = args.blocks;
     this.states = args.states;
     this.options = args.options ?? {};
-    this.events = args.events ?? ImporterStats.new(args.logger, () => this.states.diskSizeInBytes?.() ?? null);
+    this.events = args.events ?? ImporterStats.new(() => this.states.diskSizeInBytes?.() ?? null);
 
     this.metrics = metrics.createMetrics();
 

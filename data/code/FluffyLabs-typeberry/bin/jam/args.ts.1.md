@@ -1,19 +1,20 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/args.ts#L79-L226'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/args.ts#L78-L205'
 title: bin/jam/args.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 3
-content_sha: 088f500056d4f2be831d999927c0aaeecc87105fd1ea460e71014513067c84a5
+content_sha: 07753c63ca02770384a0a592179353ecccd9181ab2760bab4415ab6cae71fa2c
 language: typescript
 ---
-`bin/jam/args.ts` (lines 79–226)
+`bin/jam/args.ts` (lines 78–205)
 
 ```typescript
+      SharedOptions & {
         index: U16 | "all";
         isFastForward?: boolean;
       }
@@ -88,7 +89,14 @@ export function parseArgs(input: string[], withRelPath: (v: string) => string): 
       return { command: Command.Run, args: data };
     }
     case Command.Dev: {
-      const data = parseSharedOptions(args, [DEV_CONFIG]);
+      const shared = parseSharedOptions(args, [DEV_TINY_CONFIG]);
+      // Dev mode always needs a base dev config. If the user only provided jq-query
+      // modifiers (e.g. `--config=.database_base_path=...`), keep the tiny dev config
+      // as the base and layer the modifiers on top — otherwise the query would be
+      // applied to an empty config and fail. A provided base config / file replaces
+      // it as usual.
+      const hasBaseConfig = shared.config.some((c) => !c.startsWith("."));
+      const data = hasBaseConfig ? shared : { ...shared, config: [DEV_TINY_CONFIG, ...shared.config] };
       const indexOrAll = args._.shift();
       if (indexOrAll === undefined) {
         throw new Error("Missing dev-validator index.");
@@ -134,32 +142,4 @@ export function parseArgs(input: string[], withRelPath: (v: string) => string): 
       args._ = [];
       assertNoMoreArgs(args);
       return {
-        command: Command.Import,
-        args: {
-          ...data,
-          files,
-        },
-      };
-    }
-    case Command.Export: {
-      const data = parseSharedOptions(args);
-      const output = args._.shift();
-      if (output === undefined) {
-        throw new Error("Missing output directory.");
-      }
-      assertNoMoreArgs(args);
-      return {
-        command: Command.Export,
-        args: {
-          ...data,
-          output: withRelPath(output),
-        },
-      };
-    }
-    default: {
-      args._.unshift(command);
-      assertNoMoreArgs(args);
-    }
-  }
-
 ```

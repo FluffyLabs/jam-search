@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/README.md#L1-L100'
 title: README.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-05-28T15:07:03+02:00'
-last_modified: '2026-05-28T15:07:03+02:00'
+created_at: '2026-06-12T11:39:19+02:00'
+last_modified: '2026-06-12T11:39:19+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 37aea4f9f6bb8e278854a81c0fed4d7a9b99c7a5046707a6d0c0eae339924c88

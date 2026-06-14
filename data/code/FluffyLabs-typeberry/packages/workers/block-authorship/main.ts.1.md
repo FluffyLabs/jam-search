@@ -2,101 +2,104 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/main.ts#L107-L190
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/main.ts#L96-L182
 title: packages/workers/block-authorship/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
-chunk_total: 6
-content_sha: 961b0cb5ef94733182deda5bc81e9b81fa263900b17d61fe22ee308d51f88da8
+chunk_total: 4
+content_sha: 30f741e2836e3873d8351cc94f6a50f4ac74facddd44a666e183724012b8ebc0
 language: typescript
 ---
-`packages/workers/block-authorship/main.ts` (lines 107–190)
+`packages/workers/block-authorship/main.ts` (lines 96–182)
 
 ```typescript
-  logger.info`Block authorship validator keys: ${keys.map(({ bandersnatchPublic }, index) => `\n ${index}: ${bandersnatchPublic.toString()}`)}`;
+  // Generate blocks until the close signal is received.
+  let isFinished = false;
+  comms.setOnFinish(async () => {
+    isFinished = true;
+  });
 
-  // Per-epoch cache for Tickets mode: index corresponds to position in sealingKeySeries.tickets.
-  // null entry means none of our keys match that slot.
-  // Rebuilt once per epoch via buildTicketAuthorshipCache().
-  // Declared here (before the eager startup build below) so its TDZ doesn't fire
-  // when `buildTicketAuthorshipCache` runs during initialisation.
-  let ticketAuthorshipCache: Array<SealData | null> | null = null;
+  let ticketGeneratorDone = Promise.resolve();
 
-  if (initialState !== null) {
-    const isEpochStart = startTimeSlot % chainSpec.epochLength === 0;
-    const initialKeys = await getSealingKeySeries(isEpochStart, startTimeSlot, initialState);
-    if (initialKeys.isOk) {
-      logEpochBlockCreation(tryAsEpoch(Math.floor(startTimeSlot / chainSpec.epochLength)), initialKeys.ok);
-      // Build the cache eagerly so the first slot of a session doesn't need an
-      // on-the-fly VRF scan. After this, `buildTicketAuthorshipCache` is only
-      // re-run on epoch boundaries.
-      const initialEntropy = isEpochStart ? initialState.entropy[2] : initialState.entropy[3];
-      await buildTicketAuthorshipCache(initialKeys.ok, initialEntropy);
-    }
-  }
+  while (!isFinished) {
+    const state = getBestState();
 
-  function getTime() {
-    const currentTime = process.hrtime.bigint() / 1_000_000n;
-    const timeFromStart = currentTime - startTime;
-    const slotDurationMs = BigInt(chainSpec.slotDuration * 1000);
-    return tryAsU64(BigInt(startTimeSlot) * slotDurationMs + timeFromStart + slotDurationMs);
-  }
+    // query current expected time slot
+    const stateTimeSlot = state.timeslot;
+    const newTimeSlot = timeSlotHandler.getCurrentTimeSlot(stateTimeSlot);
+    const epochPhase = newTimeSlot % chainSpec.epochLength;
 
-  function getValidatorIndex(key: ValidatorKeys, currentValidatorData: PerValidator<ValidatorData>) {
-    const index = currentValidatorData.findIndex((data) => data.bandersnatch.isEqualTo(key.bandersnatchPublic));
-    if (index < 0) {
-      return null;
-    }
-    return tryAsValidatorIndex(index);
-  }
+    // Seems that the epoch is changing, let's transition
+    if (epochData === null || epochTracker.isEpochChanged(stateTimeSlot, newTimeSlot)) {
+      const oldEpochData = epochData;
+      const epochDataResult = await epochTracker.getEpochData(logger, state, newTimeSlot);
+      if (epochDataResult.isError) {
+        // Couldn't compute the sealing keys for this epoch — wait and retry rather
+        // than crashing the worker (`epochData` keeps its previous value, if any).
+        logger.warn`[#${newTimeSlot}] Could not compute epoch data: ${epochDataResult.details()}`;
+        await timeSlotHandler.waitForNextSlot(false, epochPhase, ticketGeneratorDone);
+        continue;
+      }
+      epochData = epochDataResult.ok;
+      const epochIndex = epochData.epoch;
+      if (oldEpochData === null) {
+        logger.info`🎁 [E${epochIndex}#${newTimeSlot}] starting authorship (state at #${stateTimeSlot})`;
+      } else {
+        logger.info`🎁 [E${oldEpochData.epoch}#${stateTimeSlot} -> E${epochIndex}#${newTimeSlot}] epoch transition`;
+      }
 
-  /**
-   * Precomputes which slots we are the author of for the current epoch (Tickets mode).
-   */
-  async function buildTicketAuthorshipCache(sealingKeySeries: SafroleSealingKeys, entropy: EntropyHash) {
-    if (sealingKeySeries.kind !== SafroleSealingKeysKind.Tickets) {
-      ticketAuthorshipCache = null;
-      return;
-    }
+      // On every epoch boundary, push the authoritative ticket pool to networking so it
+      // can replace its redistribution set; this keeps the two sides from drifting.
+      const tickets = verifiedPool.getForEpoch(epochIndex).map((entry) => entry.ticket);
+      await networkingComms.sendReplaceTicketPool({
+        epochIndex,
+        tickets,
+      });
 
-    const ownTickets = new HashDictionary<EntropyHash, SealData>();
-    for (let attempt = 0; attempt < chainSpec.ticketsPerValidator; attempt++) {
-      const payload = getTicketSealPayload(entropy, attempt);
-      for (const key of keys) {
-        const result = await bandersnatchVrf.getVrfOutputHash(bandersnatch, key.bandersnatchSecret, payload);
-        if (result.isOk) {
-          ownTickets.set(result.ok.asOpaque<EntropyHash>(), { key, sealPayload: asOpaqueType(payload) });
-        }
+      // Let's generate some tickets for the next epoch if we still have time
+      if (epochPhase < chainSpec.contestLength) {
+        const generatingForEpoch = epochData.epoch;
+        const isEpochStart = epochPhase === 0;
+        ticketGeneratorDone = ticketGenerator.generateTickets(state, isEpochStart, async (tickets) => {
+          // too late!
+          if (generatingForEpoch !== epochData?.epoch) {
+            return;
+          }
+          const isValid = await onEpochTickets(generatingForEpoch, tickets, "generator");
+          // Push our freshly generated tickets to networking so they're redistributed
+          // to peers (who include them in their blocks). Without this, a multi-node
+          // network never shares tickets and accumulators only ever hold local ones.
+          if (isValid) {
+            await networkingComms.sendTickets({ epochIndex: generatingForEpoch, tickets });
+          }
+        });
       }
     }
 
-    const cache = sealingKeySeries.tickets.map((ticket) => ownTickets.get(ticket.id.asOpaque<EntropyHash>()) ?? null);
-    ticketAuthorshipCache = cache;
-    const ours = cache.filter(Boolean).length;
-    logger.info`Built ticket authorship cache: ${ours}/${cache.length} slots assigned to us this epoch.`;
-  }
+    const logPrefix = `[E${epochData.epoch}#${newTimeSlot}]`;
 
-  function getTicketSealPayload(entropy: EntropyHash, attempt: number): BytesBlob {
-    return BytesBlob.blobFromParts(JAM_TICKET_SEAL, entropy.raw, new Uint8Array([attempt]));
-  }
+    // author a block if we are assigned to that slot
+    const currentSlot = epochData.slots[epochPhase];
+    if (currentSlot !== null) {
+      const { logId, key, sealPayload } = currentSlot;
+      // figure out validator index
+      const validatorIndex = getValidatorIndex(key.bandersnatchPublic, state.currentValidatorData);
+      if (validatorIndex === null) {
+        logger.log`${logPrefix} Not currently validator, yet ${currentSlot.logId} is present.`;
+        // Don't spin: wait for the next slot before re-checking (otherwise this is
+        // a tight hot loop until some other component advances the DB).
+        await timeSlotHandler.waitForNextSlot(false, epochPhase, ticketGeneratorDone);
+        continue;
+      }
 
-  function getFallbackSealPayload(entropy: EntropyHash): BlockSealInput {
-    return asOpaqueType(BytesBlob.blobFromParts(JAM_FALLBACK_SEAL, entropy.raw));
-  }
-
-  /**
-   * Returns the validator key and seal payload for the current slot, or null if we are not the author.
-   *
-   * Keys mode (fallback): matches our key against the slot's assigned bandersnatch key.
-   * Tickets mode: O(1) lookup against the per-epoch authorship cache (built eagerly at
-   * startup and on every epoch transition, so we never fall back to on-the-fly VRF).
-   */
-  function getSealData(
-    sealingKeySeries: SafroleSealingKeys,
-    keys: ValidatorKeys[],
-    timeSlot: TimeSlot,
-    entropy: EntropyHash,
-  ): SealData | null {
+      logger.log`${logPrefix} Creating block using ${logId} (valIdx: ${validatorIndex})`;
+      // retrieve epoch tickets to include
+      const currentEpochTickets = verifiedPool.getForEpoch(epochData.epoch);
+      const newBlock = await generator.nextBlockView(
+        validatorIndex,
+        key.bandersnatchSecret,
+        sealPayload,
+        newTimeSlot,
 ```

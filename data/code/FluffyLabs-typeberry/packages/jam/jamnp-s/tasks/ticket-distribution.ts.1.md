@@ -2,19 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/ticket-distribution.ts#L95-L186
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/ticket-distribution.ts#L95-L156
 title: packages/jam/jamnp-s/tasks/ticket-distribution.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: 196274ac781cbb036daad92151f0fb2ac103c6d1d711cb9582f04b4f70228b16
+content_sha: 33e49527a821fb3e183a015e06defac53da7f43fd7b92bf3c0b701df9a2a4b21
 language: typescript
 ---
-`packages/jam/jamnp-s/tasks/ticket-distribution.ts` (lines 95–186)
+`packages/jam/jamnp-s/tasks/ticket-distribution.ts` (lines 95–156)
 
 ```typescript
+                logger.trace`[${peerInfo.peerId}] <-- Sending ticket for epoch ${epochIndex}`;
+                handler.sendTicket(sender, epochIndex, ticket);
                 return OK;
               },
             );
@@ -31,80 +33,48 @@ language: typescript
   }
 
   /**
-   * Add a ticket to the pending queue for distribution.
+   * Add a ticket to the redistribution pool.
    * Clears pending tickets when epoch changes.
    * Deduplicates tickets based on signature.
    */
   addTicket(epochIndex: Epoch, ticket: SignedTicket) {
-    // Drop tickets for older epochs (can happen when a delayed validation callback completes
-    // after the epoch has already advanced — accepting it would roll back currentEpoch).
-    if (this.currentEpoch !== null && epochIndex < this.currentEpoch) {
-      return;
-    }
-
-    // Epoch advanced — clear old tickets
-    if (this.currentEpoch !== null && epochIndex > this.currentEpoch) {
-      logger.log`[addTicket] Epoch changed from ${this.currentEpoch} to ${epochIndex}, clearing ${this.pendingTickets.length} old tickets`;
-      this.pendingTickets = [];
-      // Note: We don't need to clear aux data for all peers here.
-      // The aux data contains the epoch, so maintainDistribution will lazily
-      // reset it when it detects an epoch mismatch. This handles both connected
-      // and disconnected peers correctly.
-    }
-
-    this.currentEpoch = epochIndex;
-
-    /**
-     * Deduplicate: check if a ticket with the same signature already exists
-     *
-     * Here we are risking "poisoning" the local pendingTickets - i.e:
-     *  1. The adversary sees a signature and swaps the ticket attempt to something different.
-     *  2. This creates an invalid ticket, but prevents a valid ticket with the same signature from being included and distributed.
-     *
-     * TODO [MaSi]: The poisoning risk should be fixed during implementation of ticket validation.
-     */
-    const isDuplicate = this.pendingTickets.some(
-      (pending) => pending.epochIndex === epochIndex && pending.ticket.signature.isEqualTo(ticket.signature),
-    );
-
-    if (!isDuplicate) {
-      this.pendingTickets.push({ epochIndex, ticket });
-      logger.info`[addTicket] Added ticket for epoch ${epochIndex}, total: ${this.pendingTickets.length}`;
-    }
+    this.pool.addTicket(epochIndex, ticket);
   }
 
-  private onTicketReceivedCallback: ((epochIndex: Epoch, ticket: SignedTicket) => Promise<boolean>) | null = null;
+  /**
+   * Replace the redistribution pool for the given epoch with the supplied tickets.
+   * Used when the authorship worker dumps the authoritative pool on an epoch boundary.
+   */
+  replacePool(epochIndex: Epoch, tickets: readonly SignedTicket[]) {
+    this.pool.replace(epochIndex, tickets);
+  }
 
   /**
-   * Register a callback that validates a received ticket.
-   * The ticket is only added to the redistribution pool if the callback returns `true`.
-   * This prevents redistribution of invalid tickets (e.g. those with a tampered `attempt` field).
+   * Register the validator that decides whether tickets received from peers should be
+   * accepted (and therefore redistributed). The default is {@link DenyTicketsValidator},
+   * so the caller must install a real validator for any peer ticket to make it through.
    */
-  setOnTicketReceived(cb: (epochIndex: Epoch, ticket: SignedTicket) => Promise<boolean>) {
-    this.onTicketReceivedCallback = cb;
+  setTicketValidator(validator: TicketValidator) {
+    this.validator = validator;
   }
 
   private onTicketReceived(epochIndex: Epoch, ticket: SignedTicket) {
     logger.trace`Received ticket for epoch ${epochIndex}, attempt ${ticket.attempt}`;
-    if (this.onTicketReceivedCallback !== null) {
-      // Validate first; only redistribute if valid to avoid spreading tampered tickets.
-      // Wrap with Promise.resolve().then() to catch both sync throws and async rejections.
-      const cb = this.onTicketReceivedCallback;
-      Promise.resolve()
-        .then(() => cb(epochIndex, ticket))
-        .then((isValid) => {
-          if (isValid) {
-            this.addTicket(epochIndex, ticket);
-          } else {
-            logger.warn`Dropping invalid ticket for epoch ${epochIndex} (validation failed)`;
-          }
-        })
-        .catch((error) => {
-          logger.error`Error validating ticket for epoch ${epochIndex}, attempt ${ticket.attempt}: ${error}`;
-        });
-    } else {
-      this.addTicket(epochIndex, ticket);
-    }
+    const validator = this.validator;
+    // Wrap with Promise.resolve().then() so a synchronous throw inside the validator
+    // funnels into the same .catch() as an async rejection.
+    Promise.resolve()
+      .then(() => validator.validate(epochIndex, [ticket]))
+      .then((result) => {
+        if (result.isOk) {
+          this.addTicket(epochIndex, ticket);
+        } else {
+          logger.trace`Dropping ticket for epoch ${epochIndex}: ${result.error}`;
+        }
+      })
+      .catch((error) => {
+        logger.error`Error validating ticket for epoch ${epochIndex}, attempt ${ticket.attempt}: ${error}`;
+      });
   }
 }
 ```

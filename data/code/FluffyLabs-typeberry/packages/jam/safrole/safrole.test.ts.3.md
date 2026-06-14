@@ -2,24 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L225-L353
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L230-L355
 title: packages/jam/safrole/safrole.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 3
 chunk_total: 9
-content_sha: 8bb112dcf8eaa1eaf7e451b9525add69307ceb4510c05be9cc91f3e462639217
+content_sha: 474e2471a8a3f24e9c9706cc03a777e3174585b58bea14f6481805d99852de10
 language: typescript
 ---
-`packages/jam/safrole/safrole.test.ts` (lines 225–353)
+`packages/jam/safrole/safrole.test.ts` (lines 230–355)
 
 ```typescript
-      punishSet,
-      epochMarker: null,
-      ticketsMarker: null,
-    };
-
     const result = await safrole.transition(input);
 
     assert.deepEqual(result.isError, true);
@@ -30,10 +25,10 @@ language: typescript
 
   it("should return duplicated ticket error", async () => {
     mock.method(bandersnatchVrf, "verifyTickets", () =>
-      Promise.resolve([
-        { isValid: true, entropyHash: Bytes.zero(HASH_SIZE) },
-        { isValid: true, entropyHash: Bytes.zero(HASH_SIZE) },
-      ]),
+      Promise.resolve({
+        isValid: true,
+        tickets: [Bytes.zero(HASH_SIZE), Bytes.zero(HASH_SIZE)],
+      }),
     );
     const punishSet = SortedSet.fromArray<Ed25519Key>(hashComparator);
     const state: SafroleState = {
@@ -88,10 +83,10 @@ language: typescript
 
   it("should return bad ticket order error", async () => {
     mock.method(bandersnatchVrf, "verifyTickets", () =>
-      Promise.resolve([
-        { isValid: true, entropyHash: Bytes.fill(HASH_SIZE, 1) },
-        { isValid: true, entropyHash: Bytes.zero(HASH_SIZE) },
-      ]),
+      Promise.resolve({
+        isValid: true,
+        tickets: [Bytes.fill(HASH_SIZE, 1), Bytes.zero(HASH_SIZE)],
+      }),
     );
     const punishSet = SortedSet.fromArray<Ed25519Key>(hashComparator);
     const state: SafroleState = {
@@ -144,4 +139,6 @@ language: typescript
     }
   });
 
+  it("should return correctly sequenced sealingKeySeries", async () => {
+    const punishSet = SortedSet.fromArray<Ed25519Key>(hashComparator);
 ```

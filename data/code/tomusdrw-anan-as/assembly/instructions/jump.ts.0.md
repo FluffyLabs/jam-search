@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/jump.ts#L1-L25
 title: assembly/instructions/jump.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-29T16:20:56+02:00'
-last_modified: '2026-05-29T16:20:56+02:00'
+created_at: '2026-06-12T09:48:57+02:00'
+last_modified: '2026-06-12T09:48:57+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 3309982c9a64d89e74e981d8357376d171ea44f15a50ecaedb9fa8855d2a731e

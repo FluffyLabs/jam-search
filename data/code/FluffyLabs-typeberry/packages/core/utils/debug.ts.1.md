@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.ts#L135-L216
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/debug.ts#L135-L222
 title: packages/core/utils/debug.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: f2c8b8fb338efd179cc8a776f04153b2e5a62a591a311175a478d37fe0565d2d
+content_sha: a077dd390b84e6613535c0dbd7f719c391f636182355700107571e040e49c376
 language: typescript
 ---
-`packages/core/utils/debug.ts` (lines 135–216)
+`packages/core/utils/debug.ts` (lines 135–222)
 
 ```typescript
  * Utility function to measure time taken for some operation [ms].
@@ -58,28 +58,34 @@ function rawMemoryUsage(): NodeJS.MemoryUsage | null {
  * `arrayBuffers` should allow tracking WASM memory, since every instance backs its
  * memory with `ArrayBuffer`.
  */
-export function memoryUsage(): string {
+export function memoryUsage(withDetails: boolean): string {
   const m = rawMemoryUsage();
   if (m === null) {
     return "";
   }
-  return `rss=${toMb(m.rss)}MB heap=${toMb(m.heapUsed)}/${toMb(m.heapTotal)}MB external=${toMb(m.external)}MB arrayBuffers=${toMb(m.arrayBuffers)}MB`;
+  if (withDetails) {
+    return `rss=${toMb(m.rss)}MB heap=${toMb(m.heapUsed)}/${toMb(m.heapTotal)}MB external=${toMb(m.external)}MB arrayBuffers=${toMb(m.arrayBuffers)}MB`;
+  }
+
+  return `rss=${toMb(m.rss)}MB heap=${toMb(m.heapUsed)}/${toMb(m.heapTotal)}MB`;
 }
 
 /** Create a stateful memory usage reporter. */
-export function memoryTracker(): () => string {
+export function memoryTracker(withDetails: boolean): { toString(): string } {
   let prev: NodeJS.MemoryUsage | null = null;
-  return () => {
-    const m = rawMemoryUsage();
-    if (m === null) {
-      return "";
-    }
-    const delta =
-      prev === null
-        ? ""
-        : ` (Δrss=${signedMb(m.rss - prev.rss)}MB ΔarrayBuffers=${signedMb(m.arrayBuffers - prev.arrayBuffers)}MB)`;
-    prev = m;
-    return `${memoryUsage()}${delta}`;
+  return {
+    toString() {
+      const m = rawMemoryUsage();
+      if (m === null) {
+        return "";
+      }
+      const delta =
+        prev === null || withDetails === false
+          ? ""
+          : ` (Δrss=${signedMb(m.rss - prev.rss)}MB ΔarrayBuffers=${signedMb(m.arrayBuffers - prev.arrayBuffers)}MB)`;
+      prev = m;
+      return `${memoryUsage(withDetails)}${delta}`;
+    },
   };
 }
 

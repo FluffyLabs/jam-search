@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/test/test-w3f-portable.ts#L1-L7'
 title: test/test-w3f-portable.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-29T16:20:56+02:00'
-last_modified: '2026-05-29T16:20:56+02:00'
+created_at: '2026-06-12T09:48:57+02:00'
+last_modified: '2026-06-12T09:48:57+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: ed029073992114d985d14282a642fd13bd7ff8c2c60419b35d832e0629a89edf

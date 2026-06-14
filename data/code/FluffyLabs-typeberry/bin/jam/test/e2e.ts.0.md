@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/test/e2e.ts#L1-L104'
 title: bin/jam/test/e2e.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: a4ebc19e469f60766c5082a4d2cda7eaf334b7e9d928f35dfb3c467e0998156a
+content_sha: 7faf8bb29cfcd2618d6a2e81b491cb672abb680628547485d8c248dd546e020b
 language: typescript
 ---
 `bin/jam/test/e2e.ts` (lines 1–104)
@@ -27,7 +27,7 @@ const TARGET_BLOCK = 6;
 
 const logger = Logger.new(import.meta.filename, "jam:e2e");
 
-const bestBlockPattern = /🧊 Best block:.+#(\d+)/;
+const bestBlockPattern = /🧊 Best:.+#(\d+)/;
 
 test("JAM Node dev blocks with In Memory", { timeout: TEST_TIMEOUT }, async () => {
   let jamProcess: ChildProcess | null = null;

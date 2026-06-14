@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L102
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L100
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: c1d8449f3904a22436b8d4bd14464f43feda673bf81fc632fb12923ff45acd43
+content_sha: 373ea90486c4a6317803811e8a20a821cbe208282bdcd5b0a69e0d4c54b1ca13
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 1–102)
+`packages/jam/node/main-importer.ts` (lines 1–100)
 
 ```typescript
 import type { BlockView, HeaderHash, StateRootHash } from "@typeberry/block";
@@ -31,14 +31,18 @@ import type { NodeApi } from "./main.js";
 
 const zeroHash = Bytes.zero(HASH_SIZE).asOpaque<StateRootHash>();
 
+export type StateBackend = "lmdb" | "lmdb-hybrid" | "fjall-hybrid";
+
 export type ImporterOptions = {
   initGenesisFromAncestry?: boolean;
   dummyFinalityDepth?: number;
   pruneBlocks?: boolean;
-  /** Open the LMDB database without fsync/compression. Only safe for throwaway dbs (e.g. fuzzing). */
+  /** Open the database without fsync/compression. Only safe for throwaway dbs (e.g. fuzzing). */
   ephemeral?: boolean;
-  /** Persistent backend to use when `databaseBasePath` is set. Defaults to full LMDB. */
-  stateBackend?: "lmdb" | "hybrid";
+  /**
+   * Persistent backend to use when `databaseBasePath` is set. Defaults to full LMDB.
+   */
+  stateBackend?: StateBackend;
 };
 
 export async function mainImporter(
@@ -87,8 +91,8 @@ export async function mainImporter(
           blake2b,
           workerParams,
         })
-      : dbBackend === "hybrid"
-        ? HybridWorkerConfig.new({
+      : dbBackend === "lmdb-hybrid" || dbBackend === "fjall-hybrid"
+        ? await HybridWorkerConfig.new({
             nodeName,
             chainSpec,
             blake2b,
@@ -96,6 +100,7 @@ export async function mainImporter(
             workerParams,
             ephemeral,
             compression,
+            backend: dbBackend === "lmdb-hybrid" ? "lmdb" : "fjall",
           })
         : LmdbWorkerConfig.new({
             nodeName,
@@ -110,11 +115,4 @@ export async function mainImporter(
   logger.info`🛢️ Opening database at ${dbPath}`;
   const rootDb = workerConfig.openDatabase({ readonly: false });
   await initializeDatabase(chainSpec, blake2b, genesisHeaderHash, rootDb, config.node.chainSpec, config.ancestry, {
-    initGenesisFromAncestry: options.initGenesisFromAncestry,
-  });
-  await rootDb.close();
-
-  const { db, importer } = await createImporter(workerConfig, {
-    initGenesisFromAncestry: options.initGenesisFromAncestry,
-  });
 ```

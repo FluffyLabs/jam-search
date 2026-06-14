@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/truncated-hash-dictionary.test.ts#L109-L211
 title: packages/core/collections/truncated-hash-dictionary.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: 94267798e58cfa5639e0d309091c31f23146b6facdf9425f8ace983f7fd721cc

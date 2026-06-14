@@ -2,19 +2,24 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/ticket-distribution.test.ts#L221-L324
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/ticket-distribution.test.ts#L221-L338
 title: packages/jam/jamnp-s/tasks/ticket-distribution.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 2
-chunk_total: 3
-content_sha: 06c7f0444826cdb7a173cc707a244fedb762bd50cd08d6ee79c96a2518fbc258
+chunk_total: 4
+content_sha: 7bffc77c444d2e941dd9c7437949ecf3bbf30969a988aef438bbc1ef782d02d5
 language: typescript
 ---
-`packages/jam/jamnp-s/tasks/ticket-distribution.test.ts` (lines 221–324)
+`packages/jam/jamnp-s/tasks/ticket-distribution.test.ts` (lines 221–338)
 
 ```typescript
+    assert.strictEqual(peer1.receivedTickets.length, 1);
+    assert.strictEqual(peer1.receivedTickets[0].epochIndex, OTHER_EPOCH);
+    assert.deepStrictEqual(peer1.receivedTickets[0].ticket, ticket2);
+  });
+
   it("should send new tickets to newly connected peers", async () => {
     const self = await init("self");
     const peer1 = await init("peer1");
@@ -70,7 +75,7 @@ language: typescript
     assert.deepStrictEqual(peer2.receivedTickets[0].ticket, ticket);
   });
 
-  it("should NOT redistribute ticket if validation callback returns false", async () => {
+  it("should NOT redistribute ticket if validator rejects", async () => {
     const self = await init("self");
     const peer1 = await init("peer1");
     const peer2 = await init("peer2");
@@ -80,21 +85,23 @@ language: typescript
     await tick();
 
     // Validation always rejects
-    self.ticketTask.setOnTicketReceived(async () => false);
+    self.ticketTask.setTicketValidator({
+      validate: async () => Result.error(ValidationError.InvalidProof, () => "rejected"),
+    });
 
     const ticket = createTestTicket(0);
     peer1.ticketTask.addTicket(TEST_EPOCH, ticket);
     peer1.ticketTask.maintainDistribution();
     await tick();
 
-    // self.addTicket was NOT called (callback returned false), so nothing to redistribute
+    // self.addTicket was NOT called (validator rejected), so nothing to redistribute
     assert.strictEqual(self.receivedTickets.length, 0);
     self.ticketTask.maintainDistribution();
     await tick();
     assert.strictEqual(peer2.receivedTickets.length, 0);
   });
 
-  it("should redistribute ticket if validation callback returns true", async () => {
+  it("should redistribute ticket if validator accepts", async () => {
     const self = await init("self");
     const peer1 = await init("peer1");
     const peer2 = await init("peer2");
@@ -103,20 +110,27 @@ language: typescript
     self.openConnection(peer2);
     await tick();
 
-    // Validation always accepts
-    self.ticketTask.setOnTicketReceived(async () => true);
-
+    // Default init() already wires an AcceptTicketsValidator
     const ticket = createTestTicket(0);
     peer1.ticketTask.addTicket(TEST_EPOCH, ticket);
     peer1.ticketTask.maintainDistribution();
     await tick();
 
-    // self.addTicket WAS called (callback returned true)
+    // self.addTicket WAS called
     assert.strictEqual(self.receivedTickets.length, 1);
     self.ticketTask.maintainDistribution();
     await tick();
     assert.strictEqual(peer2.receivedTickets.length, 1);
     assert.deepStrictEqual(peer2.receivedTickets[0].ticket, ticket);
   });
-});
+
+  it("replacePool overwrites the redistribution pool", async () => {
+    const self = await init("self");
+    const peer1 = await init("peer1");
+
+    self.openConnection(peer1);
+    await tick();
+
+    // Locally added tickets first
+    self.ticketTask.addTicket(TEST_EPOCH, createTestTicket(0));
 ```

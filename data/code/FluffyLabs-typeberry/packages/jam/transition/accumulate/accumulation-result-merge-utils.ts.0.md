@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/accumulate/accumulation-result-merge-utils.ts#L1-L109
 title: packages/jam/transition/accumulate/accumulation-result-merge-utils.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 3
 content_sha: 44e974ba39328b74af1297362a0f2a25872e53cea1d5ca1a42b4586ee57cfdb0

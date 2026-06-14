@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/collections/expected/map-set.json#L1-L25
 title: benchmarks/collections/expected/map-set.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 52657ac538edda3f3ed102b68064c02739d9d0b268db0ab218f261790354c8a2
+content_sha: 58114e6c46a63668cba1f9667ef8e9e8f06fcedbb24362c03e7d5c12b5e73cbf
 language: json
 ---
 `benchmarks/collections/expected/map-set.json` (lines 1–25)
@@ -22,12 +22,12 @@ language: json
   "results": [
     {
       "name": "2 gets + conditional set",
-      "ops": 86222.26,
-      "margin": 10
+      "ops": 46992.12,
+      "margin": 2.0
     },
     {
       "name": "1 get 1 set",
-      "ops": 49092.29,
+      "ops": 37868.19,
       "margin": 10
     }
   ],

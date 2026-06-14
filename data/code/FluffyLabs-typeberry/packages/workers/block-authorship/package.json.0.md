@@ -2,22 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/package.json#L1-L34
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/package.json#L1-L36
 title: packages/workers/block-authorship/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: aa59cfcd89c2b420951fbaef294df51bb05ec45b29b34c61413a42d2e1ec221d
+content_sha: c35e26f538b8ab15665dfd6b979ac439ef63a276f21ca8717cf73d47741df41a
 language: json
 ---
-`packages/workers/block-authorship/package.json` (lines 1–34)
+`packages/workers/block-authorship/package.json` (lines 1–36)
 
 ```json
 {
   "name": "@typeberry/block-authorship",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "A test block generator simulating blocks received over the network.",
   "main": "index.ts",
   "dependencies": {
@@ -27,6 +27,7 @@ language: json
     "@typeberry/codec": "*",
     "@typeberry/comms-authorship-network": "*",
     "@typeberry/collections": "*",
+    "@typeberry/concurrent": "*",
     "@typeberry/config": "*",
     "@typeberry/crypto": "*",
     "@typeberry/database": "*",
@@ -37,6 +38,7 @@ language: json
     "@typeberry/state": "*",
     "@typeberry/state-merkleization": "*",
     "@typeberry/telemetry": "*",
+    "@typeberry/ticket-pool": "*",
     "@typeberry/transition": "*",
     "@typeberry/utils": "*",
     "@typeberry/workers-api": "*",

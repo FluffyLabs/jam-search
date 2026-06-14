@@ -2,19 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L125-L236
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.ts#L128-L239
 title: packages/jam/safrole/bandersnatch-vrf.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 3
-content_sha: ce7b66e20659ff9d9e770a416b958c08dc338fe967f107356cdf109e4d089432
+content_sha: 1430741db6e1597f170409b30b742b69f5688e4e6d361088c9c67a395abb0f43
 language: typescript
 ---
-`packages/jam/safrole/bandersnatch-vrf.ts` (lines 125–236)
+`packages/jam/safrole/bandersnatch-vrf.ts` (lines 128–239)
 
 ```typescript
+): Promise<Result<BandersnatchRingRoot, null>> {
+  const keys = BytesBlob.blobFromParts(validators.map((x) => x.raw));
   const cacheEntry = ringCommitmentCache.find((v) => v.keys.isEqualTo(keys));
   if (cacheEntry !== undefined) {
     return cacheEntry.value;
@@ -44,16 +46,13 @@ async function getRingCommitmentNoCache(
   return Result.ok(Bytes.fromBlob(commitmentResult.subarray(1), BANDERSNATCH_RING_ROOT_BYTES).asOpaque());
 }
 
-// One byte for result discriminator (`ResultValues`) and the rest is entropy hash.
-const TICKET_RESULT_LENGTH = 1 + HASH_SIZE;
-
 async function verifyTickets(
   bandersnatch: BandernsatchWasm,
   numberOfValidators: number,
   epochRoot: BandersnatchRingRoot,
   tickets: readonly SignedTicket[],
   entropy: EntropyHash,
-): Promise<{ isValid: boolean; entropyHash: EntropyHash }[]> {
+): Promise<{ isValid: boolean; tickets: EntropyHash[] }> {
   const contextLength = entropy.length + JAM_TICKET_SEAL.length + 1;
 
   const ticketsData = BytesBlob.blobFromParts(
@@ -70,10 +69,15 @@ async function verifyTickets(
     ticketsData,
     contextLength,
   );
-  return Array.from(BytesBlob.blobFrom(verificationResult).chunks(TICKET_RESULT_LENGTH)).map((result) => ({
-    isValid: result.raw[RESULT_INDEX] === ResultValues.Ok,
-    entropyHash: Bytes.fromBlob(result.raw.subarray(1, TICKET_RESULT_LENGTH), HASH_SIZE).asOpaque(),
-  }));
+  const isValid = verificationResult[RESULT_INDEX] === ResultValues.Ok;
+  // NOTE: in case of failure, the hashes will be all zeros, but we can safely
+  // keep the same code path.
+  const chunks = BytesBlob.blobFrom(verificationResult.subarray(1)).chunks(HASH_SIZE);
+  const results: EntropyHash[] = [];
+  for (const entropyHash of chunks) {
+    results.push(Bytes.fromBlob(entropyHash.raw, HASH_SIZE).asOpaque());
+  }
+  return { isValid, tickets: results };
 }
 
 const SEAL_FAILED_ERROR = () => "Seal generation failed";
@@ -113,18 +117,14 @@ async function getVrfOutputHash(
 const GENERATE_RESULT_ENTRY_LENGTH = 1 + BANDERSNATCH_PROOF_BYTES;
 
 /**
- * Generates signed tickets for all attempts at once using batch ring VRF.
+ * Batch-generate signed tickets for multiple validators in a single native call,
+ * reusing the ring prover setup across all of them. Returns one ticket list per
+ * validator, in the same order as `proverKeyIndices`/`secrets`.
  */
 async function generateTickets(
   bandersnatch: BandernsatchWasm,
   ringKeys: BandersnatchKey[],
-  proverKeyIndex: number,
-  key: BandersnatchSecretSeed,
+  proverKeyIndices: readonly number[],
+  secrets: readonly BandersnatchSecretSeed[],
   entropy: EntropyHash,
-  ticketsPerValidator: number,
-): Promise<Result<SignedTicket[], null>> {
-  // Build VRF inputs: JAM_TICKET_SEAL || entropy || attempt_byte for each attempt
-  const vrfInputParts: Uint8Array[] = [];
-  for (let attempt = 0; attempt < ticketsPerValidator; attempt++) {
-    vrfInputParts.push(BytesBlob.blobFromParts([JAM_TICKET_SEAL, entropy.raw, Uint8Array.of(attempt)]).raw);
 ```

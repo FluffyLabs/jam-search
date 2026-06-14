@@ -2,19 +2,26 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/ticket-distribution.test.ts#L104-L229
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/ticket-distribution.test.ts#L102-L225
 title: packages/jam/jamnp-s/tasks/ticket-distribution.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
-chunk_total: 3
-content_sha: 26b77fb558770ff3681e089a4b909ba5e6504b8f56568281d6fe9c530518ee16
+chunk_total: 4
+content_sha: fe9edf873bad56b29a9178dececce95ba783f853bf2a136e27c4fe6f60e81972
 language: typescript
 ---
-`packages/jam/jamnp-s/tasks/ticket-distribution.test.ts` (lines 104–229)
+`packages/jam/jamnp-s/tasks/ticket-distribution.test.ts` (lines 102–225)
 
 ```typescript
+    self.ticketTask.addTicket(TEST_EPOCH, ticket);
+    self.ticketTask.maintainDistribution();
+    await tick();
+
+    // Both peers should have received the ticket
+    assert.strictEqual(peer1.receivedTickets.length, 1);
+    assert.strictEqual(peer1.receivedTickets[0].epochIndex, TEST_EPOCH);
     assert.deepStrictEqual(peer1.receivedTickets[0].ticket, ticket);
 
     assert.strictEqual(peer2.receivedTickets.length, 1);
@@ -131,14 +138,5 @@ language: typescript
     assert.strictEqual(peer1.receivedTickets[0].epochIndex, OTHER_EPOCH);
     assert.deepStrictEqual(peer1.receivedTickets[0].ticket, ticket2);
   });
-
-  it("should send new tickets to newly connected peers", async () => {
-    const self = await init("self");
-    const peer1 = await init("peer1");
-    const peer2 = await init("peer2");
-
-    // Connect peer1 first
-    self.openConnection(peer1);
-    await tick();
 
 ```

@@ -2,19 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L96-L131
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L98-L136
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: c414fbf9e58a22a7bf9e6c446953d1372d5db09ce99ef421f1655dbc14320411
+content_sha: b729b8ce20d4ec673de1527d99d38ed026ccdd2cee63e06af5c1963274de7281
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 96–131)
+`packages/jam/node/main-importer.ts` (lines 98–136)
 
 ```typescript
+  logger.info`🛢️ Opening database at ${dbPath}`;
+  const rootDb = workerConfig.openDatabase({ readonly: false });
+  await initializeDatabase(chainSpec, blake2b, genesisHeaderHash, rootDb, config.node.chainSpec, config.ancestry, {
     initGenesisFromAncestry: options.initGenesisFromAncestry,
   });
   await rootDb.close();

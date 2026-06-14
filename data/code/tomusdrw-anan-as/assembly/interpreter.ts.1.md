@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/interpreter.ts#L133-L253
 title: assembly/interpreter.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-05-29T16:20:56+02:00'
-last_modified: '2026-05-29T16:20:56+02:00'
+created_at: '2026-06-12T09:48:57+02:00'
+last_modified: '2026-06-12T09:48:57+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: ea14db4bb506c8b5556d1a7ead1099cf17c5a53250b770ecf51df1c4555bef36

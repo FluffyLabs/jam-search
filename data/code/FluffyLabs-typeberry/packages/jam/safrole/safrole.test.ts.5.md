@@ -2,24 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L468-L604
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/safrole.test.ts#L473-L605
 title: packages/jam/safrole/safrole.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 5
 chunk_total: 9
-content_sha: 9aa708fd67976c4cdd9de73a8aabc909b8121a126ef854b817f8134ae8fa6628
+content_sha: ed933360adbc66b90a9e37bc310a44602cc4c3fcd9f59582a17fcd30d8f37b84
 language: typescript
 ---
-`packages/jam/safrole/safrole.test.ts` (lines 468–604)
+`packages/jam/safrole/safrole.test.ts` (lines 473–605)
 
 ```typescript
-      Ticket.create({
-        attempt: tryAsTicketAttempt(0),
-        id: Bytes.fill(HASH_SIZE, 8),
-      }),
-      Ticket.create({
         attempt: tryAsTicketAttempt(0),
         id: Bytes.fill(HASH_SIZE, 6),
       }),
@@ -152,4 +147,5 @@ language: typescript
     );
   });
 
+  it("should return epoch marker missing error when epoch changes but epochMarker is null", async () => {
 ```

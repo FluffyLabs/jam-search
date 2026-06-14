@@ -1,21 +1,21 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/args.ts#L1-L90'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/args.ts#L1-L89'
 title: bin/jam/args.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: 0ab0bcd9c0e3f05dbff97f2760413860771a2daa00b1c07557f56573c691ca24
+content_sha: 8649ea518066b404864476a832340d706427597c7d2de6617cc50ec8b56b5b1b
 language: typescript
 ---
-`bin/jam/args.ts` (lines 1–90)
+`bin/jam/args.ts` (lines 1–89)
 
 ```typescript
 import { type PvmBackend, PvmBackendNames } from "@typeberry/config";
-import { DEFAULT_CONFIG, DEV_CONFIG, NODE_DEFAULTS } from "@typeberry/config-node";
+import { DEFAULT_CONFIG, DEV_TINY_CONFIG, NODE_DEFAULTS } from "@typeberry/config-node";
 import { logger } from "@typeberry/node";
 import { isU16, type U16 } from "@typeberry/numbers";
 import { version } from "@typeberry/utils";
@@ -44,7 +44,7 @@ Options:
   --${ARGS.NAME}                Override node name. Affects networking key and db location.
                         [default: ${NODE_DEFAULTS.name}]
   --${ARGS.CONFIG}              Configuration directives. If specified more than once, they are evaluated and merged from left to right.
-                        A configuration directive can be a path to a config file, an inline JSON object, a pseudo-jq query or one of predefined configs ['${DEV_CONFIG}', '${DEFAULT_CONFIG}'].
+                        A configuration directive can be a path to a config file, an inline JSON object, a pseudo-jq query or one of predefined configs ['${DEV_TINY_CONFIG}', '${DEFAULT_CONFIG}'].
                         Pseudo-jq queries are a way to modify the config using a subset of jq syntax.
                         Example: --${ARGS.CONFIG}=dev --${ARGS.CONFIG}=.chain_spec+={"bootnodes": []}      -- will modify only the bootnodes property of the chain spec (merge).
                         Example: --${ARGS.CONFIG}=dev --${ARGS.CONFIG}=.chain_spec={"bootnodes": []}       -- will replace the entire chain spec property with the provided JSON object.
@@ -103,5 +103,4 @@ export type Arguments =
       }
     >
   | CommandArgs<
-      Command.Export,
 ```

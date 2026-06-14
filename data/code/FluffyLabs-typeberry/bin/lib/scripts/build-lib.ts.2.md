@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/scripts/build-lib.ts#L210-L331
 title: bin/lib/scripts/build-lib.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 2
 chunk_total: 5
 content_sha: 264f0dc67d31e700d3dfb1ea5354243a2a9c0f48288fdf12734988d3f21e2353

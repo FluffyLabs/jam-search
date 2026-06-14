@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/listener/package.json#L1-L12
 title: packages/core/listener/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 1ad0b1fe0580716aaaedcd98a7b6b46c3322f7d39a2e7796bdb85f06259e67c6
+content_sha: 622404a0daa259af6834cd1a1dff24ce7b2835c7541f424faf2eca68e97cdeec
 language: json
 ---
 `packages/core/listener/package.json` (lines 1–12)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/listener",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Typed event-emitter and listener.",
   "main": "index.ts",
   "scripts": {

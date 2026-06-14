@@ -2,20 +2,22 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.test.ts#L156-L232
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.test.ts#L153-L226
 title: packages/jam/safrole/bandersnatch-vrf.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 6
 chunk_total: 9
-content_sha: 5b1ff098dfac1430cd01ff481eb8e3e09d2da9edd3fe88ec088714e224850106
+content_sha: f840b3d41b05831f30b6cfece1cfd8545bde4c48848e365b56a1a7e8efa9c4ef
 language: typescript
 ---
-`packages/jam/safrole/bandersnatch-vrf.test.ts` (lines 156–232)
+`packages/jam/safrole/bandersnatch-vrf.test.ts` (lines 153–226)
 
 ```typescript
-        "0x3a5d10abc80dda33fe3f40b3bb2e3eefd3e97dda3d617a860c9d94eb70b832ad",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
       ].map((x) => Bytes.parseBytes(x, HASH_SIZE));
 
       const result = await bandersnatchVrf.verifyTickets(
@@ -26,12 +28,9 @@ language: typescript
         entropy,
       );
 
+      assert.strictEqual(result.isValid, false);
       assert.deepStrictEqual(
-        result.map((x) => x.isValid),
-        [false, true, true],
-      );
-      assert.deepStrictEqual(
-        result.map((x) => x.entropyHash.toString()),
+        result.tickets.map((x) => x.toString()),
         expectedIds.map((x) => x.toString()),
       );
     });
@@ -90,6 +89,4 @@ language: typescript
     });
   });
 
-  describe("generateSeal", () => {
-    it("should generate a valid seal", async () => {
 ```

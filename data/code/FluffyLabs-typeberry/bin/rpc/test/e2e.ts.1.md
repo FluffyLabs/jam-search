@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/test/e2e.ts#L93-L199'
 title: bin/rpc/test/e2e.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-02T00:04:19+02:00'
-last_modified: '2026-06-02T00:04:19+02:00'
+created_at: '2026-06-12T09:50:25Z'
+last_modified: '2026-06-12T09:50:25Z'
 chunk_index: 1
 chunk_total: 4
 content_sha: f3a2175dc8558a37f775216d5d0df72f637618118c3e33b8bb848f2a596de1dd
