@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/basics/chain-spec/full'
 title: Full | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-06-12T04:28:38.525Z'
-last_modified: '2026-06-12T04:28:38.525Z'
+created_at: '2026-06-16T04:28:57.156Z'
+last_modified: '2026-06-16T04:28:57.156Z'
 ---
 The full scale version that will be known as the "JAM Chain". All parameters here must match the Gray Paper.  
 It is named _full_ because it takes up the entire _JAM Toaster_.
