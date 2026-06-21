@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/nested-pvm-spi/assembly/as-add-jam.ts#L1-L31
 title: examples/nested-pvm-spi/assembly/as-add-jam.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 30c5c5b5a88dd7c49f96e98d06698dc61da98f3b78b08a079293d02081b68f53

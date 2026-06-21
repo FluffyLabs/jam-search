@@ -6,8 +6,8 @@ url: >-
 title: >-
   packages/core/pvm-interpreter/ops-dispatchers/two-regs-one-offset-dispatcher.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: ddc90cb1d9872c669321ecc4b25a9cc27fd622b444d3676146d3c1c8220d721a

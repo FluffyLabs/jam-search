@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops/math-ops.test.ts#L428-L551
 title: packages/core/pvm-interpreter/ops/math-ops.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 4
 chunk_total: 9
 content_sha: c0f3429f7097dff655a16668780b46c377bfe3ae1e77efc64334add34609747d

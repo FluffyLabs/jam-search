@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/configs/config-v1.schema.json#L1-L32
 title: packages/configs/config-v1.schema.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: e6fb9ea2379f2f8f1bccc134f10d5a2719420bcd8cda47aacfaaaf3c25cef6a1

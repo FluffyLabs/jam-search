@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/protocol/up-0-block-announcement.ts#L115-L153
 title: packages/jam/jamnp-s/protocol/up-0-block-announcement.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 10b70c64733e73add65b6827cc55f901ccabf62a969945f5e68faf763675cbd1

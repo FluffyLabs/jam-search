@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/fuzz-proto/v1/types.test.ts#L1-L127
 title: packages/jam/fuzz-proto/v1/types.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 4
 content_sha: a3631061d44a52bac931a373b351b359afd36717aecc3aa40028cecaa63a1e74

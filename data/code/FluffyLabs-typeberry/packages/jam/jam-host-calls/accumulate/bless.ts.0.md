@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/bless.ts#L1-L88
 title: packages/jam/jam-host-calls/accumulate/bless.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 4938a794e5ddfc025a9171c7a5b5a85e1243798c42e6a5c9a1a2176426d8eaf4

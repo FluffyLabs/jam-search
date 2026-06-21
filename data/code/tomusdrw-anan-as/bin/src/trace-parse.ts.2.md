@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/bin/src/trace-parse.ts#L298-L404'
 title: bin/src/trace-parse.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-12T09:48:57+02:00'
-last_modified: '2026-06-12T09:48:57+02:00'
+created_at: '2026-06-15T09:40:01+02:00'
+last_modified: '2026-06-15T09:40:01+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 36efef69f01b44c5334bc7fdd7245a47162e1b809bebf69f4683bb8992f408d8

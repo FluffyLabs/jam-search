@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/index.ts#L1-L2'
 title: sdk/core/codec/index.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: d0a639c8b608c20e23d21f8737f907a6923f426182fd18a9fe7de48897b0f176

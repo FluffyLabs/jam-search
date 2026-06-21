@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/log-msg.ts#L1-L98'
 title: sdk/log-msg.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 4585d382f0ae3e66e191178e7dadf77103b77eef2460c209c127bbf285ea4066

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops-dispatchers/three-regs-dispatcher.test.ts#L1-L89
 title: packages/core/pvm-interpreter/ops-dispatchers/three-regs-dispatcher.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 8ccc93003f2ad2c39e39408eb43f215705a598cb20d5d71e74b95f6158c4d2ac

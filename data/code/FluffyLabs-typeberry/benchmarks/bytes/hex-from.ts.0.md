@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/bytes/hex-from.ts#L1-L118
 title: benchmarks/bytes/hex-from.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 0b9581904e4cfedca8f1ffc0137336dcecf88ab5ab0b6a20d4c930438538265c

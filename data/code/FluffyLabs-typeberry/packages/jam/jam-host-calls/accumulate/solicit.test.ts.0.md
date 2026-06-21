@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/solicit.test.ts#L1-L98
 title: packages/jam/jam-host-calls/accumulate/solicit.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 10df104e54a6ea57e9f3853be5fe05e4edf83a0a0df04a061ef82cc6e332c35e

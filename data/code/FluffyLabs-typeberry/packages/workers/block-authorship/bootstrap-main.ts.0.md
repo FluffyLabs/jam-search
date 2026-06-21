@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/bootstrap-main.ts#L1-L22
 title: packages/workers/block-authorship/bootstrap-main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 6bc046d6703e89ef7d1bc751a0cc561b00c921fe5ff911a1323ef3d69f755ca4

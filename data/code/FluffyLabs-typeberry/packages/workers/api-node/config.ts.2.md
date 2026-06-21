@@ -2,19 +2,29 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L216-L237
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L219-L250
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 2
 chunk_total: 3
-content_sha: abdd7e164f48e24a959e2a07ba1744974609edd2379da6460deacf99296b3ca4
+content_sha: bd2bce7937f5efdf24aeaa1e3822fd6821f8d2d0d65a3e34d9c48ab1a3fc19fe
 language: typescript
 ---
-`packages/workers/api-node/config.ts` (lines 216–237)
+`packages/workers/api-node/config.ts` (lines 219–250)
 
 ```typescript
+        ? sharedFjallSession !== undefined
+          ? FjallHybridSerializedStates.fromSession(chainSpec, blake2b, sharedFjallSession)
+          : await FjallHybridSerializedStates.new({ spec: chainSpec, blake2b, dbPath, ephemeral })
+        : LmdbHybridSerializedStates.new({ spec: chainSpec, blake2b, dbPath, ephemeral, compression, readOnly: false });
+    return new HybridWorkerConfig(nodeName, chainSpec, workerParams, blake2b, dbPath, ephemeral, compression, states);
+  }
+
+  private readonly blocks: InMemoryBlocks;
+
+  private constructor(
     public readonly nodeName: string,
     public readonly chainSpec: ChainSpec,
     public readonly workerParams: T,

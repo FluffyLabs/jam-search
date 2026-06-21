@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/general/fetch.test.ts#L448-L551
 title: packages/jam/jam-host-calls/general/fetch.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 5
 chunk_total: 7
 content_sha: 8b19eafc2fa64a16463d8054eacde9e63e46cc1b93c7d87c0223e37bd72892e7

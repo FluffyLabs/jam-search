@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/rot.test.ts#L1-L96
 title: assembly/instructions/rot.test.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-12T09:48:57+02:00'
-last_modified: '2026-06-12T09:48:57+02:00'
+created_at: '2026-06-15T09:40:01+02:00'
+last_modified: '2026-06-15T09:40:01+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 10983ed03fe4e005cb74c32b72200549bc629315517ee89463880d3507b447b9

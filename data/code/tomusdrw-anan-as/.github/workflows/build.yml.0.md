@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/.github/workflows/build.yml#L1-L102
 title: .github/workflows/build.yml
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-12T09:48:57+02:00'
-last_modified: '2026-06-12T09:48:57+02:00'
+created_at: '2026-06-15T09:40:01+02:00'
+last_modified: '2026-06-15T09:40:01+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 036fa0976ff3599951dd9ff57a08218a91f416de74173971a4dce8bf625f05d9

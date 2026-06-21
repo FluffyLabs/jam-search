@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/w3f/assurances.ts#L108-L199
 title: bin/test-runner/w3f/assurances.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: c3262a9c26c1a942743a84a9560a4cd5d3fdd1099595f859e679331eba6dbc84

@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/refine/machine.ts#L1-L118'
 title: sdk/jam/refine/machine.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 3a35161a5512d5d64152dbe01664dc54d8ab6b7cbb5aaaab7503cfbbbb443b6c

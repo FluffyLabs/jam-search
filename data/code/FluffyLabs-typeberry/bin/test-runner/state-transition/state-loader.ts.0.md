@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/state-transition/state-loader.ts#L1-L12
 title: bin/test-runner/state-transition/state-loader.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: d0eaa8fa4d9e009682bc945f4758c3f6071f1f6e8b6e3efd0b226c03010f3d47

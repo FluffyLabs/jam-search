@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/codec/expected/decoding.json#L1-L20
 title: benchmarks/codec/expected/decoding.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: ef004a933ffc6d2c842889df4723ea3c3a9615364b0b88dd03de3bcb4ce6464a

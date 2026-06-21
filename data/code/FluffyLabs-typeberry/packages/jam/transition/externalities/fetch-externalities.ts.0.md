@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/externalities/fetch-externalities.ts#L1-L121
 title: packages/jam/transition/externalities/fetch-externalities.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: ad31482f41a443144219c8171d5256c021e179dfc2160910729adf575e1cfcd0

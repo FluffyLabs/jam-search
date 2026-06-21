@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/assurances.ts#L1-L108
 title: packages/jam/transition/assurances.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 3
 content_sha: 8fef5e3282fc3752bf3a94ff1cc4b1346bf7389324858d17205a4a7a74f31d4c

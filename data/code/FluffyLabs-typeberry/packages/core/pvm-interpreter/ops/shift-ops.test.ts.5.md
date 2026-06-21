@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops/shift-ops.test.ts#L497-L588
 title: packages/core/pvm-interpreter/ops/shift-ops.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 5
 chunk_total: 7
 content_sha: dfc6f9008ab8d17d3914cc06886ff7fb232682ef0f3a72a1d0eac3fedd2a018d

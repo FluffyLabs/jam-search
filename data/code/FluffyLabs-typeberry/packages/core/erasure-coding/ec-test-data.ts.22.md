@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/erasure-coding/ec-test-data.ts#L2669-L2793
 title: packages/core/erasure-coding/ec-test-data.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 22
 chunk_total: 44
 content_sha: aa39acb562e19f3f92cf7c997bc2e6f1ec14ca69afc0c86562f6cee6e49af87d

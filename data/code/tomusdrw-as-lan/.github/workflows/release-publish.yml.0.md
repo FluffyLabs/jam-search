@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/release-publish.yml#L1-L105
 title: .github/workflows/release-publish.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: d684d6b463e6256d0bdc26d668d3aeb7fc3608a7c3641af8d25e799a05a9135a

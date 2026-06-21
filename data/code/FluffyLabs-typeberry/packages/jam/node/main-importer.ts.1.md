@@ -2,19 +2,31 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L98-L136
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L98-L148
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: b729b8ce20d4ec673de1527d99d38ed026ccdd2cee63e06af5c1963274de7281
+content_sha: 417651928d59f4e9a54b3963b07c8c6d3157d53de96e88f79016dc07d15b2b77
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 98–136)
+`packages/jam/node/main-importer.ts` (lines 98–148)
 
 ```typescript
+            sharedFjallSession: options.sharedFjallSession,
+          })
+        : LmdbWorkerConfig.new({
+            nodeName,
+            chainSpec,
+            blake2b,
+            dbPath,
+            workerParams,
+            ephemeral,
+          });
+
+  // Initialize the database with genesis state and block if there isn't one.
   logger.info`🛢️ Opening database at ${dbPath}`;
   const rootDb = workerConfig.openDatabase({ readonly: false });
   await initializeDatabase(chainSpec, blake2b, genesisHeaderHash, rootDb, config.node.chainSpec, config.ancestry, {

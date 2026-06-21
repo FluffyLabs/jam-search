@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.test.ts#L1-L93
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.test.ts#L1-L97
 title: packages/jam/database-fjall/hybrid-states.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
-chunk_total: 1
-content_sha: 2c6eae3e0e36c766a1adaac6227e75d096b206533d557d0f40fb4ea3dcf437d6
+chunk_total: 2
+content_sha: 93d1c3cf353fb93bc55eb556d1867ee2f01d63304ad019f21f57bdd6166c51a6
 language: typescript
 ---
-`packages/jam/database-fjall/hybrid-states.test.ts` (lines 1–93)
+`packages/jam/database-fjall/hybrid-states.test.ts` (lines 1–97)
 
 ```typescript
 import assert from "node:assert";
@@ -25,7 +25,7 @@ import { Blake2b, HASH_SIZE } from "@typeberry/hash";
 import { InMemoryState } from "@typeberry/state";
 import { StateEntries, type StateKey } from "@typeberry/state-merkleization";
 import { deepEqual, OK, Result } from "@typeberry/utils";
-import { HybridSerializedStates } from "./hybrid-states.js";
+import { FjallValuesSession, HybridSerializedStates } from "./hybrid-states.js";
 
 let blake2b: Blake2b;
 before(async () => {
@@ -93,19 +93,23 @@ describe("Fjall hybrid serialized states", () => {
     }
   });
 
-  it("drops the leaf set on markUnused while values stay on disk", async () => {
-    const states = await HybridSerializedStates.new({ spec, blake2b, dbPath });
+  it("shares an open values session across resets without closing it", async () => {
+    // The fuzz reset path opens the values keyspace once per session and reuses
+    // it: each "reset" builds a fresh states instance sharing that session, and
+    // closing a session-backed states must NOT close the shared keyspace.
+    const session = await FjallValuesSession.open(dbPath);
     try {
-      const empty = InMemoryState.empty(spec);
-      const serialized = StateEntries.serializeInMemory(spec, blake2b, empty);
-      await states.insertInitialState(headerHash, serialized);
-      assert.ok(states.getState(headerHash) !== null);
+      const big = BytesBlob.blobFromString("z".repeat(100));
+      const key: StateKey = Bytes.fill(HASH_SIZE, 7).asOpaque();
+      const entries = StateEntries.fromEntriesUnsafe([[key, big]]);
 
-      states.markUnused(headerHash);
-      assert.strictEqual(states.getState(headerHash), null);
-    } finally {
-      await states.close();
-    }
-  });
-});
+      // First "reset": write values through a states instance, then close it.
+      const first = HybridSerializedStates.fromSession(spec, blake2b, session);
+      const res = await first.insertInitialState(headerHash, entries);
+      deepEqual(res, Result.ok(OK));
+      await first.close();
+
+      // Second "reset": a fresh states sharing the same session. Its in-memory
+      // leaf set is independent (empty until it inserts)...
+      const second = HybridSerializedStates.fromSession(spec, blake2b, session);
 ```

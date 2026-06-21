@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/helpers/generate-full-genesis.ts#L1-L104
 title: bin/jam/helpers/generate-full-genesis.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 65cd387f7418df5307815799a0b2a242557c3755b1569838a15c9d9d413e85c5

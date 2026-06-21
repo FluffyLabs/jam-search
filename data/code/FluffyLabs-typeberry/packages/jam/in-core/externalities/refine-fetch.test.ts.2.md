@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/externalities/refine-fetch.test.ts#L168-L259
 title: packages/jam/in-core/externalities/refine-fetch.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 2
 chunk_total: 4
 content_sha: a1291f31dc55da848162ada87c7417a23d06e804d4480bd481d21792e7d9c7f2

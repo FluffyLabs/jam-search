@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/externalities/accumulate-fetch-externalities.test.ts#L1-L109
 title: packages/jam/transition/externalities/accumulate-fetch-externalities.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 3
 content_sha: a6bbcac5dd6306b647269d0503fe266870a06a6c06c048cb86cf6ce1c9a55632

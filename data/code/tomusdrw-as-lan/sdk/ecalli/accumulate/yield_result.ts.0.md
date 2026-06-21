@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/accumulate/yield_result.ts#L1-L15
 title: sdk/ecalli/accumulate/yield_result.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: d72a6badcf05d2cfc26a49dfbcffd28034484d8f0eb13520eec7dc4b184ddd97

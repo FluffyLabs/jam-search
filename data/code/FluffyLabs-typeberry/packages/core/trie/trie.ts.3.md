@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/trie/trie.ts#L309-L417
 title: packages/core/trie/trie.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 3
 chunk_total: 4
 content_sha: f910e849f5cee5cb9a980a76199911ae291fecf1c8aa9ee06bca09eb31c5537c

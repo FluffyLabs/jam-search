@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/publish.yml#L115-L216
 title: .github/workflows/publish.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: 7debd6baca4a0d0f51d1f2a77c3fa4c74cce8f6bb7180cd5a1c3c8445d965266

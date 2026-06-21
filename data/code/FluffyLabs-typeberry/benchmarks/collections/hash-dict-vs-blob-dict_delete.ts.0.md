@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/collections/hash-dict-vs-blob-dict_delete.ts#L1-L123
 title: benchmarks/collections/hash-dict-vs-blob-dict_delete.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: c200a9382506b3305d5da3d2a9a5fa57201eb675c04455552863f00aba8f3640

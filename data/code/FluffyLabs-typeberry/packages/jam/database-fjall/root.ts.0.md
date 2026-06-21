@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/root.ts#L1-L99
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/root.ts#L1-L110
 title: packages/jam/database-fjall/root.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: cc28a5b772eafc497c8f91e3475511e4b7fcbf9dc84016c33047f475723da2ac
+content_sha: 1b4f77986d72754b7b047e32e6c32d8395870d3ad1ba33889d64643df801f17d
 language: typescript
 ---
-`packages/jam/database-fjall/root.ts` (lines 1–99)
+`packages/jam/database-fjall/root.ts` (lines 1–110)
 
 ```typescript
 import * as fs from "node:fs";
@@ -33,21 +33,27 @@ export function toUint8Array(value: Buffer | null): Uint8Array | null {
 
 export type FjallRootOptions = {
   /**
-   * When set, durability flushes (`persist`) are skipped entirely.
+   * When set, we skip the durability flush (`persist`) and `close()` does not
+   * do the sync-all fsync.
    *
-   * Only safe for throwaway databases (e.g. the fuzz target, which wipes on
-   * every reset). Mirrors LMDB's `noSync`.
+   * Only safe for throwaway databases, like the fuzz target that wipes on every
+   * reset.
    */
   ephemeral?: boolean;
+  /**
+   * Cache size in bytes, shared by all partitions of the keyspace. fjall reads
+   * through this cache, so it bounds how much we keep in memory. When not set,
+   * fjall uses its own default.
+   */
+  cacheSizeBytes?: number;
 };
 
 /**
- * A thin abstraction over the fjall keyspace.
+ * Thin wrapper over the fjall keyspace.
  *
- * Unlike LMDB (a memory-mapped B-tree), fjall is an LSM-tree that reads/writes
- * through regular file I/O, so its working set is bounded by an explicit block
- * cache rather than the whole mmap. LMDB has been causing oom issues because
- * of that.
+ * fjall is an LSM-tree: it reads and writes through normal file i/o and keeps
+ * only a bounded block cache in memory, so the resident set stays bounded even
+ * when the store on disk is big.
  */
 export class FjallRoot {
   private constructor(
@@ -59,7 +65,12 @@ export class FjallRoot {
 
   /** Open (or create) a fjall keyspace at the given path. */
   static async open(dbPath: string, options: FjallRootOptions): Promise<FjallRoot> {
-    const keyspace = await open(dbPath);
+    // Forward our options to the binding: `ephemeral` makes `close()` skip the
+    // sync-all fsync, `cacheSizeBytes` bounds how much we keep in memory.
+    const keyspace = await open(dbPath, {
+      ephemeral: options.ephemeral,
+      cacheSizeBytes: options.cacheSizeBytes,
+    });
     return new FjallRoot(keyspace, dbPath, options);
   }
 
@@ -82,11 +93,11 @@ export class FjallRoot {
   }
 
   /**
-   * Apparent on-disk size of the keyspace directory, in bytes.
+   * Size of the keyspace directory on disk, in bytes.
    *
-   * Returns `null` if the directory cannot be walked (e.g. not yet created).
-   * Unlike LMDB's single `data.mdb`, a fjall keyspace is a directory of
-   * partition and journal files, so we sum it recursively.
+   * Returns `null` when the directory cannot be walked (e.g. not created yet).
+   * A fjall keyspace is a directory of partition and journal files, so we sum
+   * them recursively.
    */
   sizeInBytes(): number | null {
     try {

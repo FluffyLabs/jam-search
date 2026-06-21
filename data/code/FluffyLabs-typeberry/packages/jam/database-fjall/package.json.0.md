@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/package.json#L1-L26
 title: packages/jam/database-fjall/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 41050550271af18229504a9cd701e4c79ab6461b3bf8df1c5288ebd235049c02
+content_sha: b2f6762589c3df52cb147eb152682da4ab60e46c0bd9cca95632a4c53a4525ec
 language: json
 ---
 `packages/jam/database-fjall/package.json` (lines 1–26)
@@ -26,7 +26,7 @@ language: json
   "author": "Fluffy Labs",
   "license": "MPL-2.0",
   "dependencies": {
-    "@fjall-js/fjall": "0.1.3",
+    "@fjall-js/fjall": "0.2.0",
     "@typeberry/block": "*",
     "@typeberry/bytes": "*",
     "@typeberry/collections": "*",

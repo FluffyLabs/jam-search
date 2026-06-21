@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-json/dump.example.json#L536-L553
 title: packages/jam/state-json/dump.example.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 11
 chunk_total: 12
 content_sha: 5cb0fdde58121b34f2f041953fe3e61cf0db467fbfc4816ae2766407d064d2e2

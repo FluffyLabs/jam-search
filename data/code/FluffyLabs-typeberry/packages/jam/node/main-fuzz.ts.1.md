@@ -2,19 +2,36 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L93-L188
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L89-L181
 title: packages/jam/node/main-fuzz.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 1
-chunk_total: 2
-content_sha: bab59d651a19fd435f38e255faee8abc3b455612c27c0a7b144223cd54ef7243
+chunk_total: 3
+content_sha: 3ef5d3afb5f5d3e07d6c0a3c3a764b235d8a86032f5f507ff7a3501c7c86a425
 language: typescript
 ---
-`packages/jam/node/main-fuzz.ts` (lines 93–188)
+`packages/jam/node/main-fuzz.ts` (lines 89–181)
 
 ```typescript
+    throw new Error(`JAM_FUZZ_DB must be one of: ${FUZZ_DB_OPTIONS} (got: "${rawFuzzDb}").`);
+  }
+  if (fuzzDbBase !== undefined) {
+    logger.info`🗄️ Fuzz persistent backend: ${hybridStateBackend}.`;
+  }
+
+  let runningNode: NodeApi | null = null;
+  // The fjall values keyspace is opened once per fuzz session and reused on
+  // every reset, because opening it is the slow part. Only the in-memory blocks
+  // and leaf sets are rebuilt for each vector. fjall-hybrid only.
+  let fjallSession: FjallValuesSession | null = null;
+
+  const chainSpec = getChainSpec(config.node.flavor);
+
+  const closeFuzzTarget = startFuzzTarget(fuzzConfig.version, fuzzConfig.socket, {
+    ...getFuzzDetails(),
+    chainSpec,
     importBlock: async (blockView: BlockView): Promise<Result<StateRootHash, string>> => {
       if (runningNode === null) {
         return Result.error("node not running", () => "Fuzzer: node not running when importing block");
@@ -69,46 +86,26 @@ language: typescript
             // like the in-memory backend; only the large values live on disk.
             dummyFinalityDepth: 20,
             pruneBlocks: true,
-            // Long full-spec sessions accumulate a large, never-pruned values db.
-            // Syncing lets the OS reclaim dirty mmap pages, and compression (full
-            // spec only, where values are big) bounds its on-disk/page-cache size.
-            // Tiny stays uncompressed since its db is small and speed matters more.
+            // The on-disk fuzz db is throwaway (we wipe it), so open it ephemeral and
+            // skip the fsync, we do not need durability here. On full spec ephemeral
+            // also turns on compression further down, so the big values do not grow the
+            // db too much. Tiny stays uncompressed, its db is small and speed matters more.
             ephemeral: isPersistent,
             stateBackend: isPersistent ? hybridStateBackend : "lmdb",
+            // Reuse the session keyspace (fjall-hybrid only, other backends
+            // ignore it). Nothing to pass for the in-memory fallback.
+            sharedFjallSession: isPersistent ? (fjallSession ?? undefined) : undefined,
           },
         );
       };
 
       if (fuzzDbBase !== undefined) {
-        // Each reset starts a fresh session from the genesis the fuzzer just sent,
-        // so the on-disk db must be empty: otherwise initializeDatabase sees an
-        // already-initialized db and silently resumes the previous run's state.
-        await wipeFuzzDb(fuzzDbBase);
         try {
-          runningNode = await buildNode(fuzzDbBase);
-          return await runningNode.getBestStateRootHash();
-        } catch (e) {
-          // A partially-opened db may leak on failure; acceptable for this degraded fallback (proper cleanup belongs in mainImporter).
-          logger.warn`Failed to open persistent fuzz db at ${fuzzDbBase}, falling back to in-memory: ${e}`;
-          runningNode = null;
-        }
-      }
-
-      runningNode = await buildNode(undefined);
-      return await runningNode.getBestStateRootHash();
-    },
-  });
-
-  return () => {
-    closeFuzzTarget();
-    if (fuzzDbBase !== undefined) {
-      // best-effort cleanup on shutdown; ignore failures (dir may already be gone).
-      wipeFuzzDb(fuzzDbBase).catch(() => {});
-    }
-  };
-}
-
-function isValidStateBackend(val: string): val is StateBackend {
-  return FUZZ_DB_OPTIONS.indexOf(val) !== -1;
-}
+          if (hybridStateBackend === FUZZ_DB_FJALL) {
+            // fjall-hybrid: open the values keyspace once and reuse it on every
+            // reset. The values partition is content-addressed and immutable, so
+            // it is fine that values pile up across resets, the unreferenced ones
+            // just sit there. `initializeDatabase` decides whether the db is
+            // already initialized from the in-memory blocks, which we rebuild on
+            // every reset, not from the values store, so reusing it does not
 ```

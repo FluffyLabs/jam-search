@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/safrole-data.test.ts#L72-L78
 title: packages/jam/state/safrole-data.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 2
 chunk_total: 15
 content_sha: 7130d84ed869616e4812e7ecdf7a3bc20d855811c93b7350f9dd30120cf21893

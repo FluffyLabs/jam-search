@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/protocol/ce-131-ce-132-safrole-ticket-distribution.ts#L1-L94
 title: packages/jam/jamnp-s/protocol/ce-131-ce-132-safrole-ticket-distribution.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: e7229c8ea01308072e1f909b0de6671c973d1653eff0d98d066d52bd7357d36b

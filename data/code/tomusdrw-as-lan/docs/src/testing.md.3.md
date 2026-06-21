@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L345-L468'
 title: docs/src/testing.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 3
 chunk_total: 5
 content_sha: b296c2a7903fe3c364092d70c5537288a85f196310fea51092a3cc60de5d9870

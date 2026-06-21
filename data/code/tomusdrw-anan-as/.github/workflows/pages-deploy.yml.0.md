@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/.github/workflows/pages-deploy.yml#L1-L52
 title: .github/workflows/pages-deploy.yml
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-12T09:48:57+02:00'
-last_modified: '2026-06-12T09:48:57+02:00'
+created_at: '2026-06-15T09:40:01+02:00'
+last_modified: '2026-06-15T09:40:01+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 7c77e63bd18628891b4fad98db8ffdbe51d8d8878e6d4d67f537e912b6762bf9

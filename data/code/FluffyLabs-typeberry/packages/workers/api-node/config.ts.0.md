@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L1-L116
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: 6cc9d9ef475157e9933b28b0afc79a653c9a83910adfb79a87f25818ec7acfab
+content_sha: fe7a0bc526a658fd29d7ab6534c55ab488e6d73746d1f5e32843ee70f6d3f161
 language: typescript
 ---
 `packages/workers/api-node/config.ts` (lines 1–116)
@@ -25,7 +25,7 @@ import {
   type RootDb,
   type SerializedStatesDb,
 } from "@typeberry/database";
-import { HybridSerializedStates as FjallHybridSerializedStates } from "@typeberry/database-fjall";
+import { HybridSerializedStates as FjallHybridSerializedStates, FjallValuesSession } from "@typeberry/database-fjall";
 import {
   LmdbBlocks,
   HybridSerializedStates as LmdbHybridSerializedStates,
@@ -36,7 +36,11 @@ import { Blake2b } from "@typeberry/hash";
 import type { WorkerConfig } from "@typeberry/workers-api";
 import { ThreadPort, type TransferablePort } from "./port.js";
 
-/** A worker config that's usable in node.js and uses LMDB database backend. */
+// Re-exported so the fuzz target can open one values session per run and reuse
+// it across resets (see `HybridWorkerConfig` / `mainFuzz`).
+export { FjallValuesSession };
+
+/** Worker config for node.js, backed by the LMDB database. */
 export class LmdbWorkerConfig<T = void> implements WorkerConfig<T, BlocksDb, SerializedStatesDb> {
   static new<T>({
     nodeName,
@@ -84,7 +88,7 @@ export class LmdbWorkerConfig<T = void> implements WorkerConfig<T, BlocksDb, Ser
     public readonly dbPath: string,
     public readonly blake2b: Blake2b,
     public readonly ports: Map<string, ThreadPort>,
-    // When set, the underlying LMDB skips fsync. Only safe for throwaway
+    // When set, the underlying database skips fsync. Only safe for throwaway
     // databases (the fuzz target wipes on reset). Not transferred to worker
     // threads, so the durable main node path always gets the default.
     public readonly ephemeral: boolean = false,
@@ -127,8 +131,4 @@ export type TransferableConfig = {
 /**
  * Collect the transferable objects (communication ports) embedded in a config.
  *
- * `MessagePort`s can only be transferred, not structurally cloned, so they have to
- * be listed in the `postMessage` transfer list. Omitting them results in a
- * `DataCloneError`.
- */
 ```

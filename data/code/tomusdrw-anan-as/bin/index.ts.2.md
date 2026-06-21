@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/bin/index.ts#L224-L340'
 title: bin/index.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-12T09:48:57+02:00'
-last_modified: '2026-06-12T09:48:57+02:00'
+created_at: '2026-06-15T09:40:01+02:00'
+last_modified: '2026-06-15T09:40:01+02:00'
 chunk_index: 2
 chunk_total: 5
 content_sha: 4247e6f57e5e851c04c87a74f5a1b64d1e153c87e7964874b998d00182c74512

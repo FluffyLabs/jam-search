@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/tasks/sync.ts#L1-L120
 title: packages/jam/jamnp-s/tasks/sync.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 4
 content_sha: 3faafc328b3ad6794ded67a2e981464139f4ad2de6c16d4afcd3d433a4a0c6f4

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L1-L96
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L1-L95
 title: packages/jam/node/main-fuzz.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
-chunk_total: 2
-content_sha: 58ac757ad3864ab254aebc46ff5c15332f11f536ab625dff66c61bcfabab0ded
+chunk_total: 3
+content_sha: 875d0448bbed96e8fa69c43bd6b5af0b107dacf597a37a4fd053b9dbdf921ab3
 language: typescript
 ---
-`packages/jam/node/main-fuzz.ts` (lines 1–96)
+`packages/jam/node/main-fuzz.ts` (lines 1–95)
 
 ```typescript
 import { rm } from "node:fs/promises";
@@ -26,7 +26,7 @@ import { HASH_SIZE } from "@typeberry/hash";
 import { Logger } from "@typeberry/logger";
 import type { StateEntries } from "@typeberry/state-merkleization";
 import { CURRENT_VERSION, Result, version } from "@typeberry/utils";
-import { logHostEnvironment } from "@typeberry/workers-api-node";
+import { FjallValuesSession, logHostEnvironment } from "@typeberry/workers-api-node";
 import { getChainSpec } from "./common.js";
 import type { JamConfig } from "./jam-config.js";
 import type { NodeApi } from "./main.js";
@@ -47,6 +47,15 @@ const FUZZ_DB_SUBDIR = "typeberry-fuzz-db";
 const FUZZ_DB_FJALL: StateBackend = "fjall-hybrid";
 const FUZZ_DB_LMDB: StateBackend = "lmdb-hybrid";
 const FUZZ_DB_OPTIONS: string[] = [FUZZ_DB_FJALL, FUZZ_DB_LMDB];
+
+/** Subdirectory (under the fuzzer's db dir) holding the reused fjall values keyspace. */
+const FUZZ_FJALL_VALUES_SUBDIR = "values-session";
+/**
+ * Size of the fjall block-cache for the fuzz session. Values pile up across
+ * resets (for fjall we do not wipe between them), so this cache is what keeps
+ * the resident memory bounded.
+ */
+const FUZZ_FJALL_CACHE_BYTES = 128 * 1024 * 1024;
 
 /**
  * Resolve the directory the fuzzer should use for its on-disk database, or
@@ -101,14 +110,4 @@ export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) 
   }
 
   let runningNode: NodeApi | null = null;
-
-  const chainSpec = getChainSpec(config.node.flavor);
-
-  const closeFuzzTarget = startFuzzTarget(fuzzConfig.version, fuzzConfig.socket, {
-    ...getFuzzDetails(),
-    chainSpec,
-    importBlock: async (blockView: BlockView): Promise<Result<StateRootHash, string>> => {
-      if (runningNode === null) {
-        return Result.error("node not running", () => "Fuzzer: node not running when importing block");
-      }
 ```

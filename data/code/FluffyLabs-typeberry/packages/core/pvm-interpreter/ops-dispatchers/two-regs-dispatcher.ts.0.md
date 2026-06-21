@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops-dispatchers/two-regs-dispatcher.ts#L1-L64
 title: packages/core/pvm-interpreter/ops-dispatchers/two-regs-dispatcher.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 1346fa6c87a3d5e9a55900634c2ae9e5947e1c2b12159e1da73f5fbff73bf519

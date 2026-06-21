@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L1-L108
 title: packages/jam/database-fjall/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
-chunk_total: 2
-content_sha: 6467fc4782538ed7cd620af331eed41a854c0848a6d7b8d7708be75c8c408bdf
+chunk_total: 3
+content_sha: 751ed8ce34910f3958f169d78b52e5092b82a097c42fae1008a61bf7eb4db0eb
 language: typescript
 ---
 `packages/jam/database-fjall/hybrid-states.ts` (lines 1–108)
@@ -38,20 +38,59 @@ import {
 } from "@typeberry/state-merkleization";
 import { type LeafNode, leafComparator, type ValueHash } from "@typeberry/trie";
 import { OK, Result } from "@typeberry/utils";
-import { FjallRoot, type Partition, toUint8Array } from "./root.js";
+import { FjallRoot, type FjallRootOptions, type Partition, toUint8Array } from "./root.js";
 
 const logger = Logger.new(import.meta.filename, "db");
 
 /**
+ * One open fjall keyspace together with its content-addressed `values`
+ * partition.
+ *
+ * Opening the keyspace is the slow part, so the fuzz target opens one session
+ * per run and reuses it for every reset (see `HybridSerializedStates.fromSession`).
+ * The values partition is immutable - the key is the hash of the value - so it
+ * is fine that values pile up across resets, the unreferenced ones just sit
+ * there unused.
+ */
+export class FjallValuesSession {
+  private constructor(
+    private readonly root: FjallRoot,
+    /** Shared content-addressed values partition, reused across resets. */
+    readonly values: Partition,
+  ) {}
+
+  /** Open (or create) the keyspace at `dbPath` and its `values` partition. */
+  static async open(dbPath: string, options: FjallRootOptions = {}): Promise<FjallValuesSession> {
+    const root = await FjallRoot.open(dbPath, options);
+    const values = await root.partition("values");
+    return new FjallValuesSession(root, values);
+  }
+
+  /** Flush the journal to disk (a no-op for ephemeral keyspaces). */
+  async persist(): Promise<void> {
+    await this.root.persist();
+  }
+
+  /** Size of the keyspace directory on disk, in bytes. */
+  sizeInBytes(): number | null {
+    return this.root.sizeInBytes();
+  }
+
+  /** Release the keyspace handle (skips the sync-all fsync when ephemeral). */
+  async close(): Promise<void> {
+    await this.root.close();
+  }
+}
+
+/**
  * Hybrid serialized-states db (fjall variant).
  *
- * States (leafs) are kept in-memory, but large values are persisted to fjall.
- * Reads go straight to fjall, which keeps its own (bounded) block cache.
- * Designed for long fuzzing, used with pruning to keep heap usage bounded.
+ * States (leafs) are kept in memory, only the large values go to fjall on disk.
+ * Reads hit fjall directly, which keeps its own bounded block cache. Meant for
+ * long fuzzing, used together with pruning so the heap stays bounded.
  *
- * Behaviourally identical to the LMDB hybrid db; differences are mechanical:
- * construction is async, and value writes are ordered + flushed explicitly
- * because fjall has no transaction primitive.
+ * Construction is async, and value writes are flushed explicitly, because fjall
+ * has no transaction primitive.
  */
 export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>, InitStatesDb<StateEntries> {
   static async new({
@@ -59,68 +98,29 @@ export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>
     blake2b,
     dbPath,
     ephemeral,
+    cacheSizeBytes,
   }: {
     spec: ChainSpec;
     blake2b: Blake2b;
     dbPath: string;
     ephemeral?: boolean;
+    cacheSizeBytes?: number;
   }): Promise<HybridSerializedStates> {
-    const root = await FjallRoot.open(dbPath, { ephemeral });
-    const values = await root.partition("values");
-    return new HybridSerializedStates(spec, blake2b, root, values);
+    const session = await FjallValuesSession.open(dbPath, { ephemeral, cacheSizeBytes });
+    // This instance owns the session it just opened, so its `close()` closes it.
+    return new HybridSerializedStates(spec, blake2b, session, true);
   }
 
-  private readonly inMemStates: HashDictionary<HeaderHash, SortedSet<LeafNode>> = HashDictionary.new();
-  // A single shared values accessor reused by every `LeafDb` we hand out.
-  private readonly valuesDb: ValuesDb;
-
-  private constructor(
-    private readonly spec: ChainSpec,
-    private readonly blake2b: Blake2b,
-    private readonly root: FjallRoot,
-    private readonly values: Partition,
-  ) {
-    this.valuesDb = { get: (key: ValueHash) => this.readValue(key) };
-  }
-
-  async insertInitialState(headerHash: HeaderHash, entries: StateEntries): Promise<Result<OK, StateUpdateError>> {
-    const { values, leafs } = updateLeafs(
-      SortedSet.fromArray(leafComparator, []),
-      this.blake2b,
-      Array.from(entries, (x) => [StateEntryUpdateAction.Insert, x[0], x[1]]),
-    );
-    const res = await this.writeValues(values);
-    if (res.isError) {
-      return res;
-    }
-    this.inMemStates.set(headerHash, leafs);
-    return Result.ok(OK);
-  }
-
-  async updateAndSetState(
-    header: HeaderHash,
-    state: SerializedState<LeafDb>,
-    update: Partial<State & ServicesUpdate>,
-  ): Promise<Result<OK, StateUpdateError>> {
-    const updatedValues = serializeStateUpdate(this.spec, this.blake2b, update);
-    // Clone the leaf set before mutating: the previous state keeps using its own.
-    const newLeafs = SortedSet.fromSortedArray(leafComparator, state.backend.leafs.array);
-    const { values, leafs } = updateLeafs(newLeafs, this.blake2b, updatedValues);
-    const res = await this.writeValues(values);
-    if (res.isError) {
-      // Leave the caller's state untouched: its new leaves would reference
-      // values that never reached disk.
-      return res;
-    }
-    // Re-create the lookup with the shared values accessor only once the new
-    // values are durably written.
-    state.updateBackend(LeafDb.fromLeaves(leafs, this.valuesDb));
-    this.inMemStates.set(header, leafs);
-    return Result.ok(OK);
-  }
-
-  async getStateRoot(state: SerializedState<LeafDb>): Promise<StateRootHash> {
-    return state.backend.getStateRoot(this.blake2b);
+  /**
+   * Wrap an already-open `FjallValuesSession` and reuse its keyspace.
+   *
+   * The new instance starts with its own empty in-memory leaf sets but shares
+   * the values partition on disk. Its `close()` does not close the session, the
+   * session owner closes it once. The fuzz target uses this to keep one keyspace
+   * across resets and only rebuild the in-memory state for each vector.
+   */
+  static fromSession(spec: ChainSpec, blake2b: Blake2b, session: FjallValuesSession): HybridSerializedStates {
+    return new HybridSerializedStates(spec, blake2b, session, false);
   }
 
 ```

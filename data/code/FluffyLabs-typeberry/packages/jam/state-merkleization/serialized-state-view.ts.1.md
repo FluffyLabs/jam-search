@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/serialized-state-view.ts#L103-L144
 title: packages/jam/state-merkleization/serialized-state-view.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: d84c3a3e0f90fd09789a46c94fc7a19e0f50951b04ef4da3435009058f4fd6ad

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/src/handlers/subscribe-service-value.ts#L1-L20
 title: bin/rpc/src/handlers/subscribe-service-value.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: dd9c8d49f86191100985b756bd326a09f64cab3f1ebd8a045df3ddb2e00ba28d

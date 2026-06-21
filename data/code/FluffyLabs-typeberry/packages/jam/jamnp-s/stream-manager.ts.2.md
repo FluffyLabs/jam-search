@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/stream-manager.ts#L229-L304
 title: packages/jam/jamnp-s/stream-manager.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-12T09:50:25Z'
-last_modified: '2026-06-12T09:50:25Z'
+created_at: '2026-06-15T16:53:45Z'
+last_modified: '2026-06-15T16:53:45Z'
 chunk_index: 2
 chunk_total: 3
 content_sha: 726bbb663a1ac9b0ece6cfec386e43e5f54d14feca53a1e27218d125e62a13e1

@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk-ecalli-mocks/src/accumulate/checkpoint.ts#L1-L8
 title: sdk-ecalli-mocks/src/accumulate/checkpoint.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-12T11:39:19+02:00'
-last_modified: '2026-06-12T11:39:19+02:00'
+created_at: '2026-06-16T00:03:25+02:00'
+last_modified: '2026-06-16T00:03:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 683297bada857ae98682d3958ec5a9e57aac006c23a7bd1d85794c4005ccb6f2
