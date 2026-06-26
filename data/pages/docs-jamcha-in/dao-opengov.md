@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/dao/opengov'
 title: Polkadot OpenGov Participation | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-06-23T04:21:46.929Z'
-last_modified: '2026-06-23T04:21:46.929Z'
+created_at: '2026-06-26T04:26:25.807Z'
+last_modified: '2026-06-26T04:26:25.807Z'
 ---
 Engaging in Polkadot OpenGov is one of the key functions of the DAO. Concerning this function, we have drafted this section and the _Code of Conduct_.
 
