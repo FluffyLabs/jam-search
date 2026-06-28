@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops/bit-rotation-ops.test.ts#L199-L304
 title: packages/core/pvm-interpreter/ops/bit-rotation-ops.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 2
 chunk_total: 7
 content_sha: 6cb710778d264cd8e43128ea6f67df1b814d48c2924cf2e6aea5b9c709645798

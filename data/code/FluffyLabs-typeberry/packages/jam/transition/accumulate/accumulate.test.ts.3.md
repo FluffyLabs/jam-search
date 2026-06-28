@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/accumulate/accumulate.test.ts#L249-L339
 title: packages/jam/transition/accumulate/accumulate.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 3
 chunk_total: 13
 content_sha: f98129f0cd79810af2e3bbe013d55900827c8f0eff4b4be2a547459145b8af81

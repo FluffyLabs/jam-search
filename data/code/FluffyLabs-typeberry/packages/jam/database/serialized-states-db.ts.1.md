@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/serialized-states-db.ts#L98-L112
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/serialized-states-db.ts#L98-L117
 title: packages/jam/database/serialized-states-db.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: 18be94f904a8a97cb418814e4960516245f53d30ffd1c2feaff690e244259719
+content_sha: 7466ba75dc103d03c0027e034658e7abe515454f73b19aafd46c0b64bfc63191
 language: typescript
 ---
-`packages/jam/database/serialized-states-db.ts` (lines 98–112)
+`packages/jam/database/serialized-states-db.ts` (lines 98–117)
 
 ```typescript
         if (val === undefined) {
@@ -22,6 +22,11 @@ language: typescript
       },
     });
     return SerializedState.new(this.spec, this.blake2b, leafDb);
+  }
+
+  commitFinalized(_headers: HeaderHash[]): void {
+    // No value pruning here: this in-memory db keeps every value in a plain map
+    // and is not the long-running fuzz target the refcounting is meant for.
   }
 
   markUnused(header: HeaderHash): void {

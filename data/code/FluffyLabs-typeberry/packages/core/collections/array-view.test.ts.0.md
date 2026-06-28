@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/array-view.test.ts#L1-L56
 title: packages/core/collections/array-view.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 18646f6a2d2cc1529869aa9274c0313161c3e9e11fbce79c42dff359d253aa5e

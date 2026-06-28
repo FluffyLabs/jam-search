@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interface/index.ts#L1-L5
 title: packages/core/pvm-interface/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 22bddeebe78fcd01b46d427a4926b9ab1885837c7fae477291c6c00032601925

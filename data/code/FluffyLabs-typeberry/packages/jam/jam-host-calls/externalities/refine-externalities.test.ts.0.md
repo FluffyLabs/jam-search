@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/externalities/refine-externalities.test.ts#L1-L96
 title: packages/jam/jam-host-calls/externalities/refine-externalities.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 20896ee8dd31ca9f4c73fe34dc1aacec4c58d21f2c75ab479d8452f745152cb5

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/blob-dictionary.ts#L96-L213
 title: packages/core/collections/blob-dictionary.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 5
 content_sha: 2de9158c051c66416f7e8790e09d7630509eb35ece0e13070d763d7f3cf357a5

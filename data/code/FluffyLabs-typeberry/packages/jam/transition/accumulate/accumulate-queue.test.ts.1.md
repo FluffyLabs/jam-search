@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/accumulate/accumulate-queue.test.ts#L92-L172
 title: packages/jam/transition/accumulate/accumulate-queue.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 4
 content_sha: 349aac71126c40f204efe687d0bb1e0bd851f07ed7e86f407a703bdf5b22e241

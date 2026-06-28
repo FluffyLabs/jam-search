@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-array.test.ts#L1-L124
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-array.test.ts#L1-L137
 title: packages/core/collections/sorted-array.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 0be56f24accf4ddc968b8c5e9e9ce0d30b167356a464a713820faeb02bc14723
+content_sha: 70e08c664d73d599674735a60ede262412c3a504aae8202f4c18cd0fdfac5116
 language: typescript
 ---
-`packages/core/collections/sorted-array.test.ts` (lines 1–124)
+`packages/core/collections/sorted-array.test.ts` (lines 1–137)
 
 ```typescript
 import assert from "node:assert";
@@ -90,6 +90,19 @@ describe("SortedArray", { timeout: 10 }, () => {
 
     data.removeOne(2);
     assert.deepStrictEqual(data.slice(), [3]);
+  });
+
+  it("should return the stored element that was removed", () => {
+    const byKey = (self: [number, string], other: [number, string]) => cmp(self[0], other[0]);
+    const data = SortedArray.fromArray<[number, string]>(byKey, [
+      [1, "a"],
+      [2, "b"],
+    ]);
+
+    const removed = data.removeOne([1, "x"]);
+
+    assert.deepStrictEqual(removed, [1, "a"]);
+    assert.strictEqual(data.removeOne([5, "z"]), undefined);
   });
 
   it("should throw when using fromSortedArray and array is not sorted", () => {

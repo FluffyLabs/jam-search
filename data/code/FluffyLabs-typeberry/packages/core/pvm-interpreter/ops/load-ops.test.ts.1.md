@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops/load-ops.test.ts#L88-L168
 title: packages/core/pvm-interpreter/ops/load-ops.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 5
 content_sha: 41fc3a130bacdb24edc01f27e76986a251f9b402336fc2dc9918c7043f3e6774

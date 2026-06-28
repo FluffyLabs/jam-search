@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/networking/setup.ts#L105-L203
 title: packages/core/networking/setup.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: f713c07ccaec2a12e7cf969c9d1754acbe790bad91d5aefe6365a9e7eafce6df

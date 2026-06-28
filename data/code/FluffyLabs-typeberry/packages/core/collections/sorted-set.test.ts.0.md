@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-set.test.ts#L1-L129
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-set.test.ts#L1-L134
 title: packages/core/collections/sorted-set.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: f90a63e378cc14fddce5a1dc0c2ac14d0291eae71ae67311d537262985a1a874
+content_sha: 909db92cd0efa581542c3e4d45e81176afa6bdbfd5ce7be4a21b0e9eeda06503
 language: typescript
 ---
-`packages/core/collections/sorted-set.test.ts` (lines 1–129)
+`packages/core/collections/sorted-set.test.ts` (lines 1–134)
 
 ```typescript
 import assert from "node:assert";
@@ -111,6 +111,37 @@ describe("SortedSet", () => {
     });
   });
 
+  describe("replace", () => {
+    const byKey = (self: [number, string], other: [number, string]) => cmp(self[0], other[0]);
+
+    it("should return the displaced element when replacing an equal one", () => {
+      const data = SortedSet.fromArrayUnique<[number, string]>(byKey, [
+        [1, "a"],
+        [2, "b"],
+      ]);
+
+      const displaced = data.replace([1, "c"]);
+
+      assert.deepStrictEqual(displaced, [1, "a"]);
+      assert.deepStrictEqual(data.slice(), [
+        [1, "c"],
+        [2, "b"],
+      ]);
+    });
+
+    it("should return undefined when inserting a fresh element", () => {
+      const data = SortedSet.fromArrayUnique<[number, string]>(byKey, [[1, "a"]]);
+
+      const displaced = data.replace([2, "b"]);
+
+      assert.strictEqual(displaced, undefined);
+      assert.deepStrictEqual(data.slice(), [
+        [1, "a"],
+        [2, "b"],
+      ]);
+    });
+  });
+
   describe("fromTwoSortedCollections", () => {
     it("should merge two sorted sets without duplicates", () => {
       const arr1 = [1, 2, 3];
@@ -118,30 +149,4 @@ describe("SortedSet", () => {
       const toMerge1 = SortedSet.fromArrayUnique(cmp, arr1);
       const toMerge2 = SortedSet.fromArrayUnique(cmp, arr2);
 
-      const result = SortedSet.fromTwoSortedCollections(toMerge1, toMerge2);
-
-      assert.deepStrictEqual(result.slice(), [...arr1, ...arr2]);
-    });
-
-    it("should merge two sorted sets with duplicates", () => {
-      const arr = [1, 2, 3];
-      const toMerge1 = SortedSet.fromArrayUnique(cmp, arr);
-      const toMerge2 = SortedSet.fromArrayUnique(cmp, arr);
-
-      const result = SortedSet.fromTwoSortedCollections(toMerge1, toMerge2);
-
-      assert.deepStrictEqual(result.slice(), arr);
-    });
-
-    it("should merge two empty sets", () => {
-      const arr: number[] = [];
-      const toMerge1 = SortedSet.fromArrayUnique(cmp, arr);
-      const toMerge2 = SortedSet.fromArrayUnique(cmp, arr);
-
-      const result = SortedSet.fromTwoSortedCollections(toMerge1, toMerge2);
-
-      assert.deepStrictEqual(result.slice(), arr);
-    });
-
-    it("should merge two sets with one duplicated item", () => {
 ```

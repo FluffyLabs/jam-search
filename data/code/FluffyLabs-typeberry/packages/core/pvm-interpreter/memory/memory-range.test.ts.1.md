@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/memory-range.test.ts#L113-L211
 title: packages/core/pvm-interpreter/memory/memory-range.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: e129c12592d53d10c4b1a9ef6422ccfacd0f6af4177dff73a39ea1589078f499

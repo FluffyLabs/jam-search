@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/state-update.ts#L130-L232
 title: packages/jam/state/state-update.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 8c51327c09c9b86bf1f6c8c5a6ebef27916fd6f79d9bc61015731b36628f0e70

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/telemetry/index.ts#L1-L120
 title: packages/core/telemetry/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 56a3d82b560814db1d3fbe4850bf3f37beb3b16f979cdcaa827b0456d1195fa1

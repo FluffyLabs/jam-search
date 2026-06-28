@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/reports/verify-contextual.ts#L1-L98
 title: packages/jam/transition/reports/verify-contextual.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 4
 content_sha: ff5019d9cf70f48d1c3aa6fc80f8e44f63c07ed9018ec0b7ac540a32129c165e

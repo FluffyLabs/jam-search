@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/configs/specs/jip4.schema.json#L1-L45
 title: packages/configs/specs/jip4.schema.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: cbf3858a728a38d4ba0904fb8d9fc3fe9d9cbf58db293ab41c3f84a76cde2fba

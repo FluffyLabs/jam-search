@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/test-preimage-blob.ts#L3-L5
 title: packages/core/pvm-interpreter/test-preimage-blob.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 2
 chunk_total: 7
 content_sha: 654bf9f68400464e73bcaffc29ececc99d3b3b36c61f02f8ef2f66a1d74506fc

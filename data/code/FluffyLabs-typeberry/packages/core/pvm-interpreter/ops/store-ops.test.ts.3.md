@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops/store-ops.test.ts#L266-L282
 title: packages/core/pvm-interpreter/ops/store-ops.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 3
 chunk_total: 4
 content_sha: 8aca3291226b1276328cb3d1fc7e5e25ccc533f0b0008ffe1be8e6aad1cf1d1c

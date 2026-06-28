@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/refine/historical-lookup.ts#L1-L78
 title: packages/jam/jam-host-calls/refine/historical-lookup.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 83d8e5c70ae9a4e4d49d25e993c2cd7c1775f376991642a22023fe9ee3acf569

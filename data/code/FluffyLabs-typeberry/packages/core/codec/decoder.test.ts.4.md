@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/codec/decoder.test.ts#L471-L592
 title: packages/core/codec/decoder.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 4
 chunk_total: 5
 content_sha: 8ab58d5a91203f73f0c5eff50e3a4ff210952f602e292188cfbe88c81b2e5ea0

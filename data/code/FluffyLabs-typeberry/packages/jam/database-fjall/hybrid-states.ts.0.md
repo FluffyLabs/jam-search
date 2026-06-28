@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L1-L108
 title: packages/jam/database-fjall/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: 751ed8ce34910f3958f169d78b52e5092b82a097c42fae1008a61bf7eb4db0eb
+content_sha: 27506e2aa880c6e6af2ec3109a886a971d8300c16604f988a4062c54dfe38765
 language: typescript
 ---
 `packages/jam/database-fjall/hybrid-states.ts` (lines 1–108)
@@ -21,10 +21,13 @@ import { HashDictionary, SortedSet } from "@typeberry/collections";
 import type { ChainSpec } from "@typeberry/config";
 import {
   type InitStatesDb,
+  InMemoryValueRefsStore,
   LeafDb,
   type StatesDb,
   StateUpdateError,
   updateLeafs,
+  ValueRefs,
+  type ValueRefsUpdate,
   type ValuesDb,
 } from "@typeberry/database";
 import type { Blake2b } from "@typeberry/hash";
@@ -91,6 +94,14 @@ export class FjallValuesSession {
  *
  * Construction is async, and value writes are flushed explicitly, because fjall
  * has no transaction primitive.
+ *
+ * Values that no longer belong to any surviving state are removed from fjall,
+ * decided by in-memory refcounting (`ValueRefs`) driven by the importer's
+ * finality signal. Counts are not persisted: this db cannot resume from disk
+ * anyway (the leaf sets live in memory), so values left over by a previous run
+ * are never collected. An instance backed by a shared session (fuzz reset
+ * reuse) only ever prunes values it inserted itself, since its refcounts start
+ * empty - values left behind by earlier resets stay untouched.
  */
 export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>, InitStatesDb<StateEntries> {
   static async new({
@@ -112,15 +123,4 @@ export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>
   }
 
   /**
-   * Wrap an already-open `FjallValuesSession` and reuse its keyspace.
-   *
-   * The new instance starts with its own empty in-memory leaf sets but shares
-   * the values partition on disk. Its `close()` does not close the session, the
-   * session owner closes it once. The fuzz target uses this to keep one keyspace
-   * across resets and only rebuild the in-memory state for each vector.
-   */
-  static fromSession(spec: ChainSpec, blake2b: Blake2b, session: FjallValuesSession): HybridSerializedStates {
-    return new HybridSerializedStates(spec, blake2b, session, false);
-  }
-
 ```

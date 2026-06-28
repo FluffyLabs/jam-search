@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/.github/workflows/vectors-test-suites.yml#L1-L121
 title: .github/workflows/vectors-test-suites.yml
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 5fe7331a6faaed8579ce76ed54491f8543fa2d6fff1d9202f2ac92b21a13600f

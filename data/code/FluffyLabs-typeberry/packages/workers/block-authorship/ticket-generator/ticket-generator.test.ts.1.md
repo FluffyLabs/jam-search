@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/ticket-generator/ticket-generator.test.ts#L110-L161
 title: packages/workers/block-authorship/ticket-generator/ticket-generator.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: e935eeba9204851ddc4a1d76670555cf89084855a09c98d3f362222de3f19c0d

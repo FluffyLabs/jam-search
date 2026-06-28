@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/args-decoder/decoders/immediate-decoder.test.ts#L111-L229
 title: packages/core/pvm-interpreter/args-decoder/decoders/immediate-decoder.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: 32ba5868c0b9e7232901846b4eac4c21f87bd7e22c1d20afa2fff66bc0d8c7e5

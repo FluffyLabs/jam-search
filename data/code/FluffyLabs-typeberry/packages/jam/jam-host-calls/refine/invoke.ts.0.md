@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/refine/invoke.ts#L1-L104
 title: packages/jam/jam-host-calls/refine/invoke.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 1adfb52aead3dfc4c77a7b1177a0eae1653a5fa33dac646687f9a01338dd1eac

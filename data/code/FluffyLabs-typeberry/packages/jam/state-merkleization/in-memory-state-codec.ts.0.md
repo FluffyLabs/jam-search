@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/in-memory-state-codec.ts#L1-L129
 title: packages/jam/state-merkleization/in-memory-state-codec.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
 content_sha: 64c4ac483f8b216f8bdffe52ee49655b134abd945fe2fb380e95afb4e7199a95

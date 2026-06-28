@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/extensions/ipc/server.ts#L1-L120
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/extensions/ipc/server.ts#L1-L126
 title: packages/extensions/ipc/server.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: 14a5dacadc3734759ff209aac3518c9872279bbda4c5aef7939ea2314f7d3311
+content_sha: e3b25ccecba60441d7b8127bfee26674a4966b22fd761000d62fa3067f5493e0
 language: typescript
 ---
-`packages/extensions/ipc/server.ts` (lines 1–120)
+`packages/extensions/ipc/server.ts` (lines 1–126)
 
 ```typescript
 import * as fs from "node:fs";
@@ -124,6 +124,12 @@ export function startIpcServer(name: string, newMessageHandler: (socket: IpcSend
     controller.abort();
     // unrefing
     server.unref();
+    // Windows named pipes are cleaned up by the OS; Unix sockets are not.
+    if (!isWindows) {
+      try {
+        fs.unlinkSync(socketPath);
+      } catch {}
+    }
   };
 }
 

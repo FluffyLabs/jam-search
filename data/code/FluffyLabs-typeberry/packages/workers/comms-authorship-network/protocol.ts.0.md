@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/comms-authorship-network/protocol.ts#L1-L42
 title: packages/workers/comms-authorship-network/protocol.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 55310422f7958b8fcb8e45f83c0a1a16296bb4c4f3196452ecf45384e003c38d

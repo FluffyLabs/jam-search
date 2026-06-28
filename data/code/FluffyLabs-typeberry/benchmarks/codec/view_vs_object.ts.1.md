@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/codec/view_vs_object.ts#L135-L168
 title: benchmarks/codec/view_vs_object.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 2794fc56aaf01ce55a2b9e77b6ba7d89a9a15970023dc7533e49961a7cb82e6f

@@ -2,19 +2,23 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-set.ts#L114-L123
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-set.ts#L114-L127
 title: packages/core/collections/sorted-set.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: 7ee207dbaaba97aac010e0fc1615802e7e4c51a65fc6cb732d71391c9a7f342e
+content_sha: c13c66795b5f533bcc71c7e4d9c8b7567a2b2554f2413ca5379f07369fb2b45b
 language: typescript
 ---
-`packages/core/collections/sorted-set.ts` (lines 114–123)
+`packages/core/collections/sorted-set.ts` (lines 114–127)
 
 ```typescript
+    const mergedLength = mergedArray.length;
+
+    let j = 1;
+    for (let i = 1; i < mergedLength; i++) {
       if (comparator(mergedArray[i - 1], mergedArray[i]).isNotEqual()) {
         mergedArray[j++] = mergedArray[i];
       }

@@ -2,19 +2,25 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-array.ts#L137-L209
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-array.ts#L133-L211
 title: packages/core/collections/sorted-array.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: 38f96ff4efdc844dfc056e73e3f8be99c5e194544d40a6bb528c0afb5ecbdf47
+content_sha: bf4ec6bdfada99ec5e08962dfd7bee2fd14b70a43de432ee6ab71ac286e9471c
 language: typescript
 ---
-`packages/core/collections/sorted-array.ts` (lines 137–209)
+`packages/core/collections/sorted-array.ts` (lines 133–211)
 
 ```typescript
+  public slice(start?: number, end?: number): V[] {
+    return this.array.slice(start, end);
+  }
+
+  protected binarySearch(v: V) {
+    const arr = this.array;
     const cmp = this.comparator;
 
     let low = 0;

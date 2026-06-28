@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/states.ts#L79-L172
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/states.ts#L79-L178
 title: packages/jam/database-lmdb/states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: 31da0fce0d3c78908b35bd5a692d6b30c0eb2b45790033cdf84789319cfbe56b
+content_sha: 490d4e828c2cb1eeaef987980b32c53b30ebd7e23b152e163a4f58f7566f2272
 language: typescript
 ---
-`packages/jam/database-lmdb/states.ts` (lines 79–172)
+`packages/jam/database-lmdb/states.ts` (lines 79–178)
 
 ```typescript
     this.states = this.root.subDb("states");
@@ -95,6 +95,12 @@ language: typescript
       throw new Error(`Inconsistent DB. Invalid leaf nodes for ${root}: ${resultToString(leafDbResult)}`);
     }
     return SerializedState.new(this.spec, this.blake2b, leafDbResult.ok);
+  }
+
+  commitFinalized(_headers: HeaderHash[]): void {
+    // Values are never pruned here. This db survives restarts, so refcounting
+    // would need counts persisted (and crash-consistent) alongside the values.
+    // See the TODO above - not implemented until actually needed.
   }
 
   markUnused(header: HeaderHash): void {

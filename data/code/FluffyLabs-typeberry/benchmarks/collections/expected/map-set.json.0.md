@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/benchmarks/collections/expected/map-set.json#L1-L25
 title: benchmarks/collections/expected/map-set.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 58114e6c46a63668cba1f9667ef8e9e8f06fcedbb24362c03e7d5c12b5e73cbf

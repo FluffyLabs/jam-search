@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L1-L95
 title: packages/jam/node/main-fuzz.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 3
-content_sha: 875d0448bbed96e8fa69c43bd6b5af0b107dacf597a37a4fd053b9dbdf921ab3
+content_sha: 6342539550bcfdf466fdd3e2dccb73406345a65a3dd3f2ed9cc09924b4e8c922
 language: typescript
 ---
 `packages/jam/node/main-fuzz.ts` (lines 1–95)
@@ -25,7 +25,7 @@ import { v1 as fuzzV1 } from "@typeberry/fuzz-proto";
 import { HASH_SIZE } from "@typeberry/hash";
 import { Logger } from "@typeberry/logger";
 import type { StateEntries } from "@typeberry/state-merkleization";
-import { CURRENT_VERSION, Result, version } from "@typeberry/utils";
+import { type Closer, CURRENT_VERSION, Result, version } from "@typeberry/utils";
 import { FjallValuesSession, logHostEnvironment } from "@typeberry/workers-api-node";
 import { getChainSpec } from "./common.js";
 import type { JamConfig } from "./jam-config.js";
@@ -90,7 +90,7 @@ export function getFuzzDetails() {
   };
 }
 
-export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) => string) {
+export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) => string): Promise<{ close: Closer }> {
   logger.info`💨 Fuzzer V${fuzzConfig.version} starting up.`;
   logger.info`🖥️ PVM Backend: ${PvmBackend[fuzzConfig.jamNodeConfig.pvmBackend]}.`;
   logHostEnvironment(logger);

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/ticket-pool/ticket-validator.test.ts#L1-L39
 title: packages/jam/ticket-pool/ticket-validator.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: ffc2a73c1c7b198ec53290d36d5fc59705fdd4c10f42862117b6d69e06e2b55a

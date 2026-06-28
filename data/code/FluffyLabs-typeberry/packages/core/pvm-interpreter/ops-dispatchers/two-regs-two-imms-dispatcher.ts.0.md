@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops-dispatchers/two-regs-two-imms-dispatcher.ts#L1-L21
 title: packages/core/pvm-interpreter/ops-dispatchers/two-regs-two-imms-dispatcher.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 46a8fc932f75e28f33044023c9116a5b2f79347aaed4b00c7ad28613ba003108

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/block-generator.test.ts#L93-L210
 title: packages/workers/block-authorship/block-generator.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 5
 content_sha: 88500d857c15ef1f45cabaaf48df8d95d5d4acbb4dc8472d35d80bc1f82a6ffc

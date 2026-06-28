@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/states.ts#L1-L117
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/states.ts#L1-L112
 title: packages/jam/database/states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: df20ecdf711110879a4d9d9aead1487b4dfe54323e15f4aba11479f05733b111
+content_sha: 93bc8f8392566fa8df6c1531fd105cd02ca665d67757bde4ef621e48c5539e61
 language: typescript
 ---
-`packages/jam/database/states.ts` (lines 1–117)
+`packages/jam/database/states.ts` (lines 1–112)
 
 ```typescript
 import type { HeaderHash, StateRootHash } from "@typeberry/block";
@@ -62,6 +62,17 @@ export interface StatesDb<T extends State = State> {
 
   /** Retrieve posterior state of given header. */
   getState(header: HeaderHash): T | null;
+
+  /**
+   * Notify the backend about newly finalized blocks, in ancestor-first order.
+   *
+   * Backends that share data between states (e.g. a content-addressed values DB)
+   * use this to move the blocks' references from speculative to finalized.
+   * MUST be called before `markUnused` of the same finality round, otherwise
+   * the newly finalized blocks would be treated as dead forks and values still
+   * referenced by the finalized state could be dropped.
+   */
+  commitFinalized(headers: HeaderHash[]): void;
 
   /** Mark state as no longer needed. Backend may remove it asynchronously. */
   markUnused(header: HeaderHash): void;
@@ -116,20 +127,4 @@ export class InMemoryStates implements StatesDb<InMemoryState> {
   }
 
   /** Insert a full state into the database. */
-  async insertInitialState(headerHash: HeaderHash, state: InMemoryState): Promise<Result<OK, StateUpdateError>> {
-    const copy = InMemoryState.copyFrom(this.spec, state, state.intoServicesData());
-    this.db.set(headerHash, copy);
-    return Result.ok(OK);
-  }
-
-  getState(headerHash: HeaderHash): InMemoryState | null {
-    const state = this.db.get(headerHash);
-    if (state === undefined) {
-      return null;
-    }
-
-    return InMemoryState.copyFrom(this.spec, state, state.intoServicesData());
-  }
-
-  markUnused(header: HeaderHash): void {
 ```

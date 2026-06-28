@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/pages/page-utils.test.ts#L1-L22
 title: packages/core/pvm-interpreter/memory/pages/page-utils.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2c19bae99d62c190b00d3d3bc18ba7b72773db7b04e68e2575f16f64e1adda5e

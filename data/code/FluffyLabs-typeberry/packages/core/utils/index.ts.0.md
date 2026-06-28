@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/index.ts#L1-L22
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/utils/index.ts#L1-L23
 title: packages/core/utils/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: a0a4ad09252f988f3350467cec77b330c36a24bcb3e8513aab63555f362eb7b3
+content_sha: 788695afae0f24ae0da91a06c0367783b6fed74c3a42d8731c9f250fc7505399
 language: typescript
 ---
-`packages/core/utils/index.ts` (lines 1–22)
+`packages/core/utils/index.ts` (lines 1–23)
 
 ```typescript
 /**
@@ -36,5 +36,6 @@ export * from "./opaque.js";
 export { name, version } from "./package.js";
 export * from "./result.js";
 export * from "./safe-alloc-uint8array.js";
+export * from "./shutdown.js";
 export * from "./test.js";
 ```

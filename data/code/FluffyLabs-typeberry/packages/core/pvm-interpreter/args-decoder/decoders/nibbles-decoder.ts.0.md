@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/args-decoder/decoders/nibbles-decoder.ts#L1-L36
 title: packages/core/pvm-interpreter/args-decoder/decoders/nibbles-decoder.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 1e78cbfadfab8bc62f10b82dd9b077c4d90b5bbb5ed961f41e8eabe6596de9ed

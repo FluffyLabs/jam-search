@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-array.ts#L1-L145
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-array.ts#L1-L143
 title: packages/core/collections/sorted-array.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: b3cb4171e745e0ddd415f650f063d0dfd6c6eaddcf953d84eda6994bfca4f277
+content_sha: 8db7b347f9f3e0441f1bd3038ca85c202c369096aa220c820948ecb7201f75fc
 language: typescript
 ---
-`packages/core/collections/sorted-array.ts` (lines 1–145)
+`packages/core/collections/sorted-array.ts` (lines 1–143)
 
 ```typescript
 import type { Comparator } from "@typeberry/ordering";
@@ -128,12 +128,14 @@ export class SortedArray<V> implements ImmutableSortedArray<V> {
   }
 
   /** Remove one matching element from the collection. */
-  public removeOne(v: V) {
+  public removeOne(v: V): V | undefined {
     const findIdx = this.binarySearch(v);
     if (findIdx.isEqual) {
-      // remove the element
-      this.array.splice(findIdx.idx, 1);
+      // remove the element and return the stored one
+      const [removed] = this.array.splice(findIdx.idx, 1);
+      return removed;
     }
+    return undefined;
   }
 
   public has(v: V) {
@@ -156,8 +158,4 @@ export class SortedArray<V> implements ImmutableSortedArray<V> {
     let low = 0;
     let high = arr.length;
 
-    while (low < high) {
-      const mid = (high + low) >> 1;
-      const r = cmp(arr[mid], v);
-      if (r.isEqual()) {
 ```

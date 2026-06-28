@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/epoch-tracker.ts#L87-L106
 title: packages/workers/block-authorship/epoch-tracker.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 285226dd1c2fac4b0d77052d165fa8df8ce44279c8cd5f0ba1a3ca407eb4c105

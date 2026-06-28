@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L116'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L114'
 title: bin/jam/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: 1ae8c718754742d6a2eaf560968ad60abc368078ca89d0a9e355a7fabdd15b75
+content_sha: 2dd127ae00aa0033004dd1b6e7bf812b0a8c2f3089b9fc44cc88ffefb3f81eb6
 language: typescript
 ---
-`bin/jam/index.ts` (lines 1–116)
+`bin/jam/index.ts` (lines 1–114)
 
 ```typescript
 // biome-ignore-all lint/suspicious/noConsole: bin file
@@ -25,7 +25,8 @@ import { Level, Logger } from "@typeberry/logger";
 import { altNameRaw } from "@typeberry/networking";
 import { exportBlocks, importBlocks, JamConfig, main, mainFuzz } from "@typeberry/node";
 import { Telemetry } from "@typeberry/telemetry";
-import { asOpaqueType, workspacePathFix } from "@typeberry/utils";
+import { asOpaqueType, type Closer, workspacePathFix } from "@typeberry/utils";
+import { installShutdownHandlers } from "@typeberry/utils/shutdown.node.js";
 import { type Arguments, Command, HELP, parseArgs } from "./args.js";
 import { readFuzzEnv, synthesizeFuzzArgs } from "./fuzz-env.js";
 
@@ -61,7 +62,15 @@ try {
   process.exit(1);
 }
 
-const running = startNode(args, withRelPath);
+// Install shutdown handlers as early as possible so signals during startup
+// also exit cleanly. The closer is mutated by each startNode branch once it
+// knows what to clean up.
+let currentClose: Closer = async () => {};
+installShutdownHandlers(() => currentClose(), { log: console });
+
+const running = startNode(args, withRelPath, (c) => {
+  currentClose = c;
+});
 
 running.catch((e) => {
   console.error(`${e}`);
@@ -119,15 +128,4 @@ async function prepareConfigFile(
       key: devNetworkingSeed(blake2b, nodeName),
       host: "127.0.0.1",
       port: devPort(devPortShift),
-      bootnodes: devBootnodes.concat(nodeConfig.chainSpec.bootnodes ?? []),
-    },
-    devValidatorIndex: devIndex,
-  });
-}
-
-async function startNode(args: Arguments, withRelPath: (p: string) => string) {
-  const blake2b = await Blake2b.createHasher();
-  const jamNodeConfig = await prepareConfigFile(args, blake2b, withRelPath);
-
-  // Initialize OpenTelemetry before anything else
 ```

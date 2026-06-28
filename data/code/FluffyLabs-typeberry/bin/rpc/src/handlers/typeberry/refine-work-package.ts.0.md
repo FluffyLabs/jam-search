@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/src/handlers/typeberry/refine-work-package.ts#L1-L93
 title: bin/rpc/src/handlers/typeberry/refine-work-package.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: 203a626388deba24679afc5f8c2e811d784780e9d37de4c63d6a780310eeb26a

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/src/handlers/subscribe-service-preimage.ts#L1-L20
 title: bin/rpc/src/handlers/subscribe-service-preimage.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: d55dd3abe33f22aee2743ba681a3652003c959dbf94faeac640ff1fb70708e8c

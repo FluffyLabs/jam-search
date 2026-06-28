@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/block-authorship/epoch-authoring-slots.ts#L94-L123
 title: packages/workers/block-authorship/epoch-authoring-slots.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: fef766de7607f3f65c15c3e1b02978f9a58ff3527664ec87d6822d71aa0085e4

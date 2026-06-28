@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-set.ts#L1-L121
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/sorted-set.ts#L1-L119
 title: packages/core/collections/sorted-set.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: 13dd920ef50e2572f0e29d550b595e3b4a392c5d9532f2f725abc88b4adf8ce0
+content_sha: 5e99c2df0ebd7cc870539bdcb3478383e761990472c011d1728fe8476af5de6e
 language: typescript
 ---
-`packages/core/collections/sorted-set.ts` (lines 1–121)
+`packages/core/collections/sorted-set.ts` (lines 1–119)
 
 ```typescript
 import type { Comparator } from "@typeberry/ordering";
@@ -104,10 +104,14 @@ export class SortedSet<V> extends SortedArray<V> implements ImmutableSortedSet<V
    *
    * Putting another value that's equal via comparator will replace the current one.
    */
-  public replace(v: V) {
+  public replace(v: V): V | undefined {
     const findIdx = this.binarySearch(v);
-    const toRemove = findIdx.isEqual ? 1 : 0;
-    this.array.splice(findIdx.idx, toRemove, v);
+    if (findIdx.isEqual) {
+      const [displaced] = this.array.splice(findIdx.idx, 1, v);
+      return displaced;
+    }
+    this.array.splice(findIdx.idx, 0, v);
+    return undefined;
   }
 
   /** Create a new SortedSet from two sorted collections. */
@@ -130,10 +134,4 @@ export class SortedSet<V> extends SortedArray<V> implements ImmutableSortedSet<V
     for (let i = 1; i < mergedLength; i++) {
       if (comparator(mergedArray[i - 1], mergedArray[i]).isNotEqual()) {
         mergedArray[j++] = mergedArray[i];
-      }
-    }
-
-    mergedArray.length = j;
-
-    return SortedSet.fromSortedArray(comparator, mergedArray);
 ```

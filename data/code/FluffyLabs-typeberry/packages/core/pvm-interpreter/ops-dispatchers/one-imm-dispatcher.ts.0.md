@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/ops-dispatchers/one-imm-dispatcher.ts#L1-L15
 title: packages/core/pvm-interpreter/ops-dispatchers/one-imm-dispatcher.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: b1171152d821b378df7fcbee4c5c9d69530e92cc29a72e403bf4b78933c63df9

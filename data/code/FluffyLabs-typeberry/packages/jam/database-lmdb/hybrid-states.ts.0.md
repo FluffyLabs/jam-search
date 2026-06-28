@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.ts#L1-L113
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.ts#L1-L107
 title: packages/jam/database-lmdb/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: f2e82ac4c83757a51f8cad5cbc1f86d2e6f78694e1b6d44646d59399358ba439
+content_sha: 6aac85854c2839586a3649c1486031762de3197b4b288002e9927b6238275311
 language: typescript
 ---
-`packages/jam/database-lmdb/hybrid-states.ts` (lines 1–113)
+`packages/jam/database-lmdb/hybrid-states.ts` (lines 1–107)
 
 ```typescript
 // packages/jam/database-lmdb/hybrid-states.ts
@@ -22,13 +22,17 @@ import { HashDictionary, SortedSet } from "@typeberry/collections";
 import type { ChainSpec } from "@typeberry/config";
 import {
   type InitStatesDb,
+  InMemoryValueRefsStore,
   LeafDb,
   type StatesDb,
   StateUpdateError,
   updateLeafs,
+  ValueRefs,
+  type ValueRefsUpdate,
   type ValuesDb,
 } from "@typeberry/database";
 import type { Blake2b } from "@typeberry/hash";
+import { Logger } from "@typeberry/logger";
 import type { ServicesUpdate, State } from "@typeberry/state";
 import {
   SerializedState,
@@ -40,6 +44,8 @@ import { type LeafNode, leafComparator, type ValueHash } from "@typeberry/trie";
 import { OK, Result } from "@typeberry/utils";
 import { LmdbRoot, type SubDb } from "./root.js";
 
+const logger = Logger.new(import.meta.filename, "db");
+
 /**
  * Hybrid serialized-states db.
  *
@@ -47,12 +53,22 @@ import { LmdbRoot, type SubDb } from "./root.js";
  * Reads go straight to lmdb, which keeps its own page cache.
  * NOTE: this DB is designed for long fuzzing and to be used with pruning to
  * keep the heap usage bounded.
+ *
+ * Values that no longer belong to any surviving state are removed from lmdb,
+ * decided by in-memory refcounting (`ValueRefs`) driven by the importer's
+ * finality signal. Counts are not persisted: this db cannot resume from disk
+ * anyway (the leaf sets live in memory), so values left over by a previous
+ * run are never collected.
  */
 export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>, InitStatesDb<StateEntries> {
   private readonly inMemStates: HashDictionary<HeaderHash, SortedSet<LeafNode>> = HashDictionary.new();
   private readonly lmdbValues: SubDb;
   // A single shared values accessor reused by every `LeafDb` we hand out.
   private readonly valuesDb: ValuesDb;
+  private readonly refsStore = new InMemoryValueRefsStore();
+  private readonly refs = new ValueRefs(this.refsStore);
+  // Queue of not-yet-committed value removals, awaited on close.
+  private pendingCleanup: Promise<unknown> = Promise.resolve();
 
   static new({
     spec,
@@ -93,6 +109,7 @@ export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>
       return res;
     }
     this.inMemStates.set(headerHash, leafs);
+    this.applyRefs(this.refs.onInitial(values.map((v) => v[0])));
     return Result.ok(OK);
   }
 
@@ -104,28 +121,5 @@ export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>
     const updatedValues = serializeStateUpdate(this.spec, this.blake2b, update);
     // Clone the leaf set before mutating: the previous state keeps using its own.
     const newLeafs = SortedSet.fromSortedArray(leafComparator, state.backend.leafs.array);
-    const { values, leafs } = updateLeafs(newLeafs, this.blake2b, updatedValues);
-    const res = await this.writeValues(values);
-    if (res.isError) {
-      // Leave the caller's state untouched: its new leaves would reference
-      // values that never reached disk.
-      return res;
-    }
-    // Re-create the lookup with the shared values accessor only once the new
-    // values are durably written.
-    state.updateBackend(LeafDb.fromLeaves(leafs, this.valuesDb));
-    this.inMemStates.set(header, leafs);
-    return Result.ok(OK);
-  }
-
-  async getStateRoot(state: SerializedState<LeafDb>): Promise<StateRootHash> {
-    return state.backend.getStateRoot(this.blake2b);
-  }
-
-  getState(header: HeaderHash): SerializedState<LeafDb> | null {
-    const leafs = this.inMemStates.get(header);
-    if (leafs === undefined) {
-      return null;
-    }
-    const leafDb = LeafDb.fromLeaves(leafs, this.valuesDb);
+    const { values, removed, leafs } = updateLeafs(newLeafs, this.blake2b, updatedValues);
 ```

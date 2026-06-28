@@ -1,20 +1,38 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L112-L168'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L107-L199'
 title: bin/jam/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 1
 chunk_total: 2
-content_sha: 1134e66d76ec2eb23db69fd0c7cfe7274fa04fc466ff86b5dbd41ade5df67949
+content_sha: 068d5f9f9751fc3891802b6efa4da87d2a2b1fff9f7addd936f3ec3f44894edd
 language: typescript
 ---
-`bin/jam/index.ts` (lines 112–168)
+`bin/jam/index.ts` (lines 107–199)
 
 ```typescript
-async function startNode(args: Arguments, withRelPath: (p: string) => string) {
+    isFastForward,
+    nodeName,
+    nodeConfig,
+    pvmBackend: args.args.pvm,
+    networkConfig: {
+      key: devNetworkingSeed(blake2b, nodeName),
+      host: "127.0.0.1",
+      port: devPort(devPortShift),
+      bootnodes: devBootnodes.concat(nodeConfig.chainSpec.bootnodes ?? []),
+    },
+    devValidatorIndex: devIndex,
+  });
+}
+
+async function startNode(
+  args: Arguments,
+  withRelPath: (p: string) => string,
+  setCloser: (c: Closer) => void,
+): Promise<void> {
   const blake2b = await Blake2b.createHasher();
   const jamNodeConfig = await prepareConfigFile(args, blake2b, withRelPath);
 
@@ -30,7 +48,9 @@ async function startNode(args: Arguments, withRelPath: (p: string) => string) {
     const version = args.args.version;
     const socket = args.args.socket;
     const initGenesisFromAncestry = args.args.initGenesisFromAncestry;
-    return mainFuzz({ jamNodeConfig, version, socket, initGenesisFromAncestry }, withRelPath);
+    const { close } = await mainFuzz({ jamNodeConfig, version, socket, initGenesisFromAncestry }, withRelPath);
+    setCloser(close);
+    return;
   }
 
   // Just import a bunch of blocks
@@ -44,15 +64,31 @@ async function startNode(args: Arguments, withRelPath: (p: string) => string) {
       withRelPath,
       telemetry,
     );
-    return await importBlocks(node, args.args.files);
+    let closePromise: Promise<void> | null = null;
+    const closeNode = () => {
+      closePromise ??= node.close();
+      return closePromise;
+    };
+    setCloser(closeNode);
+    try {
+      await importBlocks(node, args.args.files);
+    } finally {
+      // Drain workers/db on both happy-path completion and signal-driven
+      // shutdown — otherwise the process would hang on the still-active workers.
+      await closeNode();
+      setCloser(async () => {});
+    }
+    return;
   }
 
   if (args.command === Command.Export) {
-    return await exportBlocks(jamNodeConfig, args.args.output, withRelPath);
+    await exportBlocks(jamNodeConfig, args.args.output, withRelPath);
+    return;
   }
 
   // Run regular node.
-  return main(jamNodeConfig, withRelPath, telemetry);
+  const node = await main(jamNodeConfig, withRelPath, telemetry);
+  setCloser(() => node.close());
 }
 
 function devNodeName(defaultNodeName: string, idx: number | string) {

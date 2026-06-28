@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/leaf-db-update.ts#L1-L40
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/leaf-db-update.ts#L1-L58
 title: packages/jam/database/leaf-db-update.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
-content_sha: e0730a739d1a1b877572b88e646c23c06757be23b302a4755b437491f68002d7
+content_sha: 94e57ca90a543758c5d7e2a1081f309484475d182e0a7c2f5ed38580a9239084
 language: typescript
 ---
-`packages/jam/database/leaf-db-update.ts` (lines 1–40)
+`packages/jam/database/leaf-db-update.ts` (lines 1–58)
 
 ```typescript
 import { BytesBlob } from "@typeberry/bytes";
@@ -29,22 +29,39 @@ export function updateLeafs(
   data: Iterable<[StateEntryUpdateAction, StateKey | TruncatedHash, BytesBlob]>,
 ): {
   values: [ValueHash, BytesBlob][];
+  removed: ValueHash[];
   leafs: SortedSet<LeafNode>;
 } {
   const blake2bTrieHasher = getBlake2bTrieHasher(blake2b);
   // We will collect all values that don't fit directly into leaf nodes.
   const values: [ValueHash, BytesBlob][] = [];
+  // Value hashes that are no longer referenced by the leaf they were stored under.
+  // NOTE this does not yet mean they can be removed from the DB - the same value
+  // may still be referenced by another leaf or another state. It's up to value
+  // ref-counting to decide that.
+  const removed: ValueHash[] = [];
   for (const [action, key, value] of data) {
     if (action === StateEntryUpdateAction.Insert) {
       const leafNode = InMemoryTrie.constructLeaf(blake2bTrieHasher, key.asOpaque(), value);
-      leafs.replace(leafNode);
-      if (!leafNode.hasEmbeddedValue()) {
-        values.push([leafNode.getValueHash(), value]);
+      const displaced = leafs.replace(leafNode);
+      const newHash = leafNode.hasEmbeddedValue() ? null : leafNode.getValueHash();
+      const oldHash = displaced !== undefined && !displaced.hasEmbeddedValue() ? displaced.getValueHash() : null;
+      // Re-inserting the exact same value under the same key is a no-op for the DB.
+      if (newHash !== null && oldHash !== null && newHash.isEqualTo(oldHash)) {
+        continue;
+      }
+      if (newHash !== null) {
+        values.push([newHash, value]);
+      }
+      if (oldHash !== null) {
+        removed.push(oldHash);
       }
     } else if (action === StateEntryUpdateAction.Remove) {
       const leafNode = InMemoryTrie.constructLeaf(blake2bTrieHasher, key.asOpaque(), BytesBlob.empty());
-      leafs.removeOne(leafNode);
-      // TODO [ToDr] Handle ref-counting values or updating some header-hash-based references.
+      const removedLeaf = leafs.removeOne(leafNode);
+      if (removedLeaf !== undefined && !removedLeaf.hasEmbeddedValue()) {
+        removed.push(removedLeaf.getValueHash());
+      }
     } else {
       assertNever(action);
     }
@@ -52,6 +69,7 @@ export function updateLeafs(
 
   return {
     values,
+    removed,
     leafs,
   };
 }

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-host-calls/host-calls.ts#L1-L73
 title: packages/core/pvm-host-calls/host-calls.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: fcd74e8e7d1e5614f5f296d1f31e025fe263fc5eb6046c6ba04b3d2c42ae0664

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/statistics.test.ts#L217-L325
 title: packages/jam/transition/statistics.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-15T16:53:45Z'
-last_modified: '2026-06-15T16:53:45Z'
+created_at: '2026-06-24T13:20:40Z'
+last_modified: '2026-06-24T13:20:40Z'
 chunk_index: 2
 chunk_total: 7
 content_sha: 4daeed5683b77b60ff1aed644c258c5bd51d18f812100d0b49ad9d27d94c401b
