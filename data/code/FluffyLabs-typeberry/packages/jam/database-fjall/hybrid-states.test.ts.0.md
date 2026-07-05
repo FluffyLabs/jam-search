@@ -2,29 +2,38 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.test.ts#L1-L97
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.test.ts#L1-L101
 title: packages/jam/database-fjall/hybrid-states.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
-chunk_total: 2
-content_sha: 93d1c3cf353fb93bc55eb556d1867ee2f01d63304ad019f21f57bdd6166c51a6
+chunk_total: 3
+content_sha: ac05101ca271f8cabfbbf2f719732ed561d55feee6bc16060baf0045a251d0cf
 language: typescript
 ---
-`packages/jam/database-fjall/hybrid-states.test.ts` (lines 1–97)
+`packages/jam/database-fjall/hybrid-states.test.ts` (lines 1–101)
 
 ```typescript
 import assert from "node:assert";
 import * as fs from "node:fs";
 import { afterEach, before, beforeEach, describe, it } from "node:test";
-import type { HeaderHash } from "@typeberry/block";
+import { type HeaderHash, tryAsServiceId } from "@typeberry/block";
 import { Bytes, BytesBlob } from "@typeberry/bytes";
 import { tinyChainSpec } from "@typeberry/config";
+import type { LeafDb } from "@typeberry/database";
 import { Blake2b, HASH_SIZE } from "@typeberry/hash";
-import { InMemoryState } from "@typeberry/state";
-import { StateEntries, type StateKey } from "@typeberry/state-merkleization";
-import { deepEqual, OK, Result } from "@typeberry/utils";
+import {
+  InMemoryState,
+  type ServicesUpdate,
+  type State,
+  StorageItem,
+  type StorageKey,
+  UpdateStorage,
+} from "@typeberry/state";
+import { testState } from "@typeberry/state/test.utils.js";
+import { type SerializedState, StateEntries, type StateKey } from "@typeberry/state-merkleization";
+import { asOpaqueType, deepEqual, OK, Result } from "@typeberry/utils";
 import { FjallValuesSession, HybridSerializedStates } from "./hybrid-states.js";
 
 let blake2b: Blake2b;
@@ -107,9 +116,4 @@ describe("Fjall hybrid serialized states", () => {
       const first = HybridSerializedStates.fromSession(spec, blake2b, session);
       const res = await first.insertInitialState(headerHash, entries);
       deepEqual(res, Result.ok(OK));
-      await first.close();
-
-      // Second "reset": a fresh states sharing the same session. Its in-memory
-      // leaf set is independent (empty until it inserts)...
-      const second = HybridSerializedStates.fromSession(spec, blake2b, session);
 ```

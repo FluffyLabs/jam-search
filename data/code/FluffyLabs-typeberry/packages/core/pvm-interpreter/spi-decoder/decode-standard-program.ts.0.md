@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/spi-decoder/decode-standard-program.ts#L1-L117
 title: packages/core/pvm-interpreter/spi-decoder/decode-standard-program.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 38b770a559c262dee628a0f5ae475112234557b176a69ab5d0a5fd625a0c7add

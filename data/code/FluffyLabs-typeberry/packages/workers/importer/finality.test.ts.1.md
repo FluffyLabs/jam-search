@@ -2,19 +2,26 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L122-L216
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L120-L211
 title: packages/workers/importer/finality.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 6
-content_sha: d0164f1da619c9a2ec6f31ff3be1d2ba89ec820a92d7fb556b22b98a5ffc4add
+content_sha: 3980019403950b40cb5708dfc48df03bd6cca66187f24a7ac3af07069049cfcf
 language: typescript
 ---
-`packages/workers/importer/finality.test.ts` (lines 122–216)
+`packages/workers/importer/finality.test.ts` (lines 120–211)
 
 ```typescript
+      const chain = await buildLinearChain(db, genesis, 7);
+      for (let i = 0; i < 6; i++) {
+        finalizer.onBlockImported(chain[i]);
+      }
+
+      const result = finalizer.onBlockImported(chain[6]);
+      assertExists(result);
       // Prunable: genesis (prev finalized) + chain[0..2] = 4 items.
       assert.strictEqual(result.prunableStateHashes.length, 4);
       assert.ok(result.prunableStateHashes[0].isEqualTo(genesis));
@@ -43,6 +50,10 @@ language: typescript
       const r1 = finalizer.onBlockImported(chain[4]);
       assertExists(r1);
       assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
+      assert.deepStrictEqual(
+        r1.finalizedChain.map((h) => h.toString()),
+        chain.slice(0, 3).map((h) => h.toString()),
+      );
       assert.strictEqual(r1.prunableStateHashes.length, 3);
       assert.ok(r1.prunableStateHashes[0].isEqualTo(genesis));
       assert.ok(r1.prunableStateHashes[1].isEqualTo(chain[0]));
@@ -56,6 +67,11 @@ language: typescript
       const r2 = finalizer.onBlockImported(chain[7]);
       assertExists(r2);
       assert.strictEqual(r2.finalizedHash.isEqualTo(chain[5]), true);
+      // Only the blocks finalized in this round, not the ones from r1.
+      assert.deepStrictEqual(
+        r2.finalizedChain.map((h) => h.toString()),
+        chain.slice(3, 6).map((h) => h.toString()),
+      );
       assert.strictEqual(r2.prunableStateHashes.length, 3);
       assert.ok(r2.prunableStateHashes[0].isEqualTo(chain[2]));
       assert.ok(r2.prunableStateHashes[1].isEqualTo(chain[3]));
@@ -91,23 +107,4 @@ language: typescript
       // 5th: chain length = 5 > 4, finalize chain[2].
       const r1 = finalizer.onBlockImported(chain[4]);
       assertExists(r1);
-      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
-    });
-  });
-
-  describe("with depth=1", () => {
-    it("should finalize after 3 blocks and prune in batches of 2", async () => {
-      const db = InMemoryBlocks.new();
-      const genesis = db.getBestHeaderHash();
-
-      const finalizer = DummyFinalizer.create(db, 1);
-
-      const chain = await buildLinearChain(db, genesis, 6);
-
-      // Import 1: length=1, not > 2. No finality.
-      assert.strictEqual(finalizer.onBlockImported(chain[0]), null);
-
-      // Import 2: length=2, not > 2. No finality.
-      assert.strictEqual(finalizer.onBlockImported(chain[1]), null);
-
 ```

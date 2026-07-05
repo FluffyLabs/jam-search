@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/reports/verify-credentials.test.ts#L105-L209
 title: packages/jam/transition/reports/verify-credentials.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: d5a300096eda4442f50c034a772fd6b6c05a07cc8cde4e50187bda77b5f10a41

@@ -2,19 +2,31 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L106-L234
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L104-L233
 title: packages/jam/config-node/node-config.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 319a2e4fee572ecbb9839c85637449fac6f1797e707980e2a589f104a770457c
+content_sha: e663d8ddf2910833b76a069419aa1f0790de71d8fd3f16a2b48e869843e6bdd3
 language: typescript
 ---
-`packages/jam/config-node/node-config.test.ts` (lines 106–234)
+`packages/jam/config-node/node-config.test.ts` (lines 104–233)
 
 ```typescript
+      ["default", JSON.stringify({ database_base_path: "/test/path", chain_spec: { bootnodes: [] } })],
+      withRelPath,
+    );
+    assert.deepStrictEqual(
+      config,
+      parseFromJson(
+        {
+          ...configs.default,
+          database_base_path: "/test/path",
+          chain_spec: { ...configs.default.chain_spec, bootnodes: [] },
+        },
+        NodeConfiguration.fromJson,
       ),
     );
   });
@@ -133,15 +145,4 @@ language: typescript
 
   it("should throw an error if non-existing json file path is provided", () => {
     mock.method(fs, "readFileSync", () => {
-      throw new Error("File not found");
-    });
-    assert.throws(
-      () => loadConfig(["file.json"], withRelPath),
-      new Error("Unable to load config from file.json: Error: File not found"),
-    );
-  });
-
-  it("should throw an error if an invalid json file is provided using a pseudo-jq query", () => {
-    mock.method(fs, "readFileSync", () => "invalid json");
-    assert.throws(
 ```

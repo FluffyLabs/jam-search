@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L1-L108
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L1-L110
 title: packages/jam/database-fjall/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 27506e2aa880c6e6af2ec3109a886a971d8300c16604f988a4062c54dfe38765
+content_sha: 3976bb97d9d10755c9f42bca7f1607c5fe9e066c20f8b1d0baf9f5496f43d3cc
 language: typescript
 ---
-`packages/jam/database-fjall/hybrid-states.ts` (lines 1–108)
+`packages/jam/database-fjall/hybrid-states.ts` (lines 1–110)
 
 ```typescript
 import type { HeaderHash, StateRootHash } from "@typeberry/block";
@@ -64,9 +64,17 @@ export class FjallValuesSession {
 
   /** Open (or create) the keyspace at `dbPath` and its `values` partition. */
   static async open(dbPath: string, options: FjallRootOptions = {}): Promise<FjallValuesSession> {
+    if (options.readOnly === true) {
+      throw new Error("FjallValuesSession requires a writable keyspace.");
+    }
     const root = await FjallRoot.open(dbPath, options);
-    const values = await root.partition("values");
-    return new FjallValuesSession(root, values);
+    try {
+      const values = await root.writablePartition("values");
+      return new FjallValuesSession(root, values);
+    } catch (e) {
+      await root.close();
+      throw e;
+    }
   }
 
   /** Flush the journal to disk (a no-op for ephemeral keyspaces). */
@@ -117,10 +125,4 @@ export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>
     ephemeral?: boolean;
     cacheSizeBytes?: number;
   }): Promise<HybridSerializedStates> {
-    const session = await FjallValuesSession.open(dbPath, { ephemeral, cacheSizeBytes });
-    // This instance owns the session it just opened, so its `close()` closes it.
-    return new HybridSerializedStates(spec, blake2b, session, true);
-  }
-
-  /**
 ```

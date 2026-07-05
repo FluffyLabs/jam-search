@@ -2,19 +2,38 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L211-L298
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L206-L297
 title: packages/workers/importer/finality.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 2
 chunk_total: 6
-content_sha: 912cd8f5dd83e0c67c1d91a5ac84e562f7eca4fcbdbe298188e943ad8bef9dc0
+content_sha: 821b18806afd24596cc887c3c5f4b2cd7ecd4afc028d37280f13c579c8713043
 language: typescript
 ---
-`packages/workers/importer/finality.test.ts` (lines 211–298)
+`packages/workers/importer/finality.test.ts` (lines 206–297)
 
 ```typescript
+        assert.strictEqual(finalizer.onBlockImported(chain[i]), null);
+      }
+
+      // 5th: chain length = 5 > 4, finalize chain[2].
+      const r1 = finalizer.onBlockImported(chain[4]);
+      assertExists(r1);
+      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
+    });
+  });
+
+  describe("with depth=1", () => {
+    it("should finalize after 3 blocks and prune in batches of 2", async () => {
+      const db = InMemoryBlocks.new();
+      const genesis = db.getBestHeaderHash();
+
+      const finalizer = DummyFinalizer.create(db, 1);
+
+      const chain = await buildLinearChain(db, genesis, 6);
+
       // Import 1: length=1, not > 2. No finality.
       assert.strictEqual(finalizer.onBlockImported(chain[0]), null);
 
@@ -70,6 +89,10 @@ language: typescript
       const result = finalizer.onBlockImported(a5);
       assertExists(result);
       assert.strictEqual(result.finalizedHash.isEqualTo(a3), true);
+      assert.deepStrictEqual(
+        result.finalizedChain.map((h) => h.toString()),
+        [a1, a2, a3].map((h) => h.toString()),
+      );
 
       // Fork B [B1, B2] is dead (doesn't contain A3). B1 and B2 should be pruned.
       // Also: genesis (prev finalized) and A1, A2 pruned (before A3 in chain A).
@@ -84,23 +107,4 @@ language: typescript
 
     it("should keep alive forks that diverge at or after the finalized block", async () => {
       const db = InMemoryBlocks.new();
-      const genesis = db.getBestHeaderHash();
-
-      const finalizer = DummyFinalizer.create(db, 2);
-
-      // Main chain: genesis -> M1 -> M2 -> M3 -> M4
-      const m1 = await createBlock(db, genesis, 1);
-      const m2 = await createBlock(db, m1, 2);
-      const m3 = await createBlock(db, m2, 3);
-      const m4 = await createBlock(db, m3, 4);
-
-      // Fork from M3 (the block that will be finalized): M3 -> F1
-      const f1 = await createBlock(db, m3, 20);
-
-      // Import M1..M4. F1 creates a fork from the middle of the chain.
-      // After importing M1..M4: chain [M1,M2,M3,M4], length 4 not > 4.
-      for (const h of [m1, m2, m3, m4]) {
-        finalizer.onBlockImported(h);
-      }
-
 ```

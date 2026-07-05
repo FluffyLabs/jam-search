@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/export.ts#L1-L104
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/export.ts#L1-L114
 title: packages/jam/node/export.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 225c341016e9e7ff27f05121d9936bd11bea817092ff7f67870cf5171deb2928
+content_sha: 91b40ad0bd00b237b29e1bfa5e117ad84d0a2a22ab7b47ec1cbef74487b7d03f
 language: typescript
 ---
-`packages/jam/node/export.ts` (lines 1–104)
+`packages/jam/node/export.ts` (lines 1–114)
 
 ```typescript
 import fs from "node:fs";
@@ -21,9 +21,10 @@ import type { HeaderHash } from "@typeberry/block";
 import { Block as BlockCodec } from "@typeberry/block";
 import { Bytes } from "@typeberry/bytes";
 import { Encoder } from "@typeberry/codec";
+import { RegularStateBackend } from "@typeberry/config-node";
 import { Blake2b, HASH_SIZE } from "@typeberry/hash";
 import { Logger } from "@typeberry/logger";
-import { LmdbWorkerConfig } from "@typeberry/workers-api-node";
+import { FjallWorkerConfig, LmdbWorkerConfig } from "@typeberry/workers-api-node";
 import { getChainSpec, getDatabasePath } from "./common.js";
 import type { JamConfig } from "./jam-config.js";
 
@@ -58,15 +59,24 @@ export async function exportBlocks(jamNodeConfig: JamConfig, output: string, wit
     jamNodeConfig.node.chainSpec.genesisHeader,
     withRelPath(jamNodeConfig.node.databaseBasePath),
   );
-  const config = LmdbWorkerConfig.new({
-    nodeName: jamNodeConfig.nodeName,
-    chainSpec,
-    blake2b,
-    dbPath,
-    workerParams: undefined,
-  });
+  const config =
+    jamNodeConfig.node.stateBackend === RegularStateBackend.Fjall
+      ? FjallWorkerConfig.new({
+          nodeName: jamNodeConfig.nodeName,
+          chainSpec,
+          blake2b,
+          dbPath,
+          workerParams: undefined,
+        })
+      : LmdbWorkerConfig.new({
+          nodeName: jamNodeConfig.nodeName,
+          chainSpec,
+          blake2b,
+          dbPath,
+          workerParams: undefined,
+        });
 
-  const rootDb = config.openDatabase();
+  const rootDb = await config.openDatabase();
   const blocks = rootDb.getBlocksDb();
 
   logger.info`📖 Gathering blocks...`;

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/value-refs.test.ts#L124-L216
 title: packages/jam/database/value-refs.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 83018bd1f966ff82f92ded937cd2fe4e52b1f0398368108987f3f9698ae638f1

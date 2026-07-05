@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/test-runner/w3f/codec/index.ts#L1-L56
 title: bin/test-runner/w3f/codec/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 9f6f43b0e5a3d00b2870bef72b5633743b51d5f0d87caec9f28608ceabeda268

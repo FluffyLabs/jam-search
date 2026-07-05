@@ -2,23 +2,23 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L108
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L101
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 09c2b6a272c8ebcc9ef1bba3164a0c472ca7469f30dc967e4a5b1a976f63bae0
+content_sha: 0509cca34e92b13c2399b0a8184be3139081a0fa4092c129b935b8a9ea822dda
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 1–108)
+`packages/jam/node/main-importer.ts` (lines 1–101)
 
 ```typescript
 import type { BlockView, HeaderHash, StateRootHash } from "@typeberry/block";
 import { Bytes } from "@typeberry/bytes";
 import { PvmBackend } from "@typeberry/config";
-import { KnownChainSpec } from "@typeberry/config-node";
+import { KnownChainSpec, RegularStateBackend } from "@typeberry/config-node";
 import { bandersnatch, initWasm } from "@typeberry/crypto";
 import { Blake2b, HASH_SIZE } from "@typeberry/hash";
 import { createImporter, ImporterConfig } from "@typeberry/importer";
@@ -26,6 +26,7 @@ import { tryAsU16 } from "@typeberry/numbers";
 import { CURRENT_SUITE, CURRENT_VERSION, Result, resultToString, version } from "@typeberry/utils";
 import {
   type FjallValuesSession,
+  FjallWorkerConfig,
   HybridWorkerConfig,
   InMemWorkerConfig,
   LmdbWorkerConfig,
@@ -36,7 +37,7 @@ import type { NodeApi } from "./main.js";
 
 const zeroHash = Bytes.zero(HASH_SIZE).asOpaque<StateRootHash>();
 
-export type StateBackend = "lmdb" | "lmdb-hybrid" | "fjall-hybrid";
+export type StateBackend = "lmdb" | "fjall" | "lmdb-hybrid" | "fjall-hybrid";
 
 export type ImporterOptions = {
   initGenesisFromAncestry?: boolean;
@@ -45,7 +46,9 @@ export type ImporterOptions = {
   /** Open the database without fsync/compression. Only safe for throwaway dbs (e.g. fuzzing). */
   ephemeral?: boolean;
   /**
-   * Persistent backend used when `databaseBasePath` is set. Defaults to full LMDB.
+   * Persistent backend used when `databaseBasePath` is set. Defaults to config's backend (fjall unless overridden).
+   *
+   * lmdb and lmdb-hybrid are deprecated and retained as explicit fallbacks.
    */
   stateBackend?: StateBackend;
   /**
@@ -71,8 +74,14 @@ export async function mainImporter(
 
   // Single source of truth for the states db backend: drives both the log line
   // below and the worker config picked further down.
-  const dbBackend = config.node.databaseBasePath === undefined ? "in-memory" : (options.stateBackend ?? "lmdb");
+  const dbBackend =
+    config.node.databaseBasePath === undefined
+      ? "in-memory"
+      : (options.stateBackend ?? config.node.stateBackend ?? RegularStateBackend.Fjall);
   logger.info`🗄️ States DB: ${dbBackend}.`;
+  if (dbBackend === "lmdb" || dbBackend === "lmdb-hybrid") {
+    logger.warn`🗄️ The ${dbBackend} state backend is deprecated. Use fjall unless you need a temporary fallback.`;
+  }
 
   const chainSpec = getChainSpec(config.node.flavor);
   const blake2b = await Blake2b.createHasher();
@@ -107,20 +116,4 @@ export async function mainImporter(
             nodeName,
             chainSpec,
             blake2b,
-            dbPath,
-            workerParams,
-            ephemeral,
-            compression,
-            backend: dbBackend === "lmdb-hybrid" ? "lmdb" : "fjall",
-            sharedFjallSession: options.sharedFjallSession,
-          })
-        : LmdbWorkerConfig.new({
-            nodeName,
-            chainSpec,
-            blake2b,
-            dbPath,
-            workerParams,
-            ephemeral,
-          });
-
 ```

@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api/port.test.ts#L1-L32
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api/port.test.ts#L1-L77
 title: packages/workers/api/port.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 1cf80eb9894f9d540a4f62b42b37f3d2abb88e3f70c7b9a289cae93713a7e497
+content_sha: 4c0339b31c249bd7a8fe31694c65f0ea201373da25fde61b065b840967efc8ba
 language: typescript
 ---
-`packages/workers/api/port.test.ts` (lines 1–32)
+`packages/workers/api/port.test.ts` (lines 1–77)
 
 ```typescript
 import assert from "node:assert";
@@ -42,6 +42,51 @@ describe("DirectPort", () => {
     });
 
     assert.deepStrictEqual(receivedMessage, {
+      responseId: "10",
+      data: tryAsU32(10),
+    });
+  });
+
+  it("should deliver messages sent before the listener is attached", () => {
+    const [txPort, rxPort] = DirectPort.pair();
+
+    txPort.postMessage("hello", codec.u32, {
+      responseId: "10",
+      data: tryAsU32(10),
+    });
+
+    let receivedMessage: Envelope<U32> | null = null;
+    rxPort.on("hello", codec.u32, (msg) => {
+      receivedMessage = msg;
+    });
+
+    assert.deepStrictEqual(receivedMessage, {
+      responseId: "10",
+      data: tryAsU32(10),
+    });
+  });
+
+  it("should not let the sender consume its own pending message", () => {
+    const [txPort, rxPort] = DirectPort.pair();
+
+    txPort.postMessage("hello", codec.u32, {
+      responseId: "10",
+      data: tryAsU32(10),
+    });
+
+    let senderMessage: Envelope<U32> | null = null;
+    txPort.on("hello", codec.u32, (msg) => {
+      senderMessage = msg;
+    });
+
+    assert.deepStrictEqual(senderMessage, null);
+
+    let receiverMessage: Envelope<U32> | null = null;
+    rxPort.on("hello", codec.u32, (msg) => {
+      receiverMessage = msg;
+    });
+
+    assert.deepStrictEqual(receiverMessage, {
       responseId: "10",
       data: tryAsU32(10),
     });

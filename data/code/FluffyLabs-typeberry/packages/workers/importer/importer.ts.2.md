@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L195-L281
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/importer.ts#L195-L284
 title: packages/workers/importer/importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: abc1748c5cd97deebe415222bd4eea94351a97acdea8d0759f0f06bc4086599b
+content_sha: 29224070cbad312cf539f2f53d2e09bf01f2b9eb18b5addde9c8b85f35161dc2
 language: typescript
 ---
-`packages/workers/importer/importer.ts` (lines 195–281)
+`packages/workers/importer/importer.ts` (lines 195–284)
 
 ```typescript
     logger.log`🧱 Verified block: Got hash ${headerHash} for block at slot ${timeSlot}.`;
@@ -58,6 +58,9 @@ language: typescript
       const pruneBlocks = this.options.pruneBlocks ?? false;
       this.logger
         .info`🦭 Finalized: ${finality.finalizedHash.toStringTruncated()} (${finality.prunableStateHashes.length} to prune, blocks: ${pruneBlocks})`;
+      // Commit the finalized blocks BEFORE pruning: `markUnused` treats states
+      // with a pending value delta as dead forks and releases their values.
+      this.states.commitFinalized(finality.newlyFinalizedHeaders);
       for (const hash of finality.prunableStateHashes) {
         this.states.markUnused(hash);
         if (pruneBlocks) {

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/debugger-adapter.ts#L1-L100
 title: packages/core/pvm-interpreter/debugger-adapter.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 9fe581c14b6db528763cb40f8656736339f27d98645d3bac30d2cc9186b88203

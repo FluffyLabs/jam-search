@@ -2,19 +2,30 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L228-L280
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L227-L290
 title: packages/jam/config-node/node-config.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: 50ecce3623dd9e4b72507f618f204f8547deab5a109305ac720a9f7bbbc662d7
+content_sha: de13fb95e7f754f56b65321eaa214c0aef9cd30580484e9a4ea92e7768da3465
 language: typescript
 ---
-`packages/jam/config-node/node-config.test.ts` (lines 228–280)
+`packages/jam/config-node/node-config.test.ts` (lines 227–290)
 
 ```typescript
+        `Unable to load config from file.json: SyntaxError: Unexpected token 'i', "invalid json" is not valid JSON`,
+      ),
+    );
+  });
+
+  it("should throw an error if non-existing json file path is provided", () => {
+    mock.method(fs, "readFileSync", () => {
+      throw new Error("File not found");
+    });
+    assert.throws(
+      () => loadConfig(["file.json"], withRelPath),
       new Error("Unable to load config from file.json: Error: File not found"),
     );
   });

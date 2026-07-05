@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/configs/config-v1.schema.json#L1-L32
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/configs/config-v1.schema.json#L1-L48
 title: packages/configs/config-v1.schema.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: e6fb9ea2379f2f8f1bccc134f10d5a2719420bcd8cda47aacfaaaf3c25cef6a1
+content_sha: f00e16f2ed0fbe4939559eeb0f34e02111076351cabb98af3b1e549171477f7b
 language: json
 ---
-`packages/configs/config-v1.schema.json` (lines 1–32)
+`packages/configs/config-v1.schema.json` (lines 1–48)
 
 ```json
 {
@@ -40,6 +40,22 @@ language: json
       "description": "Base path for blockchain database storage",
       "minLength": 1,
       "examples": ["./database"]
+    },
+    "state_backend": {
+      "type": "string",
+      "description": "Persistent database backend used when database_base_path is set. lmdb is deprecated and retained only as an explicit fallback.",
+      "oneOf": [
+        {
+          "const": "fjall",
+          "description": "Default fjall backend."
+        },
+        {
+          "const": "lmdb",
+          "description": "Deprecated lmdb backend.",
+          "deprecated": true
+        }
+      ],
+      "default": "fjall"
     },
     "authorship": {
       "$ref": "./specs/authorship.schema.json"

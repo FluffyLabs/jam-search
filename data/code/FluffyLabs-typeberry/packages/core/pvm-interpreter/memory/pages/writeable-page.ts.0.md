@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/pages/writeable-page.ts#L1-L83
 title: packages/core/pvm-interpreter/memory/pages/writeable-page.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 6ff8a3bc75d7562d87f9a5ba45cf9b2d23a61bb0e632492f8a4209ba5a4c6f3a

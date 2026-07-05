@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/codec/decoder.ts#L279-L393
 title: packages/core/codec/decoder.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: 292e0f90f30185125bf33f8f7ff3d4906cca54a750b080e4339260e9e83de45c

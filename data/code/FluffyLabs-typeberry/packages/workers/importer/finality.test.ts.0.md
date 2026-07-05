@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L1-L124
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L1-L125
 title: packages/workers/importer/finality.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 6
-content_sha: 2d629506013d586053136361bdd393c8477ab1e83b60a597ede65a4ec946e8c7
+content_sha: 7f68c3c0b9a4bca4c4cdc9bb6316e39e69c6218e3d570c111f06b0b4b4ef741e
 language: typescript
 ---
-`packages/workers/importer/finality.test.ts` (lines 1–124)
+`packages/workers/importer/finality.test.ts` (lines 1–125)
 
 ```typescript
 import assert from "node:assert";
@@ -121,6 +121,11 @@ describe("DummyFinalizer", () => {
       const result = finalizer.onBlockImported(chain[6]);
       assertExists(result);
       assert.strictEqual(result.finalizedHash.isEqualTo(chain[3]), true);
+      // The whole prefix becomes finalized, ancestor-first.
+      assert.deepStrictEqual(
+        result.finalizedChain.map((h) => h.toString()),
+        chain.slice(0, 4).map((h) => h.toString()),
+      );
     });
 
     it("should prune prev finalized and depth predecessors on first finality", async () => {
@@ -135,8 +140,4 @@ describe("DummyFinalizer", () => {
       }
 
       const result = finalizer.onBlockImported(chain[6]);
-      assertExists(result);
-      // Prunable: genesis (prev finalized) + chain[0..2] = 4 items.
-      assert.strictEqual(result.prunableStateHashes.length, 4);
-      assert.ok(result.prunableStateHashes[0].isEqualTo(genesis));
 ```

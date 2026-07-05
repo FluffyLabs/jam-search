@@ -2,19 +2,36 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L372-L470
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/importer/finality.test.ts#L373-L468
 title: packages/workers/importer/finality.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 4
 chunk_total: 6
-content_sha: 78271fba218e2467bd8d949a04681b954344d065cd5a59837d42fc658633157e
+content_sha: 3966199c15af1ed218788bb4b5833c1cee62d9d4939d715c1cde4292175f5c98
 language: typescript
 ---
-`packages/workers/importer/finality.test.ts` (lines 372–470)
+`packages/workers/importer/finality.test.ts` (lines 373–468)
 
 ```typescript
+      const f1 = await createBlock(db, genesis, 100);
+      const f2 = await createBlock(db, f1, 101);
+
+      // Import main chain and fork — no finality yet.
+      for (const h of chain.slice(0, 4)) {
+        finalizer.onBlockImported(h);
+      }
+      finalizer.onBlockImported(f1);
+      finalizer.onBlockImported(f2);
+
+      // Import 5th block: main chain length 5 > 4, finalize chain[2].
+      const r1 = finalizer.onBlockImported(chain[4]);
+      assertExists(r1);
+      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
+
+      // Fork [F1,F2] doesn't contain chain[2], so it's dead.
+      const pruned1 = r1.prunableStateHashes.map((h) => h.toString());
       assert.ok(pruned1.includes(genesis.toString()), "Genesis should be pruned");
       assert.ok(pruned1.includes(f1.toString()), "F1 should be pruned");
       assert.ok(pruned1.includes(f2.toString()), "F2 should be pruned");
@@ -94,24 +111,4 @@ language: typescript
 
     it("should always advance finality forward, never re-finalizing earlier blocks", async () => {
       const db = InMemoryBlocks.new();
-      const genesis = db.getBestHeaderHash();
-
-      const finalizer = DummyFinalizer.create(db, 2);
-
-      // genesis -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7
-      const chain = await buildLinearChain(db, genesis, 7);
-
-      // First 4: no finality.
-      for (let i = 0; i < 4; i++) {
-        finalizer.onBlockImported(chain[i]);
-      }
-
-      // Block 5: chain length 5 > 4, finalize chain[2].
-      const r1 = finalizer.onBlockImported(chain[4]);
-      assertExists(r1);
-      assert.strictEqual(r1.finalizedHash.isEqualTo(chain[2]), true);
-
-      // Block 6: remaining chain length 2, not > 4. No finality.
-      assert.strictEqual(finalizer.onBlockImported(chain[5]), null);
-
 ```

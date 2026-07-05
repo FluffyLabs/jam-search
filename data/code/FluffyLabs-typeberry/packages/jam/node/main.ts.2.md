@@ -2,19 +2,45 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L201-L346
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L197-L347
 title: packages/jam/node/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 2
 chunk_total: 4
-content_sha: 19ac99506db9aa5df5a61ba37b6cc71e468c9dd4412e869d9feb3143f6eb65a2
+content_sha: 5586b1ddc18bf65718d05d0fadb062df3d1cc96342bdaa9e133d908746625d49
 language: typescript
 ---
-`packages/jam/node/main.ts` (lines 201–346)
+`packages/jam/node/main.ts` (lines 197–347)
 
 ```typescript
+    bestHeader,
+  );
+
+  const { closeAuthorship } = await initAuthorship(
+    importer,
+    config.isAuthoring,
+    config.isFastForward,
+    authorshipParams,
+    baseConfig,
+    authorshipKeys,
+  );
+
+  const api: NodeApi = {
+    chainSpec,
+    async importBlock(block: BlockView) {
+      const res = await importer.sendImportBlock(block);
+      if (res.isOk) {
+        return Result.ok(await importer.sendGetBestStateRootHash());
+      }
+      return res;
+    },
+    async getStateEntries(hash: HeaderHash) {
+      return importer.sendGetStateEntries(hash);
+    },
+    async getBestStateRootHash() {
+      return importer.sendGetBestStateRootHash();
     },
     async close() {
       logger.log`[main] ☠️  Closing the authorship module`;
@@ -25,8 +51,10 @@ language: typescript
       await closeImporter();
       logger.log`[main] ☠️  Closing the extensions`;
       closeExtensions();
-      logger.log`[main] 🛢️ Closing the database`;
-      await rootDb.close();
+      if (mainRootDb !== null) {
+        logger.log`[main] 🛢️ Closing the database`;
+        await mainRootDb.close();
+      }
       logger.log`[main] 📳 Closing telemetry`;
       await telemetry?.close();
       logger.info`[main] ✅ Done.`;
@@ -55,6 +83,7 @@ const initAuthorship = async (
     chainSpec: ChainSpec;
     blake2b: Blake2b;
     dbPath: string;
+    stateBackend: RegularStateBackend;
   },
   authorshipKeys: { keys: { bandersnatch: BandersnatchSecretSeed; ed25519: Ed25519SecretSeed }[] },
 ) => {
@@ -82,7 +111,7 @@ const initAuthorship = async (
         params.networkingPort,
       )
     : await spawnBlockGeneratorWorker(
-        LmdbWorkerConfig.new({
+        createPersistentWorkerConfig({
           ...baseConfig,
           workerParams,
           ports: new Map([[AUTHORSHIP_NETWORK_PORT, params.networkingPort]]),
@@ -115,6 +144,7 @@ const initNetwork = async (
     chainSpec: ChainSpec;
     blake2b: Blake2b;
     dbPath: string;
+    stateBackend: RegularStateBackend;
   },
   genesisHeaderHash: HeaderHash,
   networkConfig: NetworkConfig | null,
@@ -136,29 +166,4 @@ const initNetwork = async (
   const networkingConfig = NetworkingConfig.create({
     genesisHeaderHash,
     key,
-    host,
-    port: tryAsU16(port),
-    bootnodes: bootnodes.map((node) => node.toString()),
-  });
-
-  const { network, worker, finish } = params.isInMemory
-    ? await startNetwork(
-        DirectWorkerConfig.new({
-          ...baseConfig,
-          blocksDb: params.rootDb.getBlocksDb(),
-          statesDb: params.rootDb.getStatesDb(),
-          workerParams: networkingConfig,
-        }),
-        params.authorshipPort,
-      )
-    : await spawnNetworkWorker(
-        LmdbWorkerConfig.new({
-          ...baseConfig,
-          workerParams: networkingConfig,
-          ports: new Map([[AUTHORSHIP_NETWORK_PORT, params.authorshipPort]]),
-        }),
-      );
-
-  // relay blocks from networking to importer
-  network.setOnBlocks(async (newBlocks) => {
 ```

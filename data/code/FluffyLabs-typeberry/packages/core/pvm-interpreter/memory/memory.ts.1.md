@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/memory.ts#L101-L217
 title: packages/core/pvm-interpreter/memory/memory.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 02cf4e1b2fadf6abc0c92358a5a40140be1944c060441a00d4c3078bf5e7cca6

@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/lib/package.json#L1-L95'
 title: bin/lib/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 8f05c7b26ccd94f406351f8ce10aab2e555c144a5c6a35d6627bf75fdf913f74
+content_sha: d3993c2288767f6d68cc630bae0e4cd13ff520886d73918b6fbf8b330474460f
 language: json
 ---
 `bin/lib/package.json` (lines 1–95)
@@ -16,7 +16,7 @@ language: json
 ```json
 {
   "name": "@typeberry/lib",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Typeberry Library",
   "repository": {
     "type": "git",

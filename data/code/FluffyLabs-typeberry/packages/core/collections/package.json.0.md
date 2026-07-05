@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/collections/package.json#L1-L18
 title: packages/core/collections/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 4caf5e900e42bb525df12e5387709770b71741e6264b22788fd8ceb0c6359caf
+content_sha: 8a2d1bd8f08c3a574e0f7fa77d9d318bd4aad7e2aaf08e053e5a1945985f16ea
 language: json
 ---
 `packages/core/collections/package.json` (lines 1–18)
@@ -18,7 +18,7 @@ language: json
 {
   "name": "@typeberry/collections",
   "description": "Known-size collection types.",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "main": "index.ts",
   "dependencies": {
     "@typeberry/bytes": "*",

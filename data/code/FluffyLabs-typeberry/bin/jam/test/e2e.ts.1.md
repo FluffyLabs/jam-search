@@ -1,20 +1,20 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/test/e2e.ts#L98-L218'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/test/e2e.ts#L98-L213'
 title: bin/jam/test/e2e.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 697d957dac84733fc9355f5f338c72586d6adcd2d6b15319708dd71f5c8ce778
+content_sha: f73699d7ae7c4e74638e5038c57afa8eda4ab18508a643d2fd4cb6f248ab6dd7
 language: typescript
 ---
-`bin/jam/test/e2e.ts` (lines 98–218)
+`bin/jam/test/e2e.ts` (lines 98–213)
 
 ```typescript
-      collectLogsUntilBlock(`validator-${i}`, proc, /\[addTicket\] Added ticket for epoch/, EPOCH_LENGTH),
+      collectTicketLogs(`validator-${i}`, proc, EXPECTED_TICKETS),
     );
 
     const validatorLogs = await Promise.all(validatorLogPromises);
@@ -28,7 +28,7 @@ language: typescript
       logger.info`Validator ${i} has ${ticketCount} tickets`;
     }
 
-    logger.info`All ${VALIDATOR_COUNT} validators have at least ${EXPECTED_TICKETS} tickets after ${EPOCH_LENGTH} blocks`;
+    logger.info`All ${VALIDATOR_COUNT} validators have at least ${EXPECTED_TICKETS} tickets`;
   } finally {
     await Promise.all(processes.map((proc) => terminate(proc)));
     // clean up all test databases at once by removing parent folder
@@ -37,18 +37,15 @@ language: typescript
 });
 
 /**
- * Collects log lines matching a pattern until target block is reached.
+ * Collects ticket logs until the validator has observed the expected ticket count.
  * Returns array of matched log lines.
  */
-async function collectLogsUntilBlock(
-  prefix: string,
-  proc: ChildProcess,
-  pattern: RegExp,
-  targetBlock: number,
-): Promise<string[]> {
+async function collectTicketLogs(prefix: string, proc: ChildProcess, expectedTickets: number): Promise<string[]> {
   const blockPattern = /🧊 Best:.+#(\d+)/;
   const matchedLines: string[] = [];
+  const recentLines: string[] = [];
   let currentBlock = 0;
+  let maxTickets = 0;
 
   return new Promise((resolve, reject) => {
     // Buffer for incomplete lines across chunks
@@ -62,20 +59,28 @@ async function collectLogsUntilBlock(
       remainder = lines.pop() ?? "";
 
       for (const line of lines) {
+        recentLines.push(line);
+        if (recentLines.length > LOG_TAIL_LINES) {
+          recentLines.shift();
+        }
+
         // Check for new blocks
         const blockMatch = blockPattern.exec(line);
         if (blockMatch !== null) {
           currentBlock = Number.parseInt(blockMatch[1], 10);
         }
 
-        // Collect lines matching the pattern
-        if (pattern.test(line)) {
+        const ticketCount = parseTicketCount(line);
+        if (ticketCount !== null) {
           matchedLines.push(line);
+          maxTickets = Math.max(maxTickets, ticketCount);
         }
       }
 
-      // Resolve when target block is reached
-      if (currentBlock >= targetBlock) {
+      // Resolve as soon as ticket distribution has completed. Waiting for a
+      // later block height makes this test depend on multi-author chain
+      // convergence, even though the assertion is only about ticket gossip.
+      if (maxTickets >= expectedTickets) {
         // Note: remainder is intentionally NOT flushed - it's an incomplete fragment
         // Only fully-terminated lines (processed in the loop) are counted
         resolve(matchedLines);
@@ -86,13 +91,19 @@ async function collectLogsUntilBlock(
       reject(`(${prefix}) Failed to start process: ${err.message}`);
     });
 
-    proc?.on("exit", (code) => {
-      if (code !== 0 && code !== null) {
-        reject(`(${prefix}) Process exited with code ${code}`);
-      } else if (currentBlock >= targetBlock) {
+    proc?.on("close", (code) => {
+      if (maxTickets >= expectedTickets) {
         resolve(matchedLines);
+        return;
+      }
+      if (code !== 0 && code !== null) {
+        reject(
+          new Error(
+            `(${prefix}) Process exited with code ${code} at block ${currentBlock}\n${formatLogTail(recentLines)}`,
+          ),
+        );
       } else {
-        reject(`(${prefix}) Process exited early at block ${currentBlock}`);
+        reject(new Error(`(${prefix}) Process exited early at block ${currentBlock}\n${formatLogTail(recentLines)}`));
       }
     });
 
@@ -102,37 +113,21 @@ async function collectLogsUntilBlock(
   });
 }
 
+function formatLogTail(lines: string[]): string {
+  if (lines.length === 0) {
+    return "No process output captured.";
+  }
+  return [`Last ${lines.length} process output lines:`, ...lines].join("\n");
+}
+
 /**
  * Extracts ticket count from addTicket log lines.
  * Returns the maximum "total" value found (represents final ticket count).
  */
 function extractTicketCount(logLines: string[]): number {
-  const ticketPattern = /\[addTicket\] Added ticket for epoch (\d+), total: (\d+)/;
   let maxTickets = 0;
 
   for (const line of logLines) {
-    const match = ticketPattern.exec(line);
-    if (match !== null) {
-      const count = Number.parseInt(match[2], 10);
-      if (count > maxTickets) {
-        maxTickets = count;
-      }
-    }
-  }
-
-  return maxTickets;
-}
-
-async function listenForBestBlocks(prefix: string, proc: ChildProcess, check: (blockNum: number) => boolean) {
-  return new Promise((resolve, reject) => {
-    proc?.on("error", (err) => {
-      reject(`(${prefix}) Failed to start process: ${err.message}`);
-    });
-    proc?.on("exit", (code, signal) => {
-      reject(`(${prefix}) Process exited (code: ${code}, signal: ${signal})`);
-    });
-    proc?.stderr?.on("data", (data: Buffer) => {
-      logger.error`(${prefix}) ${data.toString()}`;
-    });
-
+    const count = parseTicketCount(line);
+    if (count !== null && count > maxTickets) {
 ```

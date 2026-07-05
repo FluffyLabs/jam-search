@@ -2,19 +2,24 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L188-L262
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L191-L270
 title: packages/jam/database-fjall/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: e90038730271c7389ed1face6593f3402c6b1543a8f51ea69d0d93a8d732f54d
+content_sha: 3781eb237e6c1d3cdd6be4c0e6a4b9518339f9f1b4f2b97f0876380d5c4adc07
 language: typescript
 ---
-`packages/jam/database-fjall/hybrid-states.ts` (lines 188–262)
+`packages/jam/database-fjall/hybrid-states.ts` (lines 191–270)
 
 ```typescript
+  getState(header: HeaderHash): SerializedState<LeafDb> | null {
+    const leafs = this.inMemStates.get(header);
+    if (leafs === undefined) {
+      return null;
+    }
     const leafDb = LeafDb.fromLeaves(leafs, this.valuesDb);
     return SerializedState.new(this.spec, this.blake2b, leafDb);
   }

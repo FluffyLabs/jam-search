@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/workers.ts#L1-L123
 title: packages/jam/node/workers.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: bcdac2df50ed9877827fef30f3152c78d0a699d681ba37a0f8091d0455ac14b6
+content_sha: 69e33834bf147b592a816de4528f5e9527c9b4e1c825fdc1293069df6a6c76c9
 language: typescript
 ---
 `packages/jam/node/workers.ts` (lines 1–123)
@@ -23,9 +23,9 @@ import * as importer from "@typeberry/importer";
 import * as jamNetwork from "@typeberry/jam-network";
 import type { SerializedState } from "@typeberry/state-merkleization";
 import { Channel, type DirectPort, type DirectWorkerConfig, startSameThread } from "@typeberry/workers-api";
-import { type LmdbWorkerConfig, spawnWorker } from "@typeberry/workers-api-node";
+import { type PersistentWorkerConfig, spawnWorker } from "@typeberry/workers-api-node";
 
-export async function spawnImporterWorker(config: LmdbWorkerConfig<importer.ImporterConfig>) {
+export async function spawnImporterWorker(config: PersistentWorkerConfig<importer.ImporterConfig>) {
   const { api, workerFinished } = spawnWorker(
     importer.protocol,
     importer.WORKER,
@@ -60,7 +60,7 @@ export async function startImporterDirect(
   };
 }
 
-export async function spawnNetworkWorker(config: LmdbWorkerConfig<jamNetwork.NetworkingConfig>) {
+export async function spawnNetworkWorker(config: PersistentWorkerConfig<jamNetwork.NetworkingConfig>) {
   const { api, worker, workerFinished } = spawnWorker(
     jamNetwork.protocol,
     jamNetwork.WORKER,
@@ -99,7 +99,7 @@ export async function startNetwork(
   };
 }
 
-export async function spawnBlockGeneratorWorker(config: LmdbWorkerConfig<blockAuthorship.BlockAuthorshipConfig>) {
+export async function spawnBlockGeneratorWorker(config: PersistentWorkerConfig<blockAuthorship.BlockAuthorshipConfig>) {
   const { api, worker, workerFinished } = spawnWorker(
     blockAuthorship.protocol,
     blockAuthorship.WORKER,

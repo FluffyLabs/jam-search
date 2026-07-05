@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/args-decoder/args-decoder.ts#L307-L345
 title: packages/core/pvm-interpreter/args-decoder/args-decoder.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 3
 chunk_total: 4
 content_sha: f87c7c51a4ed2e63dc5caf386100aaf1d97927bfd9defa0a99caf8a8bae9f81f

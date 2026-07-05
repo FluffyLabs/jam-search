@@ -2,19 +2,55 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.ts#L113-L226
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.ts#L123-L252
 title: packages/jam/config-node/node-config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
-chunk_total: 2
-content_sha: 8aa3283a28e1b52b2f35c5d2007e8d73ceabcc465576eb64bc3e78f6430af490
+chunk_total: 3
+content_sha: 8a571b8df14f49de6fda86989d88487cae5825fa8bae8a2f407f15eed0f12411
 language: typescript
 ---
-`packages/jam/config-node/node-config.ts` (lines 113–226)
+`packages/jam/config-node/node-config.ts` (lines 123–252)
 
 ```typescript
+export function loadConfig(config: string[], withRelPath: (p: string) => string): NodeConfiguration {
+  logger.log`🔧 Loading config`;
+  let mergedJson: AnyJsonObject = {};
+
+  for (const entry of config) {
+    logger.log`🔧 Applying '${entry}'`;
+
+    if (entry === DEV_TINY_CONFIG) {
+      mergedJson = structuredClone(configs.devTiny); // clone to avoid mutating the original config. not doing a merge since dev and default should theoretically replace all properties.
+      continue;
+    }
+
+    if (entry === DEV_FULL_CONFIG) {
+      mergedJson = structuredClone(configs.devFull); // clone to avoid mutating the original config. not doing a merge since dev and default should theoretically replace all properties.
+      continue;
+    }
+
+    if (entry === DEFAULT_CONFIG) {
+      mergedJson = structuredClone(configs.default);
+      continue;
+    }
+
+    // try to parse as JSON
+    try {
+      const parsed = JSON.parse(entry);
+      deepMerge(mergedJson, parsed);
+      continue;
+    } catch {}
+
+    // if not, try to load as file
+    if (entry.indexOf("=") === -1 && entry.endsWith(".json")) {
+      try {
+        const configFile = fs.readFileSync(withRelPath(entry), "utf8");
+        const parsed = JSON.parse(configFile);
+        deepMerge(mergedJson, parsed);
+      } catch (e) {
         throw new Error(`Unable to load config from ${entry}: ${e}`);
       }
     } else {
@@ -109,24 +145,4 @@ function processQuery(input: AnyJsonObject, query: string, withRelPath: (p: stri
         } else {
           target[part] = parsedValue;
         }
-        return;
-      }
-      target = target[part];
-    }
-  }
-
-  throw new Error("Unrecognized syntax.");
-}
-
-type JsonValue = string | number | boolean | null | AnyJsonObject | JsonArray;
-
-interface AnyJsonObject {
-  [key: string]: JsonValue;
-}
-
-interface JsonArray extends Array<JsonValue> {}
-
-function isJsonObject(value: JsonValue): value is AnyJsonObject {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
 ```

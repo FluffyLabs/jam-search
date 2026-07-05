@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/jam-network/main.ts#L1-L107
 title: packages/workers/jam-network/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 545d21656c3bf83ef5d6c5d4537c585ee2cf83b397a510edfc7a84bddfd5dbfb
+content_sha: 824c8fb3ce412166eaae7c1948121a4e66fcb778c68d12796fbbcec87a5c5352
 language: typescript
 ---
 `packages/workers/jam-network/main.ts` (lines 1–107)
@@ -48,7 +48,7 @@ export async function main(
 
   // Await the configuration object
   const chainSpec = config.chainSpec;
-  const db = config.openDatabase();
+  const db = await config.openDatabase();
   const blocks = db.getBlocksDb();
   const params = config.workerParams;
   const key = await ed25519.privateKey(params.key);

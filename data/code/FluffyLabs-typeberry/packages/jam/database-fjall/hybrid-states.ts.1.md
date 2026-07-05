@@ -2,19 +2,29 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L103-L195
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L101-L196
 title: packages/jam/database-fjall/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 2f0a501b656517cafb24f1a9d15aa546a01accd0f6c63fbed8d5a15df79e9947
+content_sha: 89ca4fbef92b5d5957873516cc6a1124873ee281c00ed4aea9edfe602e18ebf9
 language: typescript
 ---
-`packages/jam/database-fjall/hybrid-states.ts` (lines 103–195)
+`packages/jam/database-fjall/hybrid-states.ts` (lines 101–196)
 
 ```typescript
+    dbPath,
+    ephemeral,
+    cacheSizeBytes,
+  }: {
+    spec: ChainSpec;
+    blake2b: Blake2b;
+    dbPath: string;
+    ephemeral?: boolean;
+    cacheSizeBytes?: number;
+  }): Promise<HybridSerializedStates> {
     const session = await FjallValuesSession.open(dbPath, { ephemeral, cacheSizeBytes });
     // This instance owns the session it just opened, so its `close()` closes it.
     return new HybridSerializedStates(spec, blake2b, session, true);
@@ -101,11 +111,4 @@ language: typescript
       return null;
     }
     const leafDb = LeafDb.fromLeaves(leafs, this.valuesDb);
-    return SerializedState.new(this.spec, this.blake2b, leafDb);
-  }
-
-  commitFinalized(headers: HeaderHash[]): void {
-    this.applyRefs(this.refs.commitFinalized(headers));
-  }
-
 ```

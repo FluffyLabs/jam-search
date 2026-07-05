@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L114'
 title: bin/jam/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 2dd127ae00aa0033004dd1b6e7bf812b0a8c2f3089b9fc44cc88ffefb3f81eb6

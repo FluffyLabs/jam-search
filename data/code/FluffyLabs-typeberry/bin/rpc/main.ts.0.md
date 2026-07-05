@@ -1,29 +1,29 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/main.ts#L1-L88'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/rpc/main.ts#L1-L97'
 title: bin/rpc/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 84795ca754afcb70b0cef3891f8d36849468efa540fc05634c30867f90ae5a95
+content_sha: 2acf33f540548e06a41c95946bf9aca9a9b81b1c3068d56a6b07d88decb2afef
 language: typescript
 ---
-`bin/rpc/main.ts` (lines 1–88)
+`bin/rpc/main.ts` (lines 1–97)
 
 ```typescript
 /** biome-ignore-all lint/suspicious/noConsole: for displaying help */
 
 import { PvmBackend } from "@typeberry/config";
-import { loadConfig, NODE_DEFAULTS } from "@typeberry/config-node";
-import { LmdbRoot } from "@typeberry/database-lmdb";
+import { loadConfig, NODE_DEFAULTS, RegularStateBackend } from "@typeberry/config-node";
 import { Blake2b } from "@typeberry/hash";
 import { parseSharedOptions } from "@typeberry/jam/args.js";
 import { getChainSpec, getDatabasePath } from "@typeberry/node";
 import { validation } from "@typeberry/rpc-validation";
 import { version, workspacePathFix } from "@typeberry/utils";
+import { FjallWorkerConfig, LmdbWorkerConfig } from "@typeberry/workers-api-node";
 import minimist from "minimist";
 import { handlers } from "./src/handlers.js";
 import { RpcServer } from "./src/server.js";
@@ -79,7 +79,7 @@ export async function main(args: string[]) {
   const nodeConfig = loadConfig(config, withRelPath);
   const spec = getChainSpec(nodeConfig.flavor);
   if (nodeConfig.databaseBasePath === undefined) {
-    throw new Error("RPC server requires a LMDB database path.");
+    throw new Error("RPC server requires a persistent database path.");
   }
 
   const { dbPath } = getDatabasePath(
@@ -89,8 +89,17 @@ export async function main(args: string[]) {
     withRelPath(nodeConfig.databaseBasePath),
   );
 
-  // Read-only view of a durable node db, which is written compressed by default.
-  const rootDb = LmdbRoot.new(dbPath, { readOnly: true, compression: true });
+  const dbConfigParams = {
+    nodeName,
+    chainSpec: spec,
+    workerParams: undefined,
+    dbPath,
+    blake2b,
+  };
+  const rootDb =
+    nodeConfig.stateBackend === RegularStateBackend.Fjall
+      ? await FjallWorkerConfig.new(dbConfigParams).openDatabase({ readonly: true })
+      : await LmdbWorkerConfig.new(dbConfigParams).openDatabase({ readonly: true });
   // TODO [RPC] Make PvmBackend configurable via CLI args
   const pvmBackend = PvmBackend.Ananas;
   const server = RpcServer.new(port, rootDb, spec, blake2b, pvmBackend, handlers, validation.schemas);

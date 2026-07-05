@@ -2,19 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/index.ts#L1-L2
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/index.ts#L1-L4
 title: packages/jam/database-fjall/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: d671c464c574576628248cb213b6ae20656c827be26949d248c8b6435d98dc12
+content_sha: 143df1764b7728e62c8e26052ec083f16dcc93413e1823b893373b140dc731ee
 language: typescript
 ---
-`packages/jam/database-fjall/index.ts` (lines 1–2)
+`packages/jam/database-fjall/index.ts` (lines 1–4)
 
 ```typescript
+export * from "./blocks.js";
 export * from "./hybrid-states.js";
 export * from "./root.js";
+export * from "./states.js";
 ```

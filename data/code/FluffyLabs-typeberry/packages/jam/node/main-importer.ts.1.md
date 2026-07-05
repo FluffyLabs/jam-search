@@ -2,33 +2,54 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L98-L148
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L95-L166
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 417651928d59f4e9a54b3963b07c8c6d3157d53de96e88f79016dc07d15b2b77
+content_sha: ffeb1cfef5ae21e267729024d4d6bfa9dc3370da6dd05c817e305e9be24cf29a
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 98–148)
+`packages/jam/node/main-importer.ts` (lines 95–166)
 
 ```typescript
-            sharedFjallSession: options.sharedFjallSession,
-          })
-        : LmdbWorkerConfig.new({
+          workerParams,
+        })
+      : dbBackend === "lmdb-hybrid" || dbBackend === "fjall-hybrid"
+        ? await HybridWorkerConfig.new({
             nodeName,
             chainSpec,
             blake2b,
             dbPath,
             workerParams,
             ephemeral,
-          });
+            compression,
+            backend: dbBackend === "lmdb-hybrid" ? "lmdb" : "fjall",
+            sharedFjallSession: options.sharedFjallSession,
+          })
+        : dbBackend === "fjall"
+          ? FjallWorkerConfig.new({
+              nodeName,
+              chainSpec,
+              blake2b,
+              dbPath,
+              workerParams,
+              ephemeral,
+            })
+          : LmdbWorkerConfig.new({
+              nodeName,
+              chainSpec,
+              blake2b,
+              dbPath,
+              workerParams,
+              ephemeral,
+            });
 
   // Initialize the database with genesis state and block if there isn't one.
   logger.info`🛢️ Opening database at ${dbPath}`;
-  const rootDb = workerConfig.openDatabase({ readonly: false });
+  const rootDb = await workerConfig.openDatabase({ readonly: false });
   await initializeDatabase(chainSpec, blake2b, genesisHeaderHash, rootDb, config.node.chainSpec, config.ancestry, {
     initGenesisFromAncestry: options.initGenesisFromAncestry,
   });

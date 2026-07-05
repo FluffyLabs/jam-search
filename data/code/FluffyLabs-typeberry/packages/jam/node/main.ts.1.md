@@ -2,24 +2,41 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L93-L206
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L98-L208
 title: packages/jam/node/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 1
 chunk_total: 4
-content_sha: fda61a4572f0d4b68bcb80e0424f6bbc93046a21e4b9853db84aeabc4e63b6d2
+content_sha: e04e90f7fec7352be3dc1de364f8630fb07dcba6622978b0af0ac66592abea28
 language: typescript
 ---
-`packages/jam/node/main.ts` (lines 93–206)
+`packages/jam/node/main.ts` (lines 98–208)
 
 ```typescript
-  // NOTE [ToDr] even though, we should be closing the database here,
-  // it seems that opening it in the main thread for writing, and later
-  // in the importer thread, causes issues. Everything works fine though,
-  // if we DO NOT close the database (I guess it's process-shared?)
-  // await rootDb.close();
+    : { isInMemory, config: createPersistentWorkerConfig(importerParams) };
+
+  // Initialize the database with genesis state and block if there isn't one.
+  logger.info`🛢️ Opening database at ${dbPath}`;
+  const rootDb = await importerConfig.config.openDatabase({ readonly: false });
+  try {
+    await initializeDatabase(chainSpec, blake2b, genesisHeaderHash, rootDb, config.node.chainSpec, config.ancestry);
+  } catch (e) {
+    try {
+      await rootDb.close();
+    } catch (closeError) {
+      logger.warn`Failed to close database after initialization error: ${closeError}`;
+    }
+    throw e;
+  }
+  // fjall-js shares the engine explicitly and requires every handle to close.
+  // Keep lmdb's historical main-thread handle open until shutdown.
+  let mainRootDb: RootDb<BlocksDb, SerializedStatesDb> | null = rootDb;
+  if (!importerConfig.isInMemory && config.node.stateBackend === RegularStateBackend.Fjall) {
+    await rootDb.close();
+    mainRootDb = null;
+  }
 
   // Start block importer
   let importer: ImporterApi;
@@ -109,24 +126,4 @@ language: typescript
     authorshipKeys,
   );
 
-  const api: NodeApi = {
-    chainSpec,
-    async importBlock(block: BlockView) {
-      const res = await importer.sendImportBlock(block);
-      if (res.isOk) {
-        return Result.ok(await importer.sendGetBestStateRootHash());
-      }
-      return res;
-    },
-    async getStateEntries(hash: HeaderHash) {
-      return importer.sendGetStateEntries(hash);
-    },
-    async getBestStateRootHash() {
-      return importer.sendGetBestStateRootHash();
-    },
-    async close() {
-      logger.log`[main] ☠️  Closing the authorship module`;
-      await closeAuthorship();
-      logger.log`[main] ☠️  Closing the networking module`;
-      await closeNetwork();
 ```

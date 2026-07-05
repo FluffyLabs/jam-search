@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api/port.ts#L1-L102
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api/port.ts#L1-L134
 title: packages/workers/api/port.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
-chunk_total: 1
-content_sha: 44fe065e252a336605e84063a547bb13b29c193d54e53a7bac16db46a31260d1
+chunk_total: 2
+content_sha: 20fb71df2c7fcffd208acfcbc69024dd749481c2f9cacd2d3be1b5b9c76b3863
 language: typescript
 ---
-`packages/workers/api/port.ts` (lines 1–102)
+`packages/workers/api/port.ts` (lines 1–134)
 
 ```typescript
 import type { Codec } from "@typeberry/codec";
@@ -63,6 +63,11 @@ export interface Port {
   close(): void;
 }
 
+type PortState = {
+  events: EventEmitter;
+  pendingMessages: Map<string, Envelope<unknown>[]>;
+};
+
 /**
  * A message-passing port that is directly connected to another end.
  *
@@ -74,14 +79,18 @@ export class DirectPort implements Port {
 
   /** Create a pair of symmetrical inter-connected ports. */
   static pair(): [DirectPort, DirectPort] {
-    const events = new EventEmitter();
-    return [new DirectPort(events), new DirectPort(events)];
+    const left = createPortState();
+    const right = createPortState();
+    return [new DirectPort(left, right), new DirectPort(right, left)];
   }
 
-  private constructor(private readonly events: EventEmitter) {}
+  private constructor(
+    private readonly inbound: PortState,
+    private readonly outbound: PortState,
+  ) {}
 
   onClose(callback: (e: Error) => void): void {
-    this.events.on("error", callback);
+    this.inbound.events.on("error", callback);
   }
 
   on<T>(event: string, _codec: Codec<T>, callback: (msg: Envelope<T>) => void): () => void {
@@ -89,10 +98,11 @@ export class DirectPort implements Port {
       // we simply cast the args, since there is no encoding involved.
       callback(args as Envelope<T>);
     };
-    this.events.on(event, trigger);
+    this.inbound.events.on(event, trigger);
+    this.flushPending(event, trigger);
 
     return () => {
-      this.events.off(event, trigger);
+      this.inbound.events.off(event, trigger);
     };
   }
 
@@ -101,20 +111,42 @@ export class DirectPort implements Port {
       // we simply cast the args, since there is no encoding involved.
       callback(args as Envelope<T>);
     };
-    this.events.once(event, trigger);
+
+    const pending = this.inbound.pendingMessages.get(event);
+    const pendingMessage = pending?.shift();
+    if (pending?.length === 0) {
+      this.inbound.pendingMessages.delete(event);
+    }
+    if (pendingMessage !== undefined) {
+      trigger(pendingMessage);
+      return () => {};
+    }
+
+    this.inbound.events.once(event, trigger);
 
     return () => {
-      this.events.off(event, trigger);
+      this.inbound.events.off(event, trigger);
     };
   }
 
   postMessage<T>(event: string, _codec: Codec<T>, msg: Envelope<T>): void {
-    this.events.emit(event, msg);
+    if (this.outbound.events.listenerCount(event) === 0) {
+      this.queuePending(event, msg);
+      return;
+    }
+    this.outbound.events.emit(event, msg);
   }
 
   close() {
-    this.events.emit("error", new Error("closing channel"));
-    this.events.removeAllListeners();
+    this.closeState(this.inbound);
+    this.closeState(this.outbound);
   }
-}
+
+  private queuePending(event: string, msg: Envelope<unknown>) {
+    const pending = this.outbound.pendingMessages.get(event) ?? [];
+    pending.push(msg);
+    this.outbound.pendingMessages.set(event, pending);
+  }
+
+  private flushPending(event: string, trigger: (args: unknown) => void) {
 ```

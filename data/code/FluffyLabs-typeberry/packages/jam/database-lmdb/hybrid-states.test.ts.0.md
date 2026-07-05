@@ -2,30 +2,39 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.test.ts#L1-L98
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-lmdb/hybrid-states.test.ts#L1-L115
 title: packages/jam/database-lmdb/hybrid-states.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-06-24T13:20:40Z'
-last_modified: '2026-06-24T13:20:40Z'
+created_at: '2026-07-03T23:06:13+02:00'
+last_modified: '2026-07-03T23:06:13+02:00'
 chunk_index: 0
-chunk_total: 1
-content_sha: 3d17a5a5d441558c5ec888d14497de54f3852d29bdffb8c4e4a6e9a6e5f6c453
+chunk_total: 2
+content_sha: cf4cf896d19b9b3885745af392cffe6d0200490694a7cd761cd405d7d8b1765f
 language: typescript
 ---
-`packages/jam/database-lmdb/hybrid-states.test.ts` (lines 1–98)
+`packages/jam/database-lmdb/hybrid-states.test.ts` (lines 1–115)
 
 ```typescript
 // packages/jam/database-lmdb/hybrid-states.test.ts
 import assert from "node:assert";
 import * as fs from "node:fs";
 import { afterEach, before, beforeEach, describe, it } from "node:test";
-import type { HeaderHash } from "@typeberry/block";
+import { type HeaderHash, tryAsServiceId } from "@typeberry/block";
 import { Bytes, BytesBlob } from "@typeberry/bytes";
 import { tinyChainSpec } from "@typeberry/config";
+import type { LeafDb } from "@typeberry/database";
 import { Blake2b, HASH_SIZE } from "@typeberry/hash";
-import { InMemoryState } from "@typeberry/state";
-import { StateEntries, type StateKey } from "@typeberry/state-merkleization";
-import { deepEqual, OK, Result } from "@typeberry/utils";
+import {
+  InMemoryState,
+  type ServicesUpdate,
+  type State,
+  StorageItem,
+  type StorageKey,
+  UpdateStorage,
+} from "@typeberry/state";
+import { testState } from "@typeberry/state/test.utils.js";
+import { type SerializedState, StateEntries, type StateKey } from "@typeberry/state-merkleization";
+import { asOpaqueType, deepEqual, OK, Result } from "@typeberry/utils";
 import { HybridSerializedStates } from "./hybrid-states.js";
 
 let blake2b: Blake2b;
@@ -113,4 +122,12 @@ describe("Hybrid serialized states", () => {
     }
   });
 });
+
+function hh(n: number): HeaderHash {
+  return Bytes.fill(HASH_SIZE, n).asOpaque();
+}
+
+const storageKey: StorageKey = asOpaqueType(BytesBlob.blobFromString("test-key"));
+
+/** A state update writing a single large (non-embedded) value under `storageKey`. */
 ```
