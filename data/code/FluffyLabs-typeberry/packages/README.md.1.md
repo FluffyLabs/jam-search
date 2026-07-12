@@ -1,20 +1,19 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/packages/README.md#L92-L102'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/packages/README.md#L92-L101'
 title: packages/README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: f4b0bba167123917234b52aad0344a7f2aa50147e7e2a2c676e59cf2d5348bd7
+content_sha: a6ff7afc199d5e52030730e216441a1b311cc413ae5b1fc311aa9ae1314c9cdc
 language: markdown
 ---
-`packages/README.md` (lines 92–102)
+`packages/README.md` (lines 92–101)
 
 ```markdown
-4. **Use @typeberry scope**: Package names should use the `@typeberry/` npm scope
 5. **Add dependencies**: Reference other packages using the `@typeberry/` scope and "*" version for local packages
 
 ## Package Organization Guidelines

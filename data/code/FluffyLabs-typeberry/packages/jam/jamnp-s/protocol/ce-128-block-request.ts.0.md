@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/protocol/ce-128-block-request.ts#L1-L121
 title: packages/jam/jamnp-s/protocol/ce-128-block-request.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 3
 content_sha: 166d2891fac897ef74a2845abca39419345ab62f9700811fff9528882386169b

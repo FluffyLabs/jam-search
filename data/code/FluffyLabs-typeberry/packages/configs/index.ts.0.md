@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/configs/index.ts#L1-L9
 title: packages/configs/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 9e2e4422a126af658846c24dae6bf228651f5c3c1cd230e4f099adb3fc73ddb9

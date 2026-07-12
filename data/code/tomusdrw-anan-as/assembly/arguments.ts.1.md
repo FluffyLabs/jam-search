@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/arguments.ts#L126-L172'
 title: assembly/arguments.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-15T09:40:01+02:00'
-last_modified: '2026-06-15T09:40:01+02:00'
+created_at: '2026-07-10T09:46:52Z'
+last_modified: '2026-07-10T09:46:52Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: 4db22f6898cc811a1e93430050d5519da64c968ae7857397336f317c22c27b29

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block/test-helpers.ts#L1-L22
 title: packages/jam/block/test-helpers.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 824d2238c800b87313e0b57ed7413f41a5e61db93cb29a55645a672672ea44cc

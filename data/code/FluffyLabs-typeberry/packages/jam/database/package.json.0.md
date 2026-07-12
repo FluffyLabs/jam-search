@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/package.json#L1-L24
 title: packages/jam/database/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 6cbeb17e26f016b383984407ec830339d22681c9d93d1a8aea1d060f27d0d4d0
+content_sha: eb45e24d6f63a1041e6398d98cb127c8234bc218af4418152cacf35e3d01e387
 language: json
 ---
 `packages/jam/database/package.json` (lines 1–24)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/database",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Database abstraction for typeberry.",
   "main": "index.ts",
   "dependencies": {

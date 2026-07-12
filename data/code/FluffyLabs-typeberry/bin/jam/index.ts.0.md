@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L114'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/index.ts#L1-L107'
 title: bin/jam/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
-chunk_total: 2
-content_sha: 2dd127ae00aa0033004dd1b6e7bf812b0a8c2f3089b9fc44cc88ffefb3f81eb6
+chunk_total: 3
+content_sha: 837fee41ef8c8f3a19eda36e96399917a30761a3a494ce918d68106e3b939485
 language: typescript
 ---
-`bin/jam/index.ts` (lines 1–114)
+`bin/jam/index.ts` (lines 1–107)
 
 ```typescript
 // biome-ignore-all lint/suspicious/noConsole: bin file
@@ -23,10 +23,13 @@ import { deriveEd25519SecretKey } from "@typeberry/crypto/key-derivation.js";
 import { Blake2b } from "@typeberry/hash";
 import { Level, Logger } from "@typeberry/logger";
 import { altNameRaw } from "@typeberry/networking";
-import { exportBlocks, importBlocks, JamConfig, main, mainFuzz } from "@typeberry/node";
+import { exportBlocks, getChainSpec, getDatabasePath, importBlocks, JamConfig, main, mainFuzz } from "@typeberry/node";
+import { RpcServer, rpcHandlers } from "@typeberry/rpc";
+import { validation } from "@typeberry/rpc-validation";
 import { Telemetry } from "@typeberry/telemetry";
 import { asOpaqueType, type Closer, workspacePathFix } from "@typeberry/utils";
 import { installShutdownHandlers } from "@typeberry/utils/shutdown.node.js";
+import { FjallWorkerConfig } from "@typeberry/workers-api-node";
 import { type Arguments, Command, HELP, parseArgs } from "./args.js";
 import { readFuzzEnv, synthesizeFuzzArgs } from "./fuzz-env.js";
 
@@ -118,14 +121,4 @@ async function prepareConfigFile(
   const devIndex = isDevMode ? args.args.index : null;
   const isFastForward = isDevMode ? args.args.isFastForward : false;
 
-  return JamConfig.new({
-    isAuthoring: isDevMode,
-    isFastForward,
-    nodeName,
-    nodeConfig,
-    pvmBackend: args.args.pvm,
-    networkConfig: {
-      key: devNetworkingSeed(blake2b, nodeName),
-      host: "127.0.0.1",
-      port: devPort(devPortShift),
 ```

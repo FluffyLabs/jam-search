@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/erasure-coding/package.json#L1-L21
 title: packages/core/erasure-coding/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 67bac288f52ab8135e8d1d3c14c416d047b22ef016c8460e723da0d1551b21ed
+content_sha: 975cdea07f019f6d4c9b6c7ce530a48eb3adb3b6d916dbc994a0afb76425ae75
 language: json
 ---
 `packages/core/erasure-coding/package.json` (lines 1–21)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/erasure-coding",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Erasure encoding implementation",
   "main": "index.ts",
   "scripts": {

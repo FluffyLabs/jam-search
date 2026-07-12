@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/block-json/refine-context.ts#L1-L33
 title: packages/jam/block-json/refine-context.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 0057a82067721fbd3432f04299248250c44c4284c2981638157b8516f531e54f

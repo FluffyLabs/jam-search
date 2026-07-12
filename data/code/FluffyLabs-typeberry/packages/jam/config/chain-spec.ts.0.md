@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config/chain-spec.ts#L1-L106
 title: packages/jam/config/chain-spec.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 3dc0337a706f22336289321e286af4f18388d9af3dfc54444c3c136e6f950ff4

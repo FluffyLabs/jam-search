@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/ipc2rpc/package.json#L1-L24
 title: bin/ipc2rpc/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 1a610bd00a03674fced2ff5d65f94f7d57d537b4aefd01c7e0436aa16bb184ba
+content_sha: d5d6da6fa630f2a82c22daf9386e790999798e35bc6032538c864e7cc3196008
 language: json
 ---
 `bin/ipc2rpc/package.json` (lines 1–24)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/ipc2rpc",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "JSON-RPC adapter for the JAMCODEC-IPC interface.",
   "main": "index.ts",
   "dependencies": {

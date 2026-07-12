@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/disputes/disputes.test.ts#L82-L136
 title: packages/jam/transition/disputes/disputes.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: ccc3c6850c41573f48f9498833191aa1b8fd93b5c8ad412eba6a0b517241fb0c

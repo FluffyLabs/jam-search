@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/package.json#L1-L26
 title: packages/jam/safrole/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: a1483c6030d7235171c465116e07915af44cca8800a44bcdc5f2cf563b4496bf
+content_sha: 504e626103caad29f5a765449a9b82044e013f2017faf98c7aa511f8f421fede
 language: json
 ---
 `packages/jam/safrole/package.json` (lines 1–26)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/safrole",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Safrole implementation based on the Gray Paper.",
   "main": "index.ts",
   "dependencies": {

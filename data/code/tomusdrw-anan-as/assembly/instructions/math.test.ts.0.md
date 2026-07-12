@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/math.test.ts#L1-L105
 title: assembly/instructions/math.test.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-15T09:40:01+02:00'
-last_modified: '2026-06-15T09:40:01+02:00'
+created_at: '2026-07-10T09:46:52Z'
+last_modified: '2026-07-10T09:46:52Z'
 chunk_index: 0
 chunk_total: 1
 content_sha: f3a8bd97226da415ac1a260d9cdc14de157e5edcd54dc1bc862e9e48e604a8f2

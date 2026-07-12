@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/safrole/bandersnatch-vrf.test.ts#L133-L155
 title: packages/jam/safrole/bandersnatch-vrf.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 5
 chunk_total: 9
 content_sha: 82bbe091f6807213570a272447b44afa7bd074f441e20fe42d98645f1d8c46e6

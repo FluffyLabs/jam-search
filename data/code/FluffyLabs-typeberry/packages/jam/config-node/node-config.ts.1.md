@@ -2,38 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.ts#L123-L252
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.ts#L117-L247
 title: packages/jam/config-node/node-config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
-chunk_total: 3
-content_sha: 8a571b8df14f49de6fda86989d88487cae5825fa8bae8a2f407f15eed0f12411
+chunk_total: 2
+content_sha: 3733194f1e96048535a3be8579a666aad9d92f41e2b8d81851bac93f36deaed0
 language: typescript
 ---
-`packages/jam/config-node/node-config.ts` (lines 123–252)
+`packages/jam/config-node/node-config.ts` (lines 117–247)
 
 ```typescript
-export function loadConfig(config: string[], withRelPath: (p: string) => string): NodeConfiguration {
-  logger.log`🔧 Loading config`;
-  let mergedJson: AnyJsonObject = {};
-
-  for (const entry of config) {
-    logger.log`🔧 Applying '${entry}'`;
-
-    if (entry === DEV_TINY_CONFIG) {
-      mergedJson = structuredClone(configs.devTiny); // clone to avoid mutating the original config. not doing a merge since dev and default should theoretically replace all properties.
-      continue;
-    }
-
-    if (entry === DEV_FULL_CONFIG) {
-      mergedJson = structuredClone(configs.devFull); // clone to avoid mutating the original config. not doing a merge since dev and default should theoretically replace all properties.
-      continue;
-    }
-
-    if (entry === DEFAULT_CONFIG) {
-      mergedJson = structuredClone(configs.default);
       continue;
     }
 
@@ -145,4 +126,24 @@ function processQuery(input: AnyJsonObject, query: string, withRelPath: (p: stri
         } else {
           target[part] = parsedValue;
         }
+        return;
+      }
+      target = target[part];
+    }
+  }
+
+  throw new Error("Unrecognized syntax.");
+}
+
+type JsonValue = string | number | boolean | null | AnyJsonObject | JsonArray;
+
+interface AnyJsonObject {
+  [key: string]: JsonValue;
+}
+
+interface JsonArray extends Array<JsonValue> {}
+
+function isJsonObject(value: JsonValue): value is AnyJsonObject {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 ```

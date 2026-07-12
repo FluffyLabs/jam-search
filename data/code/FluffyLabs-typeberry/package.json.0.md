@@ -1,22 +1,22 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L107'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L106'
 title: package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 25c66c26330f49c10c99ad395a7cc5dd52d708c5c29d92c22aa01cc93f7037f6
+content_sha: af3c767aa0aeee20a3b2268e2ef2803defe668340830eba857b29479746affa9
 language: json
 ---
-`package.json` (lines 1–107)
+`package.json` (lines 1–106)
 
 ```json
 {
   "name": "@typeberry/jam",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "JAM implementation in TypeScript",
   "private": true,
   "workspaces": [
@@ -26,7 +26,6 @@ language: json
     "bin/jam",
     "bin/lib",
     "bin/pvm",
-    "bin/rpc",
     "bin/test-runner",
     "packages/configs",
     "packages/core/bytes",
@@ -58,13 +57,13 @@ language: json
     "packages/jam/config-node",
     "packages/jam/database",
     "packages/jam/database-fjall",
-    "packages/jam/database-lmdb",
     "packages/jam/executor",
     "packages/jam/fuzz-proto",
     "packages/jam/in-core",
     "packages/jam/jam-host-calls",
     "packages/jam/jamnp-s",
     "packages/jam/node",
+    "packages/jam/rpc",
     "packages/jam/rpc-client",
     "packages/jam/rpc-validation",
     "packages/jam/safrole",

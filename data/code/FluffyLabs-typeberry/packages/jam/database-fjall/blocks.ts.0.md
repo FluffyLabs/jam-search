@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/blocks.ts#L1-L104
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/blocks.ts#L1-L112
 title: packages/jam/database-fjall/blocks.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 261820f9ae67b8f151932480f4b35a38117ca232204fa3d54cdf8001bcaf5059
+content_sha: 80dfecf8831d9fd65052999694426282777505b4af08c57715e96c0cdbf2a595
 language: typescript
 ---
-`packages/jam/database-fjall/blocks.ts` (lines 1–104)
+`packages/jam/database-fjall/blocks.ts` (lines 1–112)
 
 ```typescript
 import {
@@ -53,6 +53,8 @@ export class FjallBlocks implements BlocksDb {
     private readonly extrinsics: FjallPartition,
     private readonly postStateRoots: FjallPartition,
   ) {}
+
+  private pendingPrune: Promise<unknown> = Promise.resolve();
 
   async setPostStateRoot(hash: HeaderHash, postStateRoot: StateRootHash): Promise<void> {
     await writable(this.postStateRoots, this.root).insert(hash.raw, postStateRoot.raw);
@@ -103,14 +105,20 @@ export class FjallBlocks implements BlocksDb {
   }
 
   markUnused(hash: HeaderHash): void {
-    void Promise.all([
-      writable(this.headers, this.root).remove(hash.raw),
-      writable(this.extrinsics, this.root).remove(hash.raw),
-      writable(this.postStateRoots, this.root).remove(hash.raw),
-    ]).catch((e) => logger.warn`Failed to prune block ${hash}: ${e}`);
+    this.pendingPrune = this.pendingPrune
+      .then(() =>
+        Promise.all([
+          writable(this.headers, this.root).remove(hash.raw),
+          writable(this.extrinsics, this.root).remove(hash.raw),
+          writable(this.postStateRoots, this.root).remove(hash.raw),
+        ]),
+      )
+      .catch((e) => logger.warn`Failed to prune block ${hash}: ${e}`);
   }
 
-  async close() {}
+  async close() {
+    await this.pendingPrune;
+  }
 }
 
 function writable(partition: FjallPartition, root: FjallRoot): Partition {

@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/package.json#L1-L26
 title: packages/jam/state-merkleization/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 9c8c1dbf82e1e763d0d14afb8f8a4229c5a51e32182463ed79b75e1fdfb791a9
+content_sha: 6bce73120dd9db5a676f1ec15a03b2f7044108185fc77b50e3d443656507e742
 language: json
 ---
 `packages/jam/state-merkleization/package.json` (lines 1–26)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/state-merkleization",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Serialization and merkleization of the state.",
   "license": "MPL-2.0",
   "author": "Fluffy Labs",

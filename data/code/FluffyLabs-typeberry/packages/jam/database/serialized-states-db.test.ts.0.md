@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/serialized-states-db.test.ts#L1-L100
 title: packages/jam/database/serialized-states-db.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 48aede245090214f1a2840163f308102936e000b25d5f3e5da50c203df9e4658

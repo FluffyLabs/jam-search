@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/helpers/tiny-network.ts#L1-L125
 title: bin/jam/helpers/tiny-network.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: d7f75a26e41fcfc8bcce200b5c8a86777513be5bc496fa9fe5499c326f5b656a

@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/value-refs.ts#L1-L90
 title: packages/jam/database/value-refs.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 7ac398943a5b9e9f9f2de57205079f0eb005b8c8ae49cf102de9855fd21fd613
+content_sha: b43b0ea7d4bb5f49b7d34845d24983b9029cfed976c21bc9f983af96bf5d6a21
 language: typescript
 ---
 `packages/jam/database/value-refs.ts` (lines 1–90)
@@ -30,10 +30,9 @@ export interface ValueDelta {
 /**
  * Synchronous, read-only view of the persisted refcounting state.
  *
- * Both LMDB and fjall offer synchronous reads, so reads can go straight
- * to the backing store. All writes go through `ValueRefsUpdate` batches
- * instead, since persistent backends can only write asynchronously
- * (LMDB transactions, fjall inserts + persist).
+ * fjall offers synchronous reads, so reads can go straight to the backing
+ * store. All writes go through `ValueRefsUpdate` batches instead, since
+ * persistent backends can only write asynchronously (fjall inserts + persist).
  */
 export interface ValueRefsReader {
   /** How many leaves of the finalized-tip state reference the value. Missing keys read as `0`. */
@@ -49,7 +48,7 @@ export interface ValueRefsReader {
  *
  * The backend is responsible for applying the batch using its own write
  * primitive - ideally atomically with the state write that triggered it
- * (one LMDB transaction, one fjall persist).
+ * (one fjall persist).
  *
  * Counts are absolute values rather than increments, so applying the same
  * update more than once (e.g. on crash-replay) is harmless.
@@ -105,4 +104,5 @@ export class ValueRefs {
 
   /** Record values referenced by the genesis / initial finalized state. */
   onInitial(inserted: ValueHash[]): ValueRefsUpdate {
+    const update = new UpdateBuilder(this.reader);
 ```

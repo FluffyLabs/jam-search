@@ -2,19 +2,27 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L101-L196
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L103-L194
 title: packages/jam/database-fjall/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: 89ca4fbef92b5d5957873516cc6a1124873ee281c00ed4aea9edfe602e18ebf9
+content_sha: 1e1e9aa9dd315e03121c11520536b368fe8fd7306a13cdb52858a0242e90d19f
 language: typescript
 ---
-`packages/jam/database-fjall/hybrid-states.ts` (lines 101–196)
+`packages/jam/database-fjall/hybrid-states.ts` (lines 103–194)
 
 ```typescript
+ * are never collected. An instance backed by a shared keyspace (fuzz reset
+ * reuse) only ever prunes values it inserted itself, since its refcounts start
+ * empty - values left behind by earlier resets stay untouched.
+ */
+export class HybridSerializedStates implements StatesDb<SerializedState<LeafDb>>, InitStatesDb<StateEntries> {
+  static async new({
+    spec,
+    blake2b,
     dbPath,
     ephemeral,
     cacheSizeBytes,
@@ -27,6 +35,12 @@ language: typescript
   }): Promise<HybridSerializedStates> {
     const session = await FjallValuesSession.open(dbPath, { ephemeral, cacheSizeBytes });
     // This instance owns the session it just opened, so its `close()` closes it.
+    return new HybridSerializedStates(spec, blake2b, session, true);
+  }
+
+  /** Create a db over an already-open keyspace owned by the caller. */
+  static async fromRoot(spec: ChainSpec, blake2b: Blake2b, root: FjallRoot): Promise<HybridSerializedStates> {
+    const session = await FjallValuesSession.fromRoot(root);
     return new HybridSerializedStates(spec, blake2b, session, true);
   }
 
@@ -93,22 +107,4 @@ language: typescript
       // values that never reached disk.
       return res;
     }
-    // Re-create the lookup with the shared values accessor only once the new
-    // values are durably written.
-    state.updateBackend(LeafDb.fromLeaves(leafs, this.valuesDb));
-    this.inMemStates.set(header, leafs);
-    this.applyRefs(this.refs.onImport(header, { inserted: values.map((v) => v[0]), removed }));
-    return Result.ok(OK);
-  }
-
-  async getStateRoot(state: SerializedState<LeafDb>): Promise<StateRootHash> {
-    return state.backend.getStateRoot(this.blake2b);
-  }
-
-  getState(header: HeaderHash): SerializedState<LeafDb> | null {
-    const leafs = this.inMemStates.get(header);
-    if (leafs === undefined) {
-      return null;
-    }
-    const leafDb = LeafDb.fromLeaves(leafs, this.valuesDb);
 ```

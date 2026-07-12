@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/portable.ts#L1-L133'
 title: assembly/portable.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-15T09:40:01+02:00'
-last_modified: '2026-06-15T09:40:01+02:00'
+created_at: '2026-07-10T09:46:52Z'
+last_modified: '2026-07-10T09:46:52Z'
 chunk_index: 0
 chunk_total: 3
 content_sha: d76b1dff6d62f4dbfc1685ff67da1ea77cb73376e81ba0bb6347a3276df17df1

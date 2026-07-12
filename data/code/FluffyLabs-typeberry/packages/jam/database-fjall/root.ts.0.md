@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/root.ts#L1-L126
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/root.ts#L1-L120
 title: packages/jam/database-fjall/root.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: d62252463d42e6ea5207b75ecd36011bb627def643d0a2c38f4925634756a951
+content_sha: 9941eaf40d1f0a9eccf558f1be968119a1bf225a4e836a88af02cb279f2464dd
 language: typescript
 ---
-`packages/jam/database-fjall/root.ts` (lines 1–126)
+`packages/jam/database-fjall/root.ts` (lines 1–120)
 
 ```typescript
 import * as fs from "node:fs";
@@ -76,7 +76,7 @@ export class FjallRoot {
 
   /** Open (or create) a fjall keyspace at the given path. */
   static async open(dbPath: string, options: FjallRootOptions = {}): Promise<FjallRoot> {
-    // fjall-js 0.3 shares one engine per path. Readers must use the read-only
+    // fjall-js shares one engine per path. Readers must use the read-only
     // wrapper surface; durability is driven explicitly through persist().
     const config = {
       path: dbPath,
@@ -104,6 +104,14 @@ export class FjallRoot {
     return (await this.keyspace.partition(name)) as Partition;
   }
 
+  /** Delete a writable partition and all of its data. */
+  async deletePartition(name: string): Promise<void> {
+    if (this.readOnly) {
+      throw new Error(`Cannot delete fjall partition '${name}' from a read-only keyspace.`);
+    }
+    await (this.keyspace as Keyspace).deletePartition(name);
+  }
+
   /**
    * Flush the journal to disk so prior writes survive a crash.
    *
@@ -127,18 +135,4 @@ export class FjallRoot {
    * A fjall keyspace is a directory of partition and journal files, so we sum
    * them recursively.
    */
-  sizeInBytes(): number | null {
-    try {
-      return dirSizeInBytes(this.dbPath);
-    } catch {
-      return null;
-    }
-  }
-
-  /** Release this keyspace handle. Call persist() first when durability is needed. */
-  async close(): Promise<void> {
-    await this.keyspace.close();
-  }
-}
-
 ```

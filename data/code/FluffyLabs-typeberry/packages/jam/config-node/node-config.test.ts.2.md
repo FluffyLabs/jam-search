@@ -2,19 +2,24 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L227-L290
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L227-L295
 title: packages/jam/config-node/node-config.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: de13fb95e7f754f56b65321eaa214c0aef9cd30580484e9a4ea92e7768da3465
+content_sha: 29d31059f04e05fb2c6e7086986c46af39704c0f4267db7e56802784865bf3d1
 language: typescript
 ---
-`packages/jam/config-node/node-config.test.ts` (lines 227–290)
+`packages/jam/config-node/node-config.test.ts` (lines 227–295)
 
 ```typescript
+  it("should throw an error if an invalid json file is provided", () => {
+    mock.method(fs, "readFileSync", () => "invalid json");
+    assert.throws(
+      () => loadConfig(["file.json"], withRelPath),
+      new Error(
         `Unable to load config from file.json: SyntaxError: Unexpected token 'i', "invalid json" is not valid JSON`,
       ),
     );

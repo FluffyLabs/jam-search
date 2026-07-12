@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/protocol.ts#L116-L177
 title: packages/workers/api-node/protocol.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: c2543ff5d86b836e858736fd79ff6489a21e61658daa480b4de6ac6680417d30

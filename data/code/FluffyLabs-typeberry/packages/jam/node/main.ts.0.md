@@ -2,24 +2,23 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L1-L101
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L1-L103
 title: packages/jam/node/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 4
-content_sha: 7b71f99a216786c129724039b60d5d17406983b10e5a17b2dabcb8f4c37d628f
+content_sha: 18c34f1062acf9c5720d5fc9684c33c6452294bd7d0945875a87716014ac999b
 language: typescript
 ---
-`packages/jam/node/main.ts` (lines 1–101)
+`packages/jam/node/main.ts` (lines 1–103)
 
 ```typescript
 import { isMainThread } from "node:worker_threads";
 import type { BlockView, HeaderHash, HeaderView, StateRootHash } from "@typeberry/block";
 import { AUTHORSHIP_NETWORK_PORT } from "@typeberry/comms-authorship-network";
 import { type ChainSpec, PvmBackend } from "@typeberry/config";
-import { RegularStateBackend } from "@typeberry/config-node";
 import { initWasm } from "@typeberry/crypto";
 import {
   type BandersnatchSecretSeed,
@@ -41,7 +40,6 @@ import { DirectPort, DirectWorkerConfig } from "@typeberry/workers-api";
 import {
   FjallWorkerConfig,
   InMemWorkerConfig,
-  LmdbWorkerConfig,
   logHostEnvironment,
   type PersistentWorkerConfig,
   ThreadPort,
@@ -88,10 +86,7 @@ export async function main(
   const blake2b = await Blake2b.createHasher();
   const nodeName = config.nodeName;
   const isInMemory = config.node.databaseBasePath === undefined;
-  logger.info`🗄️ States DB: ${isInMemory ? "in-memory" : config.node.stateBackend}.`;
-  if (!isInMemory && config.node.stateBackend === RegularStateBackend.Lmdb) {
-    logger.warn`🗄️ The lmdb state backend is deprecated. Use state_backend="fjall" unless you need a temporary fallback.`;
-  }
+  logger.info`🗄️ States DB: ${isInMemory ? "in-memory" : "fjall"}.`;
 
   const { dbPath, genesisHeaderHash } = getDatabasePath(
     blake2b,
@@ -100,7 +95,7 @@ export async function main(
     withRelPath(config.node.databaseBasePath ?? "<in-memory>"),
   );
 
-  const baseConfig = { nodeName, chainSpec, blake2b, dbPath, stateBackend: config.node.stateBackend };
+  const baseConfig = { nodeName, chainSpec, blake2b, dbPath };
   const importerParams = {
     ...baseConfig,
     workerParams: ImporterConfig.create({
@@ -116,4 +111,11 @@ export async function main(
 
   // Initialize the database with genesis state and block if there isn't one.
   logger.info`🛢️ Opening database at ${dbPath}`;
+  const rootDb = await importerConfig.config.openDatabase({ readonly: false });
+  try {
+    await initializeDatabase(chainSpec, blake2b, genesisHeaderHash, rootDb, config.node.chainSpec, config.ancestry);
+  } catch (e) {
+    try {
+      await rootDb.close();
+    } catch (closeError) {
 ```

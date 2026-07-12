@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/packages/README.md#L1-L96'
 title: packages/README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: e44d823d455b0768b89b9c4dbdbc733614ad551df4f45fc51c1e5bba9931d299
+content_sha: f8db329fef8afc3368a93811a6d45ebd90e746ad3e9e8a82634f382265539702
 language: markdown
 ---
 `packages/README.md` (lines 1–96)
@@ -54,7 +54,6 @@ Contains JAM (Join-Accumulate Machine) specific packages:
 - **config** - JAM configuration handling
 - **config-node** - Node-specific JAM configuration
 - **database** - Database abstractions for JAM
-- **database-lmdb** - LMDB database implementation
 - **executor** - JAM PVM execution entry point with host calls
 - **fuzz-proto** - Fuzzing protocol implementation
 - **in-core** - In-core execution utilities (refine phase)
@@ -110,4 +109,5 @@ When adding a new package:
 
 ## Package Organization Guidelines
 
+- **Core packages** should be framework-agnostic and provide fundamental functionality
 ```

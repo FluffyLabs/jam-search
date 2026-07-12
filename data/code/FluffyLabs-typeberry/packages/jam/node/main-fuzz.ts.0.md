@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L1-L94
 title: packages/jam/node/main-fuzz.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
-chunk_total: 3
-content_sha: 69ab436b7012e658d9317c578af10c3c5329340ff79b1a92ad53218bd4d5862c
+chunk_total: 4
+content_sha: aa0e5db64a3ba059a2c5fce1a86778d6a2c9821c7e35f33ce7b8860a57b63404
 language: typescript
 ---
 `packages/jam/node/main-fuzz.ts` (lines 1–94)
@@ -26,7 +26,7 @@ import { HASH_SIZE } from "@typeberry/hash";
 import { Logger } from "@typeberry/logger";
 import type { StateEntries } from "@typeberry/state-merkleization";
 import { type Closer, CURRENT_VERSION, Result, version } from "@typeberry/utils";
-import { FjallValuesSession, logHostEnvironment } from "@typeberry/workers-api-node";
+import { FjallRoot, logHostEnvironment } from "@typeberry/workers-api-node";
 import { getChainSpec } from "./common.js";
 import type { JamConfig } from "./jam-config.js";
 import type { NodeApi } from "./main.js";
@@ -45,17 +45,17 @@ const logger = Logger.new(import.meta.filename, "fuzztarget");
 const FUZZ_DB_SUBDIR = "typeberry-fuzz-db";
 
 const FUZZ_DB_FJALL: StateBackend = "fjall-hybrid";
-const FUZZ_DB_LMDB: StateBackend = "lmdb-hybrid";
-const FUZZ_DB_OPTIONS: string[] = [FUZZ_DB_FJALL, FUZZ_DB_LMDB, "fjall", "lmdb"];
+const FUZZ_DB_OPTIONS: string[] = [FUZZ_DB_FJALL, "fjall"];
 
-/** Subdirectory (under the fuzzer's db dir) holding the reused fjall values keyspace. */
-const FUZZ_FJALL_VALUES_SUBDIR = "values-session";
+/** The partitions used by FjallBlocks and FjallStates in the full-fjall backend. */
+const FUZZ_FJALL_PARTITIONS = ["headers", "extrinsics", "postStateRoots", "states", "values"] as const;
 /**
- * Size of the fjall block-cache for the fuzz session. Values pile up across
- * resets (for fjall we do not wipe between them), so this cache is what keeps
- * the resident memory bounded.
+ * Size of the fjall block-cache for the fuzz session. The keyspace stays open
+ * across resets, so this cache is what keeps the resident memory bounded.
  */
 const FUZZ_FJALL_CACHE_BYTES = 128 * 1024 * 1024;
+/** Rebuild reused fjall keyspaces every N resets to limit LSM write/read amplification. */
+const REBUILD_FJALL_KEYSPACE_EVERY = 50;
 
 /**
  * Resolve the directory the fuzzer should use for its on-disk database, or
@@ -100,7 +100,6 @@ export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) 
   const fuzzDbBase = resolveFuzzDbBase(config.node.databaseBasePath);
 
   const rawFuzzDb = process.env.JAM_FUZZ_DB?.trim() ?? "";
-  // Using experimental fjall-hybrid by default, with an option to test lmdb as well.
   const hybridStateBackend = rawFuzzDb === "" ? FUZZ_DB_FJALL : rawFuzzDb;
   if (!isValidStateBackend(hybridStateBackend)) {
     throw new Error(`JAM_FUZZ_DB must be one of: ${FUZZ_DB_OPTIONS} (got: "${rawFuzzDb}").`);
@@ -109,4 +108,5 @@ export async function mainFuzz(fuzzConfig: FuzzConfig, withRelPath: (v: string) 
     logger.info`🗄️ Fuzz persistent backend: ${hybridStateBackend}.`;
   }
 
+  let runningNode: NodeApi | null = null;
 ```

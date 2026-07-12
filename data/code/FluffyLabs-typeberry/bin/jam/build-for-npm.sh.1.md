@@ -2,23 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L75-L141
+  https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/build-for-npm.sh#L78-L139
 title: bin/jam/build-for-npm.sh
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 0042abbf283139b871cb55dabfdc918f91ee2f0d5e9a889d3dc84f4c67f599b0
+content_sha: 030c6deb22b36dd84f50033e99fe05b255b33e39e300ba9948bfe99938e08142
 language: bash
 ---
-`bin/jam/build-for-npm.sh` (lines 75–141)
+`bin/jam/build-for-npm.sh` (lines 78–139)
 
 ```bash
-$BUILD ./packages/workers/jam-network/bootstrap-main.ts -o $DIST_FOLDER/jam-network
-$BUILD ./packages/workers/block-authorship/bootstrap-main.ts -o $DIST_FOLDER/block-authorship
-
-# copy some files that should be there
 cp ./LICENSE $DIST_FOLDER/
 cp ./README.md $DIST_FOLDER/
 
@@ -67,7 +63,6 @@ cat > ./package.json << EOF
     "jam": "./index.js"
   },
   "dependencies": {
-    "lmdb": "$LMDB_VERSION",
     "@matrixai/quic": "$QUIC_VERSION",
     "@fjall-js/fjall": "$FJALL_VERSION",
     "@typeberry/native": "$NATIVE_VERSION"

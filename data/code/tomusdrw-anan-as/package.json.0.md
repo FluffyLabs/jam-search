@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/package.json#L1-L104'
 title: package.json
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-15T09:40:01+02:00'
-last_modified: '2026-06-15T09:40:01+02:00'
+created_at: '2026-07-10T09:46:52Z'
+last_modified: '2026-07-10T09:46:52Z'
 chunk_index: 0
 chunk_total: 2
-content_sha: ce99f7805a14d20fafcc8f6dc1679dd312ae3bae2d6205a136ea1e88171f0389
+content_sha: d4307bce3a9e46f041ed851805ae21e5b969b7c9d65e65aa4e38d519a543f026
 language: json
 ---
 `package.json` (lines 1–104)
@@ -70,13 +70,13 @@ language: json
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.10",
-		"@typeberry/lib": "^0.9.0",
-		"@types/node": "^25.3.3",
+		"@typeberry/lib": "^0.11.0",
+		"@types/node": "^26.1.1",
 		"assemblyscript": "^0.28.9",
 		"esbuild": "^0.28.0",
 		"json-bigint-patch": "^0.0.8",
 		"tsx": "^4.21.0",
-		"typescript": "^6.0.2"
+		"typescript": "^7.0.2"
 	},
 	"files": [
 		"dist/**/*.wasm",

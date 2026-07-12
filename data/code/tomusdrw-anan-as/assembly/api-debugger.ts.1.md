@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/api-debugger.ts#L147-L281
 title: assembly/api-debugger.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-15T09:40:01+02:00'
-last_modified: '2026-06-15T09:40:01+02:00'
+created_at: '2026-07-10T09:46:52Z'
+last_modified: '2026-07-10T09:46:52Z'
 chunk_index: 1
 chunk_total: 3
 content_sha: 3e3f729b04255b27f7d4e2e9023fff702504c7217c3da925c68290eede296fbe

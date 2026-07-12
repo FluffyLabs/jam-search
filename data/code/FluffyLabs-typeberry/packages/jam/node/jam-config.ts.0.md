@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/jam-config.ts#L1-L114
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/jam-config.ts#L1-L120
 title: packages/jam/node/jam-config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 657fca6468d055d8e365892e7ccdd3800b1c3f857ae54ab9d43c92cef1ac5b93
+content_sha: e8f3f5506052f2fa6fce153106e51d7324585a3024b82a98a1a1ad56c1e8221f
 language: typescript
 ---
-`packages/jam/node/jam-config.ts` (lines 1–114)
+`packages/jam/node/jam-config.ts` (lines 1–120)
 
 ```typescript
 import {
@@ -45,6 +45,7 @@ export class JamConfig {
     pvmBackend,
     devConfig = null,
     networkConfig = null,
+    rpcPort = null,
     ancestry = [],
     devValidatorIndex = null,
   }: {
@@ -55,6 +56,8 @@ export class JamConfig {
     pvmBackend: PvmBackend;
     devConfig?: DevConfig | null;
     networkConfig?: NetworkConfig | null;
+    /** RPC WebSocket port. When set, an in-process RPC server is started. */
+    rpcPort?: number | null;
     ancestry?: [HeaderHash, TimeSlot][];
     /** Validator index for dev mode authorship. Use "all" to author as all validators. */
     devValidatorIndex?: U16 | "all" | null;
@@ -67,6 +70,7 @@ export class JamConfig {
       pvmBackend,
       devConfig,
       networkConfig,
+      rpcPort,
       ancestry,
       devValidatorIndex,
     );
@@ -87,6 +91,8 @@ export class JamConfig {
     public readonly dev: DevConfig | null,
     /** Networking options. */
     public readonly network: NetworkConfig | null,
+    /** RPC WebSocket port. When set, an in-process RPC server is started. */
+    public readonly rpcPort: number | null,
     /** Optional pre-genesis ancestry information. */
     public readonly ancestry: [HeaderHash, TimeSlot][],
     /** Validator index for dev mode authorship. Use "all" to author as all validators. */

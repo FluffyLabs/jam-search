@@ -4,17 +4,17 @@ content_kind: code
 url: 'https://github.com/FluffyLabs/typeberry/blob/main/bin/jam/README.md#L148-L218'
 title: bin/jam/README.md
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: ac03e8aea9f31e62561458b9d7267a1ed2f92cb4180ac09ec516ec9f5ec69714
+content_sha: 535028dc3259e42ac7c8e2858c9bf6e3880efd7d2a028f42b8b74bccc0f3388a
 language: markdown
 ---
 `bin/jam/README.md` (lines 148–218)
 
 ```markdown
-| `JAM_FUZZ_DATA_PATH` | No | Database location. A real path runs the target against the hybrid backend (in-memory leaves plus an on-disk LMDB value store, recommended for full-spec runs to bound memory). Unset, empty, or `undefined` keeps the fully in-memory database (the default). |
+| `JAM_FUZZ_DATA_PATH` | No | Database location. A real path runs the target against the hybrid backend (in-memory leaves plus an on-disk fjall value store, recommended for full-spec runs to bound memory). Unset, empty, or `undefined` keeps the fully in-memory database (the default). |
 | `JAM_FUZZ_LOG_LEVEL` | No | Log verbosity: `error`, `warn`, `info`, `debug`, `trace`. Overrides `JAM_LOG` in fuzz mode. |
 
 The target stays up across multiple fuzzer sessions; on each `Initialize`
@@ -24,7 +24,7 @@ directory, the target uses a hybrid backend instead (wiped on every reset, so
 each session starts clean); if that store cannot be opened it logs a warning and
 falls back to in-memory. The hybrid backend keeps the trie-leaf sets in memory
 (so it still prunes at finality depth 10_000 to bound memory, like the in-memory
-backend) but persists the large values to an on-disk LMDB store fronted by an
+backend) but persists the large values to an on-disk fjall store fronted by an
 in-memory LRU cache. This keeps memory bounded while the large values live on
 disk. 
 

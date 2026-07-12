@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/erasure-coding/erasure-coding.test.ts#L211-L332
 title: packages/core/erasure-coding/erasure-coding.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 2
 chunk_total: 4
 content_sha: 08d7e1366715998310a3c5743b4288e4da6a1679cabecb3b30d18412e56ad626

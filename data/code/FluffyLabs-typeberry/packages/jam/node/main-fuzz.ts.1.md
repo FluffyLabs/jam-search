@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L89-L180
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L88-L182
 title: packages/jam/node/main-fuzz.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
-chunk_total: 3
-content_sha: a015f589d2982b90c444dafe29eccdb5df72fa1a375e3c73033e2c079d9ad0bf
+chunk_total: 4
+content_sha: a19f88466b20172957955c5de8c18d13cfe2fbdbd5eb41a8c3b8c68106470ed2
 language: typescript
 ---
-`packages/jam/node/main-fuzz.ts` (lines 89–180)
+`packages/jam/node/main-fuzz.ts` (lines 88–182)
 
 ```typescript
     throw new Error(`JAM_FUZZ_DB must be one of: ${FUZZ_DB_OPTIONS} (got: "${rawFuzzDb}").`);
@@ -22,10 +22,11 @@ language: typescript
   }
 
   let runningNode: NodeApi | null = null;
-  // The fjall values keyspace is opened once per fuzz session and reused on
-  // every reset, because opening it is the slow part. Only the in-memory blocks
-  // and leaf sets are rebuilt for each vector. fjall-hybrid only.
-  let fjallSession: FjallValuesSession | null = null;
+  // The fjall keyspace is opened once per fuzz session and reused on every
+  // reset, because opening it is the slow part.
+  let fjallKeyspace: FjallRoot | null = null;
+  // Track how many times resetState has been called for periodic fjall keyspace rebuilds.
+  let resetCount = 0;
   // Set when close() starts. Guards resetState so a fuzz command arriving
   // mid-shutdown can't build a fresh node that close() then orphans.
   let isClosing = false;
@@ -66,6 +67,9 @@ language: typescript
           await finish;
         }
 
+        // Increment reset counter for periodic fjall session rebuilds.
+        resetCount++;
+
         const buildNode = (databaseBasePath: string | undefined) => {
           const isPersistent = databaseBasePath !== undefined;
           return mainImporter(
@@ -95,16 +99,15 @@ language: typescript
               // also turns on compression further down, so the big values do not grow the
               // db too much. Tiny stays uncompressed, its db is small and speed matters more.
               ephemeral: isPersistent,
-              stateBackend: isPersistent ? hybridStateBackend : "lmdb",
-              // Reuse the session keyspace (fjall-hybrid only, other backends
-              // ignore it). Nothing to pass for the in-memory fallback.
-              sharedFjallSession: isPersistent ? (fjallSession ?? undefined) : undefined,
+              stateBackend: isPersistent ? hybridStateBackend : "fjall",
+              // Reuse the keyspace for both fjall backends. Nothing to pass for
+              // the in-memory fallback.
+              sharedFjallKeyspace: fjallKeyspace ?? undefined,
             },
           );
         };
 
         if (fuzzDbBase !== undefined) {
           try {
-            if (hybridStateBackend === FUZZ_DB_FJALL) {
-              // fjall-hybrid: open the values keyspace once and reuse it on every
+            const fjallKeyspacePath = withRelPath(fuzzDbBase);
 ```

@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/bin/src/test-json.ts#L149-L172'
 title: bin/src/test-json.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-06-15T09:40:01+02:00'
-last_modified: '2026-06-15T09:40:01+02:00'
+created_at: '2026-07-10T09:46:52Z'
+last_modified: '2026-07-10T09:46:52Z'
 chunk_index: 1
 chunk_total: 2
 content_sha: cdc0802e256f1f4e056d1c2aa6abafc8930039ed3be14e001199701d154fc7d0

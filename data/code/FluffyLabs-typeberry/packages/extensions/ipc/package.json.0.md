@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/extensions/ipc/package.json#L1-L28
 title: packages/extensions/ipc/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 8b2caec7df5327e2ab76f030a04df8aca705c6a84d2f4bd72a648fb0e9aa58e7
+content_sha: f9b699fb749f6f40565fe160ca084f646b31ba7897a798c167d9010978911714
 language: json
 ---
 `packages/extensions/ipc/package.json` (lines 1–28)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/ext-ipc",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "An IPC extension to inspect the node state.",
   "main": "index.ts",
   "dependencies": {

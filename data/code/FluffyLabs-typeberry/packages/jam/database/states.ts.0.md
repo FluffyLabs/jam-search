@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/states.ts#L1-L112
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database/states.ts#L1-L108
 title: packages/jam/database/states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 93bc8f8392566fa8df6c1531fd105cd02ca665d67757bde4ef621e48c5539e61
+content_sha: 804fd5e9864297756a447b1abd7c56cdb90ceba64d99ea9a2dc639dab238c8ee
 language: typescript
 ---
-`packages/jam/database/states.ts` (lines 1–112)
+`packages/jam/database/states.ts` (lines 1–108)
 
 ```typescript
 import type { HeaderHash, StateRootHash } from "@typeberry/block";
@@ -37,14 +37,7 @@ export interface InitStatesDb<T = State> {
   insertInitialState(headerHash: HeaderHash, initialState: T): Promise<Result<OK, StateUpdateError>>;
 }
 
-/**
- * Interface for accessing states stored in the database.
- *
- * NOTE that the design of this interface is heavily influenced
- * by the LMDB implementation, so that we can implement it efficiently.
- *
- * See the documentation there for more detailed reasoning.
- */
+/** Interface for accessing states stored in the database. */
 export interface StatesDb<T extends State = State> {
   /** Compute a state root for given state. */
   getStateRoot(state: T): Promise<StateRootHash>;
@@ -127,4 +120,7 @@ export class InMemoryStates implements StatesDb<InMemoryState> {
   }
 
   /** Insert a full state into the database. */
+  async insertInitialState(headerHash: HeaderHash, state: InMemoryState): Promise<Result<OK, StateUpdateError>> {
+    const copy = InMemoryState.copyFrom(this.spec, state, state.intoServicesData());
+    this.db.set(headerHash, copy);
 ```

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/pvm-interpreter/memory/memory.test.ts#L248-L345
 title: packages/core/pvm-interpreter/memory/memory.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 3
 chunk_total: 5
 content_sha: 491a0cb596272df9fbf02deaadb5bd988d8d1f78e3de3e4e2d257303264d150c

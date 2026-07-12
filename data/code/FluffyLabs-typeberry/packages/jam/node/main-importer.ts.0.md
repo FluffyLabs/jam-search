@@ -2,42 +2,36 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L101
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-importer.ts#L1-L102
 title: packages/jam/node/main-importer.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 0509cca34e92b13c2399b0a8184be3139081a0fa4092c129b935b8a9ea822dda
+content_sha: 4d3f7991ac26171ebeb1177bc38e5808beafedf98785e2a1a601736ab930eb00
 language: typescript
 ---
-`packages/jam/node/main-importer.ts` (lines 1–101)
+`packages/jam/node/main-importer.ts` (lines 1–102)
 
 ```typescript
 import type { BlockView, HeaderHash, StateRootHash } from "@typeberry/block";
 import { Bytes } from "@typeberry/bytes";
 import { PvmBackend } from "@typeberry/config";
-import { KnownChainSpec, RegularStateBackend } from "@typeberry/config-node";
+import { KnownChainSpec } from "@typeberry/config-node";
 import { bandersnatch, initWasm } from "@typeberry/crypto";
 import { Blake2b, HASH_SIZE } from "@typeberry/hash";
 import { createImporter, ImporterConfig } from "@typeberry/importer";
 import { tryAsU16 } from "@typeberry/numbers";
 import { CURRENT_SUITE, CURRENT_VERSION, Result, resultToString, version } from "@typeberry/utils";
-import {
-  type FjallValuesSession,
-  FjallWorkerConfig,
-  HybridWorkerConfig,
-  InMemWorkerConfig,
-  LmdbWorkerConfig,
-} from "@typeberry/workers-api-node";
+import { type FjallRoot, FjallWorkerConfig, HybridWorkerConfig, InMemWorkerConfig } from "@typeberry/workers-api-node";
 import { getChainSpec, getDatabasePath, initializeDatabase, logger } from "./common.js";
 import type { JamConfig } from "./jam-config.js";
 import type { NodeApi } from "./main.js";
 
 const zeroHash = Bytes.zero(HASH_SIZE).asOpaque<StateRootHash>();
 
-export type StateBackend = "lmdb" | "fjall" | "lmdb-hybrid" | "fjall-hybrid";
+export type StateBackend = "fjall" | "fjall-hybrid";
 
 export type ImporterOptions = {
   initGenesisFromAncestry?: boolean;
@@ -45,18 +39,13 @@ export type ImporterOptions = {
   pruneBlocks?: boolean;
   /** Open the database without fsync/compression. Only safe for throwaway dbs (e.g. fuzzing). */
   ephemeral?: boolean;
-  /**
-   * Persistent backend used when `databaseBasePath` is set. Defaults to config's backend (fjall unless overridden).
-   *
-   * lmdb and lmdb-hybrid are deprecated and retained as explicit fallbacks.
-   */
+  /** Persistent backend used when `databaseBasePath` is set. Defaults to fjall. */
   stateBackend?: StateBackend;
   /**
-   * Reuse an already-open fjall values session instead of opening a fresh
-   * keyspace. Only used when `stateBackend === "fjall-hybrid"`. The fuzz target
-   * opens one per run and reuses it across resets.
+   * Reuse an already-open fjall keyspace instead of opening a fresh keyspace
+   * from `dbPath`. Used by fjall and fjall-hybrid fuzz targets.
    */
-  sharedFjallSession?: FjallValuesSession;
+  sharedFjallKeyspace?: FjallRoot;
 };
 
 export async function mainImporter(
@@ -74,14 +63,8 @@ export async function mainImporter(
 
   // Single source of truth for the states db backend: drives both the log line
   // below and the worker config picked further down.
-  const dbBackend =
-    config.node.databaseBasePath === undefined
-      ? "in-memory"
-      : (options.stateBackend ?? config.node.stateBackend ?? RegularStateBackend.Fjall);
+  const dbBackend = config.node.databaseBasePath === undefined ? "in-memory" : (options.stateBackend ?? "fjall");
   logger.info`🗄️ States DB: ${dbBackend}.`;
-  if (dbBackend === "lmdb" || dbBackend === "lmdb-hybrid") {
-    logger.warn`🗄️ The ${dbBackend} state backend is deprecated. Use fjall unless you need a temporary fallback.`;
-  }
 
   const chainSpec = getChainSpec(config.node.flavor);
   const blake2b = await Blake2b.createHasher();
@@ -111,9 +94,27 @@ export async function mainImporter(
           blake2b,
           workerParams,
         })
-      : dbBackend === "lmdb-hybrid" || dbBackend === "fjall-hybrid"
+      : dbBackend === "fjall-hybrid"
         ? await HybridWorkerConfig.new({
             nodeName,
             chainSpec,
             blake2b,
+            dbPath,
+            workerParams,
+            ephemeral,
+            compression,
+            sharedFjallKeyspace: options.sharedFjallKeyspace,
+          })
+        : FjallWorkerConfig.new({
+            nodeName,
+            chainSpec,
+            blake2b,
+            dbPath,
+            workerParams,
+            ephemeral,
+            sharedFjallKeyspace: options.sharedFjallKeyspace,
+          });
+
+  // Initialize the database with genesis state and block if there isn't one.
+  logger.info`🛢️ Opening database at ${dbPath}`;
 ```

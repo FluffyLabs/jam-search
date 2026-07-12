@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state/accumulation-queue.test.ts#L1-L21
 title: packages/jam/state/accumulation-queue.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 2dd5021421c03d1feb5d4ebf1eab90b658e0abc3359ee5893ded04be3eb1f45b

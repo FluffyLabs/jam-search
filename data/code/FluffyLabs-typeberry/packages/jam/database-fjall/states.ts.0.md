@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/states.ts#L1-L101
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/states.ts#L1-L102
 title: packages/jam/database-fjall/states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 2
-content_sha: 988da7ce10ffc9dbad5f641011ceb9d1a629e1dfcd0f761fdb3d2b9fd2bbaec1
+content_sha: 7ffde31462adcdeba3d0a1697eda94de8e15780e3b9e0557c68e4888e57681cc
 language: typescript
 ---
-`packages/jam/database-fjall/states.ts` (lines 1–101)
+`packages/jam/database-fjall/states.ts` (lines 1–102)
 
 ```typescript
 import type { HeaderHash, StateRootHash } from "@typeberry/block";
@@ -46,6 +46,7 @@ export class FjallStates implements StatesDb<SerializedState<LeafDb>>, InitState
   }
 
   private readonly valuesDb: ValuesDb;
+  private pendingPrune: Promise<unknown> = Promise.resolve();
 
   private constructor(
     private readonly spec: ChainSpec,
@@ -102,8 +103,8 @@ export class FjallStates implements StatesDb<SerializedState<LeafDb>>, InitState
   }
 
   markUnused(headerHash: HeaderHash): void {
-    void writable(this.states, this.root)
-      .remove(headerHash.raw)
+    this.pendingPrune = this.pendingPrune
+      .then(() => writable(this.states, this.root).remove(headerHash.raw))
       .catch((e) => logger.warn`Failed to prune state ${headerHash}: ${e}`);
   }
 
@@ -111,9 +112,9 @@ export class FjallStates implements StatesDb<SerializedState<LeafDb>>, InitState
     return this.root.sizeInBytes();
   }
 
-  async close() {}
+  async close() {
+    await this.pendingPrune;
+  }
 
   private async updateAndCommit(
-    headerHash: HeaderHash,
-    leafs: SortedSet<LeafNode>,
 ```

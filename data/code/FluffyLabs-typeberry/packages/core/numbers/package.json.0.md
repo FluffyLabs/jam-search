@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/numbers/package.json#L1-L15
 title: packages/core/numbers/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 1573ea2fecb95975df03533fed0b74da919d7d86cc71d8204cb422fb494357ba
+content_sha: db70acae79628c58864e12f3cf3d008ebdb33aaf8d505770dced11ee3f023dd5
 language: json
 ---
 `packages/core/numbers/package.json` (lines 1–15)
@@ -17,7 +17,7 @@ language: json
 ```json
 {
   "name": "@typeberry/numbers",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Number types for typeberry data structures.",
   "main": "index.ts",
   "dependencies": {

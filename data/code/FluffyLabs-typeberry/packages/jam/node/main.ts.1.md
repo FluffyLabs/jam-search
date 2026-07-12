@@ -2,24 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L98-L208
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L98-L215
 title: packages/jam/node/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 4
-content_sha: e04e90f7fec7352be3dc1de364f8630fb07dcba6622978b0af0ac66592abea28
+content_sha: 691a4089ed169673d9cdccf0dbbfa5e51a43aa893c33d58199d11a380d29b7a8
 language: typescript
 ---
-`packages/jam/node/main.ts` (lines 98–208)
+`packages/jam/node/main.ts` (lines 98–215)
 
 ```typescript
-    : { isInMemory, config: createPersistentWorkerConfig(importerParams) };
-
-  // Initialize the database with genesis state and block if there isn't one.
-  logger.info`🛢️ Opening database at ${dbPath}`;
-  const rootDb = await importerConfig.config.openDatabase({ readonly: false });
   try {
     await initializeDatabase(chainSpec, blake2b, genesisHeaderHash, rootDb, config.node.chainSpec, config.ancestry);
   } catch (e) {
@@ -31,9 +26,8 @@ language: typescript
     throw e;
   }
   // fjall-js shares the engine explicitly and requires every handle to close.
-  // Keep lmdb's historical main-thread handle open until shutdown.
   let mainRootDb: RootDb<BlocksDb, SerializedStatesDb> | null = rootDb;
-  if (!importerConfig.isInMemory && config.node.stateBackend === RegularStateBackend.Fjall) {
+  if (!importerConfig.isInMemory) {
     await rootDb.close();
     mainRootDb = null;
   }
@@ -126,4 +120,17 @@ language: typescript
     authorshipKeys,
   );
 
+  const api: NodeApi = {
+    chainSpec,
+    async importBlock(block: BlockView) {
+      const res = await importer.sendImportBlock(block);
+      if (res.isOk) {
+        return Result.ok(await importer.sendGetBestStateRootHash());
+      }
+      return res;
+    },
+    async getStateEntries(hash: HeaderHash) {
+      return importer.sendGetStateEntries(hash);
+    },
+    async getBestStateRootHash() {
 ```

@@ -2,45 +2,76 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L175-L256
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main-fuzz.ts#L175-L260
 title: packages/jam/node/main-fuzz.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 2
-chunk_total: 3
-content_sha: 8c67534fff4fa24cace7e20bfab3db7714f762dcf0e5ba948c5eaea1837020e8
+chunk_total: 4
+content_sha: 4afad410802faf253467e92e8e8399406bfe72d824d220b635eb0660e13cd20c
 language: typescript
 ---
-`packages/jam/node/main-fuzz.ts` (lines 175–256)
+`packages/jam/node/main-fuzz.ts` (lines 175–260)
 
 ```typescript
+              sharedFjallKeyspace: fjallKeyspace ?? undefined,
+            },
+          );
         };
 
         if (fuzzDbBase !== undefined) {
           try {
+            const fjallKeyspacePath = withRelPath(fuzzDbBase);
             if (hybridStateBackend === FUZZ_DB_FJALL) {
-              // fjall-hybrid: open the values keyspace once and reuse it on every
-              // reset. The values partition is content-addressed and immutable, so
-              // it is fine that values pile up across resets, the unreferenced ones
-              // just sit there. `initializeDatabase` decides whether the db is
-              // already initialized from the in-memory blocks, which we rebuild on
-              // every reset, not from the values store, so reusing it does not
-              // resume the previous run.
-              if (fjallSession === null) {
-                // Start from a clean slate once, then keep the keyspace open.
+              // fjall-hybrid: values pile up across resets, so rebuild the
+              // keyspace periodically to avoid LSM read amplification.
+              if (resetCount === 1 || fjallKeyspace === null) {
+                // First reset: start from a clean slate.
                 await wipeFuzzDb(fuzzDbBase);
-                fjallSession = await FjallValuesSession.open(`${withRelPath(fuzzDbBase)}/${FUZZ_FJALL_VALUES_SUBDIR}`, {
+                fjallKeyspace = await FjallRoot.open(fjallKeyspacePath, {
                   ephemeral: true,
                   cacheSizeBytes: FUZZ_FJALL_CACHE_BYTES,
                 });
-                logger.info`🗄️ Opened reusable fjall values session at ${withRelPath(fuzzDbBase)}/${FUZZ_FJALL_VALUES_SUBDIR}`;
+                logger.info`🗄️ Opened reusable fjall keyspace at ${fjallKeyspacePath}`;
+              } else if (resetCount % REBUILD_FJALL_KEYSPACE_EVERY === 0) {
+                // Periodic rebuild: close, wipe keyspace dir, and reopen.
+                const keyspace = fjallKeyspace;
+                fjallKeyspace = null;
+                await keyspace.close().catch(() => {});
+                await wipeFuzzDb(fuzzDbBase).catch(() => {});
+                fjallKeyspace = await FjallRoot.open(fjallKeyspacePath, {
+                  ephemeral: true,
+                  cacheSizeBytes: FUZZ_FJALL_CACHE_BYTES,
+                });
+                logger.info`🗄️ Rebuilt reusable fjall keyspace at ${fjallKeyspacePath}`;
               }
             } else {
-              // lmdb-hybrid: keep the old behaviour, wipe and reopen on every
-              // reset. A fresh db each reset makes `initializeDatabase` set up
-              // genesis again instead of resuming the previous run.
-              await wipeFuzzDb(fuzzDbBase);
+              // full-fjall: keep one keyspace open and recycle only the five
+              // partitions used by FjallBlocks/FjallStates.
+              if (resetCount === 1 || fjallKeyspace === null) {
+                await wipeFuzzDb(fuzzDbBase);
+                fjallKeyspace = await FjallRoot.open(fjallKeyspacePath, {
+                  ephemeral: true,
+                  cacheSizeBytes: FUZZ_FJALL_CACHE_BYTES,
+                });
+                logger.info`🗄️ Opened reusable fjall keyspace at ${fjallKeyspacePath}`;
+              } else if (resetCount % REBUILD_FJALL_KEYSPACE_EVERY === 0) {
+                // Periodic rebuild: delete/recreate keeps correctness, but a
+                // long-lived keyspace accumulates fjall write amplification.
+                const keyspace = fjallKeyspace;
+                fjallKeyspace = null;
+                await keyspace.close().catch(() => {});
+                await wipeFuzzDb(fuzzDbBase).catch(() => {});
+                fjallKeyspace = await FjallRoot.open(fjallKeyspacePath, {
+                  ephemeral: true,
+                  cacheSizeBytes: FUZZ_FJALL_CACHE_BYTES,
+                });
+                logger.info`🗄️ Rebuilt reusable fjall keyspace at ${fjallKeyspacePath}`;
+              } else if (fjallKeyspace !== null) {
+                const keyspace = fjallKeyspace;
+                await Promise.all(FUZZ_FJALL_PARTITIONS.map((name) => keyspace.deletePartition(name)));
+              }
             }
             runningNode = await buildNode(fuzzDbBase);
             return await runningNode.getBestStateRootHash();
@@ -70,31 +101,4 @@ language: typescript
       isClosing = true;
       // Stop accepting connections + unlink the socket.
       closeFuzzTarget();
-      // Drain the active session (flush + close DB). Swallow errors so a
-      // failing close still lets the process exit 0; the db is wiped next.
-      // The node references the shared fjall session, so it must close first.
-      if (activeReset !== null) {
-        await activeReset.catch((e) => logger.error`Error waiting for fuzz reset: ${e}`);
-      }
-      if (runningNode !== null) {
-        const node = runningNode;
-        runningNode = null;
-        await node.close().catch((e) => logger.error`Error closing fuzz node: ${e}`);
-      }
-      // Release the reused fjall values keyspace before wiping its files.
-      if (fjallSession !== null) {
-        const session = fjallSession;
-        fjallSession = null;
-        await session.close().catch((e) => logger.error`Error closing fjall session: ${e}`);
-      }
-      if (fuzzDbBase !== undefined) {
-        await wipeFuzzDb(fuzzDbBase).catch(() => {});
-      }
-    },
-  };
-}
-
-function isValidStateBackend(val: string): val is StateBackend {
-  return FUZZ_DB_OPTIONS.indexOf(val) !== -1;
-}
 ```

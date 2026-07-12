@@ -2,36 +2,19 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L197-L347
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/node/main.ts#L208-L354
 title: packages/jam/node/main.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 2
 chunk_total: 4
-content_sha: 5586b1ddc18bf65718d05d0fadb062df3d1cc96342bdaa9e133d908746625d49
+content_sha: da09af4c5d524657cee90523a4c68878364f088cec357d042f2dbb7ae9230e96
 language: typescript
 ---
-`packages/jam/node/main.ts` (lines 197–347)
+`packages/jam/node/main.ts` (lines 208–354)
 
 ```typescript
-    bestHeader,
-  );
-
-  const { closeAuthorship } = await initAuthorship(
-    importer,
-    config.isAuthoring,
-    config.isFastForward,
-    authorshipParams,
-    baseConfig,
-    authorshipKeys,
-  );
-
-  const api: NodeApi = {
-    chainSpec,
-    async importBlock(block: BlockView) {
-      const res = await importer.sendImportBlock(block);
-      if (res.isOk) {
         return Result.ok(await importer.sendGetBestStateRootHash());
       }
       return res;
@@ -83,7 +66,6 @@ const initAuthorship = async (
     chainSpec: ChainSpec;
     blake2b: Blake2b;
     dbPath: string;
-    stateBackend: RegularStateBackend;
   },
   authorshipKeys: { keys: { bandersnatch: BandersnatchSecretSeed; ed25519: Ed25519SecretSeed }[] },
 ) => {
@@ -144,7 +126,6 @@ const initNetwork = async (
     chainSpec: ChainSpec;
     blake2b: Blake2b;
     dbPath: string;
-    stateBackend: RegularStateBackend;
   },
   genesisHeaderHash: HeaderHash,
   networkConfig: NetworkConfig | null,
@@ -166,4 +147,19 @@ const initNetwork = async (
   const networkingConfig = NetworkingConfig.create({
     genesisHeaderHash,
     key,
+    host,
+    port: tryAsU16(port),
+    bootnodes: bootnodes.map((node) => node.toString()),
+  });
+
+  const { network, worker, finish } = params.isInMemory
+    ? await startNetwork(
+        DirectWorkerConfig.new({
+          ...baseConfig,
+          blocksDb: params.rootDb.getBlocksDb(),
+          statesDb: params.rootDb.getStatesDb(),
+          workerParams: networkingConfig,
+        }),
+        params.authorshipPort,
+      )
 ```

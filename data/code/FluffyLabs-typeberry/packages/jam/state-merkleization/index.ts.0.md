@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/state-merkleization/index.ts#L1-L34
 title: packages/jam/state-merkleization/index.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 37d832ecfddcf5762a8af67e524a03033059952d268d3ab05398a94752981a1c
+content_sha: f3fc24858412077bbfb91c5ec3117c3001510428caf2b359f420bc75763e3420
 language: typescript
 ---
 `packages/jam/state-merkleization/index.ts` (lines 1–34)
@@ -36,7 +36,7 @@ language: typescript
  *        (incomplete in-memory view).
  *     - `SerializedState<LeafDb>`: Disk-backed trie storage-leaf nodes live on
  *        disk and load on demand; cheap to update (no data duplication) and re-compute
- *        the `stateRoot`. Used in LMDB.
+ *        the `stateRoot`.
  *     - `SerializedState<StateEntries>`: serialized state represented as a simple in-memory
  *        hashmap of `key -> value` entries.
  */

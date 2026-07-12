@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L1-L110
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L1-L107
 title: packages/jam/config-node/node-config.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 0
 chunk_total: 3
-content_sha: 78ef54527cde6267dcc9e6f537bef60f5a46686c7be3e7604582d6867ef4497b
+content_sha: 4db2988de14b58259b32a4a1bf2c023e17ed27bcb9ec96d52144d58ccfa68e1c
 language: typescript
 ---
-`packages/jam/config-node/node-config.test.ts` (lines 1–110)
+`packages/jam/config-node/node-config.test.ts` (lines 1–107)
 
 ```typescript
 import assert from "node:assert";
@@ -22,7 +22,8 @@ import { configs } from "@typeberry/configs";
 import polkajamConfig from "@typeberry/configs/typeberry-polkajam-dev.json" with { type: "json" };
 import { parseFromJson } from "@typeberry/json-parser";
 import { workspacePathFix } from "@typeberry/utils";
-import { KnownChainSpec, loadConfig, NodeConfiguration, RegularStateBackend } from "./node-config.js";
+import { KnownChainSpec, loadConfig, NodeConfiguration } from "./node-config.js";
+import { RpcOptions } from "./rpc.js";
 
 const withRelPath = workspacePathFix(`${import.meta.dirname}/../..`);
 
@@ -68,14 +69,17 @@ describe("Importing Node Configuration", () => {
     assert.deepStrictEqual(config.databaseBasePath, "/tmp/jam-node-db");
   });
 
-  it("defaults to the fjall state backend", () => {
-    assert.deepStrictEqual(config.stateBackend, RegularStateBackend.Fjall);
+  it("defaults to no rpc config", () => {
+    assert.deepStrictEqual(config.rpc, undefined);
   });
 
-  it("should read the state backend", () => {
-    const lmdbConfig = parseFromJson({ ...NODE_CONFIG_TEST, state_backend: "lmdb" }, NodeConfiguration.fromJson);
+  it("should read rpc config when present", () => {
+    const withRpc = parseFromJson({ ...NODE_CONFIG_TEST, rpc: { port: 9999 } }, NodeConfiguration.fromJson);
+    assert.deepStrictEqual(withRpc.rpc, RpcOptions.new({ port: 9999 }));
+  });
 
-    assert.deepStrictEqual(lmdbConfig.stateBackend, RegularStateBackend.Lmdb);
+  it("should reject unknown config keys", () => {
+    assert.throws(() => parseFromJson({ ...NODE_CONFIG_TEST, state_backend: "fjall" }, NodeConfiguration.fromJson));
   });
 
   it("should read the chain spec", () => {
@@ -109,6 +113,7 @@ describe("loadConfig", () => {
   it("should load default config", () => {
     const config = loadConfig(["default"], withRelPath);
     assert.deepStrictEqual(config, parseFromJson(configs.default, NodeConfiguration.fromJson));
+    assert.deepStrictEqual(config.rpc, RpcOptions.new({ port: 19800 }));
   });
 
   it("should load dev config", () => {
@@ -117,12 +122,4 @@ describe("loadConfig", () => {
   });
 
   it("should parse inline json config and deep merge onto previous entries", () => {
-    const config = loadConfig(
-      ["default", JSON.stringify({ database_base_path: "/test/path", chain_spec: { bootnodes: [] } })],
-      withRelPath,
-    );
-    assert.deepStrictEqual(
-      config,
-      parseFromJson(
-        {
 ```

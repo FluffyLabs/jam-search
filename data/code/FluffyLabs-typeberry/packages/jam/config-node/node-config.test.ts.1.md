@@ -2,19 +2,25 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L104-L233
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/config-node/node-config.test.ts#L103-L231
 title: packages/jam/config-node/node-config.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 1
 chunk_total: 3
-content_sha: e663d8ddf2910833b76a069419aa1f0790de71d8fd3f16a2b48e869843e6bdd3
+content_sha: 0065aaaacb04544f03aff4d82733b59cc252b6b7d62cfab7b00c9df8fc68fd1a
 language: typescript
 ---
-`packages/jam/config-node/node-config.test.ts` (lines 104–233)
+`packages/jam/config-node/node-config.test.ts` (lines 103–231)
 
 ```typescript
+    const config = loadConfig(["dev"], withRelPath);
+    assert.deepStrictEqual(config, parseFromJson(configs.devTiny, NodeConfiguration.fromJson));
+  });
+
+  it("should parse inline json config and deep merge onto previous entries", () => {
+    const config = loadConfig(
       ["default", JSON.stringify({ database_base_path: "/test/path", chain_spec: { bootnodes: [] } })],
       withRelPath,
     );
@@ -138,11 +144,4 @@ language: typescript
     assert.throws(
       () => loadConfig(["file.json"], withRelPath),
       new Error(
-        `Unable to load config from file.json: SyntaxError: Unexpected token 'i', "invalid json" is not valid JSON`,
-      ),
-    );
-  });
-
-  it("should throw an error if non-existing json file path is provided", () => {
-    mock.method(fs, "readFileSync", () => {
 ```

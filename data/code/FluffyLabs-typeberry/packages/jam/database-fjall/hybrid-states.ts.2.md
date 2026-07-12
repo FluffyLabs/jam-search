@@ -2,19 +2,37 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L191-L270
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/database-fjall/hybrid-states.ts#L189-L286
 title: packages/jam/database-fjall/hybrid-states.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-03T23:06:13+02:00'
-last_modified: '2026-07-03T23:06:13+02:00'
+created_at: '2026-07-11T19:25:25+02:00'
+last_modified: '2026-07-11T19:25:25+02:00'
 chunk_index: 2
 chunk_total: 3
-content_sha: 3781eb237e6c1d3cdd6be4c0e6a4b9518339f9f1b4f2b97f0876380d5c4adc07
+content_sha: 72412cf004a32a88fb5eb0a36167ef5a9853a2cbc495ff83a367c5b4ed058030
 language: typescript
 ---
-`packages/jam/database-fjall/hybrid-states.ts` (lines 191–270)
+`packages/jam/database-fjall/hybrid-states.ts` (lines 189–286)
 
 ```typescript
+    const res = await this.writeValues(values);
+    if (res.isError) {
+      // Leave the caller's state untouched: its new leaves would reference
+      // values that never reached disk.
+      return res;
+    }
+    // Re-create the lookup with the shared values accessor only once the new
+    // values are durably written.
+    state.updateBackend(LeafDb.fromLeaves(leafs, this.valuesDb));
+    this.inMemStates.set(header, leafs);
+    this.applyRefs(this.refs.onImport(header, { inserted: values.map((v) => v[0]), removed }));
+    return Result.ok(OK);
+  }
+
+  async getStateRoot(state: SerializedState<LeafDb>): Promise<StateRootHash> {
+    return state.backend.getStateRoot(this.blake2b);
+  }
+
   getState(header: HeaderHash): SerializedState<LeafDb> | null {
     const leafs = this.inMemStates.get(header);
     if (leafs === undefined) {
