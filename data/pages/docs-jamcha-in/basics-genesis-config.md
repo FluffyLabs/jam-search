@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/basics/genesis-config'
 title: Genesis Config | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-07-14T03:58:57.714Z'
-last_modified: '2026-07-14T03:58:57.714Z'
+created_at: '2026-07-17T03:59:24.537Z'
+last_modified: '2026-07-17T03:59:24.537Z'
 ---
 The genesis config provides the initial values that are needed by all nodes to start the JAM chain. Each field is explained below.
 
