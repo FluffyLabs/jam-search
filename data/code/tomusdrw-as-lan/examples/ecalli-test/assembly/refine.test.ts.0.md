@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/refine.test.ts#L1-L121
 title: examples/ecalli-test/assembly/refine.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 4
 content_sha: 7222ef696d278eb600a7e4a7aafa38d70ea3a084522771366150badd821ab738

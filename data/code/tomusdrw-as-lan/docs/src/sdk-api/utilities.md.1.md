@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/docs/src/sdk-api/utilities.md#L96-L110
 title: docs/src/sdk-api/utilities.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: 91e01a0809c1daa94e10f8ea2925ea5fc9a464c615a5b71b64aaf34963a68663

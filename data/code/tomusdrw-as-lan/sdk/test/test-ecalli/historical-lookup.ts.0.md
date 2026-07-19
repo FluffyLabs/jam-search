@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/test/test-ecalli/historical-lookup.ts#L1-L20
 title: sdk/test/test-ecalli/historical-lookup.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 1d33b3ff8627c5a8da42537d8d7f48c5b2366aa8e35c7e6eab3836690814db9d

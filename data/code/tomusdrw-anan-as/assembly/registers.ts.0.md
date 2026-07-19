@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/registers.ts#L1-L14'
 title: assembly/registers.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-07-10T09:46:52Z'
-last_modified: '2026-07-10T09:46:52Z'
+created_at: '2026-07-15T12:24:45+02:00'
+last_modified: '2026-07-15T12:24:45+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: bc012a38ee7ac57b53ee53e47a546a8c4fe16f1e252a375839287dd0b506ed5e

@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/package.json#L1-L104'
 title: package.json
 site: github.com/tomusdrw/anan-as
-created_at: '2026-07-10T09:46:52Z'
-last_modified: '2026-07-10T09:46:52Z'
+created_at: '2026-07-15T12:24:45+02:00'
+last_modified: '2026-07-15T12:24:45+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: d4307bce3a9e46f041ed851805ae21e5b969b7c9d65e65aa4e38d519a543f026

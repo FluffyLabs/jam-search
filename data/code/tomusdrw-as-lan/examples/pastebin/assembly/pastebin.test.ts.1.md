@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/pastebin/assembly/pastebin.test.ts#L104-L194
 title: examples/pastebin/assembly/pastebin.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 58dafe8b1e789b2b9edcd97611469dfc0460ac3585461d03e21f2975c33ce780

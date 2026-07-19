@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/anan-as/blob/main/assembly/instructions/outcome.ts#L1-L79
 title: assembly/instructions/outcome.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-07-10T09:46:52Z'
-last_modified: '2026-07-10T09:46:52Z'
+created_at: '2026-07-15T12:24:45+02:00'
+last_modified: '2026-07-15T12:24:45+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: a996ed6e13f69288619e3b1302ccdcb6b053148afdcdb4754c1584b24354460c

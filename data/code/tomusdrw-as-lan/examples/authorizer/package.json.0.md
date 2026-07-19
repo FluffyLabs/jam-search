@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/authorizer/package.json#L1-L28
 title: examples/authorizer/package.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: a79d33d806040ce61f72f1b47cb1b4967bac15f0486e706905e37b451dcab661

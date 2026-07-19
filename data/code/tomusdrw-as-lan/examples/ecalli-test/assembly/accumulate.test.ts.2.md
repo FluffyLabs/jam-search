@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/ecalli-test/assembly/accumulate.test.ts#L232-L336
 title: examples/ecalli-test/assembly/accumulate.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: f5bbbc792993a62eb57651723c209a7f84a0c3367797c9e9d21ac64dbe732844

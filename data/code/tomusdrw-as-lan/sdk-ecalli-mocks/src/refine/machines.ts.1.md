@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk-ecalli-mocks/src/refine/machines.ts#L145-L207
 title: sdk-ecalli-mocks/src/refine/machines.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 1
 chunk_total: 2
 content_sha: e56a3679f0f6f3736cc7820106911865a6c38955f4c6cd079366b7734791d8f6

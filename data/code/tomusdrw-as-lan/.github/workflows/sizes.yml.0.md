@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/.github/workflows/sizes.yml#L1-L128
 title: .github/workflows/sizes.yml
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: d22d74f9494baaa7f8c542dedacafd0259ed13a79d6d11837f687efa7e0173bb

@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/examples/fibonacci/assembly/index.test.ts#L1-L47
 title: examples/fibonacci/assembly/index.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: af4bb29af1f9d5f91cb66faa7a28d24591e74e3b941777d4cb2768d604d1a141

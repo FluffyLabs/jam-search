@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/assembly/memory.ts#L1-L126'
 title: assembly/memory.ts
 site: github.com/tomusdrw/anan-as
-created_at: '2026-07-10T09:46:52Z'
-last_modified: '2026-07-10T09:46:52Z'
+created_at: '2026-07-15T12:24:45+02:00'
+last_modified: '2026-07-15T12:24:45+02:00'
 chunk_index: 0
 chunk_total: 5
 content_sha: bb9b96d6a38033b2280a82062545767cb7ef29e6b8174df2848e9c3518d96e21

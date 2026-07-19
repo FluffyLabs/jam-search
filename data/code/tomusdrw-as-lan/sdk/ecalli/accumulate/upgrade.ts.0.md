@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/ecalli/accumulate/upgrade.ts#L1-L19
 title: sdk/ecalli/accumulate/upgrade.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 36d4a5b53ef201139b3096877c89cf0152dad32675476c064e63d33ce20d4ce5

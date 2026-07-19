@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/anan-as/blob/main/web/pvm-metadata.json#L1-L12'
 title: web/pvm-metadata.json
 site: github.com/tomusdrw/anan-as
-created_at: '2026-07-10T09:46:52Z'
-last_modified: '2026-07-10T09:46:52Z'
+created_at: '2026-07-15T12:24:45+02:00'
+last_modified: '2026-07-15T12:24:45+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: c03dd99a741f4024876d784c2c9dda22dc1d6f0f7d743c33a048a3656dddef8b

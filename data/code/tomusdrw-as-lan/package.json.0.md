@@ -4,11 +4,11 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/package.json#L1-L27'
 title: package.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 1bd8217a8b2e393e59df0d19a60becb6f6aaa16b0c7271c5be437e346e228aa4
+content_sha: 77effa8b6de0a7fcc813afa14b285df237305d4c0322cf7bc7635a973e15b78a
 language: json
 ---
 `package.json` (lines 1–27)
@@ -36,7 +36,7 @@ language: json
   "author": "Fluffy Labs",
   "license": "MPL-2.0",
   "devDependencies": {
-    "@biomejs/biome": "^2.5.0",
+    "@biomejs/biome": "^2.5.4",
     "assemblyscript": "^0.28.19"
   },
   "type": "module"

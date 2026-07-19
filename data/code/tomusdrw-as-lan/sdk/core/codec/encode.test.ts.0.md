@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/encode.test.ts#L1-L132
 title: sdk/core/codec/encode.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 0
 chunk_total: 2
 content_sha: 858450aa7fb774da79c8d585ebe1f0557c4ff232fae7e9a8e5f62e314792cec9

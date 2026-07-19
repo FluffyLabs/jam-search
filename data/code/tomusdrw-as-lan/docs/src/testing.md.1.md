@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/docs/src/testing.md#L115-L230'
 title: docs/src/testing.md
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 1
 chunk_total: 5
 content_sha: 591d6a562fda0505bfc3bf89ddbdeb185817d45b95f3fa9103e813dac2b37ee3

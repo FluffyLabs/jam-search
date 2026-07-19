@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/jam/work-package.test.ts#L202-L304
 title: sdk/jam/work-package.test.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-06-16T00:03:25+02:00'
-last_modified: '2026-06-16T00:03:25+02:00'
+created_at: '2026-07-15T12:15:02+02:00'
+last_modified: '2026-07-15T12:15:02+02:00'
 chunk_index: 2
 chunk_total: 4
 content_sha: 4ed200cb6807a5a95a6edf07540d262cd48b861dd578474b25e51443bbfa614d
