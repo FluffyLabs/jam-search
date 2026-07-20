@@ -73,3 +73,8 @@ Hello @davxy, ready for another run. Everything should be fixed. Thank you!
 ## Comment by @davxy
 
 Hey @bamzedev have you implemented [std packaging](https://github.com/davxy/jam-conformance/blob/main/fuzz-proto/README.md#standard-target-packaging) for your target?
+
+
+## Comment by @bamzedev
+
+Hey @davxy Sorry for the late reply. The project got canceled in February.
