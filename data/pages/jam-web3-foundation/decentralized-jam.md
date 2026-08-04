@@ -3,8 +3,8 @@ type: page
 url: 'https://jam.web3.foundation'
 title: Decentralized JAM
 site: jam.web3.foundation
-created_at: '2026-07-31T04:06:50.243Z'
-last_modified: '2026-07-31T04:06:50.243Z'
+created_at: '2026-08-04T04:00:49.070Z'
+last_modified: '2026-08-04T04:00:49.070Z'
 ---
 [Read the Rules](/rules) [Milestone Delivery](https://github.com/w3f/jam-milestone-delivery)
 

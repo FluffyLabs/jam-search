@@ -3,7 +3,7 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/advanced/simple-networking'
 title: P2P Networking | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-07-31T04:06:34.129Z'
-last_modified: '2026-07-31T04:06:34.129Z'
+created_at: '2026-08-04T04:00:34.624Z'
+last_modified: '2026-08-04T04:00:34.624Z'
 ---
 The JAM networking spec defines a the [Simple Networking Protocol](/knowledge/advanced/simple-networking/spec) for testing. This version of the protocol will most likely not be formalized in the Graypaper. The Graypaper will only define the full version of the networking protocol once it is finalized.
