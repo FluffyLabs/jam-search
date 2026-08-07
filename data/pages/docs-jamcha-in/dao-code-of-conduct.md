@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/dao/code_of_conduct'
 title: Code of Conduct for JAM Implementers DAO | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-08-04T04:00:33.268Z'
-last_modified: '2026-08-04T04:00:33.268Z'
+created_at: '2026-08-07T04:01:35.986Z'
+last_modified: '2026-08-07T04:01:35.986Z'
 ---
 _Note: This is only be taken as a draft and _NOT_ considered final._
 

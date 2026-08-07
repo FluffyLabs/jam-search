@@ -3,8 +3,8 @@ type: page
 url: 'https://graypaper.com/tour/'
 title: JAM Tour
 site: graypaper.com
-created_at: '2026-08-04T04:00:46.572Z'
-last_modified: '2026-08-04T04:00:46.572Z'
+created_at: '2026-08-07T04:01:51.306Z'
+last_modified: '2026-08-07T04:01:51.306Z'
 ---
 ## Tour
 
