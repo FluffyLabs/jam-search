@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/'
 title: Welcome | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-08-07T04:01:47.108Z'
-last_modified: '2026-08-07T04:01:47.108Z'
+created_at: '2026-08-11T03:30:30.928Z'
+last_modified: '2026-08-11T03:30:30.928Z'
 ---
 There are currently [over 40 teams](https://jamcha.in/clients) registered to implement JAM and [over 17](https://github.com/davxy/jam-conformance/issues) actively participating in conformance testing. Joins us to build JAM together!
 
