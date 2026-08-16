@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/workers/api-node/config.ts#L118-L252
 title: packages/workers/api-node/config.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: e4e68cb4b1741e5a0c1b41d98b9ceebf4bb9f1e6995a413eccb3f6f666085dd0

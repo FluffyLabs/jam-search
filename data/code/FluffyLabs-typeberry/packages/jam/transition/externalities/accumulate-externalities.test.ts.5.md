@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/externalities/accumulate-externalities.test.ts#L580-L702
 title: packages/jam/transition/externalities/accumulate-externalities.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 5
 chunk_total: 26
 content_sha: 73ed9041a46e2e7b160e8c01e338870fd6655700da97c1290602a4e1a4b1c753

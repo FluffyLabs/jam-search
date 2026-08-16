@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jam-host-calls/accumulate/transfer.test.ts#L98-L204
 title: packages/jam/jam-host-calls/accumulate/transfer.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 1
 chunk_total: 3
 content_sha: 5a0833988bd1ecf8b683d9eacdad8367be1cf23afa0f65eb890835f4ebafc80b

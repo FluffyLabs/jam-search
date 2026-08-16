@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/extensions/ipc/server.ts#L1-L126
 title: packages/extensions/ipc/server.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: e3b25ccecba60441d7b8127bfee26674a4966b22fd761000d62fa3067f5493e0

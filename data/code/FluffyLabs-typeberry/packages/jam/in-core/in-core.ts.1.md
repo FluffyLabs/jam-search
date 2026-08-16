@@ -2,19 +2,21 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/in-core.ts#L94-L211
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/in-core.ts#L93-L213
 title: packages/jam/in-core/in-core.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 1
-chunk_total: 2
-content_sha: d7fe036f64e3d1b40cffa769c7ee7aa7c42ec0f54c1d4ad9d9dcc06fcb338dab
+chunk_total: 3
+content_sha: 02f4057ec3dfa3f014f19842f6e7f33ff42c7d180190d1734d654a80fab94687
 language: typescript
 ---
-`packages/jam/in-core/in-core.ts` (lines 94–211)
+`packages/jam/in-core/in-core.ts` (lines 93–213)
 
 ```typescript
+        RefineError.StateRootMismatch,
+        () =>
           `State at ${context.anchor} does not match expected root hash. Ours: ${stateRoot}, expected: ${context.stateRoot}`,
       );
     }
@@ -74,7 +76,14 @@ language: typescript
 
     // amalgamate the work report now
     return Result.ok(
-      InCore.amalgamateWorkReport(asKnownSize(refineResults), authResult.ok, workPackageHash, context, core),
+      InCore.amalgamateWorkReport(
+        asKnownSize(refineResults),
+        authResult.ok,
+        workPackageHash,
+        context,
+        core,
+        this.blake2b,
+      ),
     );
   }
 
@@ -84,6 +93,7 @@ language: typescript
     workPackageHash: WorkPackageHash,
     context: RefineContext,
     coreIndex: CoreIndex,
+    blake2b: Blake2b,
   ) {
     // unzip exports and work results for each work item
     const exports = refineResults.map((x) => x.exports);
@@ -94,8 +104,7 @@ language: typescript
 
     // TODO [ToDr] Compute erasure root
     const erasureRoot = Bytes.zero(HASH_SIZE);
-    // TODO [ToDr] Compute exports root
-    const exportsRoot = Bytes.zero(HASH_SIZE).asOpaque();
+    const exportsRoot = computeExportsRoot(exports, blake2b);
     const exportsCount = exports.reduce((acc, x) => acc + x.length, 0);
 
     // TODO [ToDr] Segment root lookup computation?
@@ -127,10 +136,4 @@ language: typescript
         authorizationOutput,
         segmentRootLookup,
         // safe to convert, since we know that number of work items is limited
-        results: FixedSizeArray.new(results, tryAsU8(refineResults.length)),
-      }),
-      exports: asKnownSize(exports),
-    };
-  }
-}
 ```

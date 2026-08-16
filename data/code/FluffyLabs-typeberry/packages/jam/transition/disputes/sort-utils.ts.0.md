@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/disputes/sort-utils.ts#L1-L28
 title: packages/jam/transition/disputes/sort-utils.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: bbf67c289959d956198ac9dd3995bc1752bd6cd5245a9f04e7c5d239cfac3bd9

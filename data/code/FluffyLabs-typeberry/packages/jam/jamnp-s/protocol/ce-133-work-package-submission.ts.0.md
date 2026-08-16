@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/jamnp-s/protocol/ce-133-work-package-submission.ts#L1-L104
 title: packages/jam/jamnp-s/protocol/ce-133-work-package-submission.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 3cb142188e703e241e2fa448cd3d4137d72022ea48b248d8168c11f1e20d3a0d

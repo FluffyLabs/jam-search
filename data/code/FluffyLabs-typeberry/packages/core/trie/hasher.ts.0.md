@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/core/trie/hasher.ts#L1-L21
 title: packages/core/trie/hasher.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 8dec7085154d406a8bc5f9d8ae0b4775f2e4dffde77c0aca9e3b21f9b4d9a67d

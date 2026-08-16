@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/rpc/test/e2e.ts#L93-L199
 title: packages/jam/rpc/test/e2e.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 1
 chunk_total: 4
 content_sha: 2e4e372076bbd102a22319f735606231ea1bbdb149e32a661f977a40ccc07948

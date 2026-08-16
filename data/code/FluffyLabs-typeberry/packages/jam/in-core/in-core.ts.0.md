@@ -5,11 +5,11 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/in-core.ts#L1-L99
 title: packages/jam/in-core/in-core.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 0
-chunk_total: 2
-content_sha: 1170cac0912a4bd553194b4f8cf68d72188fce25906708cb06fa35f21e8d2ad5
+chunk_total: 3
+content_sha: 457252e235dc514fd7f07e268b89aaec207e27307dadfc046294043654c0bed1
 language: typescript
 ---
 `packages/jam/in-core/in-core.ts` (lines 1–99)
@@ -30,6 +30,7 @@ import { Logger } from "@typeberry/logger";
 import { tryAsU8, tryAsU16, tryAsU32 } from "@typeberry/numbers";
 import { buildWorkPackageFetchData } from "@typeberry/transition/externalities/fetch-externalities.js";
 import { assertEmpty, Result } from "@typeberry/utils";
+import { computeExportsRoot } from "./exports-root.js";
 import type { ImportedSegment, PerWorkItem } from "./externalities/index.js";
 import { AuthorizationError, type AuthorizationOk, IsAuthorized } from "./is-authorized.js";
 export type { ImportedSegment, PerWorkItem };
@@ -66,7 +67,7 @@ export class InCore {
     public readonly chainSpec: ChainSpec,
     private readonly states: StatesDb,
     pvmBackend: PvmBackend,
-    blake2b: Blake2b,
+    private readonly blake2b: Blake2b,
   ) {
     this.isAuthorized = new IsAuthorized(chainSpec, pvmBackend, blake2b);
     this.refineItem = new Refine(chainSpec, pvmBackend, blake2b);
@@ -113,5 +114,4 @@ export class InCore {
     }
 
     // TODO [ToDr] GP link
-    // Verify lookup anchor state
 ```

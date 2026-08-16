@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/package.json#L1-L32
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/package.json#L1-L33
 title: packages/jam/in-core/package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: 8c593162aa5d0a607012597a602e8f0918716eb8e9e568cc32b6872bfa6582ad
+content_sha: a9e6662751677113c9ecc9992375de30f0339c75c7e76553e7bbb96703ae4dae
 language: json
 ---
-`packages/jam/in-core/package.json` (lines 1–32)
+`packages/jam/in-core/package.json` (lines 1–33)
 
 ```json
 {
@@ -34,6 +34,7 @@ language: json
     "@typeberry/hash": "*",
     "@typeberry/jam-host-calls": "*",
     "@typeberry/logger": "*",
+    "@typeberry/merkleization": "*",
     "@typeberry/numbers": "*",
     "@typeberry/ordering": "*",
     "@typeberry/pvm-host-calls": "*",

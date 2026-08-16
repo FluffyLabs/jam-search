@@ -2,17 +2,17 @@
 type: page
 content_kind: code
 url: >-
-  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/in-core.test.ts#L97-L149
+  https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/in-core/in-core.test.ts#L97-L150
 title: packages/jam/in-core/in-core.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 1
 chunk_total: 2
-content_sha: 450cfb2aa54e5920d90c70780c3f581562fbb4b68a4475fc0805d631f0c1e005
+content_sha: c13d3b5f264f0f8acc704e90c7bf56dfdf3aaf6d428dec6b37319dee0db363ab
 language: typescript
 ---
-`packages/jam/in-core/in-core.test.ts` (lines 97–149)
+`packages/jam/in-core/in-core.test.ts` (lines 97–150)
 
 ```typescript
   return WithHash.new(workPackageHash, workPackage);
@@ -66,6 +66,7 @@ describe("InCore", () => {
     assert.strictEqual(result.isOk, true, `Expected OK but got error: ${result.isError ? result.details() : ""}`);
     assert.strictEqual(result.ok.report.coreIndex, 0);
     assert.strictEqual(result.ok.report.results.length, 1);
+    assert.deepStrictEqual(result.ok.report.workPackageSpec.exportsRoot.raw, Bytes.zero(HASH_SIZE).raw);
   });
 });
 ```

@@ -5,8 +5,8 @@ url: >-
   https://github.com/FluffyLabs/typeberry/blob/main/packages/jam/transition/reports/guarantor-assignment.test.ts#L100-L132
 title: packages/jam/transition/reports/guarantor-assignment.test.ts
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 2
 chunk_total: 4
 content_sha: 4a5a8c2fa8f21cba4852a3d756ed301a0ffdc74eb50cdb625f735e6765e8f34c

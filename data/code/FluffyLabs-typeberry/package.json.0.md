@@ -1,17 +1,17 @@
 ---
 type: page
 content_kind: code
-url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L106'
+url: 'https://github.com/FluffyLabs/typeberry/blob/main/package.json#L1-L107'
 title: package.json
 site: github.com/FluffyLabs/typeberry
-created_at: '2026-07-11T19:25:25+02:00'
-last_modified: '2026-07-11T19:25:25+02:00'
+created_at: '2026-08-14T15:27:42+02:00'
+last_modified: '2026-08-14T15:27:42+02:00'
 chunk_index: 0
 chunk_total: 1
-content_sha: af3c767aa0aeee20a3b2268e2ef2803defe668340830eba857b29479746affa9
+content_sha: 3d61e2808a71248085eaeb0a6ee2a332450a1961b1c5676cb66b5736978155e6
 language: json
 ---
-`package.json` (lines 1–106)
+`package.json` (lines 1–107)
 
 ```json
 {
@@ -62,6 +62,7 @@ language: json
     "packages/jam/in-core",
     "packages/jam/jam-host-calls",
     "packages/jam/jamnp-s",
+    "packages/jam/merkleization",
     "packages/jam/node",
     "packages/jam/rpc",
     "packages/jam/rpc-client",
