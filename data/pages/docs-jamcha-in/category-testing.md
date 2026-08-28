@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/category/testing'
 title: Testing | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-08-25T03:17:11.247Z'
-last_modified: '2026-08-25T03:17:11.247Z'
+created_at: '2026-08-28T05:38:17.679Z'
+last_modified: '2026-08-28T05:38:17.679Z'
 ---
 [
 
