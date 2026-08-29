@@ -20,7 +20,7 @@
     "typecheck": "npm run --workspaces typecheck"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
+    "@biomejs/biome": "^2.4.15",
     "typescript": "^6.0.3"
   },
   "overrides": {
