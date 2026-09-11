@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/testing/suite'
 title: Test Suite | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-09-08T03:02:36.865Z'
-last_modified: '2026-09-08T03:02:36.865Z'
+created_at: '2026-09-11T03:02:34.082Z'
+last_modified: '2026-09-11T03:02:34.082Z'
 ---
 Beyond the "importblocks" test, here is a _wishlist_ of a broader range of JAM testing and benchmarking tools:
 
