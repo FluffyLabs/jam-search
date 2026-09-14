@@ -277,3 +277,8 @@ Cleaned up container temp dir: /tmp/jam_pbnjam-r7jeai__dgvka96
 ## Comment by @mikirov
 
 @davxy we conform to the docker spec now
+
+
+## Comment by @mikirov
+
+Hey @davxy can you fuzz me for 0.8+ traces?
