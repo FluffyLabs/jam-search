@@ -282,3 +282,8 @@ Cleaned up container temp dir: /tmp/jam_pbnjam-r7jeai__dgvka96
 ## Comment by @mikirov
 
 Hey @davxy can you fuzz me for 0.8+ traces?
+
+
+## Comment by @davxy
+
+@mikirov https://github.com/davxy/jam-conformance/pull/212
