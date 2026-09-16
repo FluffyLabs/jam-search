@@ -287,3 +287,35 @@ Hey @davxy can you fuzz me for 0.8+ traces?
 ## Comment by @davxy
 
 @mikirov https://github.com/davxy/jam-conformance/pull/212
+
+
+## Comment by @mikirov
+
+@davxy i figured out the reason for my divergence and fixed it, my dockerfile was updated. Could you fuzz me again?
+
+
+## Comment by @davxy
+
+What was the issue? It might be useful to share it in case someone else runs into the same problem.
+
+
+
+## Comment by @mikirov
+
+The r8 being set to 0 as pointed on the test vectors repo's issue. I rolled back to the GP faithful version 
+
+
+## Comment by @davxy
+
+### NOTE for everyone: When you find a divergence from the GP - as in this case - never assume that we're right and you're wrong. The GP is the only authoritative source of truth, so we must always stick to it.
+
+
+
+## Comment by @davxy
+
+@mikirov I removed the old ones and published a couple of new traces. Please have a look
+
+
+## Comment by @mikirov
+
+@davxy the fuzzer got me on some future slot jumps. I kind of overdid myself trying to save memory. That was an easy fix. now i pass those as well.
