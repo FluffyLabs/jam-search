@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/advanced/telemetry'
 title: Telemetry | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-09-15T03:02:35.458Z'
-last_modified: '2026-09-15T03:02:35.458Z'
+created_at: '2026-09-18T03:02:32.792Z'
+last_modified: '2026-09-18T03:02:32.792Z'
 ---
 We outline a protospec for using [OpenTelemetry](https://opentelemetry.io/docs/languages/) to instrument JAM implementations to open-source widely used systems like Prometheus.
 
