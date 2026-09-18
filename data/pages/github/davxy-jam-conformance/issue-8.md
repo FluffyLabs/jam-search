@@ -788,3 +788,12 @@ Thanks @davxy, have reverted the build back for now.
 ## Comment by @jaymansfield
 
 @davxy latest JavaJAM build supports the new fuzzer env variables.
+
+
+## Comment by @jaymansfield
+
+Hey @davxy 
+
+The latest JavaJAM build is now at 0.8.0.
+
+Thanks!

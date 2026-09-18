@@ -615,3 +615,8 @@ Yes, but I'm unable to test it since there aren't traces with full specs
 Yes, it should handle it as described, and I have a CI for testing it
 
 
+
+
+## Comment by @dakk
+
+Hi davxy, Jampy has been updated to 0.8.0
