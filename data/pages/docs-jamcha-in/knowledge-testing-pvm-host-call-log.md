@@ -3,10 +3,10 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/testing/pvm/host-call-log'
 title: host-call-log | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-09-18T03:02:34.504Z'
-last_modified: '2026-09-18T03:02:34.504Z'
+created_at: '2026-09-22T03:02:41.901Z'
+last_modified: '2026-09-22T03:02:41.901Z'
 ---
-(fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-1.md) on 2026-03-28)
+(fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-1.md) on 2026-09-21)
 
 A host call for passing a debugging message from the service/authorizer to the hosting environment for logging to the node operator.
 

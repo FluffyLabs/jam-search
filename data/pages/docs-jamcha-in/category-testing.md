@@ -3,12 +3,12 @@ type: page
 url: 'https://docs.jamcha.in/category/testing'
 title: Testing | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-09-18T03:02:26.982Z'
-last_modified: '2026-09-18T03:02:26.982Z'
+created_at: '2026-09-22T03:02:34.280Z'
+last_modified: '2026-09-22T03:02:34.280Z'
 ---
 [
 
-## 🗃️ Testnets
+## 🗃Testnets
 
 1 item
 
@@ -16,7 +16,7 @@ last_modified: '2026-09-18T03:02:26.982Z'
 
 [
 
-## 📄️ Test Suite
+## 📄️Test Suite
 
 Beyond the "importblocks" test, here is a wishlist of a broader range of JAM testing and benchmarking tools:
 
@@ -24,7 +24,7 @@ Beyond the "importblocks" test, here is a wishlist of a broader range of JAM tes
 
 [
 
-## 📄️ Conformance Tests
+## 📄️Conformance Tests
 
 Conformance tests are used to check that an implementation adheres to the exact definitions of the Graypaper. There are official ones and unofficial test vectors. Only official ones need to be passed for the JAM Prize, but it is advisable to try and pass as many as possible to ensure that an implementation is 100% conformant.
 
@@ -32,7 +32,7 @@ Conformance tests are used to check that an implementation adheres to the exact 
 
 [
 
-## 🗃️ PVM Debugging
+## 🗃PVM Debugging
 
 1 item
 

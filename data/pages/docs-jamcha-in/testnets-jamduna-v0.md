@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/testnets/jamduna-v0'
 title: JAM DUNA | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-09-18T03:02:38.013Z'
-last_modified: '2026-09-18T03:02:38.013Z'
+created_at: '2026-09-22T03:02:45.637Z'
+last_modified: '2026-09-22T03:02:45.637Z'
 ---
 A stage 0 testnet in the [tiny](/basics/chain-spec/tiny) configuration hosted by _Colorful Notion_.
 
