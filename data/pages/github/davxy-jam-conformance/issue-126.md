@@ -70,3 +70,18 @@ Our client is now up to date with GP v0.7.2, the docker image has been updated.
 ## Comment by @philoniare
 
 @davxy we've also updated our docker image to support docker envs
+
+
+## Comment by @philoniare
+
+@davxy The updated JamForge docker image is now graypaper v0.8 compliant, it's passing on all of the updated test vectors and conformance tests. 
+
+
+## Comment by @davxy
+
+@philoniare The handshake (PeerInfo) reports jam_version 0.7.2
+
+
+## Comment by @philoniare
+
+@davxy Thanks for flagging, updated the handshake
