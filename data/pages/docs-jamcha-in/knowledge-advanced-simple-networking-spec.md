@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/advanced/simple-networking/spec'
 title: spec | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-09-29T03:02:45.343Z'
-last_modified: '2026-09-29T03:02:45.343Z'
+created_at: '2026-10-02T03:03:22.525Z'
+last_modified: '2026-10-02T03:03:22.525Z'
 ---
 (fetched from [here](https://github.com/zdave-parity/jam-np/blob/main/simple.md) on 2026-09-21)
 
