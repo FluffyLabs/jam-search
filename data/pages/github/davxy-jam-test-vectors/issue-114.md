@@ -21,3 +21,9 @@ E(x∈ T) ≡ E(xy ,E1(xe))
 After just switching it in javajam, I can no longer parse some of the full vectors here. Can you confirm if this was updated in the vectors, or if they are still using compact for the ticket attempt numbers?
 
 Thanks!
+
+
+## Comment by @davxy
+
+You are right, thanks. Fixed by: https://github.com/davxy/jam-test-vectors/pull/115
+
