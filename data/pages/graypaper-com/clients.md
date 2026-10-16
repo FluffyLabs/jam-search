@@ -3,8 +3,8 @@ type: page
 url: 'https://graypaper.com/clients/'
 title: JAM Clients
 site: graypaper.com
-created_at: '2026-10-13T03:08:51.481Z'
-last_modified: '2026-10-13T03:08:51.481Z'
+created_at: '2026-10-16T03:03:04.955Z'
+last_modified: '2026-10-16T03:03:04.955Z'
 ---
 ## Clients
 

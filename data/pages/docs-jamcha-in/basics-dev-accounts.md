@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/basics/dev-accounts'
 title: Dev Accounts | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-10-13T03:08:34.471Z'
-last_modified: '2026-10-13T03:08:34.471Z'
+created_at: '2026-10-16T03:02:47.384Z'
+last_modified: '2026-10-16T03:02:47.384Z'
 ---
 The well known accounts can be used for testing and are known by all JAM implementations. The values are specified by [JIP-5](https://github.com/polkadot-fellows/JIPs/pull/2).
 
