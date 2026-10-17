@@ -414,3 +414,12 @@ Hi @davxy, our latest release contains fixes for the new year batch
 
 Hi @davxy 
 Support for #188 has been implemented in our new release (v0.1.50).
+
+
+## Comment by @emielsebastiaan
+
+Hi @davxy 
+We have GP-0.8.0 conformance in our new PyJAMaz release.
+Could you please check and bump our label.
+
+DockerHub: `latest` or [v0.3.2-gp0.8.0](https://hub.docker.com/layers/jamdottech/pyjamaz/v0.3.2-gp0.8.0/images/sha256-6fea54126fcf288ebc87b095cf7de7ddbd27d906e7c2e6d1e619c9bb3cc028cc)
