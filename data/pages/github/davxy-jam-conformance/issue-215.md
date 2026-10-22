@@ -44,3 +44,25 @@ Designates can resize it to any size in {6, 9, ..., 255}, as GP 0.8.0 `eq:valcou
 - Comment here when your target supports it, or if a value causes a problem.
 
 
+
+
+## Comment by @emielsebastiaan
+
+@davxy PyJAMaz (`latest` or `v0.3.3-gp0.8.0`) has been updated with support for `JAM_FUZZ_SPEC=fuzz`.
+
+
+## Comment by @jaymansfield
+
+Don't see any issues with the proposed params.
+
+Added them to JavaJAM 0.4.13.
+
+
+## Comment by @mikirov
+
+I updated pbnjam as well to include this mode
+
+
+## Comment by @philoniare
+
+Added the mode to JamForge
