@@ -797,3 +797,23 @@ Hey @davxy
 The latest JavaJAM build is now at 0.8.0.
 
 Thanks!
+
+
+## Comment by @davxy
+
+@jaymansfield looks like you new image crashes at start on my fuzz machine.
+It stops with SIGILL in `libjavajam_bandersnatch.so+0x8dfc3`, before the fuzz socket opens.
+he instruction there is `vpshldq`, which is AVX-51
+
+Please build the native library for generic x86-64, without target-cpu=native / -march=native. Until then, we cannot fuzz javajam for GP 0.8
+
+
+
+## Comment by @jaymansfield
+
+@davxy Thanks for letting me know. I’ve updated my CI build script and pushed a new release. Please let me know if this one works for you. 
+
+
+## Comment by @davxy
+
+works . Ty
