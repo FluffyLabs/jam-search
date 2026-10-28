@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/65'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/65'
 title: issue with account storage key
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-29T13:58:16.000Z'

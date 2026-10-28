@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/63'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/63'
 title: Tessera
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-05T16:00:31.000Z'

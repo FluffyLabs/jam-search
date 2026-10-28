@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/30'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/30'
 title: Jampy
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-22T07:53:23.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/16'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/16'
 title: Boka
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-15T07:21:26.000Z'

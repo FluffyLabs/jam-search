@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/81'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/81'
 title: merkle "trie" tests not compatible with the state roots from "traces" tests
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-18T17:42:26.000Z'

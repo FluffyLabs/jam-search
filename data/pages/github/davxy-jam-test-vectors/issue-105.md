@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/105'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/105'
 title: fuzzy_trace ...008 (and possibly others) do wrongly some service statistics
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-10-27T16:41:05.000Z'

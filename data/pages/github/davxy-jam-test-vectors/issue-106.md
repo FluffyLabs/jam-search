@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/106'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/106'
 title: fuzzy/00000037.json
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-11-04T11:35:36.000Z'

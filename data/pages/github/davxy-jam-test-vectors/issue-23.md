@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/23'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/23'
 title: Preimages unneeded tests
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-15T18:49:04.000Z'

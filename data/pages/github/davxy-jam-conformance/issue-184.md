@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/184'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/184'
 title: Jambda
 site: github.com/davxy/jam-conformance
 created_at: '2026-03-30T03:37:22.000Z'

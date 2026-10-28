@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/9'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/9'
 title: preimage not needed fix
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-28T15:58:48.000Z'

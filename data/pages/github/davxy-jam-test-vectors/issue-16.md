@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/16'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/16'
 title: GP Version has changed E.10 prefix to "peak" instead of "node".
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-08T21:45:02.000Z'

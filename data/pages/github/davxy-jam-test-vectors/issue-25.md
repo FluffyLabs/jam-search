@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/25'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/25'
 title: 'bandersnatch::Public::deserialize_compressed Fails to Deserialize Test Vector'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-26T09:04:54.000Z'

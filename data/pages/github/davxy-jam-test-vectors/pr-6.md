@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/pull/6'
+url: 'https://github.com/jam-conformance/jam-test-vectors/pull/6'
 title: Add Known Packages to the Reports STF Input
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-17T10:46:25.000Z'

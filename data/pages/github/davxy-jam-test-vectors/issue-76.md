@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/76'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/76'
 title: introduce field threshold for service info in accumulate tests
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-10T07:52:07.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/24'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/24'
 title: '`1754982087/00000005` is not using compact encoding for generating service ids'
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-20T07:05:14.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/33'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/33'
 title: GrayMatter
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-24T11:17:45.000Z'

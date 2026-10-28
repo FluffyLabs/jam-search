@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/91'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/91'
 title: Question about handling of `post_state.slot` in statistics test vector
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-08-17T10:06:14.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/40'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/40'
 title: Sample Request for 0.6.5 compliant State Transition data
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-18T13:11:52.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/86'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/86'
 title: Accumulation Output Order
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-16T11:17:49.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/7'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/7'
 title: 'Reports STF: detect duplicate packages'
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-17T18:34:17.000Z'

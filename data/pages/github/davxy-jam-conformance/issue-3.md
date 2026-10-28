@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/3'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/3'
 title: '[M1 FUZZ] Unclarity around the `type` of the Unix socket'
 site: github.com/davxy/jam-conformance
 created_at: '2025-07-05T19:26:14.000Z'

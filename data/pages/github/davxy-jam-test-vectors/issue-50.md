@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/50'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/50'
 title: Accumulation vectors statistics issue
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-07T17:45:09.000Z'

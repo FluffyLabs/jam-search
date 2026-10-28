@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/7'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/7'
 title: Project-side reproduction of published fuzz-reports
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-03T21:16:07.000Z'

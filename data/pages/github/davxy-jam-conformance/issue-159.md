@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/159'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/159'
 title: Minifuzz unexpected close reason
 site: github.com/davxy/jam-conformance
 created_at: '2026-01-22T21:10:48.000Z'

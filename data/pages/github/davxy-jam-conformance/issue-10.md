@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/10'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/10'
 title: PVM traces log register state
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-06T19:21:12.000Z'

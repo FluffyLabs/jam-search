@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/213'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/213'
 title: Lasair
 site: github.com/davxy/jam-conformance
 created_at: '2026-09-28T11:46:38.000Z'

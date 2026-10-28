@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/83'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/83'
 title: PVM logs for "traces" v0.6.6 tests
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-26T00:23:13.000Z'

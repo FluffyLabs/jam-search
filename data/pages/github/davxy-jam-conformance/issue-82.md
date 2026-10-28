@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/82'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/82'
 title: Potential bug on v1 proto examples transition from 29 to 30
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-15T08:43:16.000Z'

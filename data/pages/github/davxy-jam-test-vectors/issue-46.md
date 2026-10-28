@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/46'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/46'
 title: Request for PVM trace of work done in tiny/process_one_immediate_report-1
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-01T18:26:44.000Z'

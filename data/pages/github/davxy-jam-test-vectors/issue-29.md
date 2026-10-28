@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/29'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/29'
 title: Safrole Markers Placement
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-17T21:27:41.000Z'

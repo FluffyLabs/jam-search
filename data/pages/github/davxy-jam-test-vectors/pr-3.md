@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/pull/3'
+url: 'https://github.com/jam-conformance/jam-test-vectors/pull/3'
 title: modify progress_with_bad_signatures-2.json
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-12T07:41:34.000Z'

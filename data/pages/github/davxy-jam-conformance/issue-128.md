@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/128'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/128'
 title: Jam4s
 site: github.com/davxy/jam-conformance
 created_at: '2025-12-12T04:07:43.000Z'

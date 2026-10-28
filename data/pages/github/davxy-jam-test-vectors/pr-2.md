@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/pull/2'
+url: 'https://github.com/jam-conformance/jam-test-vectors/pull/2'
 title: Update safrole.asn
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-11-29T13:38:30.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/20'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/20'
 title: PyJAMaz
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-19T11:54:31.000Z'

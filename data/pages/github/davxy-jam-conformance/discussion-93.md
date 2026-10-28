@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/93'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/93'
 title: March 2026 In-person JAM Meetup @ PBA Lisbon
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-18T19:04:05.000Z'

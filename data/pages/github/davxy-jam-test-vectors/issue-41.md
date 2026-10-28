@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/41'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/41'
 title: Requesting test vectors for Page-Proof Fn
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-21T12:17:08.000Z'

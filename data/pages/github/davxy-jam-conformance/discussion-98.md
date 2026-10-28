@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/98'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/98'
 title: Privileged services in trace 1758622403/00000239.json
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-23T15:03:36.000Z'

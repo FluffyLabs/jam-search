@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/21'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/21'
 title: '[nit] Disputes test case improvement'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-15T00:39:41.000Z'

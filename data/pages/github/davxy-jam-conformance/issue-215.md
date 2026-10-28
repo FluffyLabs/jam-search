@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/215'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/215'
 title: '[Spec] Dedicated protocol spec for fuzzing sessions'
 site: github.com/davxy/jam-conformance
 created_at: '2026-10-20T07:33:36.000Z'

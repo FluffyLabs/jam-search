@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/8'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/8'
 title: JavaJAM
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-05T12:32:58.000Z'

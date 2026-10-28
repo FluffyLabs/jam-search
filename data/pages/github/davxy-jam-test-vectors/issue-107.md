@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/107'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/107'
 title: consistence between testvectors format in `stf/preimages` and `stf/accumulate`
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-11-05T17:39:22.000Z'

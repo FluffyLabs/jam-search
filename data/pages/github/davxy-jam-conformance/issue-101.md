@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/101'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/101'
 title: Strawberry
 site: github.com/davxy/jam-conformance
 created_at: '2025-10-08T04:51:45.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/76'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/76'
 title: PVM FFI-able library for JAM Implementers
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-12T17:17:56.000Z'

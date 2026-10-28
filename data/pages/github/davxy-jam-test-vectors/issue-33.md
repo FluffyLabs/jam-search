@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/33'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/33'
 title: Service item is not synced between `accumulate` and `reports`
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-29T15:34:15.000Z'

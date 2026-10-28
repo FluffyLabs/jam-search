@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/35'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/35'
 title: TSJam
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-27T15:48:00.000Z'

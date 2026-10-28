@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/81'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/81'
 title: Typeberry
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-14T20:52:49.000Z'

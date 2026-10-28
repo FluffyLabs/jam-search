@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/84'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/84'
 title: Parallelized fuzzing
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-16T02:53:51.000Z'

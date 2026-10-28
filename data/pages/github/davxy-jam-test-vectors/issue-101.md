@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/101'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/101'
 title: transfer_for_ejected_service-1 wrong statistics
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-10-09T11:59:27.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/182'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/182'
 title: Serialization order of fields in recent_history (beta) does not match GP 0.7.2
 site: github.com/davxy/jam-conformance
 created_at: '2026-03-25T08:30:45.000Z'

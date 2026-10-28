@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/123'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/123'
 title: New-JAMneration
 site: github.com/davxy/jam-conformance
 created_at: '2025-12-07T05:26:14.000Z'

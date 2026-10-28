@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/53'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/53'
 title: v0.6.6
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-13T11:00:56.000Z'

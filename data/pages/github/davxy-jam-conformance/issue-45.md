@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/45'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/45'
 title: FastRoll
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-31T14:02:19.000Z'

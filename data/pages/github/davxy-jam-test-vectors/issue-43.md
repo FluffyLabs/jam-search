@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/43'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/43'
 title: Test vectors for services
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-26T16:19:14.000Z'

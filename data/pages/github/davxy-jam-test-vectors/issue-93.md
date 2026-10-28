@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/93'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/93'
 title: Wrong order Statistics attributes
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-08-25T14:54:52.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/11'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/11'
 title: JamDuna
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-07T21:03:32.000Z'

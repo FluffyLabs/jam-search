@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/187'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/187'
 title: Standardizing Target Packaging and Entry Points (Docker-based Submission)
 site: github.com/davxy/jam-conformance
 created_at: '2026-04-27T14:52:31.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/100'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/100'
 title: Missing storage_item in `transfer_for_ejected_service-1.json`
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-10-08T20:11:29.000Z'

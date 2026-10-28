@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/42'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/42'
 title: Test vectors for state keys
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-26T14:34:20.000Z'

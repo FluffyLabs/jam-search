@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/pull/4'
+url: 'https://github.com/jam-conformance/jam-test-vectors/pull/4'
 title: Constant tickets_per_validator
 site: github.com/davxy/jam-test-vectors
 created_at: '2024-12-13T08:33:57.000Z'

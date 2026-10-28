@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/144'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/144'
 title: PeanutButterAndJAM
 site: github.com/davxy/jam-conformance
 created_at: '2025-12-29T17:24:48.000Z'

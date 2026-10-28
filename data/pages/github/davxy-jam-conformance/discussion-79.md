@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/79'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/79'
 title: 1757861618 | heap or region check?
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-14T20:11:00.000Z'

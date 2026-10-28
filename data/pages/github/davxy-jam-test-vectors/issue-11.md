@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/11'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/11'
 title: >-
   Different semantic for services in `preimages` and `accumulation` and
   `reports`

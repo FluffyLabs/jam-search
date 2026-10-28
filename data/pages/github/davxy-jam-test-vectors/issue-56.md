@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/56'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/56'
 title: Dictionaries key encoding
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-19T08:22:49.000Z'

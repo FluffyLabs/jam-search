@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/64'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/64'
 title: >-
   The invocation arguments for is-authorized do not appear to conform to GP
   0.6.5.

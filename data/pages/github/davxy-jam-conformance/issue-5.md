@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/5'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/5'
 title: Vinwolf
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-01T11:47:44.000Z'

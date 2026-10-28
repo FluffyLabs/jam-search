@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/69'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/69'
 title: Accumulate test vector storage keys should be consistent with traces
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-06-03T11:43:29.000Z'

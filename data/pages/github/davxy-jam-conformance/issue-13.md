@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/13'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/13'
 title: SpaceJam
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-13T05:13:15.000Z'

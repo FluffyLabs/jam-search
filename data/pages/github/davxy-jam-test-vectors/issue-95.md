@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/95'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/95'
 title: Clarification on STF assurances test vectors (v0.7.0)
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-08-28T19:15:18.000Z'

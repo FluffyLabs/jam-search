@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/162'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/162'
 title: Trace 1766479507_7943
 site: github.com/davxy/jam-conformance
 created_at: '2026-01-27T21:56:32.000Z'

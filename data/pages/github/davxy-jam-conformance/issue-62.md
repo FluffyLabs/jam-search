@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/62'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/62'
 title: Gossamer-Jam
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-05T13:33:40.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/104'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/104'
 title: '"jam_types" module not found'
 site: github.com/davxy/jam-conformance
 created_at: '2025-10-13T07:05:00.000Z'

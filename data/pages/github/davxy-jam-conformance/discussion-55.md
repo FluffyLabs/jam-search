@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/55'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/55'
 title: '1756572122'
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-02T15:54:36.000Z'

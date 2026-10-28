@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/24'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/24'
 title: 'Disputes: bad_signature-2 test vector also has other errors.'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-17T15:35:59.000Z'

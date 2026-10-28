@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/57'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/57'
 title: >-
   Core index encoding is using E2 (little endian) instead of normal integer
   encoding

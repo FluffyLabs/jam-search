@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/22'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/22'
 title: JSON Block/State Representation Improvement
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-15T01:13:04.000Z'

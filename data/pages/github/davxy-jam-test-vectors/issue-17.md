@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/17'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/17'
 title: 'Reports: reports/tiny/big_work_report_output-1.json'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-11T13:06:28.000Z'

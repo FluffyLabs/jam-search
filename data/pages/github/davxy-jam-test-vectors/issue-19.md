@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/19'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/19'
 title: Preimages input ordering
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-12T12:44:12.000Z'

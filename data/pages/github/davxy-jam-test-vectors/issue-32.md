@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/32'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/32'
 title: 'jam-types.asn: Inconsistent use of  the Gas type'
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-27T13:03:16.000Z'

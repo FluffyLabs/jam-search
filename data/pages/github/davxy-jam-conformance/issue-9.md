@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/9'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/9'
 title: Jamixir
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-05T14:17:11.000Z'

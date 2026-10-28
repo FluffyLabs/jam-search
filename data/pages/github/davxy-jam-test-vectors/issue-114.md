@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/114'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/114'
 title: Potential codec issue in 0.8.0 full vectors
 site: github.com/davxy/jam-test-vectors
 created_at: '2026-10-05T16:44:33.000Z'

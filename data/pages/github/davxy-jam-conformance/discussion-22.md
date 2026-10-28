@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/22'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/22'
 title: Welcome to JAM Conformance Discussions!
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-20T06:22:00.000Z'

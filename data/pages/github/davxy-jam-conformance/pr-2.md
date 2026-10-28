@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/pull/2'
+url: 'https://github.com/jam-conformance/jam-fuzzing/pull/2'
 title: GetState change
 site: github.com/davxy/jam-conformance
 created_at: '2025-07-01T20:11:44.000Z'

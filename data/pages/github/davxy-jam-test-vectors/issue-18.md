@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/18'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/18'
 title: >-
   Verifying Shuffle and Rotate => assigning validators to cores in Reports =>
   WRONG_ASSIGNMENT check.

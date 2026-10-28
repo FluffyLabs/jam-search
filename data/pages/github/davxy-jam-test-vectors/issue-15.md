@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/15'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/15'
 title: Ordering of Reporters Set
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-02-05T14:43:54.000Z'

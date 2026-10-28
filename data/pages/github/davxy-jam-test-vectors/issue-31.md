@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/31'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/31'
 title: WorkResult Codec Problem
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-03-23T05:19:27.000Z'

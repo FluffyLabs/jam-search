@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/196'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/196'
 title: JOTL
 site: github.com/davxy/jam-conformance
 created_at: '2026-05-05T16:43:05.000Z'

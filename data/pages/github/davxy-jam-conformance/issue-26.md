@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/issues/26'
+url: 'https://github.com/jam-conformance/jam-fuzzing/issues/26'
 title: TurboJam
 site: github.com/davxy/jam-conformance
 created_at: '2025-08-20T23:05:42.000Z'

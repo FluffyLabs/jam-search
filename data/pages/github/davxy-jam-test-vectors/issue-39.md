@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/39'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/39'
 title: Statistics test vector with preimage data does not lead to services stats
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-04-10T12:19:25.000Z'

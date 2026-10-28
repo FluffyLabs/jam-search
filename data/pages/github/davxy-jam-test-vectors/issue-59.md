@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/59'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/59'
 title: Storage Encoding is not using hash of values
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-05-23T09:52:00.000Z'

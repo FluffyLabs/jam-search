@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/97'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/97'
 title: OnTransfer statistics in trace 1758621198/00000042.json
 site: github.com/davxy/jam-conformance
 created_at: '2025-09-23T13:44:47.000Z'

@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-test-vectors/issues/92'
+url: 'https://github.com/jam-conformance/jam-test-vectors/issues/92'
 title: PVM logs for 0.7.0 preimages light?
 site: github.com/davxy/jam-test-vectors
 created_at: '2025-08-25T06:17:03.000Z'

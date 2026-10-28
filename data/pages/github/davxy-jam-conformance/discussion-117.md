@@ -1,6 +1,6 @@
 ---
 type: page
-url: 'https://github.com/davxy/jam-conformance/discussions/117'
+url: 'https://github.com/jam-conformance/jam-fuzzing/discussions/117'
 title: 1763371498 - designate updated by designate service
 site: github.com/davxy/jam-conformance
 created_at: '2025-11-17T14:24:15.000Z'
