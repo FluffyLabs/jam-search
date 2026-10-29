@@ -319,3 +319,8 @@ The r8 being set to 0 as pointed on the test vectors repo's issue. I rolled back
 ## Comment by @mikirov
 
 @davxy the fuzzer got me on some future slot jumps. I kind of overdid myself trying to save memory. That was an easy fix. now i pass those as well.
+
+
+## Comment by @davxy
+
+@mikirov I've sent you an invitation to join the jam-conformance organization 

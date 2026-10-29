@@ -85,3 +85,13 @@ Our client is now up to date with GP v0.7.2, the docker image has been updated.
 ## Comment by @philoniare
 
 @davxy Thanks for flagging, updated the handshake
+
+
+## Comment by @davxy
+
+@philoniare  I've sent you an invitation to join the jam-conformance organization
+
+
+## Comment by @philoniare
+
+@davxy Thanks, invitation accepted

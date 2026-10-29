@@ -817,3 +817,8 @@ Please build the native library for generic x86-64, without target-cpu=native / 
 ## Comment by @davxy
 
 works . Ty
+
+
+## Comment by @davxy
+
+@jaymansfield  I've sent you an invitation to join the jam-conformance organization 

@@ -725,3 +725,8 @@ Error: Failed to pull Docker image ghcr.io/jamixir/jamixir:0.7.2
 ## Comment by @danicuki
 
 Fixed. Made public 
+
+
+## Comment by @davxy
+
+@daiagi @danicuki I've sent you an invitation to join the jam-conformance organization

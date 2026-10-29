@@ -319,3 +319,8 @@ Sorry @davxy my bad. I introduced a regression and didnt properly forward args. 
 ## Comment by @vekexasia
 
 Hello @davxy not sure if i should open a PR. tsjam should be docker ready: ghcr.io/vekexasia/tsjam-target:0.7.2
+
+
+## Comment by @davxy
+
+@vekexasia I've sent you an invitation to join the jam-conformance organization
