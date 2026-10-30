@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/testnets'
 title: Testnets | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-10-27T03:03:46.246Z'
-last_modified: '2026-10-27T03:03:46.246Z'
+created_at: '2026-10-30T03:02:20.876Z'
+last_modified: '2026-10-30T03:02:20.876Z'
 ---
 Testnets here are categorized in three tiers, each successively becoming available once the prior tier is reached by a sufficient number of teams.
 
