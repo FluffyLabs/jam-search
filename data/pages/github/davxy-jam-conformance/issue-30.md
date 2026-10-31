@@ -620,15 +620,3 @@ Yes, it should handle it as described, and I have a CI for testing it
 ## Comment by @dakk
 
 Hi davxy, Jampy has been updated to 0.8.0
-
-
-## Comment by @davxy
-
-@dakk I've sent you an invitation to join the jam-conformance organization as part of the jampy team
-
-
-## Comment by @dakk
-
-> 32\. [@dakk](https://github.com/dakk) I've sent you an invitation to join the jam-conformance organization as part of the jampy team
-
-accepted (y) 

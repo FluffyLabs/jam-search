@@ -46,3 +46,8 @@ A PR to add JOTL to `scripts/targets.json` will follow.
 ## Comment by @polykrate
 
 Updated with the fix for compact encoding for the ticket attempts
+
+
+## Comment by @davxy
+
+@polykrate I've sent you an invitation to join the jam-conformance organization

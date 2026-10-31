@@ -307,3 +307,8 @@ Results updated
 
 A new TurboJam Docker image has been published that implements the [Standard Target Packaging](https://github.com/davxy/jam-conformance/tree/main/fuzz-proto#standard-target-packaging).
 It's hash: sha256:67b76bac7494de36a345d136c0bc5cefbda32011040da12b24c8302c3a7ebd2f
+
+
+## Comment by @davxy
+
+@sierkov I've sent you an invitation to join the jam-conformance organization

@@ -660,3 +660,8 @@ Hello @davxy,
 Can you please check #198? 
 
 We are now transitioning to docker-based with std-entry support. (For now we only support `JAM_FUZZ_SPEC=tiny` but will add `JAM_FUZZ_SPEC =full` network support in next docker release)
+
+
+## Comment by @davxy
+
+@sourabhniyogi @mkchungs @yoyo2325  I've sent you an invitation to join the jam-conformance organization

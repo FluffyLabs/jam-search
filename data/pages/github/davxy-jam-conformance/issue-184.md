@@ -22,3 +22,8 @@ Summary:
 - Configured for Graypaper `0.7.2`
 
 Basic local fuzz validation has been completed successfully.
+
+
+## Comment by @davxy
+
+@libingjiang47 I've sent you an invitation to join the jam-conformance organization

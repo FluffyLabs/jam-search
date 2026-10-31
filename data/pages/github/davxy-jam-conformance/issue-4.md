@@ -590,3 +590,8 @@ Platforms: `linux/amd64`, `linux/arm64`
 
 Cheers ⚡
 
+
+
+## Comment by @davxy
+
+@boymaas I've sent you an invitation to join the jam-conformance organization

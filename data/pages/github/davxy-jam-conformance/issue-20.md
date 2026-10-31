@@ -423,13 +423,3 @@ We have GP-0.8.0 conformance in our new PyJAMaz release.
 Could you please check and bump our label.
 
 DockerHub: `latest` or [v0.3.3-gp0.8.0](https://hub.docker.com/layers/jamdottech/pyjamaz/v0.3.3-gp0.8.0/images/sha256-6d73e2b1244345a27616dbe2bc8bb6004229cf1ff5620d3465a6346bf82e97bf)
-
-
-## Comment by @davxy
-
-@emielsebastiaan @arjanz I've sent you an invitation to join the jam-conformance organization as part of the pyjamaz team
-
-
-## Comment by @davxy
-
-@jam-conformance/implementers ping via super-group check

@@ -32,3 +32,8 @@ docker run --rm --init --platform linux/amd64 --user "$(id -u):$(id -g)" \
  ```
 
 Thank you!
+
+
+## Comment by @davxy
+
+@abutlabs I've sent you an invitation to join the jam-conformance organization
