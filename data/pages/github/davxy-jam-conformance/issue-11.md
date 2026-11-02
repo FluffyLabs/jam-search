@@ -662,6 +662,19 @@ Can you please check #198?
 We are now transitioning to docker-based with std-entry support. (For now we only support `JAM_FUZZ_SPEC=tiny` but will add `JAM_FUZZ_SPEC =full` network support in next docker release)
 
 
+## Comment by @yoyo2325
+
+Hi @davxy ,
+JAMDUNA's GP 0.8.0 Docker image is now available
+
+
 ## Comment by @davxy
 
-@sourabhniyogi @mkchungs @yoyo2325  I've sent you an invitation to join the jam-conformance organization
+@jam-conformance/jamduna duna-target 0.8.0.0 (= latest) cannot be pulled: "layers from manifest don't match image configuration". The manifest has the arm64 debian base layer, but the config is the amd64 build. Please push the amd64 image again.
+
+
+
+## Comment by @yoyo2325
+
+@davxy Thanks for catching this, and sorry for the broken image. 
+Could you please pull it again and confirm it works on your runner?

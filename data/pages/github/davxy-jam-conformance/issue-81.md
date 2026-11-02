@@ -296,3 +296,8 @@ We've just released `0.5.0` which defaults to GP version `0.7.2` and passes all 
 ## Comment by @tomusdrw
 
 Heads up: `0.5.3` is out with performance improvements and hopefully fixes for crashes as well🤞.
+
+
+## Comment by @davxy
+
+@tomusdrw @mateuszsikora  I've sent you an invitation to join the jam-conformance organization

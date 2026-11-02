@@ -185,3 +185,13 @@ Hey @qiweiii  have you implemented [std packaging](https://github.com/davxy/jam-
 ## Comment by @xlc
 
 yes we have
+
+
+## Comment by @davxy
+
+@xlc @qiweiii  I've sent you an invitation to join the jam-conformance organization. Is there anyone else on your team I should invite?
+
+
+## Comment by @xlc
+
+Just two of us

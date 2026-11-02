@@ -78,3 +78,9 @@ Hey @bamzedev have you implemented [std packaging](https://github.com/davxy/jam-
 ## Comment by @bamzedev
 
 Hey @davxy Sorry for the late reply. The project got canceled in February.
+
+
+## Comment by @davxy
+
+@bamzedev I'm closing this. Feel free to re-open if the project is resumed.
+

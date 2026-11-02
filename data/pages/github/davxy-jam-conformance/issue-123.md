@@ -124,3 +124,8 @@ https://paritytech.github.io/jam-conformance-dashboard/
 ## Comment by @yu2C
 
 Hi @davxy — we’ve updated our submission to use a Docker image for the fuzz target
+
+
+## Comment by @davxy
+
+@YCC3741 @YuChunTsao @yu2C  I've sent you an invitation to join the jam-conformance organization

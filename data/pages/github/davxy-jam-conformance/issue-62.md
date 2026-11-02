@@ -376,3 +376,10 @@ Hi @davxy, I have just implemented std packaging and opened a PR: https://github
 ## Comment by @davxy
 
 @aang114 you can now self-assess your implementation here: https://fuzz.jamtoaster.network/
+
+
+## Comment by @davxy
+
+@aang114  I've sent you an invitation to join the jam-conformance organization
+
+(any other people to add to the team?)
