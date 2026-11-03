@@ -33,3 +33,17 @@ However, the respective history element has ```slot``` 10:
 
 This test vector is expected to pass, but this configuration should fail (11.36)
 <img width="467" height="52" alt="Image" src="https://github.com/user-attachments/assets/956e9539-cfac-4298-912d-6cd68a252fba" />
+
+
+## Comment by @dakk
+
+x_n is the anchor slot, not the lookup_anchor_slot (which is x_t) and x_a is the anchor, not the lookup_anchor
+
+
+## Comment by @davxy
+
+As dakk points out, Eq. 11.36 only checks the anchor \((x_a, x_n)\).
+
+However, you're right that we're breaking the lookup anchor slot. This hasn't been caught because our STF doesn't yet implement the ancestry check for the lookup anchor.
+
+I'll fix the vectors for now.
