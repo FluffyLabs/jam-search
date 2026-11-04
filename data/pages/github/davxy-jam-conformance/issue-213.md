@@ -34,6 +34,12 @@ docker run --rm --init --platform linux/amd64 --user "$(id -u):$(id -g)" \
 Thank you!
 
 
-## Comment by @davxy
+## Comment by @abutlabs
 
-@abutlabs I've sent you an invitation to join the jam-conformance organization
+lasair 2.0.3 is published: ghcr.io/abutlabs/lasair-fuzz-target:latest, digest sha256:86e7e68c4a2243d4ad044e6690e463e1276880b47a1ed89cb007ffa1a6976630. All 35 errors reported for build 2.0.2 (through "cross round" 42e61250) now reproduce the reference post-state on 2.0.3. No action needed; the next run will pick up latest.
+
+Causes:
+- the cmov gas rule, GP PR 559 (8)
+- the work-package limits, GP PR #563 (18)
+- host-side memory ranges stopping at 2^32 (3)
+- ejected services (2)

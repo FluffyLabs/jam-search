@@ -16,3 +16,9 @@ Hello. I have a bug report for the disputes STF in typeberry, with test vectors 
 
 The repository has no SECURITY.md and private vulnerability reporting is off. Could you tell me where to send it?
 
+
+
+## Comment by @tomusdrw
+
+Note that typeberry implementation is based on the https://github.com/gavofyork/graypaper - if you believe the bug is rather spec-specific, not implementation please consider submitting it there.
+I've also enabled private vulnerability reporting in `typeberry`, feel free to report it now.

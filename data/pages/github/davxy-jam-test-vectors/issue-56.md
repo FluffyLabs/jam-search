@@ -28,3 +28,8 @@ Are you using E4 for service_id encoding on πS? What about other values on the 
 ## Comment by @davxy
 
 This affects only the dictionary key (i.e. service_id). The fields of service statistics record are encoded as compact
+
+
+## Comment by @davxy
+
+Closed by https://github.com/gavofyork/graypaper/pull/564

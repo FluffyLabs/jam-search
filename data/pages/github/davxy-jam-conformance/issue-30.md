@@ -620,3 +620,10 @@ Yes, it should handle it as described, and I have a CI for testing it
 ## Comment by @dakk
 
 Hi davxy, Jampy has been updated to 0.8.0
+
+
+## Comment by @davxy
+
+@dakk the new image does not start:
+The previous image worked
+
