@@ -627,3 +627,12 @@ Hi davxy, Jampy has been updated to 0.8.0
 @dakk the new image does not start:
 The previous image worked
 
+
+
+## Comment by @dakk
+
+> 27\. [@dakk](https://github.com/dakk) the new image does not start:
+>          The previous image worked
+
+should be fixed now, thx
+
