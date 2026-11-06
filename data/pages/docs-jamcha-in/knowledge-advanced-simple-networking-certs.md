@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/advanced/simple-networking/certs'
 title: OpenSSL Certificate Generation | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-11-03T03:02:05.686Z'
-last_modified: '2026-11-03T03:02:05.686Z'
+created_at: '2026-11-06T03:02:21.537Z'
+last_modified: '2026-11-06T03:02:21.537Z'
 ---
 This guide demonstrates how to generate Ed25519 keys and certificates for the [Alice](/basics/dev-accounts#alice) dev account using the OpenSSL CLI. These certificates can be used for the [Simple Networking Protocol](/knowledge/advanced/simple-networking/spec#encryption-and-handshake).
 
