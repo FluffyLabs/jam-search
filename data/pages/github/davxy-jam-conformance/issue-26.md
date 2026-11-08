@@ -313,3 +313,10 @@ It's hash: sha256:67b76bac7494de36a345d136c0bc5cefbda32011040da12b24c8302c3a7ebd
 
 @davxy A new TurboJam image that supports GP 0.8.0 has been published to r2rationality/turbojam-fuzz:latest
 It's hash: sha256:2e8fc30ab81c2172a81c398e60b9cf051a8fab0221fd6d8f38bb28533d580e1d
+
+
+## Comment by @davxy
+
+@sierkov Turbojam image docker.io/r2rationality/turbojam-fuzz:latest (sha256:5701f2312dea, built 2026-11-06) disconnects on all 68 GP 0.8.0 traces without genesis.bin. The previous image 9a3f9ded passes them
+
+[summary](https://github.com/jam-conformance/jam-fuzzing/blob/v0.8.0/fuzz-reports/0.8.0/summaries/summary-table.md)
