@@ -320,3 +320,29 @@ It's hash: sha256:2e8fc30ab81c2172a81c398e60b9cf051a8fab0221fd6d8f38bb28533d580e
 @sierkov Turbojam image docker.io/r2rationality/turbojam-fuzz:latest (sha256:5701f2312dea, built 2026-11-06) disconnects on all 68 GP 0.8.0 traces without genesis.bin. The previous image 9a3f9ded passes them
 
 [summary](https://github.com/jam-conformance/jam-fuzzing/blob/v0.8.0/fuzz-reports/0.8.0/summaries/summary-table.md)
+
+
+## Comment by @sierkov
+
+@davxy Thank you for the feedback!
+
+Could you clarify how you construct the ```Initialize``` message when replaying a partial trace without genesis.bin?
+1. When the target advertises ```feature-ancestry```, does your fuzzer send a nonempty ancestry sequence during partial replays?
+2. How do you construct ```Initialize.header```? Can its slot be greater than zero?
+
+My current hypothesis is:
+1. The message contains empty ancestry, so TurboJam creates its own from the supplied header, β history, and the current state root for the latest entry. This reconstruction requires strictly increasing slots.
+2. TurboJam inserts the supplied header first, then appends β history. A matching genesis entry at the start of β is skipped and causes no problem. However, if the first entry to append has an earlier slot—or the same slot with a different hash—initialization throws and the connection closes.
+
+
+## Comment by @davxy
+
+@sierkov the protocol is described here 
+https://github.com/jam-conformance/jam-fuzzing/tree/main/fuzz-proto#features
+
+We send it off, so in the end is OFF.
+We don't send an empty list. We don't send any list, the field is just not present
+
+Have you fixed your target ? With last update your target started failing with a lotnof traves. I'll merge the PR soon.
+
+
