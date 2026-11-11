@@ -340,9 +340,45 @@ My current hypothesis is:
 @sierkov the protocol is described here 
 https://github.com/jam-conformance/jam-fuzzing/tree/main/fuzz-proto#features
 
-We send it off, so in the end is OFF.
-We don't send an empty list. We don't send any list, the field is just not present
+We send the ancestry feature disabledit, so in the end is OFF.
+We don't send an empty list. The field is just not present
 
 Have you fixed your target ? With last update your target started failing with a lotnof traves. I'll merge the PR soon.
 
 
+
+
+## Comment by @sierkov
+
+@davxy For 0.8.0, TurboJam introduced stricter consistency checks between genesis, beta, and ancestry. My current best hypothesis for the recent failures is that, when replaying partical traces, the headers sent in ```Initialize```  are not entirely consistent with the history in ```beta```.
+
+TurboJam currently retains this check even when ```feature-ancestry``` is disabled. I recognize this stretches the ```should``` in ```When this feature is disabled, the check described in the GP reference should also be skipped.```
+
+I tested the latest TurboJam target by sending all 0.8.0 partial traces with and without ancestry provided in ```Initialize``` using my own client, and the target passes them. However, when a trace's ```genesis``` file is missing, my replay client constructs the header in ```Initialize``` using ```genesis_header``` in the devnet spec that comes with polkajam 0.8.0: [dev-spec.json](https://github.com/user-attachments/files/34624737/dev-spec.json)
+
+If you could send me an example initialize message that fuzzer sends when replaying a partial trace without genesis and a log produced by TurboJam, I can investigathe this further. If now is not a good time to investigate this, I can disable this behavior, and get back to this in 0.8.1,
+
+Also, I rechecked the protocol description, and I read it as the ancestry field is empty rather than missing when the feature is not supported:
+```
+-- Empty when `feature-ancestry` is not supported by both parties
+Ancestry ::= SEQUENCE (SIZE(0..24)) OF AncestryItem
+
+Initialize ::= SEQUENCE {
+    -- "genesis-like" header whose hash can be used to reference `state` in the chain
+    header Header,
+    -- Sequence of key-values
+    keyvals State,
+    -- Ancestry sequence (includes `header` hash)
+    ancestry Ancestry
+}
+```
+
+
+## Comment by @davxy
+
+I can't follow your implementation to that extent. At least not right now. Just ping me when you fixed your stuff
+
+
+## Comment by @davxy
+
+FWIW we ideed not sending the empty lost. I'll fix it in the 0.8.1 campaign
