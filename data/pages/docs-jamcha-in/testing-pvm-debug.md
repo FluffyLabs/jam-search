@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/testing/pvm-debug'
 title: PVM Debugging | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-11-10T03:02:37.686Z'
-last_modified: '2026-11-10T03:02:37.686Z'
+created_at: '2026-11-13T03:02:18.298Z'
+last_modified: '2026-11-13T03:02:18.298Z'
 ---
 Tools to help test PolkaVM blobs (custom format) and JAM services (GP format).
 
