@@ -4,8 +4,8 @@ content_kind: code
 url: 'https://github.com/tomusdrw/as-lan/blob/main/package.json#L1-L27'
 title: package.json
 site: github.com/tomusdrw/as-lan
-created_at: '2026-07-15T12:15:02+02:00'
-last_modified: '2026-07-15T12:15:02+02:00'
+created_at: '2026-11-11T12:44:24+01:00'
+last_modified: '2026-11-11T12:44:24+01:00'
 chunk_index: 0
 chunk_total: 1
 content_sha: 77effa8b6de0a7fcc813afa14b285df237305d4c0322cf7bc7635a973e15b78a

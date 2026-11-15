@@ -5,8 +5,8 @@ url: >-
   https://github.com/tomusdrw/as-lan/blob/main/sdk/core/codec/decode.ts#L272-L322
 title: sdk/core/codec/decode.ts
 site: github.com/tomusdrw/as-lan
-created_at: '2026-07-15T12:15:02+02:00'
-last_modified: '2026-07-15T12:15:02+02:00'
+created_at: '2026-11-11T12:44:24+01:00'
+last_modified: '2026-11-11T12:44:24+01:00'
 chunk_index: 2
 chunk_total: 3
 content_sha: b8cb8dc1c8aae2a62af5e52b125dcc082df7858e6ba26c74b7558ad76d2401a9
