@@ -595,3 +595,6 @@ Cheers ⚡
 ## Comment by @davxy
 
 @boymaas I've sent you an invitation to join the jam-conformance organization
+You should have received the invitation by email.
+
+<img width="1155" height="692" alt="Screenshot from 2026-11-17 10-35-01" src="https://github.com/user-attachments/assets/514637c8-de92-4734-92be-e641e8ae1100" />

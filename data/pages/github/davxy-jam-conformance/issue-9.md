@@ -729,4 +729,18 @@ Fixed. Made public
 
 ## Comment by @davxy
 
-@daiagi @danicuki I've sent you an invitation to join the jam-conformance organization
+@daiagi I've sent you an invitation to join the jam-conformance organization
+
+
+## Comment by @daiagi
+
+> @daiagi I've sent you an invitation to join the jam-conformance organization
+
+Didn't receive it...
+
+
+## Comment by @davxy
+
+@daiagi  IIRC you should receive the invitation in your mail 
+
+<img width="1155" height="692" alt="Screenshot from 2026-11-17 10-40-25" src="https://github.com/user-attachments/assets/d8f82c7e-297e-478d-a1fa-36f770bfb1c6" />

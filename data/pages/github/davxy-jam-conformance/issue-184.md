@@ -27,3 +27,6 @@ Basic local fuzz validation has been completed successfully.
 ## Comment by @davxy
 
 @libingjiang47 I've sent you an invitation to join the jam-conformance organization
+You should have received the invitation by email.
+
+<img width="1155" height="692" alt="Screenshot from 2026-11-17 10-36-51" src="https://github.com/user-attachments/assets/18361178-410b-49df-a8fb-c20eec3f307f" />
