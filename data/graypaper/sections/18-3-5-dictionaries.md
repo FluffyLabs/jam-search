@@ -23,8 +23,6 @@ This assertion allows us to unambiguously define the subscript and subtraction o
     &\quad \mathbf{d} \setminus \mathbf{s} \equiv \set{ \kv{k}{v}: \kv{k}{v} \in \mathbf{d}, k \not\in \mathbf{s} }
   \end{aligned}\end{aligned}$$
 
-Note that when using a subscript, it is an implicit assertion that the key exists in the dictionary. Should the key not exist, the result is undefined and any block which relies on it must be considered invalid.
-
 To denote the active domain (i.e. set of keys) of a dictionary $\mathbf{d} \in \dictionary{K}{V}$, we use $\keys{\mathbf{d}} \subseteq K$ and for the range (i.e. set of values), $\values{\mathbf{d}} \subseteq V$. Formally: $$\begin{aligned}
   \forall \mathrm{K}, \mathrm{V}, \mathbf{d} \in \dictionary{\mathrm{K}}{\mathrm{V}} : \keys{\mathbf{d}} &\equiv \set{\build{k}{\exists v : \kv{k}{v} \in \mathbf{d}}} \\
   \forall \mathrm{K}, \mathrm{V}, \mathbf{d} \in \dictionary{\mathrm{K}}{\mathrm{V}} : \values{\mathbf{d}} &\equiv \set{\build{v}{\exists k : \kv{k}{v} \in \mathbf{d}}}\end{aligned}$$

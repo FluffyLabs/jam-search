@@ -23,8 +23,7 @@ The PVM is fully defined in appendix 24, but for contextualization we will brief
     \end{aligned}
   \,}$$
 
-We refer to the time-proportional computational steps as *gas* (much like in the *YP*) and limit it to a 64-bit quantity. Within the context of the PVM, $\gascounter \in \gas$ is typically used to denote gas, but we may also use $\gascounter \in \signedgas$ internally within the definition of the PVM where it may be convenient. $$
-  \signedgas \equiv \Z_{-2^{63}\dots2^{63}}\ ,\quad
+We refer to the time-proportional computational steps as *gas* (much like in the *YP*) and limit it to a 64-bit quantity. Within the context of the PVM, $\gascounter \in \gas$ is typically used to denote gas. $$
   \gas \equiv \Nbits{64}\ ,\quad
   \pvmreg \equiv \Nbits{64}$$
 

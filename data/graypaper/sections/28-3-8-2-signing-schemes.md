@@ -3,7 +3,7 @@ type: graypaper_section
 title: 3.8.2 Signing Schemes
 index: 28
 ---
-$\edsignature{k}{m \in \blob} \subset \blob[64]$ is the set of valid Ed25519 signatures, defined by [@rfc8032], made through knowledge of a secret key whose public key counterpart is $k \in \hash$ and whose message is $m$. To aid readability, we denote the set of valid public keys $\edkey$.
+$\edsignature{k}{m \in \blob} \subset \blob[64]$ is the set of valid Ed25519 signatures, defined by [@rfc8032], made through knowledge of a secret key whose public key counterpart is $k \in \hash$ and whose message is $m$. To aid readability, we denote the set of valid public keys $\edkey$. Where [@rfc8032] admits alternative validation criteria, we adopt those of [@zip215].
 
 We denote the set of valid Bandersnatch public keys as $\bskey$, defined in appendix 30. $\bssignature{k \in \bskey}{x \in \blob}{m \in \blob} \subset \blob[96]$ is the set of valid singly-contextualized VRF signatures utilizing the secret counterpart to the public key $k$, some context $x$ and message $m$.
 
@@ -11,6 +11,6 @@ $\bsringproof{r \in \ringroot}{x \in \blob}{m \in \blob} \subset \blob[784]$, me
 
 Both the Bandersnatch signature and RingVRF proof strictly imply that a member utilized their secret key in combination with both the context $x$ and the message $m$; the difference is that the member is identified in the former and is anonymous in the latter. Furthermore, both define a VRF *output*, a high entropy hash influenced by $x$ but not by $m$, formally denoted $\banderout{\bsringproof{r}{x}{m}} \in \hash$ and $\banderout{\bssignature{k}{x}{m}} \in \hash$.
 
-We use $\blskey \subset \blob[144]$ to denote the set of public keys for the BLS signature scheme, described by [@jofc-2004-14130], on curve BLS- defined by [@bls12-381]. We correspondingly use the notation $\blssignature{k}{m}$ to denote the set of valid BLS signatures for public key $k \in \blskey$ and message $m \in \blob$.
+We use $\blskey \subset \blob[144]$ to denote the set of public keys for the BLS signature scheme, described by [@jofc-2004-14130], on curve BLS- defined by [@bls12-381], in the aggregatable form given by [@cryptoeprint:2022/1611]. We correspondingly use the notation $\blssignature{k}{m}$ to denote the set of valid BLS signatures for public key $k \in \blskey$ and message $m \in \blob$.
 
 We define the signature functions for creating valid signatures; $\edsigndata{k}{m} \in \edsignature{k}{m}$, $\blssigndata{k}{m} \in \blssignature{k}{m}$. We assert that the ability to compute a result for this function relies on knowledge of a secret key.

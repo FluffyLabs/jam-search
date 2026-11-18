@@ -10,17 +10,20 @@ Service accounts are held in state under $\accounts$, a partial mapping from a s
   \serviceid &\equiv \Nbits{32} \\
   \accounts &\in \dictionary{\serviceid}{\serviceaccount}\end{aligned}$$
 
-The service account is defined as the tuple of storage dictionary $\saNstorage$, preimage lookup dictionaries $\saNpreimages$ and $\saNrequests$, code hash $\saNcodehash$, balance $\saNbalance$ and gratis storage offset $\saNgratis$, as well as the two code gas limits $\saNminaccgas$ & $\saNminmemogas$. We also record certain usage characteristics concerning the account: the time slot at creation $\saNcreated$, the time slot at the most recent accumulation $\saNlastacc$ and the parent service $\saNparent$. Formally: $$\begin{aligned}
+The service account is defined as the tuple of storage dictionary $\saNstorage$, preimage lookup dictionaries $\saNpreimages$ and $\saNrequests$, code hash $\saNcodehash$, balance $\saNbalance$ and gratis storage offset $\saNgratis$, supervisor $\saNsupervisor$ and its creation slot $\saNsupervisorcreated$ and protected balance $\saNsupervisorbalance$, as well as the two code gas limits $\saNminaccgas$ & $\saNminmemogas$. We also record certain usage characteristics concerning the account: the time slot at creation $\saNcreated$, the time slot at the most recent accumulation $\saNlastacc$ and the parent service $\saNparent$. Formally: $$\begin{aligned}
 
   \serviceaccount \equiv \tuple{\ \begin{aligned}
     \saNstorage &\in \dictionary{\blob}{\blob}\,,\
     \saNpreimages \in \dictionary{\hash}{\blob}\,,\\
-    \saNrequests &\in \dictionary{\tuple{\hash,\bloblength}}{\sequence[:3]{\timeslot}}\,,\\
-    \saNgratis &\in \balance\,,\
-    \saNcodehash \in \hash\,,\
-    \saNbalance \in \balance\,,\
-    \saNminaccgas \in \gas\,,\\
-    \saNminmemogas &\in \gas\,,\
+    \saNrequests &\in \dictionary{\tuple{\hash,\preimagelen}}{\sequence[:3]{\timeslot}}\,,\
+    \saNgratis \in \balance\,,\
+    \saNcodehash \in \hash\,,\\
+    \saNbalance &\in \balance\,,\
+    \saNsupervisor \in \serviceid\,,\
+    \saNsupervisorcreated \in \timeslot\,,\
+    \saNsupervisorbalance \in \balance\,,\\
+    \saNminaccgas &\in \gas\,,\
+    \saNminmemogas \in \gas\,,\
     \saNcreated \in \timeslot\,,\
     \saNlastacc \in \timeslot\,,\
     \saNparent \in \serviceid\\

@@ -21,6 +21,17 @@ The set of validator keys itself is equivalent to the set of 336-octet sequences
   \forall \vkX \in \valkey : \vkX_\vkNbls \in \blskey &\equiv \vkX\subrange{64}{144} \\
   \forall \vkX \in \valkey : \vkX_\vkNmetadata \in \metadatakey &\equiv \vkX\subrange{208}{128}\end{aligned}$$
 
+We also define $\nullvalkey$, the *null* validator key, used in place of the key of a validator which must be prevented from taking part in the protocol. Formally: $$
+  \begin{aligned}
+    \nullvalkey &\in \valkey \\
+    (\nullvalkey)_\vkNbs &= \sq{0, 0, \dots} \\
+    (\nullvalkey)_\vkNed &= \sq{2, 0, 0, \dots} \\
+    (\nullvalkey)_\vkNbls &= \sq{0, 0, \dots} \\
+    (\nullvalkey)_\vkNmetadata &= \sq{0, 0, \dots}
+  \end{aligned}$$
+
+No valid signature exists under $\nullvalkey$ since none of its cryptographic components is a valid public key. Note that this is the reason its Ed25519 component is $\sq{2, 0, 0, \dots}$ rather than zero: unlike the Bandersnatch and BLS cases, the all-zero Ed25519 sequence does encode a curve point, of order four, under which a signature may be forged for any message without knowledge of any secret. The value $2$ instead encodes a $y$-coordinate admitting no corresponding curve point.
+
 With a new epoch under regular conditions, validator keys get rotated and the epoch's Bandersnatch ring root is updated into $\epochroot'$: $$\begin{aligned}
   \tup{\pendingset', \activeset', \previousset', \epochroot'} &\equiv \begin{cases}
     (\Phi(\stagingset), \pendingset, \activeset, z) &\when e' > e \\ \tup{\pendingset, \activeset, \previousset, \epochroot} &\otherwise
@@ -29,7 +40,7 @@ With a new epoch under regular conditions, validator keys get rotated and the ep
    \Phi(\mathbf{k}) &\equiv \sq{
     \build{
       \begin{rcases}
-        \sq{0, 0, \dots} &\when \vkX_\vkNed \in \offenders' \\
+        \nullvalkey &\when \vkX_\vkNed \in \offenders' \\
         \vkX &\otherwise
       \end{rcases}
     }{
@@ -37,4 +48,4 @@ With a new epoch under regular conditions, validator keys get rotated and the ep
     }
   }\end{aligned}$$
 
-Note that on epoch changes the posterior queued validator key sequence $\pendingset'$ is defined such that incoming keys belonging to the offenders $\offenders'$ are replaced with a null key containing only zeroes. The origin of the offenders is explained in section 10.
+Note that on epoch changes the posterior queued validator key sequence $\pendingset'$ is defined such that incoming keys belonging to the offenders $\offenders'$ are replaced with the null key $\nullvalkey$. The origin of the offenders is explained in section 10.

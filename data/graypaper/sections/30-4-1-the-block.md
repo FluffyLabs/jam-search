@@ -5,7 +5,7 @@ index: 30
 ---
 To aid comprehension and definition of our protocol, we partition as many of our terms as possible into their functional components. We begin with the block $\block$ which may be restated as the header $\H$ and some input data external to the system and thus said to be *extrinsic*, $\extrinsic$: $$\begin{aligned}
   \block &\equiv \tup{\header, \extrinsic} \\
-  \extrinsic &\equiv \tup{\xttickets, \xtdisputes, \xtpreimages, \xtassurances, \xtguarantees}\end{aligned}$$
+  \extrinsic &\equiv \tup{\xttickets, \xtpreimages, \xtguarantees, \xtassurances, \xtdisputes}\end{aligned}$$
 
 The header is a collection of metadata primarily concerned with cryptographic references to the blockchain ancestors and the operands and result of the present transition. As an immutable known *a priori*, it is assumed to be available throughout the functional components of block transition. The extrinsic data is split into its several portions:
 

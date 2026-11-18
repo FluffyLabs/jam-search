@@ -32,7 +32,7 @@ The extrinsic hash is a Merkle commitment to the block's extrinsic data, taking 
     \tup{\xpNserviceindex, \xpNdata} \orderedin \xtpreimages
   }}}} \\
   \also \mathbf{g} &= \encode{\var{\sq{\build{
-    \tup{\blake{\gNworkreport}, \encode[4]{\gNtimeslot}, \var{\gNcredential}}
+    \tup{\blake{\gNworkreport}, \encode[4]{\gNtimeslot}, \encodecredentials{\gNcredential}}
   }{
     \tup{\gNworkreport, \gNtimeslot, \gNcredential} \orderedin \xtguarantees
   }}}}\end{aligned}$$
