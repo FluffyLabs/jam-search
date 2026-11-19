@@ -514,3 +514,12 @@ Please let me know if you find any issues.
 `vinwolf-target-0.3.14`
 
 Cheers.
+
+
+## Comment by @bloppan
+
+Good morning @davxy 
+
+I've published the latest vinwolf-target docker image compatible with GP 0.8.0. It should pass all reports and traces published.
+
+Cheers.

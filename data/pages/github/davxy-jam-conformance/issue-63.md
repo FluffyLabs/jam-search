@@ -399,17 +399,21 @@ hi @davxy ,
 can you please update reports section? it will give the team a great heads up. thanks. 
 
 
-## Comment by @davxy
-
-@prasad-kumkar @harsh-csl I've sent you an invitation to join the jam-conformance organization.
-You should have received the invitation by email.
-
-<img width="1155" height="692" alt="Screenshot from 2026-11-17 10-33-38" src="https://github.com/user-attachments/assets/5b17b874-b07e-4ee3-a4a6-144708f6a5f5" />
-
-
 ## Comment by @harsh-csl
 
 > [@prasad-kumkar](https://github.com/prasad-kumkar) [@harsh-csl](https://github.com/harsh-csl) I've sent you an invitation to join the jam-conformance organization. You should have received the invitation by email.
 
 
 Hi @davxy , Can you please re-share invitation, I might have missed that and now its not in my inbox.
+
+
+## Comment by @davxy
+
+@harsh-csl I see that you joined. All good
+
+
+## Comment by @harsh-csl
+
+> @harsh-csl I see that you joined. All good
+
+Yes thanks. 🙌
