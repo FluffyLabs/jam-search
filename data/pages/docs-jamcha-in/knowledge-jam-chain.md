@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/jam-chain'
 title: What is JAM? | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-11-17T03:02:06.303Z'
-last_modified: '2026-11-17T03:02:06.303Z'
+created_at: '2026-11-20T03:02:30.499Z'
+last_modified: '2026-11-20T03:02:30.499Z'
 ---
 The **J**oin **A**ccumulate **M**achine (JAM) is an invention by Dr Gavin Wood formally specified in the [Gray Paper](https://graypaper.com). It is a blockchain network that will provide permissionless and scalable compute to anyone who pays for it.
 

@@ -3,8 +3,8 @@ type: page
 url: 'https://docs.jamcha.in/advanced/rpc/jip2-node-rpc'
 title: 'JIP-2: Node RPC | JAM Docs'
 site: docs.jamcha.in
-created_at: '2026-11-17T03:01:54.053Z'
-last_modified: '2026-11-17T03:01:54.053Z'
+created_at: '2026-11-20T03:02:18.210Z'
+last_modified: '2026-11-20T03:02:18.210Z'
 ---
 (fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-2.md) on 2026-09-21)
 
