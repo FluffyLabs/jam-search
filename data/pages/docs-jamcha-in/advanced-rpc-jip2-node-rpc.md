@@ -3,10 +3,10 @@ type: page
 url: 'https://docs.jamcha.in/advanced/rpc/jip2-node-rpc'
 title: 'JIP-2: Node RPC | JAM Docs'
 site: docs.jamcha.in
-created_at: '2026-11-20T03:02:18.210Z'
-last_modified: '2026-11-20T03:02:18.210Z'
+created_at: '2026-11-24T03:01:54.349Z'
+last_modified: '2026-11-24T03:01:54.349Z'
 ---
-(fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-2.md) on 2026-09-21)
+(fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-2.md) on 2026-11-16)
 
 RPC specification for JAM nodes to ensure JAM tooling which relies on being an RPC client is implementation-agnostic.
 
@@ -43,6 +43,8 @@ For convenience the following common types are defined:
     *   `"header_hash"`: Hash. Header hash of the block that triggered this update.
     *   `"slot"`: Number. Slot of the block that triggered this update.
     *   `"value"`: Subscription-specific.
+*   State Key: A String, containing padded Base64-encoded binary data, as per RFC 4648. The decoded data must be exactly 31 bytes in length: a raw state key, as defined by the state Merklization appendix of the GP.
+*   State Proof: A Blob, containing a compact Merkle proof of part of the state of some block. The decoded data is the proof as defined in [JIP-7](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-7.md). The proven keys and their values are not part of it; the values are returned beside it.
 
 ## Error codes[​](#error-codes "Direct link to Error codes")
 
@@ -94,29 +96,26 @@ An Object describing the JAM chain parameterization, which may not be equivalent
 *   `"max_dependencies"`: J\\mathsf{J}J, the maximum sum of dependency items in a work-report.
 *   `"max_tickets_per_block"`: K\\mathsf{K}K, the maximum number of tickets which may be submitted in a single extrinsic.
 *   `"max_lookup_anchor_age"`: L\\mathsf{L}L, the maximum age in timeslots of the lookup anchor.
-*   `"tickets_attempts_number"`: N\\mathsf{N}N, the number of ticket entries per validator.
 *   `"auth_window"`: O\\mathsf{O}O, the maximum number of items in the authorizations pool.
 *   `"slot_period_sec"`: P\\mathsf{P}P, the slot period, in seconds.
 *   `"auth_queue_len"`: Q\\mathsf{Q}Q, the number of items in the authorizations queue.
 *   `"rotation_period"`: R\\mathsf{R}R, the rotation period of validator-core assignments, in timeslots.
 *   `"max_extrinsics"`: T\\mathsf{T}T, the maximum number of extrinsics in a work-package.
 *   `"availability_timeout"`: U\\mathsf{U}U, the period in timeslots after which reported but unavailable work may be replaced.
-*   `"val_count"`: V\\mathsf{V}V, the total number of validators.
 *   `"max_authorizer_code_size"`: WA\\mathsf{W}\_AWA​, the maximum size of is-authorized code in octets.
 *   `"max_input"`: WB\\mathsf{W}\_BWB​, the maximum size of the concatenated variable-size blobs, extrinsics and imported segments of a work-package, in octets.
 *   `"max_service_code_size"`: WC\\mathsf{W}\_CWC​, the maximum size of service code in octets.
-*   `"basic_piece_len"`: WE\\mathsf{W}\_EWE​, the basic size of erasure-coded pieces in octets.
 *   `"max_imports"`: WM\\mathsf{W}\_MWM​, the maximum number of imports in a work-package.
-*   `"segment_piece_count"`: WP\\mathsf{W}\_PWP​, the number of erasure-coded pieces in a segment.
 *   `"max_report_elective_data"`: WR\\mathsf{W}\_RWR​, the maximum total size of all unbounded blobs in a work-report, in octets.
 *   `"transfer_memo_size"`: WT\\mathsf{W}\_TWT​, the size of a transfer memo in octets.
 *   `"max_exports"`: WX\\mathsf{W}\_XWX​, the maximum number of exports in a work-package.
 *   `"epoch_tail_start"`: Y\\mathsf{Y}Y, the number of slots into an epoch at which ticket-submission ends.
 
-All parameters not described are assumed to be their canonical values. Some parameters are dependent on other values:
+All parameters not described are assumed to be their canonical values. Some values are not parameters but are fixed or derived from the state:
 
 *   WG\=4,104\\mathsf{W}\_G = 4,104WG​\=4,104: The size of a (reconstructed) segment is fixed.
-*   WP\=WGWE\\mathsf{W}\_P = \\frac{\\mathsf{W}\_G}{\\mathsf{W}\_E}WP​\=WE​WG​​: The number of EC pieces in a segment.
+*   The number of validators is the size of the validator key set held in state (∣κ∣|\\kappa|∣κ∣).
+*   The erasure-coding piece size and count follow from the number of validators (GP appendix H).
 
 ### `bestBlock()`[​](#bestblock "Direct link to bestblock")
 
@@ -174,15 +173,62 @@ Returns the posterior state root of the block with the given header hash.
 
 Hash: The state root.
 
+### `stateValue(header_hash, key)`[​](#statevalueheader_hash-key "Direct link to statevalueheader_hash-key")
+
+Returns the value stored under the given raw state key in the posterior state of the block with the given header hash. Unlike `serviceValue`, this method takes a full 31-byte state key, so it can be used to read chain-level state components as well as any service state whose key the client can compute.
+
+#### Parameters[​](#parameters-3 "Direct link to Parameters")
+
+1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
+2.  `key`: State Key.
+
+#### Result[​](#result-5 "Direct link to Result")
+
+Null if there is no value under the given key, otherwise a Blob containing the value.
+
+### `subscribeStateValue(key, finalized)`[​](#subscribestatevaluekey-finalized "Direct link to subscribestatevaluekey-finalized")
+
+Subscribe to updates of the value stored under the given raw state key. An update is sent only when the value changes.
+
+#### Parameters[​](#parameters-4 "Direct link to Parameters")
+
+1.  `key`: State Key.
+2.  `finalized`: Boolean: True to track the latest finalized block, False to track the head of the "best" chain.
+
+#### Subscription update `"result"`[​](#subscription-update-result-2 "Direct link to subscription-update-result-2")
+
+Chain Subscription Update. The `"value"` member is Null when there is no value under the given key, otherwise a Blob containing the value.
+
+### `stateValuesWithProof(header_hash, keys, size_limit)`[​](#statevalueswithproofheader_hash-keys-size_limit "Direct link to statevalueswithproofheader_hash-keys-size_limit")
+
+Returns the values of the given keys in the posterior state of the block with the given header hash, with a State Proof of them. The proof is as defined in [JIP-7](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-7.md); the server builds it for the keys as described in its Appendix A, with no ranges.
+
+The reply covers the first keys of `keys`, as many as the size limit allows. The size of a reply is the number of octets of the encoded proof plus the lengths of the returned values. The server must choose the covered keys so that the size of the reply does not exceed `size_limit`, except that it must always cover the first key, even if the reply for it alone exceeds the limit. It may cover fewer keys than would fit. The proof and the values are those of the covered keys alone. The proof will pass verification with the covered keys as the proven keys: a key with a Blob as an entry with that value, and a key with Null as an absent key. The keys not covered have to be requested again.
+
+The server rejects the request with the JSON-RPC invalid params error if `keys` is not strictly ascending, or if `size_limit` is not a non-negative integer.
+
+#### Parameters[​](#parameters-5 "Direct link to Parameters")
+
+1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
+2.  `keys`: Array of State Keys: The keys to prove, strictly ascending.
+3.  `size_limit`: Number: A non-negative integer: soft limit on the size of the reply, in octets.
+
+#### Result[​](#result-6 "Direct link to Result")
+
+An Object with the following members:
+
+*   `"proof"`: State Proof.
+*   `"values"`: Array, each element Blob or Null: One member per covered key, in the order of `keys`: the value under the key, or Null if the key is absent. The array is shorter than `keys` if the reply covers fewer keys: an array of `n` members covers the first `n` keys. The array is empty only if `keys` is.
+
 ### `beefyRoot(header_hash)`[​](#beefyrootheader_hash "Direct link to beefyrootheader_hash")
 
 Returns the BEEFY root of the block with the given header hash.
 
-#### Parameters[​](#parameters-3 "Direct link to Parameters")
+#### Parameters[​](#parameters-6 "Direct link to Parameters")
 
 1.  `header_hash`: Hash.
 
-#### Result[​](#result-5 "Direct link to Result")
+#### Result[​](#result-7 "Direct link to Result")
 
 Hash: The BEEFY root.
 
@@ -190,11 +236,11 @@ Hash: The BEEFY root.
 
 Returns the activity statistics stored in the posterior state of the block with the given header hash.
 
-#### Parameters[​](#parameters-4 "Direct link to Parameters")
+#### Parameters[​](#parameters-7 "Direct link to Parameters")
 
 1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
 
-#### Result[​](#result-6 "Direct link to Result")
+#### Result[​](#result-8 "Direct link to Result")
 
 Blob: Activity statistics encoded as per the GP.
 
@@ -202,11 +248,11 @@ Blob: Activity statistics encoded as per the GP.
 
 Subscribe to updates of the activity statistics stored in chain state.
 
-#### Parameters[​](#parameters-5 "Direct link to Parameters")
+#### Parameters[​](#parameters-8 "Direct link to Parameters")
 
 1.  `finalized`: Boolean: True to track the latest finalized block, False to track the head of the "best" chain.
 
-#### Subscription update `"result"`[​](#subscription-update-result-2 "Direct link to subscription-update-result-2")
+#### Subscription update `"result"`[​](#subscription-update-result-3 "Direct link to subscription-update-result-3")
 
 Chain Subscription Update. The `"value"` member is a Blob, containing activity statistics encoded as per the GP.
 
@@ -214,12 +260,12 @@ Chain Subscription Update. The `"value"` member is a Blob, containing activity s
 
 Returns the storage data for the service with the given ID.
 
-#### Parameters[​](#parameters-6 "Direct link to Parameters")
+#### Parameters[​](#parameters-9 "Direct link to Parameters")
 
 1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
 2.  `id`: Number: The ID of the service.
 
-#### Result[​](#result-7 "Direct link to Result")
+#### Result[​](#result-9 "Direct link to Result")
 
 Null if there is no service with the given ID, or Blob, containing the service data encoded as per the GP.
 
@@ -227,12 +273,12 @@ Null if there is no service with the given ID, or Blob, containing the service d
 
 Subscribe to updates of the storage data for the service with the given ID.
 
-#### Parameters[​](#parameters-7 "Direct link to Parameters")
+#### Parameters[​](#parameters-10 "Direct link to Parameters")
 
 1.  `id`: Number: The ID of the service.
 2.  `finalized`: Boolean: True to track the latest finalized block, False to track the head of the "best" chain.
 
-#### Subscription update `"result"`[​](#subscription-update-result-3 "Direct link to subscription-update-result-3")
+#### Subscription update `"result"`[​](#subscription-update-result-4 "Direct link to subscription-update-result-4")
 
 Chain Subscription Update. The `"value"` member is Null when there is no service with the given ID, otherwise it is a Blob containing the service data encoded as per the GP.
 
@@ -240,13 +286,13 @@ Chain Subscription Update. The `"value"` member is Null when there is no service
 
 Returns the value associated with the given service ID and key in the posterior state of the block with the given header hash. This method can be used to query arbitrary key-value pairs set by service accumulation logic.
 
-#### Parameters[​](#parameters-8 "Direct link to Parameters")
+#### Parameters[​](#parameters-11 "Direct link to Parameters")
 
 1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
 2.  `id`: Number: The ID of the service.
 3.  `key`: Blob: The key.
 
-#### Result[​](#result-8 "Direct link to Result")
+#### Result[​](#result-10 "Direct link to Result")
 
 Null if there is no value associated with the given service ID and key, otherwise a Blob containing the value.
 
@@ -254,13 +300,13 @@ Null if there is no value associated with the given service ID and key, otherwis
 
 Subscribe to updates of the value associated with the given service ID and key.
 
-#### Parameters[​](#parameters-9 "Direct link to Parameters")
+#### Parameters[​](#parameters-12 "Direct link to Parameters")
 
 1.  `id`: Number: The ID of the service.
 2.  `key`: Blob: The key.
 3.  `finalized`: Boolean: True to track the latest finalized block, False to track the head of the "best" chain.
 
-#### Subscription update `"result"`[​](#subscription-update-result-4 "Direct link to subscription-update-result-4")
+#### Subscription update `"result"`[​](#subscription-update-result-5 "Direct link to subscription-update-result-5")
 
 Chain Subscription Update. The `"value"` member is Null when there is no value associated with the given service ID and key. Otherwise, it is a Blob containing the value.
 
@@ -268,13 +314,13 @@ Chain Subscription Update. The `"value"` member is Null when there is no value a
 
 Returns the preimage of the given hash, if it has been provided to the given service in the posterior state of the block with the given header hash.
 
-#### Parameters[​](#parameters-10 "Direct link to Parameters")
+#### Parameters[​](#parameters-13 "Direct link to Parameters")
 
 1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
 2.  `id`: Number: The ID of the service.
 3.  `hash`: Hash: The hash whose preimage is being requested.
 
-#### Result[​](#result-9 "Direct link to Result")
+#### Result[​](#result-11 "Direct link to Result")
 
 Null if the preimage has not been provided to the given service, otherwise a Blob containing the preimage.
 
@@ -282,28 +328,42 @@ Null if the preimage has not been provided to the given service, otherwise a Blo
 
 Subscribe to updates of the preimage associated with the given service ID and hash.
 
-#### Parameters[​](#parameters-11 "Direct link to Parameters")
+#### Parameters[​](#parameters-14 "Direct link to Parameters")
 
 1.  `id`: Number: The ID of the service.
 2.  `hash`: Hash. The hash whose preimage is of interest.
 3.  `finalized`: Boolean: True to track the latest finalized block, False to track the head of the "best" chain.
 
-#### Subscription update `"result"`[​](#subscription-update-result-5 "Direct link to subscription-update-result-5")
+#### Subscription update `"result"`[​](#subscription-update-result-6 "Direct link to subscription-update-result-6")
 
 Chain Subscription Update. The `"value"` member is Null if the preimage has not been provided to the service, otherwise it is a Blob containing the preimage.
+
+### `servicePreimageLen(header_hash, id, hash)`[​](#servicepreimagelenheader_hash-id-hash "Direct link to servicepreimagelenheader_hash-id-hash")
+
+Returns the length of the preimage of the given hash, if it has been provided to the given service in the posterior state of the block with the given header hash.
+
+#### Parameters[​](#parameters-15 "Direct link to Parameters")
+
+1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
+2.  `id`: Number: The ID of the service.
+3.  `hash`: Hash: The hash whose preimage length is being requested.
+
+#### Result[​](#result-12 "Direct link to Result")
+
+Null if the preimage has not been provided to the given service, otherwise a Number giving the length of the preimage in octets.
 
 ### `serviceRequest(header_hash, id, hash, len)`[​](#servicerequestheader_hash-id-hash-len "Direct link to servicerequestheader_hash-id-hash-len")
 
 Returns the preimage request associated with the given service ID and hash/length in the posterior state of the block with the given header hash.
 
-#### Parameters[​](#parameters-12 "Direct link to Parameters")
+#### Parameters[​](#parameters-16 "Direct link to Parameters")
 
 1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
 2.  `id`: Number: The ID of the service.
 3.  `hash`: Hash: The hash of the preimage.
 4.  `len`: Number: The preimage length.
 
-#### Result[​](#result-10 "Direct link to Result")
+#### Result[​](#result-13 "Direct link to Result")
 
 Null if the preimage with the given hash/length has neither been requested by nor provided to the given service. An empty Array if the preimage has been requested, but not yet provided. Otherwise, i.e. if the preimage has been provided, an Array of between 1 and 3 Numbers. The meaning of the Numbers is as follows:
 
@@ -315,14 +375,14 @@ Null if the preimage with the given hash/length has neither been requested by no
 
 Subscribe to updates of the preimage request associated with the given service ID and hash/length.
 
-#### Parameters[​](#parameters-13 "Direct link to Parameters")
+#### Parameters[​](#parameters-17 "Direct link to Parameters")
 
 1.  `id`: Number: The ID of the service.
 2.  `hash`: Hash: The hash of the preimage.
 3.  `len`: Number: The preimage length.
 4.  `finalized`: Boolean: True to track the latest finalized block, False to track the head of the "best" chain.
 
-#### Subscription update `"result"`[​](#subscription-update-result-6 "Direct link to subscription-update-result-6")
+#### Subscription update `"result"`[​](#subscription-update-result-7 "Direct link to subscription-update-result-7")
 
 Chain Subscription Update. The `"value"` member is either Null or an Array of Numbers, with the same semantics as the result of the `serviceRequest` method.
 
@@ -330,11 +390,11 @@ Chain Subscription Update. The `"value"` member is either Null or an Array of Nu
 
 Returns the work-report with the given hash.
 
-#### Parameters[​](#parameters-14 "Direct link to Parameters")
+#### Parameters[​](#parameters-18 "Direct link to Parameters")
 
 1.  `hash`: Hash: Hash of the work-report.
 
-#### Result[​](#result-11 "Direct link to Result")
+#### Result[​](#result-14 "Direct link to Result")
 
 Blob: The work-report with the given hash, encoded as per the GP.
 
@@ -342,13 +402,13 @@ Blob: The work-report with the given hash, encoded as per the GP.
 
 Submit a work-package to the guarantors currently assigned to the given core. This method will return successfully if the work-package is submitted to at least one guarantor. It will not wait for the package to be refined, reported, or accumulated. You should use e.g. `subscribeWorkPackageStatus` to monitor the status of submitted work-packages.
 
-#### Parameters[​](#parameters-15 "Direct link to Parameters")
+#### Parameters[​](#parameters-19 "Direct link to Parameters")
 
 1.  `core`: Number: The index of the core.
 2.  `package`: Blob: The work-package, encoded as per the GP.
 3.  `extrinsics`: Array of Blobs: The extrinsics.
 
-#### Result[​](#result-12 "Direct link to Result")
+#### Result[​](#result-15 "Direct link to Result")
 
 Null.
 
@@ -356,12 +416,12 @@ Null.
 
 Submit a work-bundle to the guarantors currently assigned to the given core. This method will return successfully if the bundle is submitted to at least one guarantor. It will not wait for the package to be refined, reported, or accumulated. You should use e.g. `subscribeWorkPackageStatus` to monitor the status of submitted work-packages.
 
-#### Parameters[​](#parameters-16 "Direct link to Parameters")
+#### Parameters[​](#parameters-20 "Direct link to Parameters")
 
 1.  `core`: Number: The index of the core.
 2.  `bundle`: Blob: The work-bundle, encoded as per the GP.
 
-#### Result[​](#result-13 "Direct link to Result")
+#### Result[​](#result-16 "Direct link to Result")
 
 Null.
 
@@ -369,13 +429,13 @@ Null.
 
 Returns the status of the given work-package following execution of the block with the given header hash.
 
-#### Parameters[​](#parameters-17 "Direct link to Parameters")
+#### Parameters[​](#parameters-21 "Direct link to Parameters")
 
 1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
 2.  `hash`: Hash: The hash of the work-package.
 3.  `anchor`: Hash: The hash of the work-package's anchor block's header. If this does not match the anchor specified in the work-package then an error or an incorrect status may be returned. An error may also be returned if this anchor block is too old.
 
-#### Result[​](#result-14 "Direct link to Result")
+#### Result[​](#result-17 "Direct link to Result")
 
 An Object with one of the following structures:
 
@@ -411,13 +471,13 @@ The String is a freeform message giving details.
 
 Subscribe to status updates for the given work-package.
 
-#### Parameters[​](#parameters-18 "Direct link to Parameters")
+#### Parameters[​](#parameters-22 "Direct link to Parameters")
 
 1.  `hash`: Hash: The hash of the work-package.
 2.  `anchor`: Hash: The hash of the work-package's anchor block's header. If this does not match the anchor specified in the work-package then the subscription may fail or yield incorrect statuses. The subscription may also fail if this anchor block is too old.
 3.  `finalized`: Boolean: True to track the latest finalized block, False to track the head of the "best" chain.
 
-#### Subscription update `"result"`[​](#subscription-update-result-7 "Direct link to subscription-update-result-7")
+#### Subscription update `"result"`[​](#subscription-update-result-8 "Direct link to subscription-update-result-8")
 
 Chain Subscription Update. The `"value"` member has the same structure and semantics as the result of the `workPackageStatus` method.
 
@@ -425,12 +485,12 @@ Chain Subscription Update. The `"value"` member has the same structure and seman
 
 Submit a preimage which is being requested by the given service. Note that this method does not wait for the preimage to be distributed or integrated on-chain; it returns immediately.
 
-#### Parameters[​](#parameters-19 "Direct link to Parameters")
+#### Parameters[​](#parameters-23 "Direct link to Parameters")
 
 1.  `requester`: Number: The ID of the service which has an outstanding request.
 2.  `preimage`: Blob: The preimage requested.
 
-#### Result[​](#result-15 "Direct link to Result")
+#### Result[​](#result-18 "Direct link to Result")
 
 Null.
 
@@ -438,11 +498,11 @@ Null.
 
 Returns a list of all services currently known to be on JAM. This is a best-effort list and may not reflect the true state. Nodes could e.g. reasonably hide services which are not recently active from this list.
 
-#### Parameters[​](#parameters-20 "Direct link to Parameters")
+#### Parameters[​](#parameters-24 "Direct link to Parameters")
 
 1.  `header_hash`: Hash: The header hash indicating the block whose posterior state should be used for the query.
 
-#### Result[​](#result-16 "Direct link to Result")
+#### Result[​](#result-19 "Direct link to Result")
 
 Array of Numbers: The IDs of the services currently known to be on JAM.
 
@@ -450,12 +510,12 @@ Array of Numbers: The IDs of the services currently known to be on JAM.
 
 Fetches a list of segments from the DA layer, exported by the work-package with the given hash.
 
-#### Parameters[​](#parameters-21 "Direct link to Parameters")
+#### Parameters[​](#parameters-25 "Direct link to Parameters")
 
 1.  `wp_hash`: Hash: Hash of the exporting work-package.
 2.  `indices`: Array of Numbers: Indices into the list of segments exported by the work-package.
 
-#### Result[​](#result-17 "Direct link to Result")
+#### Result[​](#result-20 "Direct link to Result")
 
 Array of Blobs: The requested segments. Each Blob should be 4104 bytes long and the length of the Array should match the length of the `indices` Array passed in to the method.
 
@@ -463,12 +523,12 @@ Array of Blobs: The requested segments. Each Blob should be 4104 bytes long and 
 
 Fetches a list of segments from the DA layer, exported by a work-package with the given segment root hash.
 
-#### Parameters[​](#parameters-22 "Direct link to Parameters")
+#### Parameters[​](#parameters-26 "Direct link to Parameters")
 
 1.  `segment_root`: Hash: Segment tree root hash of a work-package.
 2.  `indices`: Array of Numbers: Indices into the list of segments exported by the work-package.
 
-#### Result[​](#result-18 "Direct link to Result")
+#### Result[​](#result-21 "Direct link to Result")
 
 Array of Blobs: The requested segments. Each Blob should be 4104 bytes long and the length of the Array should match the length of the `indices` Array passed in to the method.
 
@@ -476,7 +536,7 @@ Array of Blobs: The requested segments. Each Blob should be 4104 bytes long and 
 
 Returns the sync state of the node.
 
-#### Result[​](#result-19 "Direct link to Result")
+#### Result[​](#result-22 "Direct link to Result")
 
 An Object with the following members:
 
@@ -487,7 +547,7 @@ An Object with the following members:
 
 Subscribe to changes in sync status.
 
-#### Subscription update `"result"`[​](#subscription-update-result-8 "Direct link to subscription-update-result-8")
+#### Subscription update `"result"`[​](#subscription-update-result-9 "Direct link to subscription-update-result-9")
 
 String: Either `"InProgress"` or `"Completed"`.
 
@@ -505,6 +565,9 @@ String: Either `"InProgress"` or `"Completed"`.
     *   [`subscribeFinalizedBlock()`](#subscribefinalizedblock)
     *   [`parent(header_hash)`](#parentheader_hash)
     *   [`stateRoot(header_hash)`](#staterootheader_hash)
+    *   [`stateValue(header_hash, key)`](#statevalueheader_hash-key)
+    *   [`subscribeStateValue(key, finalized)`](#subscribestatevaluekey-finalized)
+    *   [`stateValuesWithProof(header_hash, keys, size_limit)`](#statevalueswithproofheader_hash-keys-size_limit)
     *   [`beefyRoot(header_hash)`](#beefyrootheader_hash)
     *   [`statistics(header_hash)`](#statisticsheader_hash)
     *   [`subscribeStatistics(finalized)`](#subscribestatisticsfinalized)
@@ -514,6 +577,7 @@ String: Either `"InProgress"` or `"Completed"`.
     *   [`subscribeServiceValue(id, key, finalized)`](#subscribeservicevalueid-key-finalized)
     *   [`servicePreimage(header_hash, id, hash)`](#servicepreimageheader_hash-id-hash)
     *   [`subscribeServicePreimage(id, hash, finalized)`](#subscribeservicepreimageid-hash-finalized)
+    *   [`servicePreimageLen(header_hash, id, hash)`](#servicepreimagelenheader_hash-id-hash)
     *   [`serviceRequest(header_hash, id, hash, len)`](#servicerequestheader_hash-id-hash-len)
     *   [`subscribeServiceRequest(id, hash, len, finalized)`](#subscribeservicerequestid-hash-len-finalized)
     *   [`workReport(hash)`](#workreporthash)

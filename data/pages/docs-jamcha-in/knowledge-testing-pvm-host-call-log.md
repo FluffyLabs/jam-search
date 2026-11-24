@@ -3,10 +3,10 @@ type: page
 url: 'https://docs.jamcha.in/knowledge/testing/pvm/host-call-log'
 title: host-call-log | JAM Docs
 site: docs.jamcha.in
-created_at: '2026-11-20T03:02:31.197Z'
-last_modified: '2026-11-20T03:02:31.197Z'
+created_at: '2026-11-24T03:02:05.859Z'
+last_modified: '2026-11-24T03:02:05.859Z'
 ---
-(fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-1.md) on 2026-09-21)
+(fetched from [here](https://github.com/polkadot-fellows/JIPs/blob/main/JIP-1.md) on 2026-11-16)
 
 A host call for passing a debugging message from the service/authorizer to the hosting environment for logging to the node operator.
 
@@ -16,7 +16,7 @@ A host call for passing a debugging message from the service/authorizer to the h
 
 **Name**: `log`
 
-**Gas usage**: 10 (same as host-call with bad index)
+**Gas usage**: M∅\=1,000\\mathsf{M}\_\\varnothing = 1,000M∅​\=1,000 (same as an unknown host-call)
 
 **Input registers**: φ7⋯+5\\varphi\_{7\\dots+5}φ7⋯+5​
 

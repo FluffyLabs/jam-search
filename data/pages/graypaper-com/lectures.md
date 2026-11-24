@@ -3,12 +3,14 @@ type: page
 url: 'https://graypaper.com/lectures/'
 title: JAM Lectures
 site: graypaper.com
-created_at: '2026-11-20T03:02:39.366Z'
-last_modified: '2026-11-20T03:02:39.366Z'
+created_at: '2026-11-24T03:02:13.477Z'
+last_modified: '2026-11-24T03:02:13.477Z'
 ---
 ## Lectures
 
 Select a Lecture1.1 Nomenclature↓
+
+Watch
 
 Filmed in Buenos Aires on May 10, 2024
 

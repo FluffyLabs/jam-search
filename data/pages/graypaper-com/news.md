@@ -3,10 +3,66 @@ type: page
 url: 'https://graypaper.com/news/'
 title: JAM News
 site: graypaper.com
-created_at: '2026-11-20T03:02:36.666Z'
-last_modified: '2026-11-20T03:02:36.666Z'
+created_at: '2026-11-24T03:02:10.845Z'
+last_modified: '2026-11-24T03:02:10.845Z'
 ---
 ## News
+
+16/11/2026
+
+[JAM Gray Paper v0.8.1 Released](https://github.com/gavofyork/graypaper/releases/tag/v0.8.1)
+
+04/11/2026
+
+[Polkadot Forum—The Road to JAM: November Update](https://forum.polkadot.network/t/the-road-to-jam/18621/29)
+
+12/10/2026
+
+[Parity Blog—JAM: What It Is, How It Works, and What It Means for Polkadot](https://www.parity.io/blog/jam-what-it-is-how-it-works)
+
+08/10/2026
+
+[Polkadot Forum—The Road to JAM: October Update](https://forum.polkadot.network/t/the-road-to-jam/18621/22)
+
+08/10/2026
+
+[JAM Test Vectors v0.8.0 Released](https://github.com/jam-conformance/jam-test-vectors/releases/tag/v0.8.0)
+
+10/09/2026
+
+[Polkadot Forum—The Road to JAM](https://forum.polkadot.network/t/the-road-to-jam/18621)
+
+10/09/2026
+
+[Bastian Köcher—Parachain service takes its first steps on JAM](https://x.com/bkchr/status/2098141048450994596)
+
+07/09/2026
+
+[Polkadot Forum—JAM Prize Milestone 1 Payouts](https://forum.polkadot.network/t/jam-prize-milestone-1-payouts/18584)
+
+09/07/2026
+
+[Web3 Summit 2026—Gavin Wood: JAM & DOT DAOism](https://www.youtube.com/watch?v=sr8D1gptJB8)
+
+27/06/2026
+
+[Gavin Wood—DOT DAOism under JAM: An Island Story](https://medium.com/polkadot-network/dot-daoism-under-jam-an-island-story-efe0d02ee084)
+
+22/06/2026
+
+[Gavin Wood—DOT DAO and the need for $JAMKB](https://medium.com/polkadot-network/dot-dao-and-the-need-for-jamkb-a069e72e9728)
+
+03/06/2026
+
+[JAM Gray Paper v0.8.0 Released](https://github.com/gavofyork/graypaper/releases/tag/v0.8.0)
+
+09/03/2026
+
+[Polkadot Forum—Announcing Grey 0.1: LLM tries to build a JAM node implementation](https://forum.polkadot.network/t/announcing-grey-0-1-llm-tries-to-build-a-jam-node-implementation/17284)
+
+10/02/2026
+
+[Polkadot Forum—JAM Prize Terms & Conditions updated: Milestone 1 paid before Gray Paper 1.0](https://forum.polkadot.network/t/ensuring-jam-development-sustainability-is-it-time-for-a-dedicated-jam-bounty-program/16229/26)
 
 10/12/2025
 
@@ -28,6 +84,10 @@ last_modified: '2026-11-20T03:02:36.666Z'
 
 [Simply Staking—Introduction to Polkadot JAM: And How it Relates to Ethereum](https://simplystaking.com/intro-to-polkadot-jam)
 
+15/09/2025
+
+[JAM Gray Paper v0.7.2 Released](https://github.com/gavofyork/graypaper/releases/tag/v0.7.2)
+
 12/09/2025
 
 [PBA Campus Special - JAM panel](https://x.com/AcademyPolkadot/status/1966374101821575310)
@@ -47,6 +107,10 @@ last_modified: '2026-11-20T03:02:36.666Z'
 28/07/2025
 
 [Qinwen Wang—China’s RISC-V Strategy: Open Spec as JAM Becomes the New Sovereignty at Web3 Summit](https://www.youtube.com/watch?v=rvNyhS9-Vz8)
+
+26/07/2025
+
+[JAM Gray Paper v0.7.1 Released](https://github.com/gavofyork/graypaper/releases/tag/v0.7.1)
 
 21/07/2025
 
