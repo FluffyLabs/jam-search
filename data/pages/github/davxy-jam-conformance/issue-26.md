@@ -382,3 +382,20 @@ I can't follow your implementation to that extent. At least not right now. Just 
 ## Comment by @davxy
 
 FWIW we ideed not sending the empty lost. I'll fix it in the 0.8.1 campaign
+
+
+## Comment by @sierkov
+
+@davxy A new TurboJam image has been published to docker.io/r2rationality/turbojam-fuzz:latest
+It's hash: sha256:d27d7fcab8d89403fdaa23b913a01c2b657304d28deedbd532dee91aad72b5e4
+
+In this version, TurboJam disables ancestry checks when support is not declared by a client or ancestry data is empty.
+This should resolve the disconnects, and I also expect it to pass all published traces.
+
+The following note is for for when you start working on 0.8.1.
+
+From my POV, the way partial traces (without a genesis file) are tested is currently a gray area in the fuzzing protocol spec. It's not covered by the minifuzz tests either, which makes such issues difficult to reproduce in the development environment.
+
+In particular, the generation of a pseudo-genesis header from the latest state (rather than a true genesis state) is not explicitly specified. The way implementations process this header may differ and can affect ancestry-based checks, parent-block reference checks, and slot-monotonicity checks.
+
+A practical suggestion/request from my side would be to document how this header is generated and add an explicit minifuzz example covering a partial trace.
