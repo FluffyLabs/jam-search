@@ -308,7 +308,7 @@ From what I can tell `f30a...` is the post-state (kappa') validator 0 info.
 The prior state active validator 0 key is : `4418fb8c85bb3985394a8c2756d3643457ce614546202a2f50b093d762499ace`
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 hi @davxy I have a question related to [this traces](https://github.com/davxy/jam-conformance/blob/main/fuzz-reports/0.6.7/traces/1755530535/00000011.bin)
 
@@ -542,7 +542,7 @@ We addressed _most_ of the issues in the last 0.7.0 batch, but not all (17586211
 @davxy -- updated to [v0.7.1.1](https://github.com/jam-duna/jamtestnet/releases/tag/v0.7.1.1) -- look forward to the first reports, maybe with the above
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 hello @davxy 
 now we supported both recompiler mode (also passed the fuzzy traces) and interpreter mode in [0.7.1.3]( https://github.com/jam-duna/jamtestnet/releases/tag/v0.7.1.3) 
@@ -662,7 +662,7 @@ Can you please check #198?
 We are now transitioning to docker-based with std-entry support. (For now we only support `JAM_FUZZ_SPEC=tiny` but will add `JAM_FUZZ_SPEC =full` network support in next docker release)
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 Hi @davxy ,
 JAMDUNA's GP 0.8.0 Docker image is now available
@@ -674,7 +674,7 @@ JAMDUNA's GP 0.8.0 Docker image is now available
 
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 @davxy Thanks for catching this, and sorry for the broken image. 
 Could you please pull it again and confirm it works on your runner?

@@ -10,7 +10,7 @@ content_kind: pr
 
 # modify progress_with_bad_signatures-2.json
 
-## Pull Request by @yoyo2325
+## Pull Request by @shwchg2325
 
  `disputes/tiny/progress_with_bad_signatures-2.json`  cleaning up the state data
 
@@ -23,7 +23,7 @@ content_kind: pr
 @yoyo2325 is this PR still relevant? I don't fully understand your changes here. Closing for now
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 this case is actually has two error 
 not only for the bad signature but also that two I removed

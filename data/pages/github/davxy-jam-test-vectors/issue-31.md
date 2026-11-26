@@ -10,7 +10,7 @@ content_kind: issue
 
 # WorkResult Codec Problem
 
-## Issue by @yoyo2325
+## Issue by @shwchg2325
 
 Hi @davxy 
 the codec of the work result I think that the gas used is uint64
@@ -67,7 +67,7 @@ appending 00
 ```
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 I get the reason
 Sorry for bothering!
@@ -80,12 +80,12 @@ Sorry for bothering!
 $x_u$ is encoded using compact
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 Thank you I just noticed that!
 
 
-## Comment by @yoyo2325
+## Comment by @shwchg2325
 
 @davxy one more question
 for c13 Statistic vectors' `ValidatorStatistic` you are not using the The state serialization,right?
