@@ -3,8 +3,8 @@ type: page
 url: 'https://graypaper.com'
 title: JAM Gray Paper - JOIN-ACCUMULATE MACHINE
 site: graypaper.com
-created_at: '2026-11-24T03:02:10.222Z'
-last_modified: '2026-11-24T03:02:10.222Z'
+created_at: '2026-11-27T03:02:38.842Z'
+last_modified: '2026-11-27T03:02:38.842Z'
 ---
 ![](data:image/svg+xml;charset=utf-8,%3Csvg%20height='400'%20width='681'%20xmlns='http://www.w3.org/2000/svg'%20version='1.1'%3E%3C/svg%3E)
 

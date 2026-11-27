@@ -3,8 +3,8 @@ type: page
 url: 'https://graypaper.com/news/'
 title: JAM News
 site: graypaper.com
-created_at: '2026-11-24T03:02:10.845Z'
-last_modified: '2026-11-24T03:02:10.845Z'
+created_at: '2026-11-27T03:02:39.498Z'
+last_modified: '2026-11-27T03:02:39.498Z'
 ---
 ## News
 
