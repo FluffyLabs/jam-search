@@ -324,3 +324,8 @@ The r8 being set to 0 as pointed on the test vectors repo's issue. I rolled back
 ## Comment by @davxy
 
 @jam-conformance/pbnjam looks like current docker image is broken
+
+
+## Comment by @mikirov
+
+@davxy  quiche related build issues. I got it patched, thanks for noticing. 
